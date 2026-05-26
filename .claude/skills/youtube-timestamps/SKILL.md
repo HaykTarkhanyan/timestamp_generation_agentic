@@ -1,31 +1,33 @@
 ---
 name: youtube-timestamps
-description: Fetch YouTube subtitles via yt-dlp and propose chapter timestamps (YouTube-style chapters / table of contents) plus a short abstract for a given video URL. Use this whenever the user wants to generate timestamps, chapters, a table of contents, section markers, or a summary/abstract for a YouTube video, even if they only paste a URL without explicitly saying "timestamps". Handles auto-generated subtitles in any language (default Armenian / hy). Four explicit workflows: fetch subtitles, generate timestamps from the transcript, verify the proposed timestamps, write a short abstract.
+description: Fetch YouTube subtitles via yt-dlp and propose chapter timestamps (YouTube-style chapters / table of contents), a short abstract, hashtags, and a handful of title suggestions for a given video URL, then assemble the description + timestamps + hashtags into one paste-ready file. Use this whenever the user wants to generate timestamps, chapters, a table of contents, section markers, a summary/abstract, hashtags, or video title ideas for a YouTube video, even if they only paste a URL without explicitly saying "timestamps". Handles auto-generated subtitles in any language (default Armenian / hy). Five explicit workflows: fetch subtitles, generate timestamps from the transcript, verify the proposed timestamps, write an abstract, and assemble a combined YouTube description (abstract + timestamps + hashtags) alongside a small set of suggested video titles.
 ---
 
 # YouTube Timestamp Generator
 
-Generate YouTube-style chapter timestamps and a short abstract for a video by fetching its (auto-generated) subtitles and reasoning about content structure. Built for Armenian (`hy`) by default, works for any language yt-dlp can pull.
+Generate YouTube-style chapter timestamps, a short abstract, and hashtags for a video by fetching its (auto-generated) subtitles and reasoning about content structure, then assemble everything into one paste-ready description. Built for Armenian (`hy`) by default, works for any language yt-dlp can pull.
 
-The workflow is split into **four explicit stages**. Run them in order — do not try to do everything in one shot. Each stage's output is the next stage's input, and the user can inspect/edit between stages.
+The workflow is split into **five explicit stages**. Run them in order — do not try to do everything in one shot. Each stage's output is the next stage's input, and the user can inspect/edit between stages.
 
 ```
-fetch  ->  generate  ->  verify  ->  abstract
-(yt-dlp)   (LLM)         (script)    (LLM)
+fetch  ->  generate  ->  verify  ->  abstract  ->  assemble
+(yt-dlp)   (LLM)         (script)    (LLM)        (LLM: + hashtags -> description.txt)
 ```
 
 ## Working directory
 
-Create a per-video working directory and put all artifacts there. Pattern: `output/<video-id>/`. Keeps runs isolated and makes it easy to rerun a stage without losing prior work.
+The fetch script (stage 1) creates the per-video working directory itself and prints its path as `output_dir`. The folder name is `<YYYY-MM-DD>_<latin-slug>_<video-id>` (today's date + the title transliterated from Armenian to Latin and slugified + the video id), e.g. `output/2026-05-23_Das-50-Informaciayi-tesutyun_MxakqkjXtQY/`. Read `output_dir` from the stage-1 JSON and use it for every later stage — don't hardcode a path. Keeping the date + a readable slug in the name makes runs easy to find later; the id keeps them unique.
 
 ```
-output/<video-id>/
+output/<YYYY-MM-DD>_<latin-slug>_<video-id>/
 ├── <video-id>.hy.vtt      # raw subtitles from yt-dlp
 ├── transcript.txt         # cleaned, deduplicated transcript with timestamps
 ├── metadata.json          # id, title, duration, uploader, url
-├── timestamps.txt         # proposed chapters (stage 2)
+├── timestamps.txt         # proposed chapters (stage 2) — verifier input, intermediate
 ├── verify_report.json     # output of stage 3
-├── abstract.txt           # short abstract (stage 4)
+├── abstract.txt           # short abstract (stage 4) — intermediate
+├── description.txt        # FINAL deliverable #1: abstract + timestamps + hashtags (stage 5)
+├── titles.txt             # FINAL deliverable #2: 3-5 suggested YouTube titles (stage 5)
 └── logs/fetch_subtitles.log
 ```
 
@@ -36,11 +38,10 @@ output/<video-id>/
 ```bash
 python .claude/skills/youtube-timestamps/scripts/fetch_subtitles.py \
     <youtube-url> \
-    --output-dir output/<video-id> \
     --lang hy
 ```
 
-If the user gives a URL without specifying a video id, parse it from the URL (`v=` parameter or short-link path) and use it as the output dir name.
+The script picks the output directory itself (`<output-base>/<date>_<slug>_<id>`, default base `output`) and prints it as `output_dir` in the JSON. Grab that path and reuse it for stages 2-5. To force an exact path, pass `--output-dir <path>`.
 
 ### Private / unlisted / age-gated videos
 
@@ -48,7 +49,7 @@ If yt-dlp fails with `Private video. Sign in if you've been granted access`, rer
 
 ```bash
 python .claude/skills/youtube-timestamps/scripts/fetch_subtitles.py \
-    <youtube-url> --output-dir output/<id> --lang hy \
+    <youtube-url> --lang hy \
     --cookies-from-browser chrome
 ```
 
@@ -60,6 +61,7 @@ If `hy` auto-subs are not available, the script fails loudly (no `.vtt` produced
 
 ### What it outputs (JSON on stdout)
 
+- `output_dir` — the auto-named working directory; reuse it for stages 2-5
 - `vtt` — raw subtitle file path
 - `transcript` — cleaned transcript path (this is what stage 2 reads)
 - `metadata` — metadata JSON path
@@ -84,7 +86,7 @@ This stage is **your reasoning**, not a script. Read `transcript.txt` and `metad
 
 ### Output format
 
-Write proposed chapters to `output/<video-id>/timestamps.txt`, one per line:
+Write proposed chapters to `<output-dir>/timestamps.txt`, one per line:
 
 ```
 0:00 <Label>
@@ -157,9 +159,9 @@ Auto-generated Armenian subs are noisy. If you can't make out the content of a s
 
 ```bash
 python .claude/skills/youtube-timestamps/scripts/verify_timestamps.py \
-    output/<video-id>/timestamps.txt \
-    --metadata output/<video-id>/metadata.json \
-    --transcript output/<video-id>/transcript.txt \
+    <output-dir>/timestamps.txt \
+    --metadata <output-dir>/metadata.json \
+    --transcript <output-dir>/transcript.txt \
     --min-gap 30
 ```
 
@@ -180,9 +182,9 @@ Add `--audit-boundaries` to also get a ±10s window around each chapter, with ea
 
 ```bash
 python .claude/skills/youtube-timestamps/scripts/verify_timestamps.py \
-    output/<video-id>/timestamps.txt \
-    --metadata output/<video-id>/metadata.json \
-    --transcript output/<video-id>/transcript.txt \
+    <output-dir>/timestamps.txt \
+    --metadata <output-dir>/metadata.json \
+    --transcript <output-dir>/transcript.txt \
     --audit-boundaries
 ```
 
@@ -196,7 +198,7 @@ If verification fails or a spot-check looks wrong, **go back to stage 2 and revi
 
 ## Stage 4: Abstract
 
-Write a short abstract of the video to `output/<video-id>/abstract.txt`. Keep it tight (3-5 sentences). Tone should match the lecturer's register — for casual Armenian lectures, write casual Armenian ("Սովորում ենք, թե ոնց...") rather than stiff academic prose. The goal is: someone scanning the abstract should know whether to watch the video.
+Write a short abstract of the video to `<output-dir>/abstract.txt`. Keep it tight (3-5 sentences). Tone should match the lecturer's register — for casual Armenian lectures, write casual Armenian ("Սովորում ենք, թե ոնց...") rather than stiff academic prose. The goal is: someone scanning the abstract should know whether to watch the video.
 
 Cover:
 1. What the video is (lesson number / series context, if any).
@@ -207,9 +209,57 @@ Same glossary rule as stage 2: when introducing an English technical term in the
 
 ---
 
+## Stage 5: Assemble combined description (+ hashtags)
+
+This stage produces the **final deliverable**: one paste-ready `<output-dir>/description.txt` that stacks the abstract, the timestamps, and a hashtag line — in that order, because that is the order a YouTube description wants them (summary up top, chapters in the middle so YouTube parses them into clickable chapters, hashtags at the very bottom).
+
+### Generate hashtags
+
+Pick **8-12 hashtags**, mixing Armenian and English (Armenian topic tags for the channel's audience plus the English technical terms people actually search). Rules that matter:
+
+- Hashtags cannot contain spaces — concatenate multi-word terms (`#machinelearning`, `#ինֆորմացիայիտեսություն`), don't insert hyphens or spaces.
+- Put the 3 most important first: YouTube surfaces only the first 3 above the video title.
+- Derive them from the actual content (the named methods/topics from stage 2) plus the series/channel. Don't pad with generic junk like `#video` or `#youtube`.
+- Same glossary spirit as stage 2: a clean English term beats a garbled half-translation, but prefer the Armenian form when it's the natural one for the audience.
+
+### Assemble the file
+
+ALWAYS use this exact layout for `description.txt`:
+
+```
+<abstract — the stage-4 text>
+
+⏱️ Բովանդակություն / Timestamps:
+0:00 <Label>
+2:34 <Label>
+...
+
+<hashtag line — all tags space-separated on one line>
+```
+
+Keep the `timestamps.txt` and `abstract.txt` intermediates on disk (the verifier reads `timestamps.txt`); `description.txt` is what the user pastes into YouTube.
+
+### Title suggestions
+
+Always also write **3-5 candidate YouTube titles** to `<output-dir>/titles.txt`, one per line. The title is a separate YouTube field (not part of the description), so it lives in its own file — never paste it into `description.txt`.
+
+Why this is required: lecturers often upload with a placeholder title (`ToDo`, `Untitled`, etc.) and forget to rename. Surfacing a few options every time makes it trivial to pick one.
+
+How to pick them:
+
+- **Match the channel's existing template.** Look at `metadata.json` — if the current title follows a pattern like `Դաս N | <topic> | <series>`, the suggestions should too. Pattern consistency is what makes a suggestion feel like a real candidate rather than a generic rewrite. Keep the lesson number and series suffix; vary the middle `<topic>` segment.
+- **Cover a few angles.** A literal/descriptive one (what topics are covered), a hook-oriented one (the most surprising or memorable thread, e.g. the Gaussian/CLT connection), and a search-friendly one with the recognizable English ML terms (KL, MLE, Mutual Information, etc.).
+- **Stay under ~70 characters** in the visible portion. YouTube's hard limit is 100; longer titles get truncated in search results and on mobile.
+- Same glossary rule as stage 2: prefer the Armenian form when one exists, but keep English for terms readers actually search for (KL, MLE, Cross Entropy, Mutual Information).
+
+If the existing title is already good (a real, content-describing title — not a placeholder), say so explicitly in the wrap-up; still write `titles.txt`, but flag that the current title is fine to keep.
+
+---
+
 ## Defaults and conventions
 
 - **Language**: default `hy`. Override with `--lang` on fetch.
+- **Output dir**: auto-named `<output-base>/<date>_<latin-slug>_<id>` by the fetch script (default base `output`). Override the base with `--output-base`, or the whole path with `--output-dir`. The Armenian→Latin slug map lives in `scripts/fetch_subtitles.py` (`ARM_TO_LAT`).
 - **Min gap**: default 30s on verifier. Use `--min-gap 10` for denser chapters.
 - **Auth**: `--cookies-from-browser <browser>` on fetch for private/unlisted videos.
 - **Logging**: `logs/fetch_subtitles.log` inside the working dir, plus stderr.
@@ -219,8 +269,8 @@ Same glossary rule as stage 2: when introducing an English technical term in the
 ## When you're done
 
 Present to the user:
-1. The proposed `timestamps.txt` content (as a code block, ready to paste into YouTube).
-2. The abstract (also as a code block).
+1. The full `description.txt` content (as one code block, ready to paste into YouTube) — abstract, then timestamps, then hashtags.
+2. The 3-5 `titles.txt` candidates (as a separate code block). If the existing video title is already a real, content-describing one, say so and recommend keeping it; otherwise highlight which of the suggestions you'd pick and why.
 3. A 1-2 sentence note on how you chose chapter boundaries and which terms you translated via glossary vs. kept in English.
 4. Any uncertainty flags from stage 2.
 5. The verifier's `issues` list if non-empty.

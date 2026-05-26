@@ -1,15 +1,20 @@
 """Fetch auto-generated YouTube subtitles via yt-dlp and produce a clean transcript.
 
 Usage:
-    python fetch_subtitles.py <youtube-url> --output-dir output/<id> [--lang hy]
+    python fetch_subtitles.py <youtube-url> [--output-base output] [--lang hy]
 
-Outputs (in --output-dir):
+The output directory is generated automatically as
+    <output-base>/<YYYY-MM-DD>_<latin-slug>_<video-id>/
+where <latin-slug> is the video title transliterated from Armenian to Latin,
+slugified, and truncated. Pass --output-dir to override with an exact path.
+
+Outputs (in the output directory):
     <video-id>.<lang>.vtt   raw subtitles from yt-dlp
     transcript.txt          cleaned, deduplicated, "MM:SS  text" per line
     metadata.json           id, title, duration, uploader, url
     logs/fetch_subtitles.log
 
-Stdout: JSON with paths and convenience fields.
+Stdout: JSON with paths and convenience fields (including output_dir).
 """
 import argparse
 import json
@@ -17,6 +22,7 @@ import logging
 import re
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
@@ -25,17 +31,59 @@ if sys.stderr.encoding and sys.stderr.encoding.lower() != "utf-8":
     sys.stderr.reconfigure(encoding="utf-8")
 
 
-def setup_logging(output_dir: Path) -> None:
-    log_dir = output_dir / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
+LOG_FORMAT = "%(asctime)s %(levelname)s %(message)s"
+
+
+def setup_console_logging() -> None:
+    """Console logging only. Called before the output dir name is known."""
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(message)s",
-        handlers=[
-            logging.StreamHandler(sys.stderr),
-            logging.FileHandler(log_dir / "fetch_subtitles.log", encoding="utf-8"),
-        ],
+        format=LOG_FORMAT,
+        handlers=[logging.StreamHandler(sys.stderr)],
     )
+
+
+def add_file_logging(output_dir: Path) -> None:
+    """Attach a file handler once the output dir exists (dir name needs metadata)."""
+    log_dir = output_dir / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    handler = logging.FileHandler(log_dir / "fetch_subtitles.log", encoding="utf-8")
+    handler.setFormatter(logging.Formatter(LOG_FORMAT))
+    logging.getLogger().addHandler(handler)
+
+
+# Pragmatic Armenian -> Latin map for readable folder slugs (not a strict
+# transliteration standard). Digraphs are handled before single chars.
+ARM_TO_LAT = {
+    "ա": "a", "բ": "b", "գ": "g", "դ": "d", "ե": "e", "զ": "z", "է": "e",
+    "ը": "e", "թ": "t", "ժ": "zh", "ի": "i", "լ": "l", "խ": "kh", "ծ": "ts",
+    "կ": "k", "հ": "h", "ձ": "dz", "ղ": "gh", "ճ": "ch", "մ": "m", "յ": "y",
+    "ն": "n", "շ": "sh", "ո": "o", "չ": "ch", "պ": "p", "ջ": "j", "ռ": "r",
+    "ս": "s", "վ": "v", "տ": "t", "ր": "r", "ց": "c", "ւ": "v", "փ": "p",
+    "ք": "q", "օ": "o", "ֆ": "f",
+}
+ARM_DIGRAPHS = {"ու": "u", "ՈՒ": "U", "Ու": "U", "եւ": "ev", "և": "ev"}
+
+
+def transliterate_armenian(text: str) -> str:
+    for arm, lat in ARM_DIGRAPHS.items():
+        text = text.replace(arm, lat)
+    out: list[str] = []
+    for ch in text:
+        lat = ARM_TO_LAT.get(ch.lower())
+        if lat is None:
+            out.append(ch)
+        else:
+            out.append(lat.capitalize() if ch != ch.lower() else lat)
+    return "".join(out)
+
+
+def slugify(title: str, max_len: int = 35) -> str:
+    """Transliterate -> keep [A-Za-z0-9] runs as hyphens -> truncate on a word boundary."""
+    slug = re.sub(r"[^A-Za-z0-9]+", "-", transliterate_armenian(title)).strip("-")
+    if len(slug) > max_len:
+        slug = slug[:max_len].rsplit("-", 1)[0]
+    return slug or "video"
 
 
 def run_yt_dlp(args: list[str]) -> subprocess.CompletedProcess:
@@ -169,7 +217,14 @@ def parse_vtt(vtt_path: Path) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("url")
-    parser.add_argument("--output-dir", required=True)
+    parser.add_argument(
+        "--output-base", default="output",
+        help="Base dir under which a '<date>_<slug>_<id>' folder is created (default: output).",
+    )
+    parser.add_argument(
+        "--output-dir",
+        help="Exact output dir, overriding the auto-generated '<date>_<slug>_<id>' name.",
+    )
     parser.add_argument("--lang", default="hy")
     parser.add_argument(
         "--cookies-from-browser",
@@ -178,13 +233,20 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    out_dir = Path(args.output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    setup_logging(out_dir)
-
+    # Console logging first: the output dir name needs the title from metadata.
+    setup_console_logging()
     metadata = fetch_metadata(args.url, args.cookies_from_browser)
     logging.info(f"Title: {metadata['title']}")
     logging.info(f"Duration: {metadata['duration']}s")
+
+    if args.output_dir:
+        out_dir = Path(args.output_dir)
+    else:
+        date = datetime.now().strftime("%Y-%m-%d")
+        out_dir = Path(args.output_base) / f"{date}_{slugify(metadata['title'])}_{metadata['id']}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    add_file_logging(out_dir)
+    logging.info(f"Output dir: {out_dir}")
 
     meta_path = out_dir / "metadata.json"
     meta_path.write_text(
@@ -203,6 +265,7 @@ def main() -> None:
     logging.info(f"Transcript saved: {transcript_path} ({line_count} lines)")
 
     print(json.dumps({
+        "output_dir": str(out_dir),
         "vtt": str(vtt_path),
         "transcript": str(transcript_path),
         "metadata": str(meta_path),
