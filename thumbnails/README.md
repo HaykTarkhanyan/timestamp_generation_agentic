@@ -17,8 +17,27 @@ A white canvas with a fixed grammar — do not redesign these, only fill them:
 | Left accent bar | vertical orange bar at the very left edge (channel identity) |
 | Lesson tag | `ML NN`, top-left, **Segoe Script** (handwritten), navy `#0033A0`, 36pt |
 | Practical badge | top-right orange pill, white **Armenian** text `Գործնական` (see below) |
-| Title | Armenian, 2–3 line wrap, charcoal, **Adamathuz Bold**; size is per-lesson |
+| Title | Armenian, charcoal, **Adamathuz Bold**; size auto/per-lesson (see Title sizing) |
 | Illustration band | bottom ~42% of the canvas (`CHART_BBOX = (0.06, 0.06, 0.90, 0.42)`) |
+
+### Title sizing (auto-grow for short titles)
+
+`title_size` in each lesson config is a baseline. At render time:
+
+- **Single-line titles** (no `\n` — the "not text-heavy" cases) **auto-grow** to
+  fill the width, capped at **74pt**, never shrinking below the configured size.
+  The size is computed by *measuring* the rendered text with matplotlib's
+  `get_window_extent` (exact for Adamathuz's real glyph widths), via
+  `_fit_single_line_size()`. Short titles (e.g. ML06 `Մոդելի գնահատում`) hit the
+  cap; longer single lines fill the width.
+- **Multi-line titles** keep their configured size (they're height-constrained;
+  auto-growing them would push into the illustration). If a short title still
+  reads small as one line but is already width-maxed (e.g. ML04), **wrap it to
+  two lines and raise `title_size`** — shorter lines unlock a bigger font. ML04
+  is `"Գծային ռեգրեսիան\nզրոյից"` at 78.
+
+Rule of thumb: not text-heavy → bigger title. One line auto-grows; if it's
+already full width, wrap to two lines and bump the size manually.
 
 ## Palette (Armenian flag on white)
 

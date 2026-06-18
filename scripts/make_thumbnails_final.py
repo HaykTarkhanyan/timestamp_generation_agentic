@@ -706,6 +706,41 @@ def draw_pipeline_hero(fig, bbox):
     _strip(ax)
 
 
+# --- ML 06: embed two real course-slide plots ---
+
+def draw_ml06_slides(fig, bbox):
+    """ML 06: two actual plots lifted from the course deck
+    ml_new/02_main_concepts_continued/L01d_validation_and_cv.pdf — the degree-6
+    polynomial overfit demo (slide 2 / figure l01d_open_2_poly.pdf) and the k=5
+    fold cross-validation grid (slide 24), cropped to thumbnails/assets/. Panel
+    widths are matched to each plot's aspect so both fill the band at the same
+    height; images top-aligned with captions over them."""
+    x0, y0, _w, _h = bbox
+    iy = y0 + 0.06         # both plots are wide/short — nudge down to center them
+    img_h = 0.36
+    gap = 0.04
+    poly_w = 0.37          # widths matched to each plot's aspect so both fill
+    cv_w = 0.49            # the band at the same height
+    cap_y = iy + img_h + 0.018
+    poly = plt.imread(str(OUT_DIR / "assets" / "ml06_poly.png"))
+    cv = plt.imread(str(OUT_DIR / "assets" / "ml06_cv.png"))
+    cv_x0 = x0 + poly_w + gap
+    fig.text(x0 + poly_w / 2, cap_y, "Overfitting", ha="center", va="bottom",
+             fontsize=19, fontweight="bold", color=TITLE_COLOR,
+             family="DejaVu Sans")
+    fig.text(cv_x0 + cv_w / 2, cap_y, "Cross-validation", ha="center",
+             va="bottom", fontsize=19, fontweight="bold", color=TITLE_COLOR,
+             family="DejaVu Sans")
+    ax1 = fig.add_axes([x0, iy, poly_w, img_h])
+    ax1.imshow(poly)
+    ax1.set_anchor("N")
+    ax1.axis("off")
+    ax2 = fig.add_axes([cv_x0, iy, cv_w, img_h])
+    ax2.imshow(cv)
+    ax2.set_anchor("N")
+    ax2.axis("off")
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -734,8 +769,8 @@ LESSONS = [
     # Alternates available to swap in: draw_gradient_descent_panels (contour
     # panels), draw_gradient_descent_panels_surface (with 3D error surface).
     {
-        "tag": "ML 04", "title": "Գծային ռեգրեսիան զրոյից",
-        "title_size": 54, "draw": draw_gd_scatter_fit,
+        "tag": "ML 04", "title": "Գծային ռեգրեսիան\nզրոյից",
+        "title_size": 78, "draw": draw_gd_scatter_fit,
         "practical": True, "out": "ML04.png",
     },
     # ML 05 — chosen: log transform | correlation heatmap | coefficients, with
@@ -746,7 +781,32 @@ LESSONS = [
         "title_size": 50, "draw": draw_pipeline_panels_heatmap,
         "practical": True, "out": "ML05.png",
     },
+    # ML 06 — theory lecture (no practical badge); embeds two real course-slide
+    # plots: the polynomial overfit demo and the cross-validation diagram.
+    {
+        "tag": "ML 06", "title": "Մոդելի գնահատում",
+        "title_size": 58, "draw": draw_ml06_slides,
+        "out": "ML06.png",
+    },
 ]
+
+
+def _fit_single_line_size(fig, text, configured, max_size=74,
+                          x0=0.06, x_right=0.94):
+    """Single-line titles aren't text-heavy, so grow them to fill the available
+    width (up to max_size) for more impact; never shrink below the configured
+    size. Multi-line titles keep their tuned size (height-constrained)."""
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    probe = fig.text(x0, 0.85, text, fontproperties=ARM_PROPS,
+                     fontsize=max_size, fontweight="bold", va="top")
+    w = probe.get_window_extent(renderer).width
+    probe.remove()
+    if w <= 0:
+        return configured
+    avail = (x_right - x0) * fig.bbox.width
+    fit = min(max_size, max_size * avail / w)
+    return max(configured, fit)
 
 
 def render_thumbnail(lesson: dict) -> None:
@@ -770,9 +830,14 @@ def render_thumbnail(lesson: dict) -> None:
                  bbox=dict(boxstyle="round,pad=0.5", facecolor=BAR,
                            edgecolor="none"))
 
-    # Title — Adamathuz Bold Armenian, lesson-specific size
-    fig.text(0.06, 0.85, lesson["title"], color=TITLE_COLOR,
-             fontsize=lesson["title_size"], fontweight="bold",
+    # Title — Adamathuz Bold Armenian. Single-line titles auto-grow to fill the
+    # width (not text-heavy); multi-line titles keep their tuned size.
+    title = lesson["title"]
+    tsize = lesson["title_size"]
+    if "\n" not in title:
+        tsize = _fit_single_line_size(fig, title, tsize)
+    fig.text(0.06, 0.85, title, color=TITLE_COLOR,
+             fontsize=tsize, fontweight="bold",
              fontproperties=ARM_PROPS,
              va="top", linespacing=TITLE_LS)
 
