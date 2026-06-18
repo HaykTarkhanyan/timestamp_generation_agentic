@@ -104,6 +104,9 @@ The filter lets you regenerate one lesson without touching the others' PNGs.
 
 ## Source materials
 
-Course repo (linear-regression lesson assets, datasets, class figures) is
-cloned at `python_math_ml_course/` (gitignored). Relevant paths:
-`python_math_ml_course/ml_new/01_regression__main_concepts/{figures,data}/`.
+The course repo (linear-regression lesson assets, datasets, class figures)
+lives on the Desktop, a sibling of this project — NOT inside it:
+`C:\Users\hayk_\OneDrive\Desktop\01_python_math_ml_course` (i.e.
+`../01_python_math_ml_course/` relative to this project root). Relevant paths:
+`.../ml_new/01_regression__main_concepts/{figures,data}/` — e.g.
+`data/House_Rent_Dataset.csv` and `figures/grad_desc_alpha*.pdf`.
