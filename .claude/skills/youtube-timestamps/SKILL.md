@@ -211,7 +211,7 @@ Same glossary rule as stage 2: when introducing an English technical term in the
 
 ## Stage 5: Assemble combined description (+ hashtags)
 
-This stage produces the **final deliverable**: one paste-ready `<output-dir>/description.txt` that stacks the abstract, the timestamps, and a hashtag line — in that order, because that is the order a YouTube description wants them (summary up top, chapters in the middle so YouTube parses them into clickable chapters, hashtags at the very bottom).
+This stage produces the **final deliverable**: one paste-ready `<output-dir>/description.txt`. It opens with the **chosen video title** on the very first line (so the user copies title + description from a single file — see below), then a divider, then the channel template that stacks the abstract, the timestamps, and a hashtag line — in that order, because that is the order a YouTube description wants them (summary up top, chapters in the middle so YouTube parses them into clickable chapters, hashtags at the very bottom).
 
 ### Generate hashtags
 
@@ -238,6 +238,10 @@ Concrete examples:
 Same rule applies to placeholders: use `TODO: …` instead of `<...>`. Never emit any ASCII `<` or `>` in the description.
 
 ```
+🎬 Վերնագիր՝ The chosen video title goes here
+
+──────────────────────────────
+
 🔗 Դասընթացին միանալու հղումը՝
 https://t.me/metric_academy
 
@@ -256,6 +260,7 @@ The stage-4 abstract goes here.
 ```
 
 **Fixed elements that NEVER change:**
+- The **title header on top**: the first line is `🎬 Վերնագիր՝ <chosen title>`, followed by a blank line, a divider line (`──────────────────────────────`), and a blank line, then the rest of the template. The user wants this so they can copy ONE file and set both the YouTube title and description from it. Use the title the user picked from `titles.txt` (or, running unattended, your top recommendation from that file). Put the title verbatim — pure Armenian if that is what was chosen; the channel suffix (`| Մեքենայական ուսուցում`) is optional, add it only if the chosen title already includes it.
 - The two emoji-header lines (`🔗 Դասընթացին միանալու հղումը՝` and `📚 Նյութը՝`) and the Telegram URL (`https://t.me/metric_academy`) are baked in. Always include them verbatim.
 - The emoji headers above timestamps (`⏳ Թեմաներ՝`) and abstract (`📌 Նկարագիր`) are required.
 

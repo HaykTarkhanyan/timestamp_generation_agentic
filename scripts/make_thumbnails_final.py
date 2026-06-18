@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import font_manager
 from matplotlib.patches import Rectangle
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registers 3d projection)
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
@@ -373,6 +374,338 @@ def draw_data_prep_panels(fig, bbox):
     _draw_scaling_panel(ax3)
 
 
+# --- ML 04 Practical 01 sub-panels (gradient descent from scratch) ---
+
+def _draw_gd_contour_panel(ax):
+    """Gradient descent on the loss contours — redrawn from the course's
+    `grad_desc_alpha` figure: elongated elliptical contours, an orange start
+    point theta^(0), and red arrows zig-zagging down the narrow valley to the
+    red-star minimum. The zig-zag is the visual signature of GD overshooting."""
+    x = np.linspace(-3, 3, 240)
+    y = np.linspace(-2.2, 2.2, 240)
+    X, Y = np.meshgrid(x, y)
+    Z = 0.18 * X**2 + 0.62 * Y**2          # elongated bowl (narrow in y)
+    ax.contour(X, Y, Z, levels=[0.12, 0.32, 0.62, 1.0, 1.55, 2.2, 2.95],
+               colors=POINT_COLOR, linewidths=1.4, alpha=0.55, zorder=1)
+    pts = [(-2.55, 1.6), (-1.75, -0.7), (-1.05, 0.55), (-0.6, -0.22),
+           (-0.32, 0.13), (-0.14, -0.05), (0.0, 0.0)]
+    for i in range(len(pts) - 1):
+        ax.annotate("", xy=pts[i + 1], xytext=pts[i],
+                    arrowprops=dict(arrowstyle="-|>", color=LINE_COLOR,
+                                    lw=2.4, shrinkA=2, shrinkB=2), zorder=3)
+    ax.scatter([pts[0][0]], [pts[0][1]], s=150, color=BAR, edgecolor="white",
+               linewidth=2, zorder=5)
+    ax.text(pts[0][0] + 0.05, pts[0][1] + 0.42, r"$\theta^{(0)}$",
+            ha="center", va="bottom", fontsize=15, color=TITLE_COLOR, zorder=6)
+    ax.scatter([0], [0], s=240, color=LINE_COLOR, edgecolor="white",
+               linewidth=1.5, marker="*", zorder=5)
+    ax.set_xlim(-3, 3)
+    ax.set_ylim(-2.2, 2.2)
+    ax.set_aspect("auto")
+    _strip(ax)
+
+
+def _draw_gd_update_panel(ax):
+    """The gradient-descent update rule as math text, centered in the panel."""
+    ax.text(0.5, 0.5, r"$\theta \;\leftarrow\; \theta \,-\, \alpha\,\nabla R_{\mathrm{emp}}(\theta)$",
+            ha="center", va="center", fontsize=29, color=TITLE_COLOR,
+            transform=ax.transAxes)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    _strip(ax)
+
+
+def _draw_lr_curves_panel(ax):
+    """Loss-vs-iteration for three learning rates: too small (blue, slow),
+    just right (red, smooth decay to the floor), too large (orange, diverging
+    oscillation). Armenian-flag palette."""
+    t = np.linspace(0, 1, 200)
+    good = 0.04 + 0.92 * np.exp(-6 * t)
+    slow = 0.10 + 0.85 * np.exp(-1.4 * t)
+    diverge = 0.55 + 0.30 * np.sin(22 * t) * (0.25 + 0.75 * t) + 0.10 * t
+    ax.plot(t, slow, color=POINT_COLOR, linewidth=4, solid_capstyle="round", zorder=2)
+    ax.plot(t, diverge, color=BAR, linewidth=4, solid_capstyle="round", zorder=3)
+    ax.plot(t, good, color=LINE_COLOR, linewidth=4.5, solid_capstyle="round", zorder=4)
+    ax.set_xlim(-0.02, 1.02)
+    ax.set_ylim(0, 1.0)
+    _strip(ax)
+
+
+def draw_gradient_descent_panels(fig, bbox):
+    """ML 04a: three panels — loss bowl with descent steps, update rule,
+    learning-rate convergence curves."""
+    x0, y0, w, h = bbox
+    gap = 0.02
+    panel_w = (w - 2 * gap) / 3
+
+    ax1 = fig.add_axes([x0, y0, panel_w, h])
+    ax1.set_facecolor(BG)
+    _draw_gd_contour_panel(ax1)
+
+    ax2 = fig.add_axes([x0 + panel_w + gap, y0, panel_w, h])
+    ax2.set_facecolor(BG)
+    _draw_gd_update_panel(ax2)
+
+    ax3 = fig.add_axes([x0 + 2 * (panel_w + gap), y0, panel_w, h])
+    ax3.set_facecolor(BG)
+    _draw_lr_curves_panel(ax3)
+
+
+# --- ML 04 Practical 02 sub-panels (real data -> sklearn pipeline) ---
+
+# Real bin heights from the course's House_Rent_Dataset.csv (4746 rows):
+# raw Rent is heavily right-skewed; log(1+Rent) is ~bell-shaped. The thumbnail
+# shows the actual class-data transform, not a synthetic stand-in.
+RENT_RAW_HIST = [806, 1662, 664, 440, 258, 146, 147, 101, 49, 76, 56, 22,
+                 39, 15, 18, 27, 21, 0, 38, 10, 7, 19, 11, 114]
+RENT_LOG_HIST = [2, 4, 10, 53, 265, 555, 826, 827, 544, 486, 380, 227,
+                 226, 94, 103, 59, 52, 20, 7, 3, 2, 0, 0, 1]
+
+
+def _draw_logtransform_panel(ax):
+    """The rent target's log transform on REAL course data: left = raw,
+    right-skewed (blue); arrow labelled 'log'; right = bell-shaped after
+    log(1+Rent) (red). Tells the signature EDA move of Practical 02."""
+    raw = np.array(RENT_RAW_HIST, float)
+    raw = raw / raw.max()
+    logh = np.array(RENT_LOG_HIST, float)
+    logh = logh / logh.max()
+    n = len(raw)
+    gap = 7
+    ax.bar(np.arange(n), raw, width=0.96, color=POINT_COLOR,
+           edgecolor="white", linewidth=0.3, zorder=2)
+    ax.bar(np.arange(n) + n + gap, logh, width=0.96, color=LINE_COLOR,
+           edgecolor="white", linewidth=0.3, zorder=2)
+    ax.annotate("", xy=(n + gap - 1.2, 0.52), xytext=(n + 0.2, 0.52),
+                arrowprops=dict(arrowstyle="-|>", color=TITLE_COLOR, lw=2.6))
+    ax.text(n + gap / 2 - 0.5, 0.66, "log", ha="center", va="bottom",
+            fontsize=13, fontstyle="italic", color=TITLE_COLOR)
+    ax.set_xlim(-1, 2 * n + gap)
+    ax.set_ylim(0, 1.08)
+    _strip(ax)
+
+
+def _draw_pipeline_panel(ax):
+    """Vertical sklearn-Pipeline flow: Data -> Preprocessing -> Regression,
+    three boxes with downward arrows. Armenian labels in Sylfaen (Adamathuz
+    is uppercase-only and these are mixed-case words)."""
+    labels = ["Տվյալներ", "Նախամշակում", "Գծ. ռեգրեսիա"]
+    edges = [POINT_COLOR, BAR, LINE_COLOR]
+    box_w, box_h = 0.80, 0.20
+    cx = 0.5
+    centers_y = [0.82, 0.50, 0.18]
+    for cy, lab, ec in zip(centers_y, labels, edges):
+        rect = Rectangle((cx - box_w / 2, cy - box_h / 2), box_w, box_h,
+                         facecolor="#f7f7f7", edgecolor=ec, linewidth=2.6,
+                         transform=ax.transAxes, zorder=2)
+        ax.add_patch(rect)
+        ax.text(cx, cy, lab, ha="center", va="center", fontsize=13,
+                fontname="Sylfaen", color=TITLE_COLOR,
+                transform=ax.transAxes, zorder=3)
+    for cy_top, cy_bot in [(0.82, 0.50), (0.50, 0.18)]:
+        ax.annotate("", xy=(cx, cy_bot + box_h / 2 + 0.005),
+                    xytext=(cx, cy_top - box_h / 2 - 0.005),
+                    xycoords="axes fraction", textcoords="axes fraction",
+                    arrowprops=dict(arrowstyle="-|>", color=TITLE_COLOR, lw=2.4))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    _strip(ax)
+
+
+def _draw_coef_panel(ax):
+    """Diverging horizontal coefficient bars — some features push price up
+    (blue), some down (red), around a zero axis. Mirrors the 'interpreting
+    coefficients' finale."""
+    vals = [0.95, 0.62, 0.40, 0.22, -0.30, -0.58]
+    y = np.arange(len(vals))[::-1]
+    colors = [POINT_COLOR if v >= 0 else LINE_COLOR for v in vals]
+    ax.barh(y, vals, color=colors, edgecolor="white", linewidth=1.2,
+            height=0.62, zorder=2)
+    ax.axvline(0, color=TITLE_COLOR, linewidth=1.8, zorder=3)
+    ax.set_xlim(-0.85, 1.15)
+    ax.set_ylim(-0.6, len(vals) - 0.4)
+    _strip(ax)
+
+
+def draw_pipeline_panels(fig, bbox):
+    """ML 04b: three panels — skewed target histogram, sklearn pipeline flow,
+    coefficient bars."""
+    x0, y0, w, h = bbox
+    gap = 0.02
+    panel_w = (w - 2 * gap) / 3
+
+    ax1 = fig.add_axes([x0, y0, panel_w, h])
+    ax1.set_facecolor(BG)
+    _draw_logtransform_panel(ax1)
+
+    ax2 = fig.add_axes([x0 + panel_w + gap, y0, panel_w, h])
+    ax2.set_facecolor(BG)
+    _draw_pipeline_panel(ax2)
+
+    ax3 = fig.add_axes([x0 + 2 * (panel_w + gap), y0, panel_w, h])
+    ax3.set_facecolor(BG)
+    _draw_coef_panel(ax3)
+
+
+# ---------- alternative illustration variants (for picking) ----------
+
+# --- ML 04 variant B: data + line being fit from scratch (wide hero) ---
+
+def draw_gd_scatter_fit(fig, bbox):
+    """ML 04 alt: scatter with the regression line being learned — faint early
+    gradient-descent fits fading up to the bold final red line, plus the update
+    rule. Reads as 'fitting a line from scratch'."""
+    ax = fig.add_axes(bbox)
+    ax.set_facecolor(BG)
+    rng = np.random.default_rng(509)
+    x = np.linspace(0, 10, 16)
+    y = 0.7 * x + 1.2 + rng.normal(0, 1.0, x.size)
+    xs = np.linspace(0, 10, 100)
+    final_slope, final_int = np.polyfit(x, y, 1)
+    stages = [(0.05, 4.6), (0.28, 3.3), (0.5, 2.0), (final_slope, final_int)]
+    alphas = [0.16, 0.30, 0.48, 1.0]
+    widths = [3.0, 3.0, 3.5, 7.0]
+    for (s, b), a, w in zip(stages, alphas, widths):
+        ax.plot(xs, s * xs + b, color=LINE_COLOR, linewidth=w, alpha=a,
+                solid_capstyle="round", zorder=3)
+    ax.scatter(x, y, s=200, color=POINT_COLOR, edgecolor="white",
+               linewidth=2.5, alpha=0.95, zorder=4)
+    ax.text(0.975, 0.10, r"$\theta \leftarrow \theta - \alpha\,\nabla R_{\mathrm{emp}}(\theta)$",
+            ha="right", va="bottom", fontsize=21, color=TITLE_COLOR,
+            transform=ax.transAxes)
+    _strip(ax)
+
+
+# --- ML 04 variant C: contour | 3D error surface | LR curves ---
+
+def _draw_err_surface_panel(fig, rect):
+    """3D loss surface (paraboloid bowl) with a descent path — a redraw of the
+    course's err_surf figure."""
+    ax = fig.add_axes(rect, projection="3d")
+    ax.set_facecolor(BG)
+    u = np.linspace(-2, 2, 44)
+    v = np.linspace(-2, 2, 44)
+    U, V = np.meshgrid(u, v)
+    Z = 0.5 * U**2 + V**2
+    ax.plot_surface(U, V, Z, cmap="viridis", alpha=0.92, linewidth=0,
+                    antialiased=True, rcount=44, ccount=44)
+    px = [-1.85, -1.1, -0.62, -0.32, -0.13, 0.0]
+    py = [1.7, -0.55, 0.32, -0.12, 0.05, 0.0]
+    pz = [0.5 * a * a + b * b + 0.05 for a, b in zip(px, py)]
+    ax.plot(px, py, pz, color=LINE_COLOR, linewidth=3, marker="o",
+            markersize=4, markerfacecolor=LINE_COLOR, zorder=10)
+    ax.set_axis_off()
+    ax.view_init(elev=34, azim=-58)
+
+
+def draw_gradient_descent_panels_surface(fig, bbox):
+    """ML 04 alt: contour+path | 3D error surface | learning-rate curves."""
+    x0, y0, w, h = bbox
+    gap = 0.02
+    pw = (w - 2 * gap) / 3
+    ax1 = fig.add_axes([x0, y0, pw, h])
+    ax1.set_facecolor(BG)
+    _draw_gd_contour_panel(ax1)
+    _draw_err_surface_panel(fig, [x0 + pw + gap, y0 - 0.03, pw, h + 0.06])
+    ax3 = fig.add_axes([x0 + 2 * (pw + gap), y0, pw, h])
+    ax3.set_facecolor(BG)
+    _draw_lr_curves_panel(ax3)
+
+
+# --- ML 05 correlation heatmap (real house-data values) ---
+
+CORR_LABELS = ["BHK", "Size", "Bath", "Rent"]
+CORR_MATRIX = [
+    [1.00, 0.72, 0.79, 0.60],
+    [0.72, 1.00, 0.74, 0.57],
+    [0.79, 0.74, 1.00, 0.69],
+    [0.60, 0.57, 0.69, 1.00],
+]
+
+
+def _draw_corr_heatmap_panel(ax):
+    """Correlation heatmap on REAL house-data columns — the strong BHK/Size/
+    Bathroom correlations the lecture flags. RdBu_r so high corr reads warm."""
+    M = np.array(CORR_MATRIX)
+    ax.imshow(M, cmap="RdBu_r", vmin=-1, vmax=1, aspect="equal")
+    n = M.shape[0]
+    for i in range(n):
+        for j in range(n):
+            ax.text(j, i, f"{M[i, j]:.2f}", ha="center", va="center",
+                    fontsize=11, fontweight="bold",
+                    color="white" if abs(M[i, j]) > 0.62 else TITLE_COLOR)
+    ax.set_xticks(range(n))
+    ax.set_yticks(range(n))
+    ax.set_xticklabels(CORR_LABELS, fontsize=9, color=TITLE_COLOR)
+    ax.set_yticklabels(CORR_LABELS, fontsize=9, color=TITLE_COLOR)
+    ax.tick_params(length=0)
+    for s in ax.spines.values():
+        s.set_visible(False)
+
+
+def _panel_title(ax, text):
+    """Small descriptive Armenian title above a panel (Sylfaen — mixed-case)."""
+    ax.set_title(text, fontsize=15, fontname="Sylfaen", color=TITLE_COLOR,
+                 pad=8)
+
+
+def draw_pipeline_panels_heatmap(fig, bbox):
+    """ML 05 alt: log transform | correlation heatmap | coefficient bars,
+    each panel labelled with a short descriptive title."""
+    x0, y0, w, h = bbox
+    gap = 0.02
+    pw = (w - 2 * gap) / 3
+    ax1 = fig.add_axes([x0, y0, pw, h])
+    ax1.set_facecolor(BG)
+    _draw_logtransform_panel(ax1)
+    _panel_title(ax1, "Վարձի log-ը")
+    ax2 = fig.add_axes([x0 + pw + gap, y0, pw, h])
+    ax2.set_facecolor(BG)
+    _draw_corr_heatmap_panel(ax2)
+    _panel_title(ax2, "Կորելացիա")
+    ax3 = fig.add_axes([x0 + 2 * (pw + gap), y0, pw, h])
+    ax3.set_facecolor(BG)
+    _draw_coef_panel(ax3)
+    _panel_title(ax3, "Գործակիցներ")
+
+
+# --- ML 05 variant C: wide horizontal pipeline (hero) ---
+
+def draw_pipeline_hero(fig, bbox):
+    """ML 05 alt: a wide 4-stage sklearn-pipeline flow spanning the band —
+    raw data -> preprocessing -> model -> prediction, Armenian-flag borders."""
+    ax = fig.add_axes(bbox)
+    ax.set_facecolor(BG)
+    labels = ["Տվյալներ", "Նախամշակում", "Մոդել", "Գուշակություն"]
+    edges = [POINT_COLOR, BAR, LINE_COLOR, POINT_COLOR]
+    n = len(labels)
+    box_w = 0.195
+    box_h = 0.42
+    gap = (1.0 - n * box_w) / (n - 1)
+    cy = 0.5
+    centers = []
+    for k, (lab, ec) in enumerate(zip(labels, edges)):
+        x_left = k * (box_w + gap)
+        cx = x_left + box_w / 2
+        centers.append(cx)
+        rect = Rectangle((x_left, cy - box_h / 2), box_w, box_h,
+                         facecolor="#f7f7f7", edgecolor=ec, linewidth=3.0,
+                         transform=ax.transAxes, zorder=2)
+        ax.add_patch(rect)
+        ax.text(cx, cy, lab, ha="center", va="center", fontsize=15,
+                fontname="Sylfaen", color=TITLE_COLOR,
+                transform=ax.transAxes, zorder=3)
+    for k in range(n - 1):
+        x_start = centers[k] + box_w / 2 + 0.01
+        x_end = centers[k + 1] - box_w / 2 - 0.01
+        ax.annotate("", xy=(x_end, cy), xytext=(x_start, cy),
+                    xycoords="axes fraction", textcoords="axes fraction",
+                    arrowprops=dict(arrowstyle="-|>", color=TITLE_COLOR, lw=2.6))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    _strip(ax)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -397,6 +730,22 @@ LESSONS = [
         "draw":       draw_data_prep_panels,
         "out":        "ML03.png",
     },
+    # ML 04 — chosen: line-fitting hero (draw_gd_scatter_fit).
+    # Alternates available to swap in: draw_gradient_descent_panels (contour
+    # panels), draw_gradient_descent_panels_surface (with 3D error surface).
+    {
+        "tag": "ML 04", "title": "Գծային ռեգրեսիան զրոյից",
+        "title_size": 54, "draw": draw_gd_scatter_fit,
+        "practical": True, "out": "ML04.png",
+    },
+    # ML 05 — chosen: log transform | correlation heatmap | coefficients, with
+    # per-panel titles (draw_pipeline_panels_heatmap). Alternates: draw_pipeline_panels
+    # (vertical pipeline), draw_pipeline_hero (wide 4-stage flow).
+    {
+        "tag": "ML 05", "title": "Գծային ռեգրեսիա.\nտան վարձ գուշակել",
+        "title_size": 50, "draw": draw_pipeline_panels_heatmap,
+        "practical": True, "out": "ML05.png",
+    },
 ]
 
 
@@ -412,6 +761,14 @@ def render_thumbnail(lesson: dict) -> None:
     # Lesson tag — Segoe Script handwritten, navy
     fig.text(0.06, 0.95, lesson["tag"], color=TAG_COLOR,
              fontsize=TAG_SIZE, va="top", fontname=TAG_FONT)
+
+    # "Գործնական" (practical) badge — top-right orange pill, white Armenian
+    # text in the title font. Marks the video as a hands-on/practical session.
+    if lesson.get("practical"):
+        fig.text(0.963, 0.925, "Գործնական", ha="right", va="center",
+                 fontsize=31, fontproperties=ARM_PROPS, color="white",
+                 bbox=dict(boxstyle="round,pad=0.5", facecolor=BAR,
+                           edgecolor="none"))
 
     # Title — Adamathuz Bold Armenian, lesson-specific size
     fig.text(0.06, 0.85, lesson["title"], color=TITLE_COLOR,
@@ -430,9 +787,15 @@ def render_thumbnail(lesson: dict) -> None:
 
 def main():
     log.info(f"Output dir: {OUT_DIR.resolve()}")
-    for lesson in LESSONS:
+    # Optional CLI filter: render only lessons whose output filename contains
+    # one of the given substrings (e.g. `python make_thumbnails_final.py ML04`).
+    # No args -> render everything.
+    selected = sys.argv[1:]
+    lessons = [l for l in LESSONS
+               if not selected or any(s in l["out"] for s in selected)]
+    for lesson in lessons:
         render_thumbnail(lesson)
-    log.info(f"Done — rendered {len(LESSONS)} thumbnail(s)")
+    log.info(f"Done — rendered {len(lessons)} thumbnail(s)")
 
 
 if __name__ == "__main__":
