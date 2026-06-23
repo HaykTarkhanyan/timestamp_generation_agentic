@@ -80,6 +80,17 @@ font_manager.fontManager.addfont(str(ARM_FONT_PATH))
 ARM_PROPS = font_manager.FontProperties(fname=str(ARM_FONT_PATH))
 log.info(f"Loaded Armenian font: {ARM_PROPS.get_name()}")
 
+# Latin title font for English titles ("title_latin" lessons) — Bubble Sans,
+# same fonter.am foundry / bold-rounded look as Adamathuz. Falls back to a bold
+# sans if missing.
+LATIN_FONT_PATH = Path("fonts/bubble-sans/Bubble Sans 1.01.otf")
+if LATIN_FONT_PATH.exists():
+    font_manager.fontManager.addfont(str(LATIN_FONT_PATH))
+    LATIN_PROPS = font_manager.FontProperties(fname=str(LATIN_FONT_PATH))
+    log.info(f"Loaded Latin title font: {LATIN_PROPS.get_name()}")
+else:
+    LATIN_PROPS = font_manager.FontProperties(family="DejaVu Sans", weight="bold")
+
 
 def _strip(ax):
     ax.set_xticks([])
@@ -783,10 +794,11 @@ def draw_ml08_hp_tuning(fig, bbox):
 
 
 def draw_ml09_metrics(fig, bbox):
-    """ML 09: the residuals-vs-fitted diagnostics (good / heteroscedastic /
-    non-linear, blue/red/orange) as a wide 3-panel hero, cropped from slide 27
-    of 07_regression_metrics_notes.pdf."""
-    _draw_image_row(fig, bbox, ["ml09_residuals.png"], max_h=0.40)
+    """ML 09: leverage / Cook's-distance (an influential point pulling the fit)
+    + R^2 (variance explained vs the mean baseline), cropped from slides 29 and
+    11 of 07_regression_metrics_notes.pdf."""
+    _draw_image_row(fig, bbox, ["ml09_leverage.png", "ml09_r2.png"],
+                    captions=["Leverage / Cook's", "R²"])
 
 
 # ---------- lesson configs ----------
@@ -901,7 +913,7 @@ def render_thumbnail(lesson: dict) -> None:
     title = lesson["title"]
     tsize = lesson["title_size"]
     if lesson.get("title_latin"):
-        fontkw = {"fontfamily": "DejaVu Sans", "fontweight": "bold"}
+        fontkw = {"fontproperties": LATIN_PROPS}
     else:
         fontkw = {"fontproperties": ARM_PROPS, "fontweight": "bold"}
     if "\n" not in title:
