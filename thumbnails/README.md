@@ -55,8 +55,9 @@ When a chart has 3+ categorical colors, use this flag trio (project rule).
   it has **no Latin glyphs**. So Armenian titles and the badge must be pure
   Armenian; Latin (`sklearn`, `EDA`, `log`) goes in the panels, never an Adamathuz
   title. For an **English title**, set `"title_latin": True` on the lesson — it
-  renders in **Bubble Sans** (`fonts/bubble-sans/`, same fonter.am foundry as
-  Adamathuz — bold/rounded/uppercase) instead (e.g. ML08 "Hyperparameter Tuning").
+  renders in **Comic Sans MS Bold** (`LATIN_FONTKW`) instead — the closest
+  system font to Adamathuz's chunky rounded look (e.g. ML08 "Hyperparameter
+  Tuning"). Bubble Sans / Arial Rounded were tried and rejected.
 - **Segoe Script** (Windows system font) — the `ML NN` tag. Latin/handwritten.
 - **Sylfaen** (Windows system font) — mixed-case Armenian inside panels
   (panel titles, pipeline box labels). Use this whenever you need lowercase
@@ -108,7 +109,7 @@ rather than redrawing — pulled from the lecture decks in
 `fig/`, or `pdftoppm`-rendered + cropped slides for inline-TikZ plots). The
 generic `_draw_image_row()` places 1+ images, sizing panels by aspect so the row
 fills the band. Title sizing also supports a per-lesson `title_max` (raise the
-auto-grow cap, e.g. ML07=86) and `title_latin` (English title in Bubble Sans).
+auto-grow cap, e.g. ML07=86) and `title_latin` (English title in Comic Sans MS Bold).
 NOTE: when cropping metric plots (inline pgfplots, no figure files), crop from
 the **clean** compiled PDF (`07_regression_metrics.pdf`), NOT the annotated
 `_notes.pdf` — the latter has the lecturer's red ink baked in.

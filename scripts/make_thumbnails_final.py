@@ -80,16 +80,10 @@ font_manager.fontManager.addfont(str(ARM_FONT_PATH))
 ARM_PROPS = font_manager.FontProperties(fname=str(ARM_FONT_PATH))
 log.info(f"Loaded Armenian font: {ARM_PROPS.get_name()}")
 
-# Latin title font for English titles ("title_latin" lessons) — Bubble Sans,
-# same fonter.am foundry / bold-rounded look as Adamathuz. Falls back to a bold
-# sans if missing.
-LATIN_FONT_PATH = Path("fonts/bubble-sans/Bubble Sans 1.01.otf")
-if LATIN_FONT_PATH.exists():
-    font_manager.fontManager.addfont(str(LATIN_FONT_PATH))
-    LATIN_PROPS = font_manager.FontProperties(fname=str(LATIN_FONT_PATH))
-    log.info(f"Loaded Latin title font: {LATIN_PROPS.get_name()}")
-else:
-    LATIN_PROPS = font_manager.FontProperties(family="DejaVu Sans", weight="bold")
+# English titles ("title_latin" lessons) render in Comic Sans MS Bold — the
+# closest system font to Adamathuz's chunky rounded look (chosen over Bubble
+# Sans / Arial Rounded).
+LATIN_FONTKW = {"fontfamily": "Comic Sans MS", "fontweight": "bold"}
 
 
 def _strip(ax):
@@ -913,7 +907,7 @@ def render_thumbnail(lesson: dict) -> None:
     title = lesson["title"]
     tsize = lesson["title_size"]
     if lesson.get("title_latin"):
-        fontkw = {"fontproperties": LATIN_PROPS}
+        fontkw = dict(LATIN_FONTKW)
     else:
         fontkw = {"fontproperties": ARM_PROPS, "fontweight": "bold"}
     if "\n" not in title:
