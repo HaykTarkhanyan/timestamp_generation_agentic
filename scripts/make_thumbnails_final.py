@@ -741,6 +741,54 @@ def draw_ml06_slides(fig, bbox):
     ax2.axis("off")
 
 
+# --- generic embed of course-slide figures (ML 07-09) ---
+
+def _draw_image_row(fig, bbox, asset_names, captions=None, gap=0.04,
+                    max_h=0.42, lift=0.06):
+    """Place one or more course-slide PNGs (from thumbnails/assets/) in a
+    centered row. Heights are matched, so each panel's width follows its image
+    aspect and the row fills the band; optional bold captions sit above."""
+    x0, y0, w, _h = bbox
+    imgs = [plt.imread(str(OUT_DIR / "assets" / a)) for a in asset_names]
+    aspects = [im.shape[1] / im.shape[0] for im in imgs]
+    k = 7.2 / 12.8                       # y-fraction to x-fraction conversion
+    total_gap = gap * (len(imgs) - 1)
+    fh = min(max_h, (w - total_gap) / (sum(aspects) * k))
+    widths = [a * fh * k for a in aspects]
+    cx = x0 + (w - (sum(widths) + total_gap)) / 2.0     # center the row
+    iy = y0 + lift
+    cap_y = iy + fh + 0.018
+    for i, (im, wd) in enumerate(zip(imgs, widths)):
+        ax = fig.add_axes([cx, iy, wd, fh])
+        ax.imshow(im)
+        ax.axis("off")
+        if captions and captions[i]:
+            fig.text(cx + wd / 2, cap_y, captions[i], ha="center", va="bottom",
+                     fontsize=19, fontweight="bold", color=TITLE_COLOR,
+                     family="DejaVu Sans")
+        cx += wd + gap
+
+
+def draw_ml07_regularization(fig, bbox):
+    """ML 07: L1/L2 constraint geometry (Ridge ball vs Lasso diamond) + the
+    test-error-vs-lambda U-curve. Figures fig/l03_l1_l2_geometry.pdf and
+    fig/l03_mse_vs_lambda.pdf."""
+    _draw_image_row(fig, bbox, ["ml07_geometry.png", "ml07_ucurve.png"])
+
+
+def draw_ml08_hp_tuning(fig, bbox):
+    """ML 08: the Grid / Random / Optuna search-pattern figure as a wide hero,
+    sized to fill the band width. Figure fig/l01e_hp_search_patterns.pdf."""
+    _draw_image_row(fig, bbox, ["ml08_search.png"], max_h=0.55)
+
+
+def draw_ml09_metrics(fig, bbox):
+    """ML 09: the residuals-vs-fitted diagnostics (good / heteroscedastic /
+    non-linear, blue/red/orange) as a wide 3-panel hero, cropped from slide 27
+    of 07_regression_metrics_notes.pdf."""
+    _draw_image_row(fig, bbox, ["ml09_residuals.png"], max_h=0.40)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -788,18 +836,35 @@ LESSONS = [
         "title_size": 58, "draw": draw_ml06_slides,
         "out": "ML06.png",
     },
+    # ML 07-09 — theory lectures (no badge); embed real course-slide figures.
+    {
+        "tag": "ML 07", "title": "Ռեգուլյարիզացիա",
+        "title_size": 54, "title_max": 86, "draw": draw_ml07_regularization,
+        "out": "ML07.png",
+    },
+    {
+        "tag": "ML 08", "title": "Hyperparameter Tuning",
+        "title_size": 40, "title_max": 60, "title_latin": True,
+        "draw": draw_ml08_hp_tuning, "out": "ML08.png",
+    },
+    {
+        "tag": "ML 09", "title": "Ռեգրեսիայի մետրիկաներ",
+        "title_size": 50, "draw": draw_ml09_metrics,
+        "out": "ML09.png",
+    },
 ]
 
 
-def _fit_single_line_size(fig, text, configured, max_size=74,
+def _fit_single_line_size(fig, text, configured, max_size=74, fontkw=None,
                           x0=0.06, x_right=0.94):
     """Single-line titles aren't text-heavy, so grow them to fill the available
     width (up to max_size) for more impact; never shrink below the configured
     size. Multi-line titles keep their tuned size (height-constrained)."""
+    if fontkw is None:
+        fontkw = {"fontproperties": ARM_PROPS, "fontweight": "bold"}
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
-    probe = fig.text(x0, 0.85, text, fontproperties=ARM_PROPS,
-                     fontsize=max_size, fontweight="bold", va="top")
+    probe = fig.text(x0, 0.85, text, fontsize=max_size, va="top", **fontkw)
     w = probe.get_window_extent(renderer).width
     probe.remove()
     if w <= 0:
@@ -830,16 +895,21 @@ def render_thumbnail(lesson: dict) -> None:
                  bbox=dict(boxstyle="round,pad=0.5", facecolor=BAR,
                            edgecolor="none"))
 
-    # Title — Adamathuz Bold Armenian. Single-line titles auto-grow to fill the
-    # width (not text-heavy); multi-line titles keep their tuned size.
+    # Title — Adamathuz Bold Armenian by default; "title_latin" lessons use a
+    # bold Latin font (Adamathuz has no Latin glyphs). Single-line titles
+    # auto-grow to fill the width (up to title_max); multi-line keep their size.
     title = lesson["title"]
     tsize = lesson["title_size"]
+    if lesson.get("title_latin"):
+        fontkw = {"fontfamily": "DejaVu Sans", "fontweight": "bold"}
+    else:
+        fontkw = {"fontproperties": ARM_PROPS, "fontweight": "bold"}
     if "\n" not in title:
-        tsize = _fit_single_line_size(fig, title, tsize)
-    fig.text(0.06, 0.85, title, color=TITLE_COLOR,
-             fontsize=tsize, fontweight="bold",
-             fontproperties=ARM_PROPS,
-             va="top", linespacing=TITLE_LS)
+        tsize = _fit_single_line_size(fig, title, tsize,
+                                      max_size=lesson.get("title_max", 74),
+                                      fontkw=fontkw)
+    fig.text(0.06, 0.85, title, color=TITLE_COLOR, fontsize=tsize,
+             va="top", linespacing=TITLE_LS, **fontkw)
 
     # Illustration — draw function decides whether to use 1 axes or many
     lesson["draw"](fig, CHART_BBOX)

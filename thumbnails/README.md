@@ -50,10 +50,12 @@ When a chart has 3+ categorical colors, use this flag trio (project rule).
 
 ## Fonts (gotchas)
 
-- **Adamathuz Bold** (`fonts/adamathuz/Adamathuz Bold.ttf`) — the title font.
-  **Uppercase-Armenian only**: lowercase Armenian renders as uppercase, and it
-  has **no Latin glyphs**. So titles and the badge must be pure Armenian; any
-  Latin (`sklearn`, `EDA`, `log`) goes in the illustration panels, never the title.
+- **Adamathuz Bold** (`fonts/adamathuz/Adamathuz Bold.ttf`) — the default title
+  font. **Uppercase-Armenian only**: lowercase Armenian renders as uppercase, and
+  it has **no Latin glyphs**. So Armenian titles and the badge must be pure
+  Armenian; Latin (`sklearn`, `EDA`, `log`) goes in the panels, never an Adamathuz
+  title. For an **English title**, set `"title_latin": True` on the lesson — it
+  renders in **DejaVu Sans Bold** instead (e.g. ML08 "Hyperparameter Tuning").
 - **Segoe Script** (Windows system font) — the `ML NN` tag. Latin/handwritten.
 - **Sylfaen** (Windows system font) — mixed-case Armenian inside panels
   (panel titles, pipeline box labels). Use this whenever you need lowercase
@@ -94,6 +96,18 @@ When a chart has 3+ categorical colors, use this flag trio (project rule).
 | `ML03.png` | ML 03 | no | missing data · one-hot · scaling (panels) |
 | `ML04.png` | ML 04 | **yes** | regression line being fit from scratch (hero) |
 | `ML05.png` | ML 05 | **yes** | log transform · correlation heatmap · coefficients (panels) |
+| `ML06.png` | ML 06 | no | degree-6 poly overfit + k-fold CV grid (embedded slides) |
+| `ML07.png` | ML 07 | no | L1/L2 geometry + λ U-curve (embedded slides) |
+| `ML08.png` | ML 08 | no | Grid/Random/Optuna search patterns (embedded slide hero, English title) |
+| `ML09.png` | ML 09 | no | residual diagnostics: random/fan/curve (embedded slide hero) |
+
+ML06–09 embed real course-slide figures (cropped into `thumbnails/assets/`)
+rather than redrawing — pulled from the lecture decks in
+`01_python_math_ml_course/ml_new/02_main_concepts_continued/` (PDF figures under
+`fig/`, or `pdftoppm`-rendered + cropped slides for inline-TikZ plots). The
+generic `_draw_image_row()` places 1+ images, sizing panels by aspect so the row
+fills the band. Title sizing also supports a per-lesson `title_max` (raise the
+auto-grow cap, e.g. ML07=86) and `title_latin` (English title in DejaVu Sans Bold).
 
 ## Running
 
