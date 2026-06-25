@@ -27,7 +27,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import font_manager
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, Circle
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registers 3d projection)
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
@@ -795,6 +795,42 @@ def draw_ml09_metrics(fig, bbox):
                     captions=["Leverage / Cook's", "R²"])
 
 
+# --- ML 10 (practical): "find the mistakes" buggy-code panel ---
+
+def draw_ml10_checklist(fig, bbox):
+    """ML 10 practical: the planted ML mistakes as a 2x2 red-✗ grid — each bug
+    *category* (bold) with the offending detail as a gray subtitle. No correct
+    line is shown; the viewer is left to find them. Legible at thumbnail size."""
+    ax = fig.add_axes(bbox)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_facecolor(BG)
+    _strip(ax)
+    items = [
+        ("Data leakage", "fit() անել split-ից առաջ"),
+        ("Չֆիքսված seed", "random_state չկա"),
+        ("Սխալ մետրիկա", "R² տարբեր dataset-երի վրա"),
+        ("Առանց feature scaling",
+         "Ridge/Lasso օգտագործել,\nգործակիցներ համեմատել"),
+    ]
+    # faint 2x2 quadrant dividers
+    ax.axvline(0.50, color="#e8eaed", linewidth=1.6, zorder=1)
+    ax.axhline(0.50, color="#e8eaed", linewidth=1.6, zorder=1)
+    cols = [0.015, 0.535]          # ✗ x for left / right column
+    rows = [0.74, 0.24]            # center y for top / bottom row
+    for i, (head, sub) in enumerate(items):
+        cx, cy = cols[i % 2], rows[i // 2]
+        ax.text(cx, cy, "✗", ha="center", va="center", fontsize=36,
+                color=LINE_COLOR, fontweight="bold", zorder=4)
+        # heads mix Armenian + Latin terms, so use the default dual-script sans
+        # (DejaVu) rather than Latin-less Adamathuz. Subtitle is top-anchored so
+        # 1-line and 2-line tiles keep their first line aligned.
+        ax.text(cx + 0.055, cy + 0.10, head, ha="left", va="center", fontsize=25,
+                color=TITLE_COLOR, fontweight="bold", zorder=4)
+        ax.text(cx + 0.055, cy - 0.02, sub, ha="left", va="top", fontsize=15,
+                color="#6b7280", family="monospace", linespacing=1.5, zorder=4)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -858,6 +894,15 @@ LESSONS = [
         "title_size": 50, "draw": draw_ml09_metrics,
         "out": "ML09.png",
     },
+    # ML 10 — practical (Գործնական badge); "find the ML mistakes" bug checklist.
+    # Mixed "ML սխալները" title (Latin ML + Armenian, each in its own font).
+    {
+        "tag": "ML 10",
+        "title_segments": [("ML", "latin"), (" սխալներ", "arm")],
+        "title_size": 72, "title_max": 108, "draw": draw_ml10_checklist,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.52),
+        "practical": True, "out": "ML10.png",
+    },
 ]
 
 
@@ -878,6 +923,51 @@ def _fit_single_line_size(fig, text, configured, max_size=74, fontkw=None,
     avail = (x_right - x0) * fig.bbox.width
     fit = min(max_size, max_size * avail / w)
     return max(configured, fit)
+
+
+def _segments_fontkw(segments):
+    """Turn a list of (text, kind) into (text, fontkw) pairs. kind 'latin' uses
+    the bold Latin font (Comic Sans), 'arm' uses Adamathuz Bold."""
+    out = []
+    for text, kind in segments:
+        if kind == "latin":
+            out.append((text, dict(LATIN_FONTKW)))
+        else:
+            out.append((text, {"fontproperties": ARM_PROPS, "fontweight": "bold"}))
+    return out
+
+
+def _mixed_title_width(fig, seg_kw, size):
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    total, probes = 0.0, []
+    for text, fontkw in seg_kw:
+        p = fig.text(0.06, 0.85, text, fontsize=size, va="top", **fontkw)
+        total += p.get_window_extent(renderer).width
+        probes.append(p)
+    for p in probes:
+        p.remove()
+    return total
+
+
+def _fit_mixed_size(fig, seg_kw, configured, max_size=74, x0=0.06, x_right=0.94):
+    w = _mixed_title_width(fig, seg_kw, max_size)
+    if w <= 0:
+        return configured
+    avail = (x_right - x0) * fig.bbox.width
+    fit = min(max_size, max_size * avail / w)
+    return max(configured, fit)
+
+
+def _draw_mixed_title(fig, seg_kw, size, x0=0.06, y=0.85):
+    """Place font-segments left-to-right on one line, each in its own font."""
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    x = x0
+    for text, fontkw in seg_kw:
+        t = fig.text(x, y, text, color=TITLE_COLOR, fontsize=size, va="top",
+                     linespacing=TITLE_LS, **fontkw)
+        x += t.get_window_extent(renderer).width / fig.bbox.width
 
 
 def render_thumbnail(lesson: dict) -> None:
@@ -904,21 +994,30 @@ def render_thumbnail(lesson: dict) -> None:
     # Title — Adamathuz Bold Armenian by default; "title_latin" lessons use a
     # bold Latin font (Adamathuz has no Latin glyphs). Single-line titles
     # auto-grow to fill the width (up to title_max); multi-line keep their size.
-    title = lesson["title"]
     tsize = lesson["title_size"]
-    if lesson.get("title_latin"):
-        fontkw = dict(LATIN_FONTKW)
+    if lesson.get("title_segments"):
+        # Mixed Latin+Armenian title (e.g. "ML սխալները") — each segment in its
+        # own font, placed left-to-right, auto-grown to fill the width.
+        seg_kw = _segments_fontkw(lesson["title_segments"])
+        tsize = _fit_mixed_size(fig, seg_kw, tsize,
+                                max_size=lesson.get("title_max", 74))
+        _draw_mixed_title(fig, seg_kw, tsize)
     else:
-        fontkw = {"fontproperties": ARM_PROPS, "fontweight": "bold"}
-    if "\n" not in title:
-        tsize = _fit_single_line_size(fig, title, tsize,
-                                      max_size=lesson.get("title_max", 74),
-                                      fontkw=fontkw)
-    fig.text(0.06, 0.85, title, color=TITLE_COLOR, fontsize=tsize,
-             va="top", linespacing=TITLE_LS, **fontkw)
+        title = lesson["title"]
+        if lesson.get("title_latin"):
+            fontkw = dict(LATIN_FONTKW)
+        else:
+            fontkw = {"fontproperties": ARM_PROPS, "fontweight": "bold"}
+        if "\n" not in title:
+            tsize = _fit_single_line_size(fig, title, tsize,
+                                          max_size=lesson.get("title_max", 74),
+                                          fontkw=fontkw)
+        fig.text(0.06, 0.85, title, color=TITLE_COLOR, fontsize=tsize,
+                 va="top", linespacing=TITLE_LS, **fontkw)
 
-    # Illustration — draw function decides whether to use 1 axes or many
-    lesson["draw"](fig, CHART_BBOX)
+    # Illustration — draw function decides whether to use 1 axes or many.
+    # A lesson may request a taller/wider band via "chart_bbox".
+    lesson["draw"](fig, lesson.get("chart_bbox", CHART_BBOX))
 
     out = OUT_DIR / lesson["out"]
     fig.savefig(out, facecolor=BG)
