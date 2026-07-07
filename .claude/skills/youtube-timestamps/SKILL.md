@@ -31,6 +31,11 @@ output/<YYYY-MM-DD>_<latin-slug>_<video-id>/
 └── logs/fetch_subtitles.log
 ```
 
+The finished `description.txt` is **also copied** (stage 5) into a shared, flat
+`final/` folder at the repo root, renamed by lesson number to match the thumbnail
+naming (`final/ML<NN>.txt`, e.g. `final/ML11.txt`). This gives one place to grab
+every paste-ready description without digging through per-video folders.
+
 ---
 
 ## Stage 1: Fetch subtitles
@@ -272,6 +277,22 @@ The abstract often opens with a casual greeting in the lecturer's voice — e.g.
 
 Keep the `timestamps.txt` and `abstract.txt` intermediates on disk (the verifier reads `timestamps.txt`); `description.txt` is what the user pastes into YouTube.
 
+### Copy into the shared `final/` folder
+
+After `description.txt` is written, copy it into the flat `final/` folder at the
+repo root, renamed by lesson number so it matches the thumbnail (`final/ML<NN>.txt`).
+This is the last step of stage 5 and gives the user one place to grab every
+paste-ready description. Run:
+
+```bash
+python scripts/finalize_description.py --output-dir <output-dir>
+```
+
+The script reads the `[NN]` from the title on the first line of `description.txt`
+and writes `final/ML<NN>.txt` (zero-padded, e.g. `[11]` → `final/ML11.txt`). It
+fails loudly if the description is missing or has no `[NN]` number. (`--all`
+backfills every `output/*/description.txt` at once.)
+
 ### Title suggestions
 
 Always also write **3-5 candidate YouTube titles** to `<output-dir>/titles.txt`, one per line. The title is a separate YouTube field (not part of the description), so it lives in its own file — never paste it into `description.txt`.
@@ -307,9 +328,12 @@ If the existing title is already good (a real, content-describing title — not 
 
 ## When you're done
 
+Before presenting, run `scripts/finalize_description.py --output-dir <output-dir>` so the paste-ready description also lands in `final/ML<NN>.txt`.
+
 Present to the user:
 1. The full `description.txt` content (as one code block, ready to paste into YouTube) — abstract, then timestamps, then hashtags.
 2. The 3-5 `titles.txt` candidates (as a separate code block). If the existing video title is already a real, content-describing one, say so and recommend keeping it; otherwise highlight which of the suggestions you'd pick and why.
 3. A 1-2 sentence note on how you chose chapter boundaries and which terms you translated via glossary vs. kept in English.
 4. Any uncertainty flags from stage 2.
 5. The verifier's `issues` list if non-empty.
+6. Confirm the copy landed in `final/ML<NN>.txt`.

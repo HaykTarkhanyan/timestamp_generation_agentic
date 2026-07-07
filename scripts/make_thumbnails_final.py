@@ -831,6 +831,23 @@ def draw_ml10_checklist(fig, bbox):
                 color="#6b7280", family="monospace", linespacing=1.5, zorder=4)
 
 
+def draw_ml11_logreg(fig, bbox):
+    """ML 11: logistic regression — the decision boundary (probability surface +
+    orange 0.5 boundary, fig/logreg_boundary_2d.pdf) next to the sigmoid curve
+    that produces it (synthetic, same orange 0.5 threshold). Tells the full
+    'score → sigmoid → probability → boundary' story."""
+    _draw_image_row(fig, bbox, ["ml11_boundary.png", "ml11_sigmoid.png"],
+                    gap=0.05, max_h=0.48, lift=0.07)
+
+
+def draw_ml12_metrics(fig, bbox):
+    """ML 12: classification metrics — the 2-model ROC-vs-PR comparison (Model A
+    vs B look alike on ROC but B collapses on PR, fig/cm_roc_vs_pr.pdf) next to
+    the F1 harmonic-mean heatmap (cm_f1_heatmap left panel)."""
+    _draw_image_row(fig, bbox, ["ml12_rocpr.png", "ml12_f1.png"],
+                    captions=["ROC-AUC vs PR-AUC", "F1"], gap=0.04, max_h=0.46)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -902,6 +919,20 @@ LESSONS = [
         "title_size": 72, "title_max": 108, "draw": draw_ml10_checklist,
         "chart_bbox": (0.05, 0.05, 0.92, 0.52),
         "practical": True, "out": "ML10.png",
+    },
+    # ML 11 — classification: logistic regression (boundary + sigmoid, 1-line title).
+    {
+        "tag": "ML 11",
+        "title": "Կլասիֆիկացիա։ Լոգիստիկ ռեգրեսիա",
+        "title_size": 48, "draw": draw_ml11_logreg,
+        "out": "ML11.png",
+    },
+    # ML 12 — classification metrics: 2-model ROC vs PR comparison + F1 (next video).
+    {
+        "tag": "ML 12",
+        "title": "Կլասիֆիկացիայի մետրիկաներ",
+        "title_size": 50, "draw": draw_ml12_metrics,
+        "out": "ML12.png",
     },
 ]
 
