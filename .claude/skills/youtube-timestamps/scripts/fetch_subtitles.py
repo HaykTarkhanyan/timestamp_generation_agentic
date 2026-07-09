@@ -89,7 +89,9 @@ def slugify(title: str, max_len: int = 35) -> str:
 def run_yt_dlp(args: list[str]) -> subprocess.CompletedProcess:
     """Run yt-dlp and surface stderr loudly on failure."""
     logging.info(f"yt-dlp {' '.join(args[1:])}")
-    result = subprocess.run(args, capture_output=True, text=True, encoding="utf-8")
+    result = subprocess.run(
+        args, capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
     if result.returncode != 0:
         logging.error(f"yt-dlp failed (exit {result.returncode})")
         logging.error(f"stderr: {result.stderr}")

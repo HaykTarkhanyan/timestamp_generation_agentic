@@ -848,6 +848,36 @@ def draw_ml12_metrics(fig, bbox):
                     captions=["ROC-AUC vs PR-AUC", "F1"], gap=0.04, max_h=0.46)
 
 
+def draw_ml13_threshold(fig, bbox):
+    """ML 13: threshold tuning — every metric as a function of the threshold
+    (recall/precision/F1 crossing, F1-best far below 0.5, fig/cm_threshold_metrics.pdf)
+    next to Youden's J on the ROC (farthest point above the diagonal,
+    fig/cm_youden.pdf). The two 'how to pick the cutoff' methods side by side."""
+    _draw_image_row(fig, bbox, ["ml13_threshold.png", "ml13_youden.png"],
+                    captions=["Metrics vs threshold", "Youden's J"],
+                    gap=0.04, max_h=0.46)
+
+
+def draw_ml14_calibration(fig, bbox):
+    """ML 14: calibration — the reliability diagram (predicted vs observed
+    frequency, below-diagonal = over-confident, fig/cal_reliability.pdf) next to
+    the before/after isotonic fix that pulls the curve back onto the diagonal
+    (fig/cal_before_after.pdf). Diagnosis then cure."""
+    _draw_image_row(fig, bbox, ["ml14_reliability.png", "ml14_after.png"],
+                    captions=["Reliability diagram", "After isotonic"],
+                    gap=0.04, max_h=0.46)
+
+
+def draw_ml15_imbalance(fig, bbox):
+    """ML 15: data imbalance — the resampling grid (Original vs ROS/RUS/SMOTE on
+    the same 600/40 majority/minority scatter, fig/imb_resampling_2d.pdf) next to
+    Tomek links (drop the borderline majority point of each opposite-class
+    nearest-neighbour pair, fig/imb_tomek.pdf)."""
+    _draw_image_row(fig, bbox, ["ml15_resampling.png", "ml15_tomek.png"],
+                    captions=["Resampling", "Tomek links"],
+                    gap=0.04, max_h=0.46)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -933,6 +963,24 @@ LESSONS = [
         "title": "Կլասիֆիկացիայի մետրիկաներ",
         "title_size": 50, "draw": draw_ml12_metrics,
         "out": "ML12.png",
+    },
+    # ML 13 — threshold tuning: metrics-vs-threshold + Youden's J. Latin title.
+    {
+        "tag": "ML 13", "title": "Threshold tuning",
+        "title_size": 44, "title_max": 66, "title_latin": True,
+        "draw": draw_ml13_threshold, "out": "ML13.png",
+    },
+    # ML 14 — calibration: reliability diagram + before/after isotonic fix.
+    {
+        "tag": "ML 14", "title": "Կալիբրացիա",
+        "title_size": 54, "draw": draw_ml14_calibration,
+        "out": "ML14.png",
+    },
+    # ML 15 — data imbalance: resampling grid (ROS/RUS/SMOTE) + Tomek links.
+    {
+        "tag": "ML 15", "title": "Տվյալների դիսբալանս",
+        "title_size": 48, "draw": draw_ml15_imbalance,
+        "out": "ML15.png",
     },
 ]
 
