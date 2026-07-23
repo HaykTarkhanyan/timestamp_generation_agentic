@@ -878,6 +878,130 @@ def draw_ml15_imbalance(fig, bbox):
                     gap=0.04, max_h=0.46)
 
 
+def draw_ml16_practical(fig, bbox):
+    """ML 16 (practical): bank-marketing classification — the REAL plots from the
+    solution notebook (16_bank_marketing_solution.ipynb), not the lecture's
+    synthetic figures. Its lift-per-decile + cumulative-capture chart split into
+    two panels: the top-scored 10% converts ~4x the base rate, and calling just
+    the top decile already catches ~40% of subscribers (the practical's business
+    headline)."""
+    # each panel keeps its own title from the notebook, so no extra captions
+    _draw_image_row(fig, bbox, ["ml16_lift.png", "ml16_capture.png"],
+                    gap=0.05, max_h=0.48, lift=0.07)
+
+
+def _mini_tree(ax, cx, cy, color, half_w=0.085, h=0.44, node_s=300, lw=6):
+    """A small 7-node binary tree (root, 2 internal, 4 leaves) centered at (cx, cy)
+    in axes coords — chunky gray edges, filled colored nodes with white rims.
+    The visual building block of the boosting 'tree + tree + ...' schematic."""
+    top, bot = cy + h / 2, cy - h / 2
+    root = (cx, top)
+    a, b = (cx - 0.55 * half_w, cy), (cx + 0.55 * half_w, cy)
+    la1, la2 = (cx - 0.85 * half_w, bot), (cx - 0.25 * half_w, bot)
+    lb1, lb2 = (cx + 0.25 * half_w, bot), (cx + 0.85 * half_w, bot)
+    for (x1, y1), (x2, y2) in [(root, a), (root, b), (a, la1), (a, la2),
+                               (b, lb1), (b, lb2)]:
+        ax.plot([x1, x2], [y1, y2], color="#aab2c0", linewidth=lw,
+                solid_capstyle="round", zorder=2)
+    pts = [root, a, b, la1, la2, lb1, lb2]
+    ax.scatter([p[0] for p in pts], [p[1] for p in pts], s=node_s, color=color,
+               edgecolor="white", linewidth=1.6, zorder=3)
+
+
+def draw_boosting_trees(fig, bbox):
+    """Boosting as 'start with one tree, then keep adding trees to fix the rest' —
+    a 3-step progression in the style of the classic GBDT schematic, rebuilt on
+    white. Course notation (running model F, base learners f, no y-hat):
+    F1 = f1(x)  ->  F2 = F1 + f2(x)  ->  F3 = F2 + f3(x). Trees appear in
+    Armenian-flag order: red, then blue, then yellow/orange."""
+    ax = fig.add_axes(bbox)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_facecolor(BG)
+    _strip(ax)
+    RED, BLUE, YEL = LINE_COLOR, POINT_COLOR, BAR
+    eq_y, ty = 0.87, 0.36
+    tkw = dict(half_w=0.055, h=0.42, node_s=175, lw=5.5)
+    plus = dict(ha="center", va="center", fontsize=30, color=TITLE_COLOR, fontweight="bold")
+    eqkw = dict(ha="center", va="center", fontsize=26, color=TITLE_COLOR)
+    arrow = dict(arrowstyle="-|>", color="#9aa3b2", lw=3.5)
+
+    # step 1 — first tree
+    ax.text(0.10, eq_y, r"$F_1 = f_1(x)$", **eqkw)
+    _mini_tree(ax, 0.10, ty, RED, **tkw)
+    ax.annotate("", xy=(0.205, ty), xytext=(0.15, ty), arrowprops=arrow)
+
+    # step 2 — add a second tree
+    ax.text(0.35, eq_y, r"$F_2 = F_1 + f_2(x)$", **eqkw)
+    _mini_tree(ax, 0.28, ty, RED, **tkw)
+    ax.text(0.35, ty, "+", **plus)
+    _mini_tree(ax, 0.42, ty, BLUE, **tkw)
+    ax.annotate("", xy=(0.535, ty), xytext=(0.485, ty), arrowprops=arrow)
+
+    # step 3 — add a third tree
+    ax.text(0.74, eq_y, r"$F_3 = F_2 + f_3(x)$", **eqkw)
+    _mini_tree(ax, 0.60, ty, RED, **tkw)
+    ax.text(0.67, ty, "+", **plus)
+    _mini_tree(ax, 0.74, ty, BLUE, **tkw)
+    ax.text(0.81, ty, "+", **plus)
+    _mini_tree(ax, 0.88, ty, YEL, **tkw)
+
+
+def draw_random_forest(fig, bbox):
+    """Random forest as parallel, independent trees whose outputs are AVERAGED —
+    the visual counterpoint to boosting's sequential sum. Three trees (red, blue,
+    yellow) side by side, arrows converging into the mean (1/M) sum_m f_m(x)."""
+    ax = fig.add_axes(bbox)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_facecolor(BG)
+    _strip(ax)
+    tkw = dict(half_w=0.062, h=0.40, node_s=185, lw=5.5)
+    tree_y, box_cy = 0.70, 0.15
+    xs = [0.18, 0.50, 0.82]
+    for cx, c in zip(xs, [LINE_COLOR, POINT_COLOR, BAR]):
+        _mini_tree(ax, cx, tree_y, c, **tkw)
+    for cx in xs:
+        ax.annotate("", xy=(0.50, box_cy + 0.10), xytext=(cx, tree_y - 0.235),
+                    arrowprops=dict(arrowstyle="-|>", color="#9aa3b2", lw=3.5,
+                                    shrinkA=2, shrinkB=6))
+    ax.text(0.50, box_cy, r"$\hat{f}(x)\;=\;\dfrac{1}{M}\,\sum_{m=1}^{M} f_m(x)$",
+            ha="center", va="center", fontsize=34, color=TITLE_COLOR,
+            bbox=dict(boxstyle="round,pad=0.6", facecolor="#f6f7f9",
+                      edgecolor="#c2c8d2", linewidth=1.8))
+
+
+def draw_ml20_logos(fig, bbox):
+    """ML 20 (advanced boosting): the three production gradient-boosting library
+    logos in a full-width row — XGBoost, LightGBM, CatBoost (user-provided images,
+    trimmed onto white in thumbnails/assets/). Heights are matched and the row
+    spans the band so there's no dead space on the sides."""
+    x0, y0, w, h = bbox
+    names = ["ml20_xgboost.png", "ml20_lightgbm.png", "ml20_catboost.png"]
+    imgs = [plt.imread(str(OUT_DIR / "assets" / n)) for n in names]
+    aspects = [im.shape[1] / im.shape[0] for im in imgs]
+    k = 7.2 / 12.8
+    gap = 0.03
+    total_gap = gap * (len(imgs) - 1)
+    fh = min(h, (w - total_gap) / (sum(aspects) * k))     # fill the full width
+    widths = [a * fh * k for a in aspects]
+    cx = x0 + (w - (sum(widths) + total_gap)) / 2.0
+    iy = y0 + (h - fh) / 2.0                               # center vertically
+    for im, wd in zip(imgs, widths):
+        ax = fig.add_axes([cx, iy, wd, fh])
+        ax.imshow(im)
+        ax.axis("off")
+        cx += wd + gap
+
+
+def draw_ml17_tree(fig, bbox):
+    """ML 17: decision trees — the colored Titanic tree as a solo hero
+    (fig/titanic_tree.pdf): if-else splits on gender / age / pclass, leaves shaded
+    orange=died / blue=survived. The single most recognizable 'this is a decision
+    tree' image; pairing it with the (very wide) staircase would squish both."""
+    _draw_image_row(fig, bbox, ["ml17_tree.png"], max_h=0.52, lift=0.05)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -981,6 +1105,39 @@ LESSONS = [
         "tag": "ML 15", "title": "Տվյալների դիսբալանս",
         "title_size": 48, "draw": draw_ml15_imbalance,
         "out": "ML15.png",
+    },
+    # ML 16 — practical (Գործնական badge): bank-marketing classification.
+    # Two-line Armenian title; lift-by-decile + cost-optimal threshold panels.
+    {
+        "tag": "ML 16", "title": "Կլասիֆիկացիա.\nմարքեթինգային տվյալներ",
+        "title_size": 44, "draw": draw_ml16_practical,
+        "practical": True, "out": "ML16.png",
+    },
+    # ML 17 — decision trees: the colored Titanic tree as a solo hero.
+    {
+        "tag": "ML 17", "title": "Որոշման ծառ",
+        "title_size": 64, "title_max": 92, "draw": draw_ml17_tree, "out": "ML17.png",
+    },
+    # ML 18 — random forest: parallel independent trees averaged.
+    {
+        "tag": "ML 18", "title": "Random Forest",
+        "title_size": 56, "title_max": 90, "title_latin": True,
+        "draw": draw_random_forest,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.58), "out": "ML18.png",
+    },
+    # ML 19 — gradient boosting: "one tree, then keep adding" 3-step schematic.
+    {
+        "tag": "ML 19", "title": "Gradient Boosting",
+        "title_size": 56, "title_max": 90, "title_latin": True,
+        "draw": draw_boosting_trees,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.58), "out": "ML19.png",
+    },
+    # ML 20 — advanced boosting: the three library logos (XGBoost/LightGBM/CatBoost).
+    {
+        "tag": "ML 20", "title": "Advanced Boosting",
+        "title_size": 56, "title_max": 90, "title_latin": True,
+        "draw": draw_ml20_logos,
+        "chart_bbox": (0.03, 0.10, 0.94, 0.42), "out": "ML20.png",
     },
 ]
 
