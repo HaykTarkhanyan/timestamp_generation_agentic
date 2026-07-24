@@ -994,6 +994,48 @@ def draw_ml20_logos(fig, bbox):
         cx += wd + gap
 
 
+def draw_ml21_importances(fig, bbox):
+    """ML 21 (trees practical): a tornado chart contrasting how a TREE model and a
+    LINEAR model rank the SAME features - the lecture's key 'aha'. education is a
+    top feature for the tree but ~useless to the linear model (the relationship is
+    non-linear); age is the reverse. Left bars = tree (red), right = linear (blue),
+    feature names down the middle, value labels on every bar."""
+    ax = fig.add_axes(bbox)
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(0, 1)
+    ax.set_facecolor(BG)
+    _strip(ax)
+
+    feats = ["capital", "age", "edu-num", "relation"]
+    tree  = [0.34, 0.20, 0.30, 0.16]   # tree ranks edu-num high
+    lin   = [0.14, 0.42, 0.04, 0.36]   # linear calls edu-num ~useless
+
+    gap = 0.20                          # half-width of the center label gutter
+    max_len = 0.68                      # bar extent per side (leaves room for labels)
+    scale = max_len / max(max(tree), max(lin))
+    ys = np.linspace(0.70, 0.14, len(feats))
+    bar_h = 0.11
+
+    ax.text(-(gap + max_len / 2), 0.90, "TREE", ha="center", va="center",
+            fontsize=26, color=LINE_COLOR, **LATIN_FONTKW)
+    ax.text(gap + max_len / 2, 0.90, "LINEAR", ha="center", va="center",
+            fontsize=26, color=POINT_COLOR, **LATIN_FONTKW)
+
+    for y, f, t, l in zip(ys, feats, tree, lin):
+        wl = t * scale
+        ax.add_patch(Rectangle((-gap - wl, y - bar_h / 2), wl, bar_h,
+                               facecolor=LINE_COLOR, edgecolor="none"))
+        ax.text(-gap - wl - 0.02, y, f"{t:.2f}", ha="right", va="center",
+                fontsize=15, color=LINE_COLOR, fontweight="bold")
+        wr = l * scale
+        ax.add_patch(Rectangle((gap, y - bar_h / 2), wr, bar_h,
+                               facecolor=POINT_COLOR, edgecolor="none"))
+        ax.text(gap + wr + 0.02, y, f"{l:.2f}", ha="left", va="center",
+                fontsize=15, color=POINT_COLOR, fontweight="bold")
+        ax.text(0, y, f, ha="center", va="center", fontsize=15,
+                color=TITLE_COLOR, fontweight="bold")
+
+
 def draw_ml17_tree(fig, bbox):
     """ML 17: decision trees — the colored Titanic tree as a solo hero
     (fig/titanic_tree.pdf): if-else splits on gender / age / pclass, leaves shaded
@@ -1138,6 +1180,13 @@ LESSONS = [
         "title_size": 56, "title_max": 90, "title_latin": True,
         "draw": draw_ml20_logos,
         "chart_bbox": (0.03, 0.10, 0.94, 0.42), "out": "ML20.png",
+    },
+    # ML 21 — trees practical (Գործնական badge): tornado chart of tree-vs-linear
+    # feature importances (the lesson's "same data, different story" moment).
+    {
+        "tag": "ML 21", "title": "Ծառեր",
+        "title_size": 72, "title_max": 82, "draw": draw_ml21_importances,
+        "practical": True, "chart_bbox": (0.06, 0.05, 0.88, 0.50), "out": "ML21.png",
     },
 ]
 

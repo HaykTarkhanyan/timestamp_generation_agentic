@@ -1,8 +1,12 @@
 """Update YouTube video thumbnails and descriptions.
 
-By design this tool exposes ONLY two write operations:
-  - set-thumbnail   (thumbnails.set)
+By design this tool exposes ONLY these write operations (all via videos.update /
+thumbnails.set - metadata edits, never destructive):
+  - set-title       (videos.update, part=snippet)
   - set-description (videos.update, part=snippet)
+  - set-thumbnail   (thumbnails.set)
+plus one read-only helper:
+  - recent          (list the channel's newest uploads, so you can grab a video id)
 
 There is no videos.delete call anywhere in this file. Deleting a video is
 not possible through this tool even though the OAuth token technically has the
@@ -12,8 +16,10 @@ One-time setup: see scripts/YT_PUBLISH_SETUP.md
 
 Usage:
   python scripts/yt_publish.py auth
-  python scripts/yt_publish.py set-description <VIDEO_ID> final/ML18.txt
-  python scripts/yt_publish.py set-thumbnail  <VIDEO_ID> thumbnails/ML18.png
+  python scripts/yt_publish.py recent [N]
+  python scripts/yt_publish.py set-title       <VIDEO_ID> titles.txt
+  python scripts/yt_publish.py set-description  <VIDEO_ID> final/ML18.txt
+  python scripts/yt_publish.py set-thumbnail   <VIDEO_ID> thumbnails/ML18.png
 """
 
 import argparse
@@ -33,12 +39,20 @@ CLIENT_SECRET_FILE = SECRETS_DIR / "client_secret.json"
 TOKEN_FILE = SECRETS_DIR / "token.json"
 
 # YouTube hard limits - validate up front so we fail loudly, not mid-upload.
+MAX_TITLE_CHARS = 100
 MAX_DESCRIPTION_CHARS = 5000
 MAX_THUMBNAIL_BYTES = 2 * 1024 * 1024
 THUMBNAIL_EXTS = {".jpg", ".jpeg", ".png"}
 
 
 def _setup_logging() -> logging.Logger:
+    # Windows consoles default to cp1252, which can't encode Armenian titles and would
+    # otherwise print them as \uXXXX escapes. Force UTF-8 so `recent` output is readable.
+    # StreamHandler() logs to stderr by default, so reconfigure both streams.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
+
     log_dir = PROJECT_ROOT / "logs"
     log_dir.mkdir(exist_ok=True)
     logger = logging.getLogger("yt_publish")
@@ -116,6 +130,36 @@ def set_description(video_id: str, desc_file: str) -> None:
     )
 
 
+def set_title(video_id: str, title_file: str) -> None:
+    """Set a video's title from the first non-empty line of a UTF-8 file (e.g. titles.txt).
+
+    Reads from a file rather than a CLI argument on purpose: passing non-ASCII (Armenian)
+    text as a command argument from Git Bash to native Windows Python mangles the encoding.
+    """
+    path = Path(title_file)
+    if not path.exists():
+        raise FileNotFoundError(f"Title file not found: {path}")
+    lines = [ln.strip() for ln in path.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    if not lines:
+        raise ValueError(f"Title file is empty: {path}")
+    title = lines[0]
+    if len(title) > MAX_TITLE_CHARS:
+        raise ValueError(f"Title is {len(title)} chars, exceeds YouTube limit of {MAX_TITLE_CHARS}")
+
+    yt = get_service()
+    resp = yt.videos().list(part="snippet", id=video_id).execute()
+    items = resp.get("items", [])
+    if not items:
+        raise ValueError(f"No video found with id {video_id!r} (or not owned by this account)")
+
+    snippet = items[0]["snippet"]
+    old_title = snippet.get("title", "")
+    snippet["title"] = title  # swap only the title; keep description/categoryId/tags
+
+    yt.videos().update(part="snippet", body={"id": video_id, "snippet": snippet}).execute()
+    log.info(f"Updated title for {video_id}: {old_title!r} -> {title!r}")
+
+
 def set_thumbnail(video_id: str, image_path: str) -> None:
     from googleapiclient.http import MediaFileUpload
 
@@ -135,11 +179,40 @@ def set_thumbnail(video_id: str, image_path: str) -> None:
     log.info(f"Set thumbnail for {video_id} from {path} ({size} bytes)")
 
 
+def list_recent(n: int) -> None:
+    """List the channel's n most recent uploads (read-only) as: id  url  [published]  title."""
+    yt = get_service()
+    channels = yt.channels().list(part="contentDetails", mine=True).execute().get("items", [])
+    if not channels:
+        raise ValueError("No channel found for the authorized account")
+    uploads_playlist = channels[0]["contentDetails"]["relatedPlaylists"]["uploads"]
+
+    resp = yt.playlistItems().list(
+        part="snippet,contentDetails", playlistId=uploads_playlist, maxResults=n
+    ).execute()
+    videos = resp.get("items", [])
+    if not videos:
+        raise ValueError("No uploads found on this channel")
+
+    for item in videos:
+        vid = item["contentDetails"]["videoId"]
+        published = item["contentDetails"].get("videoPublishedAt", "?")
+        title = item["snippet"].get("title", "")
+        log.info(f"{vid}  https://youtu.be/{vid}  [{published}]  {title}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Update YouTube thumbnails/descriptions (no delete).")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("auth", help="Run the one-time OAuth consent and store the token")
+
+    p_recent = sub.add_parser("recent", help="List the channel's most recent uploads (read-only)")
+    p_recent.add_argument("n", nargs="?", type=int, default=5, help="How many to list (default 5)")
+
+    p_title = sub.add_parser("set-title", help="Set a video's title (from a file's first line)")
+    p_title.add_argument("video_id")
+    p_title.add_argument("title_file", help="UTF-8 file whose first non-empty line is the new title")
 
     p_desc = sub.add_parser("set-description", help="Replace a video's description")
     p_desc.add_argument("video_id")
@@ -154,6 +227,10 @@ def main() -> None:
     if args.command == "auth":
         get_service()
         log.info("Authorized. Token stored - you won't need to consent again.")
+    elif args.command == "recent":
+        list_recent(args.n)
+    elif args.command == "set-title":
+        set_title(args.video_id, args.title_file)
     elif args.command == "set-description":
         set_description(args.video_id, args.desc_file)
     elif args.command == "set-thumbnail":
