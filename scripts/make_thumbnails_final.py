@@ -1044,6 +1044,136 @@ def draw_ml17_tree(fig, bbox):
     _draw_image_row(fig, bbox, ["ml17_tree.png"], max_h=0.52, lift=0.05)
 
 
+def draw_ml22_blackbox(fig, bbox):
+    """ML 22 (interpretability 1): the lecture's black box vs glass box framing.
+    Left: an opaque charcoal box with a white '?' — data in, answer out, but we
+    can't see inside (GPT, big boosting ensembles). Right: a glass box holding the
+    course's REAL shallow bike-rentals tree (fig/tree_bike.pdf, via pdf_to_asset)
+    — an intrinsically interpretable model we can just read. Labels in the bold
+    Latin font (the lecturer's own terms)."""
+    x0, y0, w, h = bbox
+    ax = fig.add_axes(bbox)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_facecolor(BG)
+    _strip(ax)
+
+    box_h, cy = 0.60, 0.54
+    black_cx, black_w = 0.18, 0.24
+    glass_cx, glass_w = 0.70, 0.40      # wider — it holds the real tree
+
+    # Left: black box — opaque charcoal, big white "?"
+    ax.add_patch(Rectangle((black_cx - black_w / 2, cy - box_h / 2), black_w, box_h,
+                           facecolor="#23262e", edgecolor="#0e0e0e", linewidth=3,
+                           zorder=2))
+    ax.text(black_cx, cy, "?", ha="center", va="center", fontsize=96,
+            color="white", zorder=3, **LATIN_FONTKW)
+
+    # Right: glass box — white fill, blue rim; the REAL tree inset inside it
+    ax.add_patch(Rectangle((glass_cx - glass_w / 2, cy - box_h / 2), glass_w, box_h,
+                           facecolor="white", edgecolor=POINT_COLOR, linewidth=3,
+                           zorder=2))
+    tree = plt.imread(str(OUT_DIR / "assets" / "ml22_tree.png"))
+    pad = 0.08                          # inner padding as a fraction of the box
+    ins = fig.add_axes([
+        x0 + (glass_cx - glass_w / 2 + pad * glass_w) * w,
+        y0 + (cy - box_h / 2 + pad * box_h) * h,
+        glass_w * (1 - 2 * pad) * w,
+        box_h * (1 - 2 * pad) * h,
+    ])
+    ins.imshow(tree)
+    ins.axis("off")
+
+    # labels beneath each box
+    lab_y = cy - box_h / 2 - 0.10
+    ax.text(black_cx, lab_y, "black box", ha="center", va="top", fontsize=23,
+            color=TITLE_COLOR, **LATIN_FONTKW)
+    ax.text(glass_cx, lab_y, "glass box", ha="center", va="top", fontsize=23,
+            color=TITLE_COLOR, **LATIN_FONTKW)
+
+
+def draw_ml23_two(fig, bbox):
+    """ML 23 (chosen): two real course figures side by side — permutation feature
+    importance bars (fig/pfi_bar.pdf, 'how important is each feature') and the
+    ICE+PDP fan (fig/ice_pdp_bike_temp.pdf, 'how does temp affect the prediction').
+    The two halves of the model-agnostic toolkit."""
+    _draw_image_row(fig, bbox, ["ml23_pfi.png", "ml23_pdp_ice.png"],
+                    captions=["Feature importance", "PDP + ICE"],
+                    gap=0.05, max_h=0.46)
+
+
+def draw_ml23_pdp_real(fig, bbox):
+    """ML 23 alt: just the course's REAL ICE+PDP figure on bike temperature
+    (fig/ice_pdp_bike_temp.pdf) as a solo hero. draw_ml23_pdp below is the
+    synthetic fallback."""
+    _draw_image_row(fig, bbox, ["ml23_pdp_ice.png"], max_h=0.54, lift=0.06)
+
+
+def draw_ml23_pdp(fig, bbox):
+    """ML 23 (interpretability 2): the partial dependence plot — a bold red PDP
+    (the average effect) riding over a fan of faint blue ICE curves (one per row).
+    The rise-then-fall shape is the lecture's temperature effect: bike rentals
+    climb as it warms, then drop once it's too hot. The signature model-agnostic
+    'how does this feature affect the prediction' graph."""
+    ax = fig.add_axes(bbox)
+    ax.set_facecolor(BG)
+    rng = np.random.default_rng(509)
+    xs = np.linspace(0, 1, 200)
+
+    def hump(shift, amp):
+        return amp * np.exp(-((xs - (0.60 + shift)) ** 2) / (2 * 0.17 ** 2))
+
+    # ICE curves: same rise-then-fall shape, each row a vertical offset + jitter
+    for _ in range(16):
+        off = rng.normal(0, 0.06)
+        amp = 1.0 + rng.normal(0, 0.12)
+        sh = rng.normal(0, 0.04)
+        ax.plot(xs, 0.12 + off + hump(sh, amp), color=POINT_COLOR,
+                linewidth=1.6, alpha=0.22, zorder=2)
+
+    # PDP mean — bold red on top
+    ax.plot(xs, 0.12 + hump(0, 1.0), color=LINE_COLOR, linewidth=7,
+            solid_capstyle="round", zorder=4)
+
+    ax.text(0.63, 1.24, "PDP", ha="center", va="center", fontsize=21,
+            color=LINE_COLOR, **LATIN_FONTKW)
+    ax.text(0.13, 0.70, "ICE", ha="center", va="center", fontsize=16,
+            color=POINT_COLOR, alpha=0.75, **LATIN_FONTKW)
+
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1.4)
+    _strip(ax)
+
+
+def draw_ml24_two(fig, bbox):
+    """ML 24 / IML 3 (chosen): the two most iconic real course figures, big - the
+    SHAP beeswarm (fig/shap_beeswarm.pdf) and the famous LIME wolf-vs-husky 'snow
+    detector' strip (fig/lime_husky.png). Counterfactuals stays named in the title.
+    draw_ml24_three below is the 3-panel alternate (adds cf_flip_bank)."""
+    _draw_image_row(fig, bbox, ["ml24_shap.png", "ml24_lime.png"],
+                    captions=["SHAP", "LIME"], gap=0.05, max_h=0.48)
+
+
+def draw_ml24_three(fig, bbox):
+    """ML 24 / IML 3 alternate: three REAL course figures in a row, one per method
+    - SHAP beeswarm, the LIME wolf-vs-husky 'snow detector' strip, and a
+    counterfactual bank-flip (fig/cf_flip_bank.pdf). Left-to-right matches the
+    title 'SHAP - LIME - Counterfactuals'."""
+    _draw_image_row(fig, bbox, ["ml24_shap.png", "ml24_lime.png", "ml24_cf.png"],
+                    gap=0.035, max_h=0.42)
+
+
+def draw_ml25_toolkit(fig, bbox):
+    """ML 25 / IML practical (Գործնական): three REAL figures from the practical's OWN
+    notebook (25_startup_success_solution.ipynb), run on the startup-success data -
+    NOT the lecture's teaching figures. Permutation importance bars, the SHAP
+    beeswarm, and the local SHAP waterfall for the failing test company #13 (the one
+    the counterfactual targets). Reads left-to-right: importance -> global -> local."""
+    _draw_image_row(fig, bbox, ["ml25_pfi.png", "ml25_shap.png", "ml25_local.png"],
+                    captions=["PFI", "Global SHAP", "Local SHAP"],
+                    gap=0.035, max_h=0.40)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1187,6 +1317,42 @@ LESSONS = [
         "tag": "ML 21", "title": "Ծառեր",
         "title_size": 72, "title_max": 82, "draw": draw_ml21_importances,
         "practical": True, "chart_bbox": (0.06, 0.05, 0.88, 0.50), "out": "ML21.png",
+    },
+    # ML 22 — interpretability (lecture): black box vs glass box framing, a small
+    # readable tree inside the glass box. Mixed "Բացատրելի ML" title.
+    {
+        "tag": "ML 22",
+        "title": "Interpretable ML (IML) 1", "title_latin": True,
+        "title_size": 44, "title_max": 78, "draw": draw_ml22_blackbox,
+        "chart_bbox": (0.05, 0.04, 0.92, 0.54), "out": "ML22.png",
+    },
+    # ML 23 — interpretability part 2 (model-agnostic): two REAL course figures
+    # (permutation importance bars + ICE/PDP). Latin title, IML series scheme.
+    # (draw_ml23_pdp_real = solo PDP; draw_ml23_pdp = synthetic fallback.)
+    {
+        "tag": "ML 23", "title": "IML 2: PFI · PDP · ICE",
+        "title_size": 44, "title_max": 84, "title_latin": True,
+        "draw": draw_ml23_two,
+        "chart_bbox": (0.06, 0.05, 0.90, 0.46), "out": "ML23.png",
+    },
+    # ML 24 — interpretability part 3 (IML 3): two big REAL figures (SHAP beeswarm
+    # + LIME husky); Counterfactuals named in the title. Latin title.
+    # (draw_ml24_three is the 3-panel alternate.)
+    {
+        "tag": "ML 24", "title": "IML 3: SHAP · LIME · Counterfactuals",
+        "title_size": 40, "title_max": 72, "title_latin": True,
+        "draw": draw_ml24_two,
+        "chart_bbox": (0.05, 0.08, 0.92, 0.48), "out": "ML24.png",
+    },
+    # ML 25 — interpretability practical (Գործնական badge): the whole IML toolkit
+    # applied end-to-end on the startup-success dataset. 3-panel montage of REAL
+    # course figures (PFI bars + SHAP beeswarm + counterfactual flip), reusing the
+    # IML 2/3 assets. Latin title; the orange pill carries "practical".
+    {
+        "tag": "ML 25", "title": "IML: Startup success",
+        "title_size": 44, "title_max": 78, "title_latin": True,
+        "draw": draw_ml25_toolkit, "practical": True,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML25.png",
     },
 ]
 
