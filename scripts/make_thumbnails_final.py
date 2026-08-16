@@ -1174,6 +1174,38 @@ def draw_ml25_toolkit(fig, bbox):
                     gap=0.035, max_h=0.40)
 
 
+def draw_ml26_fe(fig, bbox):
+    """ML 26 / feature engineering (lecture): two REAL slide figures on the bike
+    dataset - binning a continuous feature (raw-vs-binned temperature, red line vs
+    blue step-bins vs orange decile curve, fig/fe_binning_temp.pdf, left panel) and
+    the temp*workingday interaction helping Ridge (+6.9 MAE) but not the tree (-1.1)
+    (fig/fe_interaction_lin_vs_tree.pdf). Scatter + bars, two core FE techniques."""
+    _draw_image_row(fig, bbox, ["ml26_binning.png", "ml26_interactions.png"],
+                    captions=["Binning", "Interactions"], gap=0.05, max_h=0.48)
+
+
+def draw_ml27_fs(fig, bbox):
+    """ML 27 / feature selection (lecture): two REAL slide figures - the RFE
+    cross-validation curve dipping to the orange k=45 marker (fig/fs_rfecv_curve.pdf,
+    left panel, 'how few features can I keep') and the Boruta shadow bars, blue=kept /
+    red=rejected below the dashed 'bar to beat' (fig/fs_boruta_shadow.pdf, 'which to
+    keep vs noise'). The two headline selection methods of the lesson."""
+    _draw_image_row(fig, bbox, ["ml27_rfecv.png", "ml27_boruta.png"],
+                    captions=["RFE-CV", "Boruta"], gap=0.05, max_h=0.46)
+
+
+def draw_ml28_classics(fig, bbox):
+    """ML 28 / classic methods (lecture): three REAL slide figures, one per method
+    family the roundup covers - LDA's shared-covariance linear boundary with the
+    class Gaussians (fig/cm_lda_qda.pdf, left panel), the SVM max-margin boundary
+    with circled support vectors (fig/cm_svm_margin.pdf), and the Gaussian-process
+    band that pinches at data and balloons away (fig/cm_gp_band.pdf). SVM centered
+    (the lesson's star). LDA replaces KNN per the user's pick."""
+    _draw_image_row(fig, bbox, ["ml28_lda.png", "ml28_svm.png", "ml28_gp.png"],
+                    captions=["LDA", "SVM", "Gaussian process"],
+                    gap=0.04, max_h=0.44)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1353,6 +1385,30 @@ LESSONS = [
         "title_size": 44, "title_max": 78, "title_latin": True,
         "draw": draw_ml25_toolkit, "practical": True,
         "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML25.png",
+    },
+    # ML 26 — feature engineering (lecture): two REAL bike-dataset slide figures,
+    # binning + a ratio/units feature. Latin title.
+    {
+        "tag": "ML 26", "title": "Feature engineering",
+        "title_size": 52, "title_max": 92, "title_latin": True,
+        "draw": draw_ml26_fe,
+        "chart_bbox": (0.05, 0.06, 0.92, 0.48), "out": "ML26.png",
+    },
+    # ML 27 — feature selection (lecture): two REAL figures, the RFE-CV curve (k=45)
+    # + the Boruta shadow bars. Latin title.
+    {
+        "tag": "ML 27", "title": "Feature selection",
+        "title_size": 56, "title_max": 96, "title_latin": True,
+        "draw": draw_ml27_fs,
+        "chart_bbox": (0.05, 0.06, 0.92, 0.46), "out": "ML27.png",
+    },
+    # ML 28 — classic methods (lecture): 3-panel montage of REAL figures, one per
+    # method family (LDA + SVM margin + GP band), SVM centered. Latin title.
+    {
+        "tag": "ML 28", "title": "Classic methods",
+        "title_size": 54, "title_max": 94, "title_latin": True,
+        "draw": draw_ml28_classics,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML28.png",
     },
 ]
 
