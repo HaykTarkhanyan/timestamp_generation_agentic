@@ -1206,6 +1206,48 @@ def draw_ml28_classics(fig, bbox):
                     gap=0.04, max_h=0.44)
 
 
+def draw_ml29_classical_ts(fig, bbox):
+    """ML 29 / classical time series (lecture): the two REAL figures that carry the
+    classical workflow - the ACF/PACF pair you read model orders off
+    (fig/acf_pacf.pdf, PACF cutting off after lag 2 => AR(2)) and the SARIMA
+    'airline model' forecast with its 95% band against the held-out actual
+    (fig/arima_forecast.pdf). The ACF asset is cropped to the ACF panel alone: with
+    both stem panels the row is width-limited and both figures shrink. Alternative
+    asset kept: ml29_rolling.png, the raw/rolling(3)/rolling(12) smoothing figure
+    from fig/rolling_mean.pdf."""
+    _draw_image_row(fig, bbox, ["ml29_acf.png", "ml29_sarima.png"],
+                    captions=["ACF", "SARIMA forecast"],
+                    gap=0.05, max_h=0.44, lift=0.04)
+
+
+def draw_ml30_ml_ts(fig, bbox):
+    """ML 30 / time series with ML (lecture): the lesson's headline figure as a wide
+    hero - gradient boosting on a trending series, raw-level predictions stuck
+    under the largest y seen in training (red, MAE 19.0) next to the same model
+    trained on differences and added back (green, MAE 6.7). Figure
+    fig/gbm_forecast.pdf. Alternative asset kept: ml30_window.png, the sliding
+    window (X, y) table from fig/supervised_reframe.pdf."""
+    _draw_image_row(fig, bbox, ["ml30_gbm.png"], max_h=0.52, lift=0.03)
+
+
+def draw_ml31_ts_practical(fig, bbox):
+    """ML 31 / time-series practical: plots from the practical's OWN notebook
+    (ml/08_time_series/31_electricity_forecast_solution.ipynb) - the monthly
+    Armenian electricity/gas/steam series in billion drams, and the held-out 2025
+    year with the baseline plus the best of each model family (SARIMA,
+    Holt-Winters mul, LightGBM). NOT the lecture's fig/ figures: a practical runs
+    the methods on its own dataset, so fig/ would show the wrong data.
+
+    Shown as a single wide hero: both notebook plots are ~3:1, so a two-panel row
+    collapses to thin unreadable ribbons (heights are matched, so the row height is
+    capped by the summed aspects). Alternative assets kept: ml31_series.png (the
+    full monthly series) and ml31_years.png (yearly totals, the dropped pre-2014
+    years in red)."""
+    _draw_image_row(fig, bbox, ["ml31_forecast.png"],
+                    captions=["2025 forecast vs actual"],
+                    max_h=0.50, lift=0.03)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1409,6 +1451,30 @@ LESSONS = [
         "title_size": 54, "title_max": 94, "title_latin": True,
         "draw": draw_ml28_classics,
         "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML28.png",
+    },
+    # ML 29 — classical time series (lecture): the ACF/PACF order-reading pair plus
+    # the SARIMA forecast against held-out actuals. Latin title.
+    {
+        "tag": "ML 29", "title": "Classical time series",
+        "title_size": 50, "title_max": 88, "title_latin": True,
+        "draw": draw_ml29_classical_ts,
+        "chart_bbox": (0.05, 0.06, 0.92, 0.46), "out": "ML29.png",
+    },
+    # ML 30 — time series with ML (lecture): the tree extrapolation trap and its fix
+    # as one wide hero, the single thing to remember from the lesson. Latin title.
+    {
+        "tag": "ML 30", "title": "Time series with ML",
+        "title_size": 52, "title_max": 92, "title_latin": True,
+        "draw": draw_ml30_ml_ts,
+        "chart_bbox": (0.05, 0.04, 0.92, 0.48), "out": "ML30.png",
+    },
+    # ML 31 — time-series practical (Գործնական): the practical's OWN notebook plots
+    # (Armenian energy series + the 2025 model bake-off), never the lecture's fig/.
+    {
+        "tag": "ML 31", "title": "Energy forecast",
+        "title_size": 54, "title_max": 94, "title_latin": True,
+        "draw": draw_ml31_ts_practical, "practical": True,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML31.png",
     },
 ]
 
