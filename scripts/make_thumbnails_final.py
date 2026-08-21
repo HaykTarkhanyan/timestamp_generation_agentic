@@ -55,6 +55,11 @@ log = logging.getLogger(__name__)
 # Locked palette
 BG = "#ffffff"
 BAR = "#F2A800"
+# Left-stripe colour for the unsupervised block of the course (ML32 on). House
+# navy - the same blue as the ML tag, so stripe and tag read as one unit and the
+# thumbnails stay inside the three-colour palette, while the section change is
+# still obvious next to the orange supervised lessons.
+UNSUP_BAR = "#0033A0"
 TAG_COLOR = "#0033A0"
 TITLE_COLOR = "#0e0e0e"
 POINT_COLOR = "#0033A0"
@@ -1248,6 +1253,32 @@ def draw_ml31_ts_practical(fig, bbox):
                     max_h=0.50, lift=0.03)
 
 
+def draw_ml32_clustering(fig, bbox):
+    """ML 32 / clustering (lecture): one panel per algorithm family. Left is the
+    "k-means be like" meme the user picked (four people each holding back their own
+    ball-pit cluster) - it reads as k-means partitioning space far faster than a
+    scatter plot does. Then DBSCAN recovering the concentric rings with noise marked
+    x (right panel of fig/clu_dbscan_circles.pdf), and the Ward dendrogram you cut to
+    pick the cluster count (fig/clu_dendrogram.pdf, right 30% cropped so the meme
+    gets more width - the row is width-limited by the summed aspects). Alternative
+    asset kept: ml32_kmeans.png, the real k-means-on-rings panel."""
+    _draw_image_row(fig, bbox, ["ml32_kmeans_meme.png", "ml32_dbscan.png", "ml32_dendro.png"],
+                    captions=["K-means", "DBSCAN", "Dendrogram"],
+                    gap=0.04, max_h=0.46)
+
+
+def draw_ml33_color_spaces(fig, bbox):
+    """ML 33 / colour spaces (lecture + project brief): the project's own before/after
+    - the Saryan painting at its original 196,680 colours next to the k-means
+    16-colour quantization (fig/clu_image_quantization.pdf, split into its two
+    panels) - plus the hue channel from fig/hsv_space.pdf, which shows what the image
+    looks like when you keep only "which colour" and throw away purity and
+    brightness."""
+    _draw_image_row(fig, bbox, ["ml33_original.png", "ml33_quantized.png", "ml33_hue.png"],
+                    captions=["Original", "16 colors", "HSV: hue"],
+                    gap=0.05, max_h=0.46)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1476,6 +1507,24 @@ LESSONS = [
         "draw": draw_ml31_ts_practical, "practical": True,
         "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML31.png",
     },
+    # ML 32 — clustering (lecture): one panel per family, k-means failing on the rings
+    # next to DBSCAN solving them, then the dendrogram. Latin title.
+    {
+        "tag": "ML 32", "title": "Clustering",
+        "title_size": 56, "title_max": 96, "title_latin": True,
+        "draw": draw_ml32_clustering,
+        "bar_color": UNSUP_BAR,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML32.png",
+    },
+    # ML 33 — colour spaces + project brief (lecture): the 196,680 -> 16 colour
+    # quantization the project asks for, plus the HSV hue channel. Latin title.
+    {
+        "tag": "ML 33", "title": "Color spaces",
+        "title_size": 54, "title_max": 94, "title_latin": True,
+        "draw": draw_ml33_color_spaces,
+        "bar_color": UNSUP_BAR,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML33.png",
+    },
 ]
 
 
@@ -1547,9 +1596,12 @@ def render_thumbnail(lesson: dict) -> None:
     fig = plt.figure(figsize=(12.8, 7.2), dpi=100)
     fig.patch.set_facecolor(BG)
 
-    # Vertical orange bar at left edge
+    # Vertical bar at left edge — orange by default. A lesson can override it with
+    # "bar_color" to mark a new block of the course (the unsupervised part from
+    # ML32 on uses UNSUP_BAR), so the stripe reads as a section marker at a glance.
+    bar_color = lesson.get("bar_color", BAR)
     bar = fig.add_axes([0.0, 0.0, 0.024, 1.0])
-    bar.set_facecolor(BAR)
+    bar.set_facecolor(bar_color)
     _strip(bar)
 
     # Lesson tag — Segoe Script handwritten, navy
@@ -1561,7 +1613,7 @@ def render_thumbnail(lesson: dict) -> None:
     if lesson.get("practical"):
         fig.text(0.963, 0.925, "Գործնական", ha="right", va="center",
                  fontsize=31, fontproperties=ARM_PROPS, color="white",
-                 bbox=dict(boxstyle="round,pad=0.5", facecolor=BAR,
+                 bbox=dict(boxstyle="round,pad=0.5", facecolor=bar_color,
                            edgecolor="none"))
 
     # Title — Adamathuz Bold Armenian by default; "title_latin" lessons use a
