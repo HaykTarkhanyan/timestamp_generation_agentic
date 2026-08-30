@@ -1279,6 +1279,18 @@ def draw_ml33_color_spaces(fig, bbox):
                     gap=0.05, max_h=0.46)
 
 
+def draw_ml34_land_cover(fig, bbox):
+    """ML 34 / clustering practical: panels from the practical's OWN notebook
+    (ml/09_clustering/34_land_cover_solution.ipynb) - the Sentinel-2 true-colour
+    view of the Sevan shoreline, the k-means k=5 segmentation fitted on all six
+    bands, and the ESA WorldCover 2021 map used as the ground truth. Same scene
+    three ways, so the thumbnail reads as input -> our result -> reality. NOT the
+    lecture's fig/ figures: a practical runs on its own dataset."""
+    _draw_image_row(fig, bbox, ["ml34_truecolor.png", "ml34_kmeans.png", "ml34_truth.png"],
+                    captions=["True colour", "K-means k=5", "Ground truth"],
+                    gap=0.045, max_h=0.46)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1524,6 +1536,15 @@ LESSONS = [
         "draw": draw_ml33_color_spaces,
         "bar_color": UNSUP_BAR,
         "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML33.png",
+    },
+    # ML 34 — clustering practical (Գործնական): the practical's OWN notebook panels,
+    # Sevan true colour vs k-means k=5 vs the ESA WorldCover ground truth.
+    {
+        "tag": "ML 34", "title": "Sevan land cover",
+        "title_size": 50, "title_max": 88, "title_latin": True,
+        "draw": draw_ml34_land_cover, "practical": True,
+        "bar_color": UNSUP_BAR,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML34.png",
     },
 ]
 
