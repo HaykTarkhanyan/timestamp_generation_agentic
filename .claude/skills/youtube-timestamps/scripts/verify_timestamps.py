@@ -24,7 +24,9 @@ if sys.stderr.encoding and sys.stderr.encoding.lower() != "utf-8":
     sys.stderr.reconfigure(encoding="utf-8")
 
 
-TS_LINE_RE = re.compile(r"^(\d{1,2}(?::\d{2}){1,2})\s+(.+)$")
+# Sub-chapters are indented with spaces before the timestamp (see SKILL.md);
+# YouTube parses those fine, so accept and ignore the leading indent here.
+TS_LINE_RE = re.compile(r"^[ 	]*(\d{1,2}(?::\d{2}){1,2})\s+(.+)$")
 TRANSCRIPT_LINE_RE = re.compile(r"^(\d{1,2}(?::\d{2}){1,2})\s{2,}(.+)$")
 
 

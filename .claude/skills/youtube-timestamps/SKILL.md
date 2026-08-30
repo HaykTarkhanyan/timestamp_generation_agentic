@@ -109,40 +109,51 @@ Or for videos >1hr (use `H:MM:SS` for **every** chapter, including `0:00:00` —
 
 Use the same language as the transcript for labels. 2-7 words. Descriptive, not generic — "Intro" / "Outro" are OK only when nothing more specific fits.
 
-### Nesting: show the hierarchy with `↳`
+### Nesting: indent sub-chapters with 4 spaces
 
-When a parent topic runs long enough to need several chapters of its own, mark the
-children by prefixing their **label** with `↳ ` so the list reads as a hierarchy
-instead of a flat wall:
+When a parent topic needs several chapters of its own, indent the children by
+putting **exactly 4 spaces before the timestamp**:
 
 ```
-11:54 K-means՝ իներցիա և silhouette
-14:48 ↳ Արմունկի մեթոդը
-15:25 ↳ Silhouette-ի պիկը երկուսի վրա
-17:53 DBSCAN՝ eps և min_samples
-35:19 ↳ K-distance plot
+20:12 Ոնց ընտրենք k-ն՝ արմունկի մեթոդ
+    21:02 Ինչու ա silhouette-ը էստեղ տանջվում
+    24:43 Կանգնում ենք 16 գույնի վրա
+25:39 Ֆայլի չափը՝ տեսականորեն
+    29:38 PNG՝ 76 անգամից մինչև 10 անգամ
+    30:29 JPEG-ը ավելի վատ ա ճզմում
 ```
 
-Rules that matter:
+This is **verified against the live API**, not inferred from blog posts: pushed to
+lesson 35 (`WT9-8Ly0EvI`, 2026-08-31) with 18 of 33 chapters indented, YouTube
+parsed all 33 chapters and kept the indentation in the description. What the test
+established:
 
-- **Never put anything before the timestamp.** YouTube's chapter parser wants the
-  line to *start* with the timestamp; one stray character (a space, a tab, a dash)
-  in front of it can invalidate the whole chapter list, not just that line. So the
-  indent marker always goes AFTER the timestamp, as part of the label.
-- **Don't indent with spaces.** YouTube renders the chapter title on the progress
-  bar with leading whitespace trimmed, so a space-indented hierarchy silently
-  disappears on the player even though it looks right in the description. `↳`
-  survives everywhere.
-- **One level only.** YouTube chapters are a flat list — the hierarchy here is
-  purely visual. Nested `↳ ↳` reads as noise; if a sub-topic needs its own
-  sub-topics, promote it to a parent instead.
-- **A parent needs at least two children.** A lone `↳` under a heading is just a
+- **Indentation before the timestamp does NOT break chapters.** A lot of writing
+  online claims any stray character before a timestamp invalidates the whole list.
+  That is wrong for leading whitespace — the chapters parsed fine. Don't "fix" this
+  back to a flat list on the strength of a blog post; re-run the test instead.
+- **Tabs get collapsed to one space; literal spaces are preserved.** A `	` indent
+  came back from the API as `' '` (one space), which is too faint to read as
+  hierarchy. Four spaces came back as `'    '`, intact. So use spaces, never tabs.
+- **The chapter title stays clean.** Because the indent sits before the timestamp,
+  it is not part of the title YouTube shows on the progress bar — which is why this
+  beats prefixing the label with a marker like `↳`, where the marker would show up
+  inside every sub-chapter's title in the player.
+
+Rules:
+
+- **One level only.** YouTube chapters are a flat list; the hierarchy is purely
+  visual in the description. Don't indent 8 spaces for grandchildren — promote the
+  sub-topic to a parent instead.
+- **A parent needs at least two children.** A lone indented chapter is just a
   chapter; either fold it into the parent or leave both flat.
-- **Nest only where the structure is real.** A lecture that moves through 20
-  unrelated topics stays flat. Practicals and multi-algorithm lectures are where
-  this earns its keep (e.g. ML32: K-means → its variants, DBSCAN → its parameters).
-- The `↳ ` prefix counts as part of the label, so keep labels short enough that the
-  arrow plus 2-7 words still reads at a glance.
+- **Nest only where the structure is real.** A lecture hopping across 20 unrelated
+  topics stays flat. Practicals and multi-algorithm lectures are where it earns its
+  keep (ML32: K-means → its variants; ML35: file size → PNG, JPEG, the surprise).
+- The minimum-gap rule applies to parents and children alike — an indented chapter
+  is still a chapter, so it still needs its 30s.
+- Write the indentation into `timestamps.txt` itself, so what the verifier checks is
+  what gets published. The verifier ignores the leading spaces.
 
 ### Cleaning ASR garbage in labels
 
@@ -189,7 +200,7 @@ Depends on content density, not duration. Guidelines:
 
 There is no hard cap, but more than ~20 chapters in a single video is rare and usually means you should consolidate. The skill's verifier doesn't enforce a maximum — judgment call.
 
-Nesting (see above) raises that ceiling: a 30-chapter list that groups into 8 parents with `↳` children scans far better than 20 flat ones, because the reader's eye lands on the parents first. So when a long lecture genuinely has that structure, prefer nesting it over merging chapters down to hit an arbitrary count.
+Nesting (see above) raises that ceiling: a 33-chapter list that groups into 15 parents with indented children scans far better than 20 flat ones, because the reader's eye lands on the parents first. So when a long lecture genuinely has that structure, prefer nesting it over merging chapters down to hit an arbitrary count.
 
 ### Honesty about uncertainty
 
