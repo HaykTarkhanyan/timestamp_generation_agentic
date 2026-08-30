@@ -109,6 +109,41 @@ Or for videos >1hr (use `H:MM:SS` for **every** chapter, including `0:00:00` —
 
 Use the same language as the transcript for labels. 2-7 words. Descriptive, not generic — "Intro" / "Outro" are OK only when nothing more specific fits.
 
+### Nesting: show the hierarchy with `↳`
+
+When a parent topic runs long enough to need several chapters of its own, mark the
+children by prefixing their **label** with `↳ ` so the list reads as a hierarchy
+instead of a flat wall:
+
+```
+11:54 K-means՝ իներցիա և silhouette
+14:48 ↳ Արմունկի մեթոդը
+15:25 ↳ Silhouette-ի պիկը երկուսի վրա
+17:53 DBSCAN՝ eps և min_samples
+35:19 ↳ K-distance plot
+```
+
+Rules that matter:
+
+- **Never put anything before the timestamp.** YouTube's chapter parser wants the
+  line to *start* with the timestamp; one stray character (a space, a tab, a dash)
+  in front of it can invalidate the whole chapter list, not just that line. So the
+  indent marker always goes AFTER the timestamp, as part of the label.
+- **Don't indent with spaces.** YouTube renders the chapter title on the progress
+  bar with leading whitespace trimmed, so a space-indented hierarchy silently
+  disappears on the player even though it looks right in the description. `↳`
+  survives everywhere.
+- **One level only.** YouTube chapters are a flat list — the hierarchy here is
+  purely visual. Nested `↳ ↳` reads as noise; if a sub-topic needs its own
+  sub-topics, promote it to a parent instead.
+- **A parent needs at least two children.** A lone `↳` under a heading is just a
+  chapter; either fold it into the parent or leave both flat.
+- **Nest only where the structure is real.** A lecture that moves through 20
+  unrelated topics stays flat. Practicals and multi-algorithm lectures are where
+  this earns its keep (e.g. ML32: K-means → its variants, DBSCAN → its parameters).
+- The `↳ ` prefix counts as part of the label, so keep labels short enough that the
+  arrow plus 2-7 words still reads at a glance.
+
 ### Cleaning ASR garbage in labels
 
 Armenian auto-subs frequently produce mid-word script splices like `Pվ value հեcking` (p-value hacking with Latin/Armenian fragments mashed together) or `survivor բesին` (survivor bias). Do **not** copy these verbatim into labels. For each technical term that appears garbled:
@@ -153,6 +188,8 @@ Depends on content density, not duration. Guidelines:
 - **Conversational / no clear structure**: 5-10 chapters at roughly even spacing, marking the topics that actually came up.
 
 There is no hard cap, but more than ~20 chapters in a single video is rare and usually means you should consolidate. The skill's verifier doesn't enforce a maximum — judgment call.
+
+Nesting (see above) raises that ceiling: a 30-chapter list that groups into 8 parents with `↳` children scans far better than 20 flat ones, because the reader's eye lands on the parents first. So when a long lecture genuinely has that structure, prefer nesting it over merging chapters down to hit an arbitrary count.
 
 ### Honesty about uncertainty
 
