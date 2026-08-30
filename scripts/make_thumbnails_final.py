@@ -1302,7 +1302,7 @@ def draw_ml35_quantization(fig, bbox):
     _draw_image_row(fig, bbox,
                     ["ml35_shrek_original.png", "ml35_shrek_k4.png", "ml35_shrek_k32.png"],
                     captions=["28,029 colors", "4 colors", "32 colors"],
-                    gap=0.05, max_h=0.47)
+                    gap=0.03, max_h=0.60, lift=0.01)
 
 
 # ---------- lesson configs ----------
@@ -1564,10 +1564,10 @@ LESSONS = [
     # panels, the painting at 124,841 colours vs k-means with 4 and with 32.
     {
         "tag": "ML 35", "title": "Color quantization",
-        "title_size": 48, "title_max": 86, "title_latin": True,
+        "title_size": 46, "title_max": 74, "title_latin": True,
         "draw": draw_ml35_quantization, "practical": True,
         "bar_color": UNSUP_BAR,
-        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML35.png",
+        "chart_bbox": (0.05, 0.04, 0.92, 0.46), "out": "ML35.png",
     },
 ]
 
