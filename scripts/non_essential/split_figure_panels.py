@@ -11,13 +11,18 @@ off the top, it scans for columns that are entirely (near-)white - the gutters
 between panels - and treats each run of non-white columns as one panel. Each
 panel is then row-trimmed the same way and written out.
 
+Some figures have no perfectly empty gutter: a stray marker or an axis
+whisker leaves a handful of pixels in the column that is otherwise the
+split (the Google PAIR mammoth has exactly 2-3). --gutter-tol allows that
+many ink pixels in a column and still calls it a gutter.
+
 Fails loudly: a missing input, a title crop that eats the whole image, or a scan
 that finds no panels raises.
 
 Usage:
-  python scripts/non_essential/split_figure_panels.py <in.pdf> <out-prefix> \
+  python scripts/non_essential/split_figure_panels.py <figure> <out-prefix> \
       [--dpi 300] [--crop-top F] [--crop-bottom F] [--keep 1,2,3] \
-      [--white 250] [--min-width-frac 0.02] [--pad 6]
+      [--white 250] [--gutter-tol 0] [--min-width-frac 0.02] [--pad 6]
 
 Example (first three panels of the eigen-garments row, titles dropped):
   python scripts/non_essential/split_figure_panels.py \
@@ -51,13 +56,23 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
-def render(pdf: Path, dpi: int) -> np.ndarray:
-    doc = fitz.open(str(pdf))
+RASTER_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp"}
+
+
+def render(src: Path, dpi: int) -> np.ndarray:
+    """Load the figure as RGB. Vector figures are rasterized at --dpi; borrowed
+    assets that are already raster (fig/borrowed/**) are read as-is, since there
+    is no resolution to choose - upscaling them would only invent pixels."""
+    if src.suffix.lower() in RASTER_SUFFIXES:
+        arr = np.asarray(Image.open(src).convert("RGB"))
+        log.info(f"Loaded raster {src.name} -> {arr.shape[1]}x{arr.shape[0]}px")
+        return arr
+    doc = fitz.open(str(src))
     if doc.page_count == 0:
-        raise ValueError(f"{pdf} has no pages")
+        raise ValueError(f"{src} has no pages")
     pix = doc.load_page(0).get_pixmap(dpi=dpi, alpha=False)
     arr = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width, 3)
-    log.info(f"Rendered {pdf.name} at {dpi} dpi -> {pix.width}x{pix.height}px")
+    log.info(f"Rendered {src.name} at {dpi} dpi -> {pix.width}x{pix.height}px")
     return arr.copy()
 
 
@@ -78,21 +93,23 @@ def runs_of_content(mask: np.ndarray, min_len: int) -> list[tuple[int, int]]:
 
 def main() -> None:
     p = argparse.ArgumentParser()
-    p.add_argument("pdf", type=Path)
+    p.add_argument("figure", type=Path, help="figure PDF, or an already-raster PNG/JPG/WEBP")
     p.add_argument("out_prefix", help="e.g. thumbnails/assets/ml36_eigen -> _1.png, _2.png")
     p.add_argument("--dpi", type=int, default=300)
     p.add_argument("--crop-top", type=float, default=0.0)
     p.add_argument("--crop-bottom", type=float, default=0.0)
     p.add_argument("--keep", default="", help="1-based panel indices, e.g. 1,2,3")
     p.add_argument("--white", type=int, default=250, help="pixels >= this count as white")
+    p.add_argument("--gutter-tol", type=int, default=0,
+                   help="a column with at most this many ink pixels is still a gutter")
     p.add_argument("--min-width-frac", type=float, default=0.02)
     p.add_argument("--pad", type=int, default=6, help="white border added back per panel")
     a = p.parse_args()
 
-    if not a.pdf.exists():
-        raise FileNotFoundError(a.pdf)
+    if not a.figure.exists():
+        raise FileNotFoundError(a.figure)
 
-    img = render(a.pdf, a.dpi)
+    img = render(a.figure, a.dpi)
     h, w, _ = img.shape
     top, bot = int(h * a.crop_top), h - int(h * a.crop_bottom)
     if bot - top < 10:
@@ -101,7 +118,7 @@ def main() -> None:
     log.info(f"After title crop: {img.shape[1]}x{img.shape[0]}px")
 
     ink = img.min(axis=2) < a.white                    # any dark-ish channel = content
-    col_has_ink = ink.any(axis=0)
+    col_has_ink = ink.sum(axis=0) > a.gutter_tol   # tol 0 -> any ink at all
     spans = runs_of_content(col_has_ink, max(1, int(w * a.min_width_frac)))
     if not spans:
         raise ValueError("no panels found - is the figure blank, or --white too low?")

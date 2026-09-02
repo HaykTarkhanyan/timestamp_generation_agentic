@@ -1318,15 +1318,22 @@ def draw_ml36_pca(fig, bbox):
 
 
 def draw_ml37_tsne_umap(fig, bbox):
-    """ML 37 / t-SNE + UMAP (lecture): the same Fashion-MNIST sample embedded
-    three ways, from fig/dr_compare_fashion.pdf - PCA's overlapping blob next to
-    the separated clusters t-SNE and UMAP find. That contrast IS the lesson, so
-    it earns the whole band. Portrait panels (0.81), so max_h drives the row;
-    0.60 matches ML35's proven headroom. Colourbar panel dropped."""
+    """ML 37 / t-SNE + UMAP (lecture): the Google PAIR woolly mammoth the lesson
+    spends its UMAP section on - the 3-D skeleton and its 2-D UMAP projection,
+    where trunk, legs and tusks each survive as their own structure. From
+    fig/borrowed/pair/umap_elephant.png, split by split_figure_panels.py with
+    --gutter-tol 2 (a couple of stray points bridge the column between the two
+    plots, so a zero-tolerance scan reads them as one). Only two panels and both
+    near-square, so the row is height-bound, not width-bound - it cannot fill
+    the band at any sane height. Height is bought by sitting the row lower
+    (y0 0.03, no lift) rather than by raising it into the title, which is why
+    max_h can be 0.635 while the captions stay where 0.61 put them. Alternative
+    assets kept: ml37_cmp_1/2/3, the Fashion-MNIST PCA vs t-SNE vs UMAP
+    comparison."""
     _draw_image_row(fig, bbox,
-                    ["ml37_cmp_1.png", "ml37_cmp_2.png", "ml37_cmp_3.png"],
-                    captions=["PCA", "t-SNE", "UMAP"],
-                    gap=0.03, max_h=0.60, lift=0.01)
+                    ["ml37_mammoth_1.png", "ml37_mammoth_2.png"],
+                    captions=["original 3D", "UMAP projection"],
+                    gap=0.03, max_h=0.635, lift=0.0)
 
 
 # ---------- lesson configs ----------
@@ -1602,15 +1609,14 @@ LESSONS = [
         "bar_color": UNSUP_BAR,
         "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML36.png",
     },
-    # ML 37 - t-SNE + UMAP (lecture): one Fashion-MNIST sample embedded three
-    # ways, so PCA's smeared blob sits right next to the clusters the non-linear
-    # methods pull apart.
+    # ML 37 - t-SNE + UMAP (lecture): the woolly mammoth, 3-D next to its UMAP
+    # projection - the example the lesson actually dwells on.
     {
         "tag": "ML 37", "title": "t-SNE and UMAP",
         "title_size": 46, "title_max": 74, "title_latin": True,
         "draw": draw_ml37_tsne_umap,
         "bar_color": UNSUP_BAR,
-        "chart_bbox": (0.05, 0.04, 0.92, 0.46), "out": "ML37.png",
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML37.png",
     },
 ]
 
