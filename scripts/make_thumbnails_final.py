@@ -1305,6 +1305,30 @@ def draw_ml35_quantization(fig, bbox):
                     gap=0.03, max_h=0.60, lift=0.01)
 
 
+def draw_ml36_pca(fig, bbox):
+    """ML 36 / PCA (lecture): the eigen-garments from fig/dr_eigengarments.pdf -
+    the mean Fashion-MNIST garment plus the first two principal components as
+    red/blue loading maps. Panels are near-square (419x407), so the row is
+    width-limited at max_h 0.50 and fills the band edge to edge. Split out of the
+    7-panel figure by scripts/non_essential/split_figure_panels.py."""
+    _draw_image_row(fig, bbox,
+                    ["ml36_eigen_1.png", "ml36_eigen_2.png", "ml36_eigen_3.png"],
+                    captions=["mean garment", "PC1 (29%)", "PC2 (18%)"],
+                    gap=0.03, max_h=0.50, lift=0.02)
+
+
+def draw_ml37_tsne_umap(fig, bbox):
+    """ML 37 / t-SNE + UMAP (lecture): the same Fashion-MNIST sample embedded
+    three ways, from fig/dr_compare_fashion.pdf - PCA's overlapping blob next to
+    the separated clusters t-SNE and UMAP find. That contrast IS the lesson, so
+    it earns the whole band. Portrait panels (0.81), so max_h drives the row;
+    0.60 matches ML35's proven headroom. Colourbar panel dropped."""
+    _draw_image_row(fig, bbox,
+                    ["ml37_cmp_1.png", "ml37_cmp_2.png", "ml37_cmp_3.png"],
+                    captions=["PCA", "t-SNE", "UMAP"],
+                    gap=0.03, max_h=0.60, lift=0.01)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1568,6 +1592,25 @@ LESSONS = [
         "draw": draw_ml35_quantization, "practical": True,
         "bar_color": UNSUP_BAR,
         "chart_bbox": (0.05, 0.04, 0.92, 0.46), "out": "ML35.png",
+    },
+    # ML 36 - PCA (lecture): the eigen-garments, i.e. the components themselves
+    # rendered as images - the mean garment plus PC1/PC2 loading maps.
+    {
+        "tag": "ML 36", "title": "Principal components",
+        "title_size": 50, "title_max": 88, "title_latin": True,
+        "draw": draw_ml36_pca,
+        "bar_color": UNSUP_BAR,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML36.png",
+    },
+    # ML 37 - t-SNE + UMAP (lecture): one Fashion-MNIST sample embedded three
+    # ways, so PCA's smeared blob sits right next to the clusters the non-linear
+    # methods pull apart.
+    {
+        "tag": "ML 37", "title": "t-SNE and UMAP",
+        "title_size": 46, "title_max": 74, "title_latin": True,
+        "draw": draw_ml37_tsne_umap,
+        "bar_color": UNSUP_BAR,
+        "chart_bbox": (0.05, 0.04, 0.92, 0.46), "out": "ML37.png",
     },
 ]
 
