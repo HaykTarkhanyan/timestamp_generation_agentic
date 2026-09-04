@@ -1336,6 +1336,20 @@ def draw_ml37_tsne_umap(fig, bbox):
                     gap=0.03, max_h=0.635, lift=0.0)
 
 
+def draw_ml38_genes(fig, bbox):
+    """ML 38 / dimensionality-reduction practical: panel a of Novembre et al.
+    2008 (fig/borrowed/novembre2008_fig1.jpg) - the PCA of European genomes that
+    comes out shaped like the map of Europe, with the real map inset. The user
+    asked for this figure and only its top part, so panels b and c are cropped
+    off (--crop-bottom 0.42) and the "a" label dropped by raising
+    --min-width-frac above its width.
+
+    A lone 1.21-aspect panel cannot fill a 16:9 band: filling the width would
+    need fh > 1. So it runs as a centered hero with no caption, pushed as tall
+    as the title allows; the side margins are geometry, not slack."""
+    _draw_image_row(fig, bbox, ["ml38_genes_1.png"], max_h=0.68, lift=0.0)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1617,6 +1631,15 @@ LESSONS = [
         "draw": draw_ml37_tsne_umap,
         "bar_color": UNSUP_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML37.png",
+    },
+    # ML 38 - dimensionality-reduction practical (Գործնական): the Novembre 2008
+    # "genes mirror geography" PCA, top panel only.
+    {
+        "tag": "ML 38", "title": "Genes and geography",
+        "title_size": 46, "title_max": 74, "title_latin": True,
+        "draw": draw_ml38_genes, "practical": True,
+        "bar_color": UNSUP_BAR,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML38.png",
     },
 ]
 
