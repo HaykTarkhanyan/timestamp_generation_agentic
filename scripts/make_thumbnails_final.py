@@ -1635,7 +1635,7 @@ LESSONS = [
     # ML 38 - dimensionality-reduction practical (Գործնական): the Novembre 2008
     # "genes mirror geography" PCA, top panel only.
     {
-        "tag": "ML 38", "title": "Genes and geography",
+        "tag": "ML 38", "title": "PCA on genomes",
         "title_size": 46, "title_max": 74, "title_latin": True,
         "draw": draw_ml38_genes, "practical": True,
         "bar_color": UNSUP_BAR,
