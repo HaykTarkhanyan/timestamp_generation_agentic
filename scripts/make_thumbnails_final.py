@@ -1350,6 +1350,20 @@ def draw_ml38_genes(fig, bbox):
     _draw_image_row(fig, bbox, ["ml38_genes_1.png"], max_h=0.68, lift=0.0)
 
 
+def draw_ml39_photo_map(fig, bbox):
+    """ML 39 / CLIP photo-clustering practical: the practical's own 92 demo
+    photos drawn at their own projected positions - potatoes and pomegranates in
+    one corner, khorovats and shawarma in another, khachkars and monasteries
+    opposite. Built by scripts/non_essential/photo_scatter_ml39.py, which reads
+    the coordinates and thumbnails out of the notebook's generated map
+    (out/demo_photos_map_pca.html) and swaps each dot for the photo it stood for.
+
+    PCA rather than UMAP: both are real outputs of this practical, but UMAP puts
+    its two blobs on a diagonal and leaves ~40% of the frame empty, while PCA
+    fills it. Swap with --map umap if that tradeoff ever flips."""
+    _draw_image_row(fig, bbox, ["ml39_photo_map.png"], max_h=0.68, lift=0.0)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1640,6 +1654,15 @@ LESSONS = [
         "draw": draw_ml38_genes, "practical": True,
         "bar_color": UNSUP_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML38.png",
+    },
+    # ML 39 - CLIP photo-clustering practical (Գործնական): 92 personal photos
+    # laid out by their CLIP embedding, each dot replaced by its own photo.
+    {
+        "tag": "ML 39", "title": "Clustering with CLIP",
+        "title_size": 46, "title_max": 74, "title_latin": True,
+        "draw": draw_ml39_photo_map, "practical": True,
+        "bar_color": UNSUP_BAR,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML39.png",
     },
 ]
 
