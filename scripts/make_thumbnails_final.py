@@ -1382,6 +1382,24 @@ def draw_ml40_history(fig, bbox):
     _draw_image_row(fig, bbox, ["ml40_history_1.png"], max_h=0.60, lift=0.15)
 
 
+def draw_ml41_hidden_layers(fig, bbox):
+    """ML 41 / from one neuron to a multilayer net (lecture): the chapter's own
+    two-moons pair, fig/two_moons_logreg.pdf and fig/two_moons_mlp.pdf - one
+    straight cut that cannot separate the moons next to the bent boundary a
+    hidden layer buys. That contrast is the lecture's whole argument, and it is
+    already in flag red and blue. Panel titles (which carry train accuracy)
+    cropped off with split_figure_panels.py --crop-top 0.14.
+
+    Two ~1.55-aspect panels sum wide enough that the row is width-limited
+    (fh ~0.51) and fills the band edge to edge - unlike ML37's near-square pair.
+    The Welch Labs frames the deck also uses were passed over: black-background
+    video stills clash with the white thumbnail."""
+    _draw_image_row(fig, bbox,
+                    ["ml41_two_moons_logreg_1.png", "ml41_two_moons_mlp_1.png"],
+                    captions=["logistic regression", "MLP"],
+                    gap=0.03, max_h=0.60, lift=0.04)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1690,6 +1708,15 @@ LESSONS = [
         "draw": draw_ml40_history,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML40.png",
+    },
+    # ML 41 - one neuron to a multilayer network (lecture): logistic regression's
+    # straight cut vs an MLP's bent boundary on two moons.
+    {
+        "tag": "ML 41", "title": "Hidden layers",
+        "title_size": 50, "title_max": 74, "title_latin": True,
+        "draw": draw_ml41_hidden_layers,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML41.png",
     },
 ]
 
