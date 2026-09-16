@@ -60,6 +60,10 @@ BAR = "#F2A800"
 # thumbnails stay inside the three-colour palette, while the section change is
 # still obvious next to the orange supervised lessons.
 UNSUP_BAR = "#0033A0"
+# Left-stripe colour for the neural-networks / deep-learning block (ML40 on).
+# Flag red, so the three blocks of the course walk the whole palette: orange
+# supervised, navy unsupervised, red deep learning.
+DL_BAR = "#D90012"
 TAG_COLOR = "#0033A0"
 TITLE_COLOR = "#0e0e0e"
 POINT_COLOR = "#0033A0"
@@ -1364,6 +1368,20 @@ def draw_ml39_photo_map(fig, bbox):
     _draw_image_row(fig, bbox, ["ml39_photo_map.png"], max_h=0.68, lift=0.0)
 
 
+def draw_ml40_history(fig, bbox):
+    """ML 40 / neural-networks intro + history (lecture): the chapter's own
+    timeline fig/dl_history.pdf - McCulloch-Pitts 1943 through perceptron, the
+    XOR winter, backprop, LeNet, AlexNet, attention, to foundation models - with
+    its title band and year axis cropped off (split_figure_panels.py,
+    --crop-top/--crop-bottom 0.10).
+
+    At aspect ~5 it is width-limited well before max_h binds, so it fills the
+    band edge to edge as a ribbon ~0.33 tall. The small event labels do not
+    survive thumbnail scale, but the coloured dots and bold years carry it;
+    lift centres the ribbon in the space under the title."""
+    _draw_image_row(fig, bbox, ["ml40_history_1.png"], max_h=0.60, lift=0.15)
+
+
 # ---------- lesson configs ----------
 
 LESSONS = [
@@ -1663,6 +1681,15 @@ LESSONS = [
         "draw": draw_ml39_photo_map, "practical": True,
         "bar_color": UNSUP_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML39.png",
+    },
+    # ML 40 - neural networks intro + history (lecture): the 1943-2020s deep
+    # learning timeline. First lesson of the neural-networks block.
+    {
+        "tag": "ML 40", "title": "Neural networks",
+        "title_size": 50, "title_max": 74, "title_latin": True,
+        "draw": draw_ml40_history,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML40.png",
     },
 ]
 
