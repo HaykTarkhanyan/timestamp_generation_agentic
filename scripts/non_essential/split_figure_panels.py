@@ -21,7 +21,7 @@ that finds no panels raises.
 
 Usage:
   python scripts/non_essential/split_figure_panels.py <figure> <out-prefix> \
-      [--dpi 300] [--crop-top F] [--crop-bottom F] [--keep 1,2,3] \
+      [--dpi 300] [--page N] [--crop-top F] [--crop-bottom F] [--keep 1,2,3] \
       [--white 250] [--gutter-tol 0] [--min-width-frac 0.02] [--pad 6]
 
 Example (first three panels of the eigen-garments row, titles dropped):
@@ -59,7 +59,7 @@ log = logging.getLogger(__name__)
 RASTER_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp"}
 
 
-def render(src: Path, dpi: int) -> np.ndarray:
+def render(src: Path, dpi: int, page: int = 1) -> np.ndarray:
     """Load the figure as RGB. Vector figures are rasterized at --dpi; borrowed
     assets that are already raster (fig/borrowed/**) are read as-is, since there
     is no resolution to choose - upscaling them would only invent pixels."""
@@ -68,11 +68,11 @@ def render(src: Path, dpi: int) -> np.ndarray:
         log.info(f"Loaded raster {src.name} -> {arr.shape[1]}x{arr.shape[0]}px")
         return arr
     doc = fitz.open(str(src))
-    if doc.page_count == 0:
-        raise ValueError(f"{src} has no pages")
-    pix = doc.load_page(0).get_pixmap(dpi=dpi, alpha=False)
+    if not 1 <= page <= doc.page_count:
+        raise ValueError(f"{src} has {doc.page_count} pages, --page {page} is out of range")
+    pix = doc.load_page(page - 1).get_pixmap(dpi=dpi, alpha=False)
     arr = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width, 3)
-    log.info(f"Rendered {src.name} at {dpi} dpi -> {pix.width}x{pix.height}px")
+    log.info(f"Rendered {src.name} p{page} at {dpi} dpi -> {pix.width}x{pix.height}px")
     return arr.copy()
 
 
@@ -96,6 +96,8 @@ def main() -> None:
     p.add_argument("figure", type=Path, help="figure PDF, or an already-raster PNG/JPG/WEBP")
     p.add_argument("out_prefix", help="e.g. thumbnails/assets/ml36_eigen -> _1.png, _2.png")
     p.add_argument("--dpi", type=int, default=300)
+    p.add_argument("--page", type=int, default=1,
+                   help="1-based PDF page; borrowed slide decks keep figures past page 1")
     p.add_argument("--crop-top", type=float, default=0.0)
     p.add_argument("--crop-bottom", type=float, default=0.0)
     p.add_argument("--keep", default="", help="1-based panel indices, e.g. 1,2,3")
@@ -109,7 +111,7 @@ def main() -> None:
     if not a.figure.exists():
         raise FileNotFoundError(a.figure)
 
-    img = render(a.figure, a.dpi)
+    img = render(a.figure, a.dpi, a.page)
     h, w, _ = img.shape
     top, bot = int(h * a.crop_top), h - int(h * a.crop_bottom)
     if bot - top < 10:

@@ -1369,35 +1369,39 @@ def draw_ml39_photo_map(fig, bbox):
 
 
 def draw_ml40_history(fig, bbox):
-    """ML 40 / neural-networks intro + history (lecture): the chapter's own
-    timeline fig/dl_history.pdf - McCulloch-Pitts 1943 through perceptron, the
-    XOR winter, backprop, LeNet, AlexNet, attention, to foundation models - with
-    its title band and year axis cropped off (split_figure_panels.py,
-    --crop-top/--crop-bottom 0.10).
+    """ML 40 / neural-networks intro + history (lecture): the LMU "image
+    classification with neural networks" slide the user picked
+    (lmu_src/01_introduction.pdf, page 7 - the last build of a four-page
+    animation, the one with image patches in every node). The layered network
+    whose units detect ever larger bird parts, next to the photo -> "some
+    magic" -> "Oh, it's a bird!" column: the representation-learning idea the
+    lecture opens with.
 
-    At aspect ~5 it is width-limited well before max_h binds, so it fills the
-    band edge to edge as a ribbon ~0.33 tall. The small event labels do not
-    survive thumbnail scale, but the coloured dots and bold years carry it;
-    lift centres the ribbon in the space under the title."""
-    _draw_image_row(fig, bbox, ["ml40_history_1.png"], max_h=0.60, lift=0.15)
+    Slide title, the Bengio quote and the footer are cropped off
+    (split_figure_panels.py --page 7 --crop-top 0.34 --crop-bottom 0.06); the
+    gutter scan then splits the two illustrations. Both are portrait (~0.77),
+    so the row is height-bound and cannot fill the band - pushed as tall as the
+    title allows instead.
+
+    Previous choice kept as an asset: ml40_history_1.png, the chapter's own
+    1943-2020s timeline (fig/dl_history.pdf)."""
+    _draw_image_row(fig, bbox, ["ml40_lmu_1.png", "ml40_lmu_2.png"],
+                    gap=0.06, max_h=0.64, lift=0.0)
 
 
 def draw_ml41_hidden_layers(fig, bbox):
-    """ML 41 / from one neuron to a multilayer net (lecture): the chapter's own
-    two-moons pair, fig/two_moons_logreg.pdf and fig/two_moons_mlp.pdf - one
-    straight cut that cannot separate the moons next to the bent boundary a
-    hidden layer buys. That contrast is the lecture's whole argument, and it is
-    already in flag red and blue. Panel titles (which carry train accuracy)
-    cropped off with split_figure_panels.py --crop-top 0.14.
+    """ML 41 / from one neuron to a multilayer net (lecture): a plain MLP
+    diagram - three inputs, four hidden layers, three outputs - from the LMU
+    deck the chapter draws on (lmu_src/02_multilayer-FNNs.pdf, page 6), picked
+    by the user so ML40 and ML41 share one visual source. Slide title cropped
+    above; the worked input vector x = (7, 1, -4) and the footer cropped below
+    (split_figure_panels.py --page 6 --crop-top 0.10 --crop-bottom 0.36), so
+    only the network and its Input/Hidden/Output labels remain.
 
-    Two ~1.55-aspect panels sum wide enough that the row is width-limited
-    (fh ~0.51) and fills the band edge to edge - unlike ML37's near-square pair.
-    The Welch Labs frames the deck also uses were passed over: black-background
-    video stills clash with the white thumbnail."""
-    _draw_image_row(fig, bbox,
-                    ["ml41_two_moons_logreg_1.png", "ml41_two_moons_mlp_1.png"],
-                    captions=["logistic regression", "MLP"],
-                    gap=0.03, max_h=0.60, lift=0.04)
+    Single ~2:1 hero, height-bound, no caption. Previous choice kept as assets:
+    ml41_two_moons_logreg_1.png / ml41_two_moons_mlp_1.png, the chapter's own
+    straight-cut vs bent-boundary pair."""
+    _draw_image_row(fig, bbox, ["ml41_lmu_mlp_1.png"], max_h=0.64, lift=0.0)
 
 
 # ---------- lesson configs ----------
@@ -1700,23 +1704,23 @@ LESSONS = [
         "bar_color": UNSUP_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML39.png",
     },
-    # ML 40 - neural networks intro + history (lecture): the 1943-2020s deep
-    # learning timeline. First lesson of the neural-networks block.
+    # ML 40 - neural networks intro + history (lecture): the LMU "Oh, it's a
+    # bird!" representation-learning slide. First lesson of the NN block.
     {
-        "tag": "ML 40", "title": "Neural networks",
+        "tag": "ML 40", "title": "Deep learning",
         "title_size": 50, "title_max": 74, "title_latin": True,
         "draw": draw_ml40_history,
         "bar_color": DL_BAR,
-        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML40.png",
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML40.png",
     },
-    # ML 41 - one neuron to a multilayer network (lecture): logistic regression's
-    # straight cut vs an MLP's bent boundary on two moons.
+    # ML 41 - one neuron to a multilayer network (lecture): a plain LMU MLP
+    # diagram, same source as ML40's slide.
     {
-        "tag": "ML 41", "title": "Hidden layers",
+        "tag": "ML 41", "title": "From neuron to network",
         "title_size": 50, "title_max": 74, "title_latin": True,
         "draw": draw_ml41_hidden_layers,
         "bar_color": DL_BAR,
-        "chart_bbox": (0.05, 0.05, 0.92, 0.46), "out": "ML41.png",
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML41.png",
     },
 ]
 
