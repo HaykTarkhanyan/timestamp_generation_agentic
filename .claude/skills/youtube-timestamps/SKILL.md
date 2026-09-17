@@ -314,6 +314,7 @@ The stage-4 abstract goes here.
 
 **Fixed elements that NEVER change:**
 - The **title header on top**: the first line is `🎬 Վերնագիր՝ <chosen title>`, followed by a blank line, a divider line (`──────────────────────────────`), and a blank line, then the rest of the template. The user wants this so they can copy ONE file and set both the YouTube title and description from it. Use the title the user picked from `titles.txt` (or, running unattended, your top recommendation from that file). Put the title verbatim — pure Armenian if that is what was chosen; the channel suffix (`| Մեքենայական ուսուցում`) is optional, add it only if the chosen title already includes it.
+  - **This header is local-only: it must never reach YouTube.** The title is its own YouTube field, and the user was deleting the header by hand in YouTube Studio after every API push (ML36-41). `scripts/yt_publish.py set-description` now strips it automatically before uploading (and raises if the top of the file starts with `🎬` but isn't in the `title / blank / divider / blank` layout), so push `final/ML<NN>.txt` as-is. If you ever publish a description by any other route, drop those first four lines yourself.
 - The two emoji-header lines (`🔗 Դասընթացին միանալու հղումը՝` and `📚 Նյութը՝`) and the Telegram URL (`https://t.me/metric_academy`) are baked in. Always include them verbatim.
 - The emoji headers above timestamps (`⏳ Թեմաներ՝`) and abstract (`📌 Նկարագիր`) are required.
 

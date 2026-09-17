@@ -20,6 +20,12 @@ Usage:
   python scripts/yt_publish.py set-title       <VIDEO_ID> titles.txt
   python scripts/yt_publish.py set-description  <VIDEO_ID> final/ML18.txt
   python scripts/yt_publish.py set-thumbnail   <VIDEO_ID> thumbnails/ML18.png
+
+set-description uploads the description WITHOUT its leading title header. The
+local final/ML*.txt files open with "🎬 Վերնագիր՝ <title>", a blank line, a
+divider and a blank line, so one file carries both title and description for
+copy-paste - but the title is its own YouTube field, and the user was deleting
+that header by hand in YouTube Studio after every push (ML36-41).
 """
 
 import argparse
@@ -103,11 +109,38 @@ def get_service():
     return build("youtube", "v3", credentials=creds)
 
 
+TITLE_HEADER_MARK = "🎬"
+DIVIDER_CHAR = "─"
+
+
+def strip_title_header(text: str) -> str:
+    """Drop the local-only title header block from a description file's text.
+
+    Expected layout when present: "🎬 ..." / "" / "────..." / "" / body. A file
+    with no header (it starts elsewhere) is returned unchanged - there is
+    nothing to strip. A file that starts with the header mark but does not
+    follow that layout raises, rather than guessing which lines to cut."""
+    if not text.startswith(TITLE_HEADER_MARK):
+        log.info("No title header at the top of the description; uploading as is")
+        return text
+    lines = text.split("\n")
+    divider = lines[2].strip() if len(lines) > 4 else ""
+    if not (divider and set(divider) == {DIVIDER_CHAR}
+            and lines[1].strip() == "" and lines[3].strip() == ""):
+        raise ValueError(
+            "Description starts with the title header mark but not the expected "
+            "'🎬 title / blank / divider / blank' layout - refusing to guess what to strip"
+        )
+    body = "\n".join(lines[4:]).lstrip("\n")
+    log.info(f"Stripped title header ({len(text) - len(body)} chars): {lines[0]!r}")
+    return body
+
+
 def set_description(video_id: str, desc_file: str) -> None:
     path = Path(desc_file)
     if not path.exists():
         raise FileNotFoundError(f"Description file not found: {path}")
-    text = path.read_text(encoding="utf-8").strip("\n")
+    text = strip_title_header(path.read_text(encoding="utf-8").strip("\n"))
     if len(text) > MAX_DESCRIPTION_CHARS:
         raise ValueError(
             f"Description is {len(text)} chars, exceeds YouTube limit of {MAX_DESCRIPTION_CHARS}"
