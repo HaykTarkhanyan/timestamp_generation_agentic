@@ -59,6 +59,29 @@ ls "C:/Users/hayk_/OneDrive/Desktop/01_python_math_ml_course/ml/<NN>_<section>/f
 ```
 Then Read the candidate PDFs (the Read tool renders them as images) to judge which read well at thumbnail scale. Prefer clean single-plot figures; skip busy multi-panel ones for a single band, or pair two clean ones side by side.
 
+### If `fig/` has nothing for the lesson's key idea, the DECK does
+
+Not every lesson ships its central diagram as a standalone figure. Some draw it
+inline in the slide deck with TikZ, so it exists only as a page of
+`ml/<NN>_<section>/<NN>_<name>.pdf`. Grep the lesson's `.tex` for what it
+actually includes, and if the answer is "almost nothing", go to the deck:
+
+```bash
+grep -oE "(includegraphics|input)[^}]*\{[^}]*\}" <NN>_<name>.tex | grep -oE "(fig|img)/[a-zA-Z0-9_]+" | sort -u
+pdftotext -layout <NN>_<name>.pdf - | awk 'BEGIN{p=1} //{p++} {if (length($0)>3 && !seen[p]++) print p": "$0}'
+```
+
+The second command prints one line per slide (page number + its title), which is
+the fastest way to find the page you want. Then pull that page with
+`pdf_to_asset.py --page N`, cropping the slide's own title, bullets and footer
+away so only the diagram is left.
+
+> Learned 2026-09-18: ML42 (backpropagation) has exactly two figures in `fig/`,
+> neither about backprop - the XOR net with the loss flowing backwards is drawn
+> inline on slide 40 of `42_training_backprop.pdf`. Same for ML43's dropout
+> parent-net/subnet pair (slides 32 and 35). Both are the best visual the lesson
+> has; `fig/` alone would have missed them.
+
 ## The locked design (do not change)
 
 - Canvas 1280x720 (`figsize=(12.8, 7.2), dpi=100`), white background.
@@ -81,7 +104,9 @@ A stray `Glyph NN (x) missing from font Adamathuz` warning during title fitting 
 
 1. **Identify the lesson** (number + the one key idea the thumbnail should land) and **whether it is a lecture or a practical** (Գործնական). The video's current title / the reference deck names it.
 2. **STEP 0 - source REAL figures** (see THE RULE):
-   - **Lecture** -> scan `ml/<NN>_<section>/fig/` and Read the promising PDFs.
+   - **Lecture** -> scan `ml/<NN>_<section>/fig/` and Read the promising PDFs. If nothing
+     there covers the lesson's central idea, check the deck's own slides (see "If `fig/`
+     has nothing" above) before considering anything synthetic.
    - **Practical** -> find the practical's solution notebook and extract its embedded plot outputs (its plots are on the practical's OWN dataset; `fig/` would be the wrong data). See "PRACTICALS" under THE RULE.
 3. **Propose the visual to the user.** Thumbnails are brand-facing and the user has strong opinions - offer 2-3 concepts (real-figure vs synthetic, one-panel vs two) and let them pick. Use `AskUserQuestion` with short ASCII previews.
 4. **Turn each chosen figure into a trimmed PNG asset** in `thumbnails/assets/ml<NN>_<slug>.png`:
@@ -91,6 +116,11 @@ A stray `Glyph NN (x) missing from font Adamathuz` warning during title fitting 
          thumbnails/assets/ml<NN>_<slug>.png --dpi 300 --crop-top 0.10
      ```
      `--crop-top` drops the figure's own title band (tune the fraction; also `--crop-bottom/-left/-right`). It renders (PyMuPDF), crops, and trims the white margin.
+   - **A diagram that lives on a slide** -> same script with `--page N` (1-based) and a
+     bigger `--dpi`, since a diagram drawn inline is small on the page:
+     ```bash
+     python scripts/pdf_to_asset.py "<ref>/ml/<NN>_<sec>/<NN>_<name>.pdf"          thumbnails/assets/ml<NN>_<slug>.png --dpi 900 --page 40          --crop-top 0.41 --crop-bottom 0.375
+     ```
    - **Practical notebook PNG** -> the extracted `imgNN_*.png` is already raster; crop its title band + trim white with a short PIL step (see "PRACTICALS" under THE RULE).
    - Either way, **VIEW the asset** to confirm the crop.
 5. **Add a draw function** in `make_thumbnails_final.py`:

@@ -5,14 +5,14 @@ Course lecture figures live as vector PDFs in the reference repo's per-chapter
 thumbnail (via make_thumbnails_final.py's _draw_image_row), it must first be a
 tightly-cropped PNG on a white background. This script does that:
 
-  1. render page 1 at high DPI (PyMuPDF),
+  1. render page 1 (or --page N) at high DPI (PyMuPDF),
   2. optionally crop a fraction off any edge (to drop a figure title / legend),
   3. trim the surrounding white margin so the figure fills the frame.
 
 Fails loudly: a missing input, an empty page, or an all-white result raises.
 
 Usage:
-  python scripts/pdf_to_asset.py <in.pdf> <out.png> [--dpi 300]
+  python scripts/pdf_to_asset.py <in.pdf> <out.png> [--dpi 300] [--page N]
       [--crop-top F] [--crop-bottom F] [--crop-left F] [--crop-right F]
       [--pad PX] [--bg 0-255]
 
@@ -44,19 +44,26 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
-def rasterize(pdf_path: Path, dpi: int):
-    """Render page 1 of the PDF to a PIL RGB image at the given DPI."""
+def rasterize(pdf_path: Path, dpi: int, page: int = 1):
+    """Render one 1-based page of the PDF to a PIL RGB image at the given DPI.
+
+    Standalone `fig/*.pdf` figures are single-page, so page 1 is the default.
+    Some lessons draw their key diagram inline in the slide deck instead (the
+    backprop computational graph lives only on a slide of 42_training_backprop.pdf),
+    and --page pulls that slide out the same way."""
     import fitz  # PyMuPDF
     from PIL import Image
 
     doc = fitz.open(str(pdf_path))
     if doc.page_count < 1:
         raise ValueError(f"PDF has no pages: {pdf_path}")
-    if doc.page_count > 1:
+    if not 1 <= page <= doc.page_count:
+        raise ValueError(f"{pdf_path} has {doc.page_count} pages, --page {page} is out of range")
+    if doc.page_count > 1 and page == 1:
         log.warning(f"{pdf_path.name} has {doc.page_count} pages; using page 1 only")
-    pix = doc[0].get_pixmap(dpi=dpi, alpha=False)
+    pix = doc[page - 1].get_pixmap(dpi=dpi, alpha=False)
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-    log.info(f"Rendered {pdf_path.name} at {dpi} dpi -> {img.width}x{img.height}px")
+    log.info(f"Rendered {pdf_path.name} p{page} at {dpi} dpi -> {img.width}x{img.height}px")
     return img
 
 
@@ -93,6 +100,8 @@ def main():
     ap.add_argument("pdf", type=Path)
     ap.add_argument("out", type=Path)
     ap.add_argument("--dpi", type=int, default=300)
+    ap.add_argument("--page", type=int, default=1,
+                    help="1-based page; a lesson deck keeps its diagrams past page 1")
     ap.add_argument("--crop-top", type=float, default=0.0)
     ap.add_argument("--crop-bottom", type=float, default=0.0)
     ap.add_argument("--crop-left", type=float, default=0.0)
@@ -104,7 +113,7 @@ def main():
     if not args.pdf.exists():
         raise FileNotFoundError(f"Input PDF not found: {args.pdf}")
 
-    img = rasterize(args.pdf, args.dpi)
+    img = rasterize(args.pdf, args.dpi, args.page)
     img = crop_fractions(img, args.crop_top, args.crop_bottom, args.crop_left, args.crop_right)
     img = trim_white(img, args.bg, args.pad)
 
