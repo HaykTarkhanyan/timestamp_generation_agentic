@@ -1406,6 +1406,28 @@ def draw_ml41_hidden_layers(fig, bbox):
 
 # ---------- lesson configs ----------
 
+def draw_ml42_backprop(fig, bbox):
+    """ML 42 / training and backpropagation (lecture): the worked XOR net with
+    the loss flowing backwards - the red dashed chain from L(y, f(x)) through
+    f_out, f_in, z_1,out, z_1,in to W_11, exactly the five factors the slide's
+    chain-rule product spells out. The chapter has no fig/ figure for this; the
+    diagram is drawn inline on slide 40 of 42_training_backprop.pdf, so it is
+    cropped straight off that page (pdf_to_asset.py --page 40, formulas above
+    and the SGD update below cropped away)."""
+    _draw_image_row(fig, bbox, ["ml42_backprop.png"], max_h=0.62, lift=0.03)
+
+
+def draw_ml43_dropout(fig, bbox):
+    """ML 43 / regularizing neural networks (lecture): the parent net next to
+    one dropout subnet - the densely wired network and the thinned one that a
+    single training step actually sees. Slides 32 and 35 of
+    43_nn_regularization.pdf (pdf_to_asset.py --page), titles and captions
+    cropped away so only the two networks remain."""
+    _draw_image_row(fig, bbox, ["ml43_parent.png", "ml43_subnet.png"],
+                    captions=["ամբողջ ցանցը", "dropout-ից հետո"],
+                    gap=0.04, max_h=0.55, lift=0.02)
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -1721,6 +1743,24 @@ LESSONS = [
         "draw": draw_ml41_hidden_layers,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML41.png",
+    },
+    # ML 42 - training + backpropagation (lecture): the XOR net with the loss
+    # flowing backwards, cropped off the lesson's own slide 40.
+    {
+        "tag": "ML 42", "title": "Backpropagation",
+        "title_size": 50, "title_max": 74, "title_latin": True,
+        "draw": draw_ml42_backprop,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML42.png",
+    },
+    # ML 43 - regularizing neural networks (lecture): parent net vs one dropout
+    # subnet, from the lesson's own slides 32 and 35.
+    {
+        "tag": "ML 43", "title": "Neural Nets: Regularization",
+        "title_size": 50, "title_max": 74, "title_latin": True,
+        "draw": draw_ml43_dropout,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML43.png",
     },
 ]
 
