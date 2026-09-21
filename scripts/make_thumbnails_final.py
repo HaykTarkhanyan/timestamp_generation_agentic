@@ -1428,6 +1428,27 @@ def draw_ml43_dropout(fig, bbox):
                     gap=0.04, max_h=0.55, lift=0.02)
 
 
+def draw_ml44_optimization(fig, bbox):
+    """ML 44 / optimizing neural networks (lecture): fig/lr_schedules.pdf - the
+    four learning-rate schedules the lesson compares (constant, LMU's linear
+    decay, Vaswani's warmup + inverse sqrt, Llama 2's warmup + cosine to 10%),
+    with the warmup band shaded at the left. Already drawn in the flag palette.
+
+    Alternative kept as an asset: ml44_adamw.png (fig/adam_l2_vs_adamw.pdf), the
+    AdamW payoff - Adam+L2 decays large- and small-gradient weights completely
+    differently, AdamW decays both the same."""
+    _draw_image_row(fig, bbox, ["ml44_lr_schedules.png"], max_h=0.62, lift=0.02)
+
+
+def draw_ml45_init_activations(fig, bbox):
+    """ML 45 / initialization and activation functions (lecture):
+    fig/act_relu_family.pdf - the whole ReLU family (ReLU, Leaky ReLU, ELU,
+    SELU, GELU) with each function next to its derivative, which is the panel
+    that matters: the derivative is what vanishes and what the lesson is really
+    about."""
+    _draw_image_row(fig, bbox, ["ml45_activations.png"], max_h=0.60, lift=0.02)
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -1761,6 +1782,24 @@ LESSONS = [
         "draw": draw_ml43_dropout,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML43.png",
+    },
+    # ML 44 - optimizing neural networks (lecture): the learning-rate schedules
+    # figure, warmup band included.
+    {
+        "tag": "ML 44", "title": "Neural Nets: Optimization",
+        "title_size": 50, "title_max": 74, "title_latin": True,
+        "draw": draw_ml44_optimization,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML44.png",
+    },
+    # ML 45 - initialization + activation functions (lecture): the ReLU family
+    # and its derivatives.
+    {
+        "tag": "ML 45", "title": "Init and activations",
+        "title_size": 50, "title_max": 74, "title_latin": True,
+        "draw": draw_ml45_init_activations,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML45.png",
     },
 ]
 
