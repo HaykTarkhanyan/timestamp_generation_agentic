@@ -1795,7 +1795,7 @@ LESSONS = [
     # ML 45 - initialization + activation functions (lecture): the ReLU family
     # and its derivatives.
     {
-        "tag": "ML 45", "title": "Init and activations",
+        "tag": "ML 45", "title": "Neural Nets: Init and activations",
         "title_size": 50, "title_max": 74, "title_latin": True,
         "draw": draw_ml45_init_activations,
         "bar_color": DL_BAR,
