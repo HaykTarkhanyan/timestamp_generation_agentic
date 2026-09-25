@@ -1449,6 +1449,64 @@ def draw_ml45_init_activations(fig, bbox):
     _draw_image_row(fig, bbox, ["ml45_activations.png"], max_h=0.60, lift=0.02)
 
 
+def draw_ml46_numpy_net(fig, bbox):
+    """ML 46 / a neural network from scratch in NumPy (practical): the NumPy
+    logo next to the exact network 46_nn_from_scratch.ipynb builds - 2 inputs ->
+    64 hidden -> 1 sigmoid output, weights W1 (2x64) and W2 (64x1) written by
+    hand. The user's concept: the notebook's own plots (moons boundary + loss
+    curves, img02 of its outputs) are real but would look the same out of
+    sklearn's MLPClassifier; "only NumPy" is the point of the lesson, and the
+    logo says it at phone size. Drawn rather than borrowed because no course
+    figure shows this 2-64-1 net (ML41's LMU diagram is 3 -> 4 layers -> 3).
+
+    Hidden layer = 6 drawn units around an ellipsis, labelled 64. Logo asset:
+    thumbnails/assets/logos/ml46_numpy.png, rasterized from the official
+    numpy/numpy branding/logo/primary/numpylogo.svg with pdf_to_asset.py. That
+    SVG colours its paths through a CSS <style> block, which PyMuPDF ignores
+    (the logo renders solid black), so the fills are inlined first:
+        sed -e 's/class="cls-1"/fill="#4D77CF"/g' \\
+            -e 's/class="cls-2"/fill="#4DABCF"/g' numpylogo.svg > fills.svg"""
+    x0, y0, w, h = bbox
+    logo = plt.imread(str(OUT_DIR / "assets" / "logos" / "ml46_numpy.png"))
+    k = 7.2 / 12.8                                  # y-fraction to x-fraction
+    logo_w = 0.42 * w
+    logo_h = logo_w / (logo.shape[1] / logo.shape[0]) / k
+    ax = fig.add_axes([x0 + 0.02, y0 + (h - logo_h) / 2, logo_w, logo_h])
+    ax.imshow(logo)
+    ax.axis("off")
+
+    net_x0 = x0 + 0.02 + logo_w + 0.06
+    ax = fig.add_axes([net_x0, y0, x0 + w - net_x0, h])
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    xs_in, xs_hid, x_out = 0.14, 0.52, 0.90
+    ys_in = [0.33, 0.67]
+    ys_hid = [0.92, 0.78, 0.64, 0.36, 0.22, 0.08]
+    y_out = 0.50
+    for yi in ys_in:
+        for yh in ys_hid:
+            ax.plot([xs_in, xs_hid], [yi, yh], color="#9a9a9a", lw=1.3, zorder=1)
+    for yh in ys_hid:
+        ax.plot([xs_hid, x_out], [yh, y_out], color="#9a9a9a", lw=1.3, zorder=1)
+    node = dict(s=1100, edgecolors=TITLE_COLOR, linewidths=1.8, zorder=3,
+                clip_on=False)
+    ax.scatter([xs_in] * 2, ys_in, color=POINT_COLOR, **node)
+    ax.scatter([xs_hid] * len(ys_hid), ys_hid, color=BAR, **node)
+    ax.scatter([x_out], [y_out], color=LINE_COLOR, **node)
+    ax.text(xs_hid, 0.50, "⋮", ha="center", va="center", fontsize=30,
+            color=TITLE_COLOR, family="DejaVu Sans")
+    ax.text(xs_hid + 0.07, 0.50, "64", ha="left", va="center", fontsize=24,
+            fontweight="bold", color=TITLE_COLOR, family="DejaVu Sans")
+    for x, y, s in [(xs_in - 0.08, ys_in[1], "x₁"), (xs_in - 0.08, ys_in[0], "x₂"),
+                    (x_out + 0.08, y_out, "ŷ")]:
+        ax.text(x, y, s, ha="center", va="center", fontsize=26,
+                color=TITLE_COLOR, family="DejaVu Sans")
+    for x, s in [((xs_in + xs_hid) / 2, "W₁"), ((xs_hid + x_out) / 2, "W₂")]:
+        ax.text(x, 1.02, s, ha="center", va="bottom", fontsize=24,
+                fontweight="bold", color=TITLE_COLOR, family="DejaVu Sans")
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -1800,6 +1858,14 @@ LESSONS = [
         "draw": draw_ml45_init_activations,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.46), "out": "ML45.png",
+    },
+    {
+        "tag": "ML 46",
+        "title_segments": [("Neural Net ", "latin"), ("ԶՐՈՅԻՑ", "arm")],
+        "title_size": 50, "title_max": 74,
+        "draw": draw_ml46_numpy_net, "practical": True,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.05, 0.92, 0.56), "out": "ML46.png",
     },
 ]
 
