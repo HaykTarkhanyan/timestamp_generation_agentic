@@ -1518,30 +1518,13 @@ def draw_ml47_name_inventor(fig, bbox):
     matplotlib would render that colour font as a black silhouette.
     Previous version (kept below the arrow code as a comment): the surname
     itself, ՓԻԼԱՔ + a red ՅԱՆ."""
-    ax = fig.add_axes(bbox)
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
+    # Laid out in pixels (an axes over the whole canvas, 1 unit = 1 px) so the
+    # group - net, arrow, ladder - can be centred exactly: horizontally between
+    # the coloured stripe and the right edge, vertically in the band.
+    W, H = 1280, 720
+    ax = fig.add_axes([0, 0, 1, 1])
     ax.axis("off")
-    layers = [(0.04, [0.30, 0.50, 0.70], POINT_COLOR),
-              (0.17, [0.14, 0.32, 0.50, 0.68, 0.86], BAR),
-              (0.30, [0.50], LINE_COLOR)]
-    for (x0, ys0, _), (x1, ys1, _) in zip(layers, layers[1:]):
-        for a in ys0:
-            for b in ys1:
-                ax.plot([x0, x1], [a, b], color="#9a9a9a", lw=1.3, zorder=1)
-    for x, ys, color in layers:
-        ax.scatter([x] * len(ys), ys, s=900, color=color, edgecolors=TITLE_COLOR,
-                   linewidths=1.8, zorder=3, clip_on=False)
-    ax.annotate("", xy=(0.47, 0.5), xytext=(0.35, 0.5),
-                arrowprops=dict(arrowstyle="-|>,head_length=1.2,head_width=0.7",
-                                lw=7, color=TITLE_COLOR))
-    # Previous version, the surname instead of the ladder:
-    # word = ax.text(0.50, 0.5, "ՓԻԼԱՔ", ha="left", va="center", fontsize=84,
-    #                fontproperties=ARM_PROPS, color=TITLE_COLOR)
-    # fig.canvas.draw()
-    # x_end = word.get_window_extent().transformed(ax.transData.inverted()).x1
-    # ax.text(x_end, 0.5, "ՅԱՆ", ha="left", va="center", fontsize=84,
-    #         fontproperties=ARM_PROPS, color=LINE_COLOR)
+
     emoji_font = ImageFont.truetype("C:/Windows/Fonts/seguiemj.ttf", 400)
     im = Image.new("RGBA", (600, 600), (255, 255, 255, 0))
     ImageDraw.Draw(im).text((300, 300), "\U0001FA9C", font=emoji_font,
@@ -1550,13 +1533,43 @@ def draw_ml47_name_inventor(fig, bbox):
     if ink is None:
         raise ValueError("ladder emoji rendered empty - Segoe UI Emoji lacks U+1FA9C?")
     im = im.crop(ink)
-    x0, y0, w, h = bbox
-    eh = 0.80 * h                                       # emoji height, figure fraction
-    ew = eh * (im.width / im.height) * (7.2 / 12.8)
-    cx = x0 + 0.70 * w
-    ax_e = fig.add_axes([cx - ew / 2, y0 + (h - eh) / 2, ew, eh])
-    ax_e.imshow(np.asarray(im))
-    ax_e.axis("off")
+
+    cy = (bbox[1] + bbox[3] / 2) * H                  # vertical centre of the band
+    gh = 0.78 * bbox[3] * H                           # group height: net and ladder alike
+    r = 21                                            # node radius: s=900 pt^2 -> 30 pt -> ~42 px
+    net_w, gap, arrow_w = 280, 60, 150
+    lad_w = gh * im.width / im.height
+    lean = 0.12 * lad_w                               # the ladder leans: at mid-height its left
+                                                      # rail sits this far right of its box
+    total = 2 * r + net_w + gap + arrow_w + gap - lean + lad_w
+    left = (0.024 * W + W) / 2 - total / 2           # stripe is 0.024 of the width
+    xs = [left + r, left + r + net_w / 2, left + r + net_w]
+    layers = [(xs[0], cy + np.array([-1, 0, 1]) * gh * 0.27, POINT_COLOR),
+              (xs[1], cy + np.linspace(-1, 1, 5) * (gh / 2 - r), BAR),
+              (xs[2], np.array([cy]), LINE_COLOR)]
+    for (x0, ys0, _), (x1, ys1, _) in zip(layers, layers[1:]):
+        for a in ys0:
+            for b in ys1:
+                ax.plot([x0, x1], [a, b], color="#9a9a9a", lw=1.3, zorder=1)
+    for x, ys, color in layers:
+        ax.scatter([x] * len(ys), ys, s=900, color=color, edgecolors=TITLE_COLOR,
+                   linewidths=1.8, zorder=3, clip_on=False)
+    a0 = xs[2] + r + gap
+    ax.annotate("", xy=(a0 + arrow_w, cy), xytext=(a0, cy),
+                arrowprops=dict(arrowstyle="-|>,head_length=1.2,head_width=0.7",
+                                lw=7, color=TITLE_COLOR, shrinkA=0, shrinkB=0))
+    l0 = a0 + arrow_w + gap - lean
+    ax.imshow(np.asarray(im), extent=[l0, l0 + lad_w, cy - gh / 2, cy + gh / 2],
+              aspect="auto", zorder=3)
+    ax.set_xlim(0, W)                                 # imshow resets the limits
+    ax.set_ylim(0, H)
+    # Previous version, the surname instead of the ladder:
+    # word = ax.text(0.50, 0.5, "ՓԻԼԱՔ", ha="left", va="center", fontsize=84,
+    #                fontproperties=ARM_PROPS, color=TITLE_COLOR)
+    # fig.canvas.draw()
+    # x_end = word.get_window_extent().transformed(ax.transData.inverted()).x1
+    # ax.text(x_end, 0.5, "ՅԱՆ", ha="left", va="center", fontsize=84,
+    #         fontproperties=ARM_PROPS, color=LINE_COLOR)
 
 
 LESSONS = [
