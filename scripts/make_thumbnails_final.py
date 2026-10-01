@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import font_manager
 from matplotlib.patches import Rectangle, Circle
+from PIL import Image, ImageDraw, ImageFont
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registers 3d projection)
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
@@ -1509,10 +1510,14 @@ def draw_ml46_numpy_net(fig, bbox):
 
 def draw_ml47_name_inventor(fig, bbox):
     """ML 47 / the Armenian surname generator (practical): a small net, an
-    arrow, and the surname it writes - Փիլաքյան, the example the lecture opens
-    with (it is not one of the 689 training surnames). The user asked for this
-    simple picture over the notebook's plots. The -յան ending is in red: 945 of
-    the trained model's 1000 inventions end that way."""
+    arrow, and a ladder emoji. The lecture's opening example surname is
+    Փիլաքյան, which (as the user pointed out) means ladder, so the net "writes"
+    a ladder. The user asked for this simple picture over the notebook's plots.
+
+    The emoji (U+1FA9C) is drawn in colour by PIL from Windows' Segoe UI Emoji:
+    matplotlib would render that colour font as a black silhouette.
+    Previous version (kept below the arrow code as a comment): the surname
+    itself, ՓԻԼԱՔ + a red ՅԱՆ."""
     ax = fig.add_axes(bbox)
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -1530,12 +1535,28 @@ def draw_ml47_name_inventor(fig, bbox):
     ax.annotate("", xy=(0.47, 0.5), xytext=(0.35, 0.5),
                 arrowprops=dict(arrowstyle="-|>,head_length=1.2,head_width=0.7",
                                 lw=7, color=TITLE_COLOR))
-    word = ax.text(0.50, 0.5, "ՓԻԼԱՔ", ha="left", va="center", fontsize=84,
-                   fontproperties=ARM_PROPS, color=TITLE_COLOR)
-    fig.canvas.draw()
-    x_end = word.get_window_extent().transformed(ax.transData.inverted()).x1
-    ax.text(x_end, 0.5, "ՅԱՆ", ha="left", va="center", fontsize=84,
-            fontproperties=ARM_PROPS, color=LINE_COLOR)
+    # Previous version, the surname instead of the ladder:
+    # word = ax.text(0.50, 0.5, "ՓԻԼԱՔ", ha="left", va="center", fontsize=84,
+    #                fontproperties=ARM_PROPS, color=TITLE_COLOR)
+    # fig.canvas.draw()
+    # x_end = word.get_window_extent().transformed(ax.transData.inverted()).x1
+    # ax.text(x_end, 0.5, "ՅԱՆ", ha="left", va="center", fontsize=84,
+    #         fontproperties=ARM_PROPS, color=LINE_COLOR)
+    emoji_font = ImageFont.truetype("C:/Windows/Fonts/seguiemj.ttf", 400)
+    im = Image.new("RGBA", (600, 600), (255, 255, 255, 0))
+    ImageDraw.Draw(im).text((300, 300), "\U0001FA9C", font=emoji_font,
+                            embedded_color=True, anchor="mm")
+    ink = im.getbbox()
+    if ink is None:
+        raise ValueError("ladder emoji rendered empty - Segoe UI Emoji lacks U+1FA9C?")
+    im = im.crop(ink)
+    x0, y0, w, h = bbox
+    eh = 0.80 * h                                       # emoji height, figure fraction
+    ew = eh * (im.width / im.height) * (7.2 / 12.8)
+    cx = x0 + 0.70 * w
+    ax_e = fig.add_axes([cx - ew / 2, y0 + (h - eh) / 2, ew, eh])
+    ax_e.imshow(np.asarray(im))
+    ax_e.axis("off")
 
 
 LESSONS = [
