@@ -1507,6 +1507,37 @@ def draw_ml46_numpy_net(fig, bbox):
                 fontweight="bold", color=TITLE_COLOR, family="DejaVu Sans")
 
 
+def draw_ml47_name_inventor(fig, bbox):
+    """ML 47 / the Armenian surname generator (practical): a small net, an
+    arrow, and the surname it writes - Փիլաքյան, the example the lecture opens
+    with (it is not one of the 689 training surnames). The user asked for this
+    simple picture over the notebook's plots. The -յան ending is in red: 945 of
+    the trained model's 1000 inventions end that way."""
+    ax = fig.add_axes(bbox)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    layers = [(0.04, [0.30, 0.50, 0.70], POINT_COLOR),
+              (0.17, [0.14, 0.32, 0.50, 0.68, 0.86], BAR),
+              (0.30, [0.50], LINE_COLOR)]
+    for (x0, ys0, _), (x1, ys1, _) in zip(layers, layers[1:]):
+        for a in ys0:
+            for b in ys1:
+                ax.plot([x0, x1], [a, b], color="#9a9a9a", lw=1.3, zorder=1)
+    for x, ys, color in layers:
+        ax.scatter([x] * len(ys), ys, s=900, color=color, edgecolors=TITLE_COLOR,
+                   linewidths=1.8, zorder=3, clip_on=False)
+    ax.annotate("", xy=(0.47, 0.5), xytext=(0.35, 0.5),
+                arrowprops=dict(arrowstyle="-|>,head_length=1.2,head_width=0.7",
+                                lw=7, color=TITLE_COLOR))
+    word = ax.text(0.50, 0.5, "ՓԻԼԱՔ", ha="left", va="center", fontsize=84,
+                   fontproperties=ARM_PROPS, color=TITLE_COLOR)
+    fig.canvas.draw()
+    x_end = word.get_window_extent().transformed(ax.transData.inverted()).x1
+    ax.text(x_end, 0.5, "ՅԱՆ", ha="left", va="center", fontsize=84,
+            fontproperties=ARM_PROPS, color=LINE_COLOR)
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -1866,6 +1897,14 @@ LESSONS = [
         "draw": draw_ml46_numpy_net, "practical": True,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.05, 0.92, 0.56), "out": "ML46.png",
+    },
+    {
+        "tag": "ML 47",
+        "title_segments": [("Neural Net ", "latin"), ("ԱԶԳԱՆՈՒՆՆԵՐԻ ԳԵՆԵՐԱՏՈՐ", "arm")],
+        "title_size": 44, "title_max": 74,
+        "draw": draw_ml47_name_inventor, "practical": True,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.08, 0.92, 0.58), "out": "ML47.png",
     },
 ]
 
