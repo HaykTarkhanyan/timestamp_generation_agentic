@@ -48,12 +48,19 @@ python scripts/yt_publish.py set-description dQThBIudT14 final/ML18.txt
 
 # set the custom thumbnail
 python scripts/yt_publish.py set-thumbnail  dQThBIudT14 thumbnails/ML18.png
+
+# post the lecture-correction comment (only after the user confirmed its text)
+python scripts/yt_publish.py add-comment    dQThBIudT14 output/<dir>/correction_comment.txt
 ```
 
 ## Notes
 
-- **Quota:** each `set-description` and `set-thumbnail` costs 50 units; the
-  default daily quota is 10,000. A whole batch of lessons is nowhere near it.
+- **Quota:** each `set-description`, `set-thumbnail` and `add-comment` costs 50
+  units; the default daily quota is 10,000. A whole batch of lessons is nowhere near it.
+- **Comments can't be pinned through the API** - the Data API has no pin method.
+  Pin the correction comment by hand in YouTube Studio. `add-comment` refuses to
+  post an exact duplicate, since this tool has no delete; a wrong comment has to
+  be deleted in Studio.
 - **Custom thumbnails** require a phone-verified channel. You already use custom
   thumbnails, so you're set.
 - **Description edits replace the whole box.** The script preserves the existing

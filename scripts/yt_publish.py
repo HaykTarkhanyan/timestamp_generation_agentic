@@ -1,10 +1,12 @@
-"""Update YouTube video thumbnails and descriptions.
+"""Update YouTube video titles, descriptions and thumbnails, and post comments.
 
-By design this tool exposes ONLY these write operations (all via videos.update /
-thumbnails.set - metadata edits, never destructive):
+By design this tool exposes ONLY these write operations (never destructive):
   - set-title       (videos.update, part=snippet)
   - set-description (videos.update, part=snippet)
   - set-thumbnail   (thumbnails.set)
+  - add-comment     (commentThreads.insert) - the lecture-correction comment of
+                    the youtube-timestamps skill's last stage, posted only after
+                    the user confirms its content. The API cannot pin comments.
 plus one read-only helper:
   - recent          (list the channel's newest uploads, so you can grab a video id)
 
@@ -20,6 +22,7 @@ Usage:
   python scripts/yt_publish.py set-title       <VIDEO_ID> titles.txt
   python scripts/yt_publish.py set-description  <VIDEO_ID> final/ML18.txt
   python scripts/yt_publish.py set-thumbnail   <VIDEO_ID> thumbnails/ML18.png
+  python scripts/yt_publish.py add-comment     <VIDEO_ID> output/<dir>/correction_comment.txt
 
 set-description uploads the description WITHOUT its leading title header. The
 local final/ML*.txt files open with "🎬 Վերնագիր՝ <title>", a blank line, a
@@ -49,6 +52,7 @@ MAX_TITLE_CHARS = 100
 MAX_DESCRIPTION_CHARS = 5000
 MAX_THUMBNAIL_BYTES = 2 * 1024 * 1024
 THUMBNAIL_EXTS = {".jpg", ".jpeg", ".png"}
+MAX_COMMENT_CHARS = 10000
 
 
 def _setup_logging() -> logging.Logger:
@@ -212,6 +216,52 @@ def set_thumbnail(video_id: str, image_path: str) -> None:
     log.info(f"Set thumbnail for {video_id} from {path} ({size} bytes)")
 
 
+def add_comment(video_id: str, comment_file: str) -> None:
+    """Post a top-level comment on a video, as the channel, from a UTF-8 file.
+
+    Reads a file rather than a CLI argument for the same reason as set_title
+    (Armenian arguments get mangled on the way to Windows Python). Refuses to post
+    a comment whose exact text this channel already has on the video: there is no
+    delete in this tool, so a re-run must never leave a duplicate behind. Pinning
+    is not available in the YouTube Data API - pin it by hand in YouTube Studio."""
+    path = Path(comment_file)
+    if not path.exists():
+        raise FileNotFoundError(f"Comment file not found: {path}")
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n").strip()
+    if not text:
+        raise ValueError(f"Comment file is empty: {path}")
+    if len(text) > MAX_COMMENT_CHARS:
+        raise ValueError(f"Comment is {len(text)} chars, exceeds YouTube limit of {MAX_COMMENT_CHARS}")
+
+    yt = get_service()
+    items = yt.videos().list(part="snippet", id=video_id).execute().get("items", [])
+    if not items:
+        raise ValueError(f"No video found with id {video_id!r} (or not owned by this account)")
+    channel_id = items[0]["snippet"]["channelId"]
+    title = items[0]["snippet"].get("title", "")
+
+    page = None
+    while True:
+        resp = yt.commentThreads().list(part="snippet", videoId=video_id, maxResults=100,
+                                        textFormat="plainText", pageToken=page).execute()
+        for thread in resp.get("items", []):
+            top = thread["snippet"]["topLevelComment"]["snippet"]
+            same_author = top.get("authorChannelId", {}).get("value") == channel_id
+            same_text = top.get("textOriginal", "").replace("\r\n", "\n").strip() == text
+            if same_author and same_text:
+                raise ValueError(f"This exact comment is already on {video_id} "
+                                 f"(comment {thread['id']}) - not posting a duplicate")
+        page = resp.get("nextPageToken")
+        if not page:
+            break
+
+    body = {"snippet": {"channelId": channel_id, "videoId": video_id,
+                        "topLevelComment": {"snippet": {"textOriginal": text}}}}
+    resp = yt.commentThreads().insert(part="snippet", body=body).execute()
+    log.info(f"Posted comment {resp['id']} on {video_id} ({title!r}), {len(text)} chars. "
+             f"The API cannot pin it - pin it in YouTube Studio if wanted.")
+
+
 def list_recent(n: int) -> None:
     """List the channel's n most recent uploads (read-only) as: id  url  [published]  title."""
     yt = get_service()
@@ -235,7 +285,7 @@ def list_recent(n: int) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Update YouTube thumbnails/descriptions (no delete).")
+    parser = argparse.ArgumentParser(description="Update YouTube titles, descriptions, thumbnails; post comments (no delete).")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("auth", help="Run the one-time OAuth consent and store the token")
@@ -255,6 +305,10 @@ def main() -> None:
     p_thumb.add_argument("video_id")
     p_thumb.add_argument("image_path", help="Path to a jpg/png thumbnail (<= 2MB)")
 
+    p_comment = sub.add_parser("add-comment", help="Post a top-level comment as the channel")
+    p_comment.add_argument("video_id")
+    p_comment.add_argument("comment_file", help="UTF-8 file with the comment text")
+
     args = parser.parse_args()
 
     if args.command == "auth":
@@ -268,6 +322,8 @@ def main() -> None:
         set_description(args.video_id, args.desc_file)
     elif args.command == "set-thumbnail":
         set_thumbnail(args.video_id, args.image_path)
+    elif args.command == "add-comment":
+        add_comment(args.video_id, args.comment_file)
 
 
 if __name__ == "__main__":

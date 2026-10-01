@@ -1,17 +1,18 @@
 ---
 name: youtube-timestamps
-description: Fetch YouTube subtitles via yt-dlp and propose chapter timestamps (YouTube-style chapters / table of contents), a short abstract, hashtags, and a handful of title suggestions for a given video URL, then assemble the description + timestamps + hashtags into one paste-ready file. Use this whenever the user wants to generate timestamps, chapters, a table of contents, section markers, a summary/abstract, hashtags, or video title ideas for a YouTube video, even if they only paste a URL without explicitly saying "timestamps". Handles auto-generated subtitles in any language (default Armenian / hy). Five explicit workflows: fetch subtitles, generate timestamps from the transcript, verify the proposed timestamps, write an abstract, and assemble a combined YouTube description (abstract + timestamps + hashtags) alongside a small set of suggested video titles.
+description: Fetch YouTube subtitles via yt-dlp and propose chapter timestamps (YouTube-style chapters / table of contents), a short abstract, hashtags, and a handful of title suggestions for a given video URL, then assemble the description + timestamps + hashtags into one paste-ready file. Use this whenever the user wants to generate timestamps, chapters, a table of contents, section markers, a summary/abstract, hashtags, or video title ideas for a YouTube video, even if they only paste a URL without explicitly saying "timestamps". Handles auto-generated subtitles in any language (default Armenian / hy). Five explicit workflows: fetch subtitles, generate timestamps from the transcript, verify the proposed timestamps, write an abstract, and assemble a combined YouTube description (abstract + timestamps + hashtags) alongside a small set of suggested video titles. A final stage reviews the lecture for the speaker's own mistakes and, only after the user confirms, posts a correction comment.
 ---
 
 # YouTube Timestamp Generator
 
 Generate YouTube-style chapter timestamps, a short abstract, and hashtags for a video by fetching its (auto-generated) subtitles and reasoning about content structure, then assemble everything into one paste-ready description. Built for Armenian (`hy`) by default, works for any language yt-dlp can pull.
 
-The workflow is split into **five explicit stages**. Run them in order — do not try to do everything in one shot. Each stage's output is the next stage's input, and the user can inspect/edit between stages.
+The workflow is split into **five explicit stages, plus a final correctness review**. Run them in order — do not try to do everything in one shot. Each stage's output is the next stage's input, and the user can inspect/edit between stages.
 
 ```
-fetch  ->  generate  ->  verify  ->  abstract  ->  assemble
-(yt-dlp)   (LLM)         (script)    (LLM)        (LLM: + hashtags -> description.txt)
+fetch  ->  generate  ->  verify  ->  abstract  ->  assemble                                  ->  review
+(yt-dlp)   (LLM)         (script)    (LLM)        (LLM: + hashtags -> description.txt)          (LLM: lecture mistakes ->
+                                                                                                  confirm -> comment)
 ```
 
 ## Working directory
@@ -28,6 +29,8 @@ output/<YYYY-MM-DD>_<latin-slug>_<video-id>/
 ├── abstract.txt           # short abstract (stage 4) — intermediate
 ├── description.txt        # FINAL deliverable #1: abstract + timestamps + hashtags (stage 5)
 ├── titles.txt             # FINAL deliverable #2: 3-5 suggested YouTube titles (stage 5)
+├── review.md              # stage 6: the lecturer's mistakes found, with evidence
+├── correction_comment.txt # stage 6: draft comment, posted only after the user confirms
 └── logs/fetch_subtitles.log
 ```
 
@@ -373,6 +376,76 @@ If the existing title is already good (a real, content-describing title — not 
 
 ---
 
+## Stage 6: Correctness review (+ correction comment, only on confirmation)
+
+The last stage, after everything is published: read the lecture as a reviewer
+and find what the lecturer (the user) **got wrong**, so a correction comment
+can go under the video. Added 2026-10-01 at the user's request, after the ML47
+review found two reversed percentages and a wrong claim about a checkpoint.
+
+### 1. Hunt
+
+Go through the transcript looking for:
+- **Numbers that disagree with the lesson's sources.** For a practical, the
+  solution notebook's printed outputs (`ml/<NN>_*/<NN>_*.ipynb`); for a lecture,
+  the slide deck / notes. Extract the outputs and compare: counts, percentages,
+  parameter counts, losses, shapes.
+- **Reversed statements**: "X% did not happen" when X% did; "A of B" when it is
+  B of A. These are the most common slip and the most misleading.
+- **Self-contradictions** within the lecture (39 in one place, 40 in another).
+- **Claims about what the code does** that the code does not do (e.g. what a
+  checkpoint contains) - check the notebook source, not memory.
+- **Formula slips**, wrong definitions, wrong dates or attributions.
+- **News and fast-changing facts** (acquisitions, renames, prices, model
+  versions): verify each with a web search, and cite it.
+- **Framing that the lesson's own results contradict** (calling an approach
+  worse when the comparison table shows it won).
+
+### 2. Separate what is certain from what is the captions
+
+Auto-captions garble numbers. For each finding decide:
+- **Clear mistake** - the transcript is unambiguous and the source disagrees.
+- **Maybe ASR** - the caption could be the recognizer, not the speaker (e.g.
+  "205000" for a correct "20,500"). These never go into the comment unless the
+  user confirms they said it.
+- **Framing** - not wrong, but misleading given the results.
+Also note what was checked and **correct**, briefly; it tells the user the
+review was real and not a fishing trip.
+
+### 3. Write it down
+
+- `<output-dir>/review.md`: one row per finding - timestamp, what was said,
+  what is correct, the evidence (notebook cell output, slide, URL), category.
+- `<output-dir>/correction_comment.txt`: the draft comment, in **Armenian, first
+  person** (it is posted from the channel, i.e. as the lecturer). Short: one
+  line per clear mistake, starting with its timestamp (YouTube makes
+  `M:SS` / `H:MM:SS` in comments clickable). Plain hyphens, no ASCII `<` `>`.
+  Clear mistakes only by default; framing items and news corrections only if
+  they matter to a viewer.
+
+### 4. Show, then STOP
+
+Present the findings (the review table, grouped by category) and the draft
+comment to the user, and **wait**. Do not post anything on a general "ok" to
+something else - the user confirms the comment itself, and may drop or reword
+items. Edit `correction_comment.txt` to match what they approve.
+
+If nothing is wrong, say so plainly and post nothing.
+
+### 5. Post (only after explicit confirmation)
+
+```bash
+python scripts/yt_publish.py add-comment <VIDEO_ID> <output-dir>/correction_comment.txt
+```
+
+It refuses to post a duplicate of a comment already on the video (the tool has
+no delete, so a re-run must not double-post). **The YouTube Data API cannot pin
+comments** - tell the user to pin it in YouTube Studio if they want it on top.
+A posted comment can only be deleted by hand in Studio, which is why step 4
+exists.
+
+---
+
 ## Defaults and conventions
 
 - **Language**: default `hy`. Override with `--lang` on fetch.
@@ -394,3 +467,5 @@ Present to the user:
 4. Any uncertainty flags from stage 2.
 5. The verifier's `issues` list if non-empty.
 6. Confirm the copy landed in `final/ML<NN>.txt`.
+7. The stage-6 correctness review and the draft correction comment - and ask
+   whether to post it. Never post it in the same breath as presenting it.
