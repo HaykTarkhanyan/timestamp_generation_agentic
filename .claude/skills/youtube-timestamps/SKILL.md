@@ -1,6 +1,6 @@
 ---
 name: youtube-timestamps
-description: Fetch YouTube subtitles via yt-dlp and propose chapter timestamps (YouTube-style chapters / table of contents), a short abstract, hashtags, and a handful of title suggestions for a given video URL, then assemble the description + timestamps + hashtags into one paste-ready file. Use this whenever the user wants to generate timestamps, chapters, a table of contents, section markers, a summary/abstract, hashtags, or video title ideas for a YouTube video, even if they only paste a URL without explicitly saying "timestamps". Handles auto-generated subtitles in any language (default Armenian / hy). Five explicit workflows: fetch subtitles, generate timestamps from the transcript, verify the proposed timestamps, write an abstract, and assemble a combined YouTube description (abstract + timestamps + hashtags) alongside a small set of suggested video titles. A final stage reviews the lecture for the speaker's own mistakes and, only after the user confirms, posts a correction comment.
+description: Fetch YouTube subtitles via yt-dlp and propose chapter timestamps (YouTube-style chapters / table of contents), a short abstract, hashtags, and a handful of title suggestions for a given video URL, then assemble the description + timestamps + hashtags into one paste-ready file. Use this whenever the user wants to generate timestamps, chapters, a table of contents, section markers, a summary/abstract, hashtags, or video title ideas for a YouTube video, even if they only paste a URL without explicitly saying "timestamps". Handles auto-generated subtitles in any language (default Armenian / hy). Five explicit workflows: fetch subtitles, generate timestamps from the transcript, verify the proposed timestamps, write an abstract, and assemble a combined YouTube description (abstract + timestamps + hashtags) alongside a small set of suggested video titles. A final stage reviews the lecture for the speaker's own mistakes and, only after the user confirms, adds the corrections to the description above the chapters.
 ---
 
 # YouTube Timestamp Generator
@@ -14,7 +14,7 @@ The workflow is split into **five explicit stages, plus a final correctness revi
 ```
 fetch  ->  generate  ->  verify  ->  abstract  ->  assemble                                  ->  review
 (yt-dlp)   (LLM)         (script)    (LLM)        (LLM: + hashtags -> description.txt)          (LLM: lecture mistakes ->
-                                                                                                  confirm -> comment)
+                                                                                                  confirm -> description)
 ```
 
 ## Working directory
@@ -32,7 +32,7 @@ output/<YYYY-MM-DD>_<latin-slug>_<video-id>/
 ├── description.txt        # FINAL deliverable #1: abstract + timestamps + hashtags (stage 5)
 ├── titles.txt             # FINAL deliverable #2: 3-5 suggested YouTube titles (stage 5)
 ├── review.md              # stage 6: the lecturer's mistakes found, with evidence
-├── correction_comment.txt # stage 6: draft comment, posted only after the user confirms
+├── corrections.txt        # stage 6: approved corrections, go into the description
 └── logs/fetch_subtitles.log
 ```
 
@@ -378,11 +378,11 @@ If the existing title is already good (a real, content-describing title — not 
 
 ---
 
-## Stage 6: Correctness review (+ correction comment, only on confirmation)
+## Stage 6: Correctness review (+ corrections in the description, only on confirmation)
 
 The last stage, after everything is published: read the lecture as a reviewer
-and find what the lecturer (the user) **got wrong**, so a correction comment
-can go under the video. Added 2026-10-01 at the user's request, after the ML47
+and find what the lecturer (the user) **got wrong**, so the corrections
+can go into the description (until 2026-10-03: a comment under the video). Added 2026-10-01 at the user's request, after the ML47
 review found two reversed percentages and a wrong claim about a checkpoint.
 
 ### 1. Hunt
@@ -408,7 +408,7 @@ Go through the transcript looking for:
 Auto-captions garble numbers. For each finding decide:
 - **Clear mistake** - the transcript is unambiguous and the source disagrees.
 - **Maybe ASR** - the caption could be the recognizer, not the speaker (e.g.
-  "205000" for a correct "20,500"). These never go into the comment unless the
+  "205000" for a correct "20,500"). These never go into the corrections unless the
   user confirms they said it.
 - **Framing** - not wrong, but misleading given the results.
 Also note what was checked and **correct**, briefly; it tells the user the
@@ -418,23 +418,42 @@ review was real and not a fishing trip.
 
 - `<output-dir>/review.md`: one row per finding - timestamp, what was said,
   what is correct, the evidence (notebook cell output, slide, URL), category.
-- `<output-dir>/correction_comment.txt`: the draft comment, in **Armenian, first
-  person** (it is posted from the channel, i.e. as the lecturer). Short: one
-  line per clear mistake, starting with its timestamp (YouTube makes
-  `M:SS` / `H:MM:SS` in comments clickable). Plain hyphens, no ASCII `<` `>`.
-  Clear mistakes only by default; framing items and news corrections only if
+- `<output-dir>/corrections.txt`: the draft corrections, in **Armenian, first
+  person** (the lecturer speaking). One line per clear mistake, starting with the
+  **minute in words**, `N-րդ րոպեին - ...` (rounded to the nearest minute), **never a
+  `H:MM:SS` timestamp** (the user asked for this on ML48). Plain hyphens, no ASCII
+  `<` `>`. Clear mistakes only by default; framing items and news corrections only if
   they matter to a viewer.
 
 ### 4. Show, then STOP
 
 Present the findings (the review table, grouped by category) and the draft
-comment to the user, and **wait**. Do not post anything on a general "ok" to
-something else - the user confirms the comment itself, and may drop or reword
-items. Edit `correction_comment.txt` to match what they approve.
+corrections to the user, and **wait**. Do not publish anything on a general "ok" to
+something else - the user confirms the corrections themselves, and may drop or reword
+items (on ML48 they kept 3 of 5). Edit `corrections.txt` to match what they approve.
 
-If nothing is wrong, say so plainly and post nothing.
+If nothing is wrong, say so plainly and add nothing.
 
-### 5. Post (only after explicit confirmation)
+### 5. Publish (only after explicit confirmation)
+
+The corrections go **in the description, above the chapters** (DECISIONS.md #4):
+
+```
+⚠️ Ուղղումներ՝ (Opus 5.5)
+15-րդ րոպեին - ...
+73-րդ րոպեին - ...
+
+⏳ Թեմաներ՝ (Opus 5.5)
+0:00:00 ...
+```
+
+Insert the block into `description.txt`, rerun `finalize_description.py`, push with
+`set-description`, check the 5,000-char count, and confirm YouTube still parses every
+chapter (`yt-dlp --skip-download --print "%(chapters)j" <url>`).
+
+**A comment is posted only if the user asks for one** (it was the default before
+2026-10-03, see #1). In that case write the comment text to
+`<output-dir>/correction_comment.txt` and run:
 
 ```bash
 python scripts/yt_publish.py add-comment <VIDEO_ID> <output-dir>/correction_comment.txt
@@ -443,8 +462,7 @@ python scripts/yt_publish.py add-comment <VIDEO_ID> <output-dir>/correction_comm
 It refuses to post a duplicate of a comment already on the video (the tool has
 no delete, so a re-run must not double-post). **The YouTube Data API cannot pin
 comments** - tell the user to pin it in YouTube Studio if they want it on top.
-A posted comment can only be deleted by hand in Studio, which is why step 4
-exists.
+A posted comment can only be deleted by hand in Studio.
 
 ---
 
@@ -469,5 +487,5 @@ Present to the user:
 4. Any uncertainty flags from stage 2.
 5. The verifier's `issues` list if non-empty.
 6. Confirm the copy landed in `final/ML<NN>.txt`.
-7. The stage-6 correctness review and the draft correction comment - and ask
-   whether to post it. Never post it in the same breath as presenting it.
+7. The stage-6 correctness review and the draft corrections - and ask whether to
+   add them to the description. Never publish them in the same breath as presenting them.

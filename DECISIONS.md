@@ -2,6 +2,26 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 4. Lecture corrections go in the description, above the chapters, with minutes instead of timestamps
+
+- **Decision:** The confirmed corrections from the stage-6 review go in the video
+  description, in a `⚠️ Ուղղումներ՝` block just above `⏳ Թեմաներ՝`. Each line starts
+  with the minute in words, `N-րդ րոպեին - ...` (rounded to the nearest minute), never a
+  `H:MM:SS` timestamp. A comment is posted only when the user asks for one.
+- **Date / status:** 2026-10-03, active. Supersedes #1 in part.
+- **Why:** On ML48 the user looked for the corrections in the description, asked for
+  them "before chapters", then asked for "at minute x" wording instead of timestamps.
+  There is room for them: ML48 went from 2,586 to 3,139 characters out of 5,000.
+  - Keeping timestamps out of that block also avoids any risk of YouTube reading them
+    as chapters. With `H:MM:SS` lines above the list, ML48 still parsed 35/35 chapters,
+    so the minute wording is the user's preference, not a measured necessity.
+- **Alternatives rejected:**
+  - *Comment only (#1)* - the user expected the corrections in the description.
+  - *Clickable timestamps* - the user asked for minutes.
+- **What would change this:**
+  - a description near the 5,000 cap (then shorten the corrections or move them to a comment);
+  - the user wanting clickable links again.
+
 ## 3. Edit points default to a 3 s minimum silence; Studio entry is by the user, Playwright only on request
 
 - **Decision:** `find_edit_points.py` defaults to cutting silences of 3 s and
@@ -65,7 +85,7 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
 - **Decision:** After a video is published, the pipeline reviews the lecture for
   the lecturer's own mistakes and posts them as one comment from the channel -
   but only after the user confirms that comment's content. The user pins it by hand.
-- **Date / status:** 2026-10-01, active.
+- **Date / status:** 2026-10-01; superseded in part by #4 on 2026-10-03 (corrections now go in the description; a comment only when asked).
 - **Why:** The user asked for it after the ML47 review found real slips (two
   reversed percentages at 0:28:38 and 0:31:34, a wrong claim about what the
   checkpoint holds at 1:21:20). A posted comment is public and the publisher has
