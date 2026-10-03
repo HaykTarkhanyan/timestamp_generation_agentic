@@ -178,10 +178,21 @@ Remind the user that nothing is saved until they press Save.
 ## After Save: chapters
 
 Wait until YouTube finishes processing the edit, then run the youtube-timestamps
-skill on the edited video. It is not yet verified whether YouTube regenerates the
-auto-captions after a Studio edit. Check that the fetched transcript's last timestamp
-fits the new length. If it doesn't, shift the transcript times with
-`studio_final_cuts.json`; there is no script for that yet.
+skill on the edited video.
+
+**YouTube regenerates the auto-captions for the edited timeline** (verified on ML48:
+the new length was 5327 s, as predicted from the cuts, and the captions started at the
+first kept sentence). Still compare the fetched `duration_seconds` with the predicted
+new length before trusting the transcript.
+
+- Fetch into a subfolder, `--output-dir <output_dir>/edited`, so the raw-timeline
+  `transcript.txt` and `metadata.json` that `find_edit_points.py` reads stay intact.
+- If you already read the raw transcript for the content cuts, you can pick chapter
+  boundaries on the raw timeline. Map each one through `studio_final_cuts.json`
+  (subtract the length of every cut that ends before it; raise if it falls inside a
+  cut), then check every boundary against the edited captions with the verifier's
+  `--audit-boundaries`. On ML48 all 35 mapped boundaries landed on the right sentence;
+  5 moved back 1-3 s to the line where the topic is named.
 
 ## Gotchas
 
