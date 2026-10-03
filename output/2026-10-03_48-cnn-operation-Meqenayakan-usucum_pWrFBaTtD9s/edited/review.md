@@ -4,7 +4,9 @@ Sources: `ml/12_cnn/L16_cnn_foundations.tex` (slide text), the regenerated capti
 the edited video (times below are on the edited timeline), web search for news items.
 Reviewed 2026-10-03.
 
-## Clear mistakes (in the draft comment)
+**Comment scope, picked by the user (2026-10-03):** the cat, the ZIP code, invariance and the pixel memory. The 30,000-weights slip is left out of the comment.
+
+## Clear mistakes
 
 | When | Said | Correct | Evidence |
 |---|---|---|---|
