@@ -1572,6 +1572,21 @@ def draw_ml47_name_inventor(fig, bbox):
     #         fontproperties=ARM_PROPS, color=LINE_COLOR)
 
 
+def draw_ml48_feature_hierarchy(fig, bbox):
+    """ML 48: what deeper CNN layers look for, edges -> textures -> patterns ->
+    parts -> objects (GoogLeNet feature visualizations, Olah et al., Distill).
+    Both rows of fig/feature_hierarchy.pdf, split into their panels with
+    scripts/non_essential/split_figure_panels.py (top row: --crop-top 0.165
+    --crop-bottom 0.43, bottom row: --crop-top 0.58) so the captions can drop
+    the layer names. Gaps are 18 px both ways."""
+    row_h, vgap = 0.28, 0.025
+    _draw_image_row(fig, bbox, [f"ml48_feat_bot_{i}.png" for i in range(1, 6)],
+                    gap=0.014, max_h=row_h, lift=0.0)
+    _draw_image_row(fig, bbox, [f"ml48_feat_top_{i}.png" for i in range(1, 6)],
+                    captions=["Edges", "Textures", "Patterns", "Parts", "Objects"],
+                    gap=0.014, max_h=row_h, lift=row_h + vgap)
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -1939,6 +1954,14 @@ LESSONS = [
         "draw": draw_ml47_name_inventor, "practical": True,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.08, 0.92, 0.58), "out": "ML47.png",
+    },
+    # ML 48 - CNN foundations (lecture): the feature hierarchy, edges to objects.
+    {
+        "tag": "ML 48", "title": "CNN: Convolution & Computer Vision",
+        "title_size": 36, "title_max": 74, "title_latin": True,
+        "draw": draw_ml48_feature_hierarchy,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.04, 0.03, 0.92, 0.66), "out": "ML48.png",
     },
 ]
 
