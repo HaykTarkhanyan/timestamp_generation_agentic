@@ -4,7 +4,7 @@ Sources: `ml/12_cnn/L16_cnn_foundations.tex` (slide text), the regenerated capti
 the edited video (times below are on the edited timeline), web search for news items.
 Reviewed 2026-10-03.
 
-**Comment scope, picked by the user (2026-10-03):** the cat, the ZIP code, invariance and the pixel memory. The 30,000-weights slip is left out of the comment.
+**Posted 2026-10-03 (comment UgwoqRKgIEIYA-OlqXp4AaABAg):** the cat, the ZIP code and the pixel memory, as the user picked. Left out at their call: the 30,000-weights slip and the invariance wording.
 
 ## Clear mistakes
 
