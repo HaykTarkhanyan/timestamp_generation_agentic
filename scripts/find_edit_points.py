@@ -11,10 +11,14 @@ Two sources of cuts:
 
 Writes, artifact of record first:
   <output-dir>/edit_points.json          every cut, its audio stats, the parameters
-  <output-dir>/studio_cuts.txt           the pre-ticked cuts, last first, for YouTube Studio
+  <output-dir>/studio_cuts.txt           the pre-ticked cuts in whole frames, numbered as
+                                         in Studio, listed last first for entry
   <output-dir>/edit_review/index.html    review page: spectrogram, "after the cut" and
                                          "what gets removed" clips per cut, tick/untick,
                                          copy the final list
+  <output-dir>/edit_review/studio.html   the same clips per merged cut, numbered and timed
+                                         exactly like Studio's Cut 1..N list
+The frame rate comes from yt-dlp once and is kept in edit_points.json.
 Clips and spectrograms (edit_review/media/) are regenerable and gitignored.
 
 The audio is <output-dir>/audio/<id>_16k.wav. If it is missing it gets downloaded
@@ -228,18 +232,46 @@ def union(intervals):
     return out
 
 
-def studio_lines(intervals, duration):
-    """Cut list for YouTube Studio, last first. Times rounded inward to 0.1 s."""
-    lines = []
-    for s, e in reversed(intervals):
-        s_r, e_r = math.ceil(s * 10) / 10, math.floor(e * 10) / 10
-        if e >= duration - 0.05:
-            lines.append(f"TRIM END   keep until {fmt_t(s_r)}   (drops {duration - s:.1f} s)")
-        elif s <= 0.05:
-            lines.append(f"TRIM START keep from  {fmt_t(e_r)}   (drops {e:.1f} s)")
-        else:
-            lines.append(f"CUT  {fmt_t(s_r)}  ->  {fmt_t(e_r)}   ({e - s:.1f} s)")
-    return lines
+def video_fps(data: dict, url: str) -> int:
+    """Frame rate of the uploaded video. Studio's time boxes are H:MM:SS:FF, so cut
+    times have to be whole frames. Asked from yt-dlp once, then kept in the JSON."""
+    if "fps" not in data:
+        out = subprocess.run(["yt-dlp", "--skip-download", "--print", "%(fps)s", url],
+                             check=True, capture_output=True, text=True).stdout.strip()
+        try:
+            data["fps"] = float(out.splitlines()[-1])
+        except (ValueError, IndexError):
+            raise ValueError(f"yt-dlp gave no frame rate for {url}: {out!r}")
+        log.info(f"Video frame rate: {data['fps']:g} fps")
+    if data["fps"] != int(data["fps"]):
+        raise NotImplementedError(f"{data['fps']} fps: Studio frame numbering for fractional rates is unverified")
+    return int(data["fps"])
+
+
+def studio_cuts(data: dict, fps: int) -> list[dict]:
+    """The pre-ticked cuts as Studio lists them: merged, rounded inward to whole frames,
+    numbered Cut 1..N by start time (Studio sorts its list that way)."""
+    def tc(frame):
+        s, ff = divmod(frame, fps)
+        h, rem = divmod(s, 3600)
+        m, s = divmod(rem, 60)
+        return f"{h}:{m:02d}:{s:02d}:{ff:02d}"
+    ticked = [c for c in data["cuts"] if c["default"]]
+    out = []
+    for n, (s, e) in enumerate(union([[c["start"], c["end"]] for c in ticked]), 1):
+        fs, fe = math.ceil(s * fps - 1e-6), math.floor(e * fps + 1e-6)
+        out.append({
+            "id": f"studio{n:02d}", "n": n, "start": fs / fps, "end": fe / fps,
+            "start_tc": tc(fs), "end_tc": tc(fe),
+            "sources": [c["id"] for c in ticked if c["start"] < e and c["end"] > s],
+        })
+    return out
+
+
+def studio_lines(scuts):
+    """Cut list for YouTube Studio: Studio's numbering, listed last first for entry."""
+    return [f"Cut {c['n']:>2}   {c['start_tc']}  ->  {c['end_tc']}   ({c['end'] - c['start']:.2f} s)"
+            for c in reversed(scuts)]
 
 
 # ---------------------------------------------------------------- media
@@ -491,6 +523,58 @@ def build_page(data, rows, page: Path):
 
 # ---------------------------------------------------------------- main
 
+def build_studio_page(data, scuts, rows, page: Path):
+    """One collapsible section per cut, numbered exactly like Studio's Cut 1..N list."""
+    esc = html.escape
+    by_id = {c["id"]: c for c in data["cuts"]}
+    sections = []
+    for sc in scuts:
+        src = [by_id[i] for i in sc["sources"]]
+        content = [c for c in src if c["source"] == "content"]
+        sil = [c for c in src if c["source"] == "silence"]
+        why = [f'<div class="reason"><span class="badge {c["kind"]}">{"safe" if c["kind"] == "safe" else "your call"}</span> '
+               f'{esc(c["reason"])}</div>' for c in content]
+        if sil and not content:
+            why.append(f'<div class="reason">{esc(sil[0]["reason"]) if len(sil) == 1 else f"{len(sil)} silences"}</div>')
+        flags = "".join(f'<div class="flag">{esc(f)}</div>' for c in sil for f in c["flags"])
+        tx = []
+        for r in snippet(rows, sc["start"], sc["end"]):
+            if r is None:
+                tx.append('<div>...</div>')
+                continue
+            cls = "in" if sc["start"] - 1 <= r[0] <= sc["end"] else ""
+            tx.append(f'<div class="{cls}"><span class="t">{esc(r[1])}</span>{esc(r[2])}</div>')
+        gain = sc.get("removed_gain_db", 0)
+        capped = " - first 15 s + last 15 s" if sc["end"] - sc["start"] > REMOVED_CAP_S else ""
+        sections.append((f"cut-{sc['n']}", f"Cut {sc['n']}   {sc['start_tc']} → {sc['end_tc']}   ({sc['end'] - sc['start']:.1f} s)", f"""
+{''.join(why)}{flags}
+<img class="spec" loading="lazy" src="media/{sc['id']}_spec.png" alt="spectrogram cut {sc['n']}">
+<div class="note">spectrogram 0-5 kHz, {fmt_t(sc['spec_window'][0], 0)} to {fmt_t(sc['spec_window'][1], 0)}, cut part in red</div>
+<div class="players">
+  <span>after the cut <audio controls preload="none" src="media/{sc['id']}_after.wav"></audio></span>
+  <span>what gets removed{f" (boosted +{gain:.0f} dB)" if gain >= 1 else ""}{capped} <audio controls preload="none" src="media/{sc['id']}_removed.wav"></audio></span>
+</div>
+<div class="tx">{''.join(tx)}</div>"""))
+    removed = sum(c["end"] - c["start"] for c in scuts)
+    toc = "".join(f'<li><a href="#{sid}">{esc(title)}</a></li>' for sid, title, _ in sections)
+    body = "".join(f'<details open id="{sid}"><summary>{esc(title)}</summary>{inner}</details>'
+                   for sid, title, inner in sections)
+    page.write_text(f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio cuts {esc(data['video_id'])}</title>
+<style>{PAGE_CSS} nav ol {{ columns: 2; font-variant-numeric: tabular-nums; }} summary {{ font-variant-numeric: tabular-nums; }}</style></head>
+<body><main>
+<h1>Studio cuts: {esc(data['title'])}</h1>
+<p class="sub">{len(scuts)} cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
+({data['fps']:g} fps, H:MM:SS:FF). Removes {fmt_t(removed, 0)}: {fmt_t(data['duration'], 0)} &rarr; {fmt_t(data['duration'] - removed, 0)}.
+To drop one, delete that Cut N in Studio before saving.</p>
+<nav><ol>{toc}</ol></nav>
+{body}
+</main></body></html>
+""", encoding="utf-8")
+
+
 def analyse(out_dir: Path, min_silence: float, pad: float) -> dict:
     meta = json.loads((out_dir / "metadata.json").read_text(encoding="utf-8"))
     wav = ensure_wav(out_dir, meta)
@@ -551,26 +635,30 @@ def main():
         data = analyse(out_dir, args.min_silence, args.pad)
         jpath.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
 
-    default_iv = union([[c["start"], c["end"]] for c in data["cuts"] if c["default"]])
-    removed = sum(e - s for s, e in default_iv)
+    fps = video_fps(data, f"https://youtu.be/{data['video_id']}")
+    scuts = studio_cuts(data, fps)
+    removed = sum(c["end"] - c["start"] for c in scuts)
     (out_dir / "studio_cuts.txt").write_text(
-        f"# {data['title']} - pre-ticked cuts, last first (end trim, cuts, start trim)\n"
-        f"# {len(default_iv)} edits, removes {fmt_t(removed, 0)}, new length {fmt_t(data['duration'] - removed, 0)}\n"
-        + "\n".join(studio_lines(default_iv, data["duration"])) + "\n", encoding="utf-8")
+        f"# {data['title']} - pre-ticked cuts, numbered as in Studio, listed last first for entry\n"
+        f"# {len(scuts)} cuts at {fps} fps, removes {fmt_t(removed, 0)}, new length {fmt_t(data['duration'] - removed, 0)}\n"
+        + "\n".join(studio_lines(scuts)) + "\n", encoding="utf-8")
 
     review = out_dir / "edit_review"
     media = review / "media"
     media.mkdir(parents=True, exist_ok=True)
     x, _ = sf.read(out_dir / "audio" / f"{data['video_id']}_16k.wav", dtype="float32")
-    for c in tqdm(data["cuts"], desc="clips + spectrograms"):
+    for c in tqdm(data["cuts"] + scuts, desc="clips + spectrograms"):
         write_clips(x, c, media)
         draw_spectrogram(x, c, data["duration"], media)
+    data["studio_cuts"] = scuts
     jpath.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
     rows = load_transcript(out_dir / "transcript.txt")
     build_page(data, rows, review / "index.html")
-    log.info(f"Pre-ticked: {len(default_iv)} edits removing {removed / 60:.1f} min "
+    build_studio_page(data, scuts, rows, review / "studio.html")
+    log.info(f"Pre-ticked: {len(scuts)} Studio cuts removing {removed / 60:.1f} min "
              f"({fmt_t(data['duration'], 0)} -> {fmt_t(data['duration'] - removed, 0)})")
-    log.info(f"Wrote {jpath}, {out_dir / 'studio_cuts.txt'}, {review / 'index.html'} in {time.time() - t0:.0f} s")
+    log.info(f"Wrote {jpath}, {out_dir / 'studio_cuts.txt'}, {review / 'index.html'}, "
+             f"{review / 'studio.html'} in {time.time() - t0:.0f} s")
 
 
 if __name__ == "__main__":
