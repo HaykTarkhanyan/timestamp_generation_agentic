@@ -45,7 +45,7 @@ ul.how li { margin: 4px 0; }
 <h1>Edit points: [48] cnn operation | Մեքենայական ուսուցում</h1>
 <p class="sub">1:45:53 raw recording, https://youtu.be/pWrFBaTtD9s</p>
 <div class="stats">
-  <span>cuts <b id="n-cuts"></b> + trims <b id="n-trims"></b></span>
+  <span>Studio cuts <b id="n-cuts"></b></span>
   <span>removed <b id="t-removed"></b></span>
   <span>new length <b id="t-new"></b></span>
   <span>min silence <select id="minsil"><option value="3" selected>3 s</option><option value="4">4 s</option><option value="5">5 s</option><option value="8">8 s</option></select></span>
@@ -55,8 +55,8 @@ ul.how li { margin: 4px 0; }
 <ul class="how">
   <li>Listen to <b>after the cut</b> first: it is 4 s before the cut joined to 4 s after, so you hear exactly how the edit will sound. <b>What gets removed</b> is the cut part itself, boosted so faint sounds are audible.</li>
   <li>Untick anything you want to keep. Ticks are remembered in this browser. The minimum-silence menu at the top hides the shorter silence cuts.</li>
-  <li>In Studio: Editor &rarr; Trim &amp; cut. Do the <b>end trim first</b>, then the cuts <b>from the last one to the first</b>, then the start trim. The list in the last section is already in that order. Working backwards means an earlier time never moves, whether or not Studio re-times the timeline after each cut.</li>
-  <li>Times are rounded inward to 0.1 s, so a rounded cut never eats into speech. If Studio's boxes only take whole seconds, round the start up and the end down.</li>
+  <li>In Studio: Editor &rarr; Trim &amp; cut &rarr; New Cut for each line of the list in the last section. It uses Studio's own numbering (Cut 1..N by start time) and its <code>H:MM:SS:FF</code> frame times, the same as <code>studio.html</code>, listed last first. Studio keeps the original timeline while you edit, so the times stay valid.</li>
+  <li>Times are rounded inward to whole frames, so a cut never eats into speech.</li>
   <li>Studio edits can't be undone after saving. Keep your original recording.</li>
   <li>Chapters come after the edit: every cut shifts the times after it.</li>
 </ul>
@@ -918,12 +918,14 @@ function active(c) { return ticked.has(c.id) && (c.source !== 'silence' || c.run
 function union(iv) { const out=[]; iv.sort((a,b)=>a[0]-b[0]);
   for (const [s,e] of iv) { if (out.length && s <= out[out.length-1][1]+0.05) out[out.length-1][1]=Math.max(out[out.length-1][1],e); else out.push([s,e]); }
   return out; }
-function studio(iv) { const D=DATA.duration, L=[];
-  for (const [s,e] of [...iv].reverse()) { const sr=Math.ceil(s*10)/10, er=Math.floor(e*10)/10;
-    if (e >= D-0.05) L.push('TRIM END   keep until ' + fmt(sr) + '   (drops ' + (D-s).toFixed(1) + ' s)');
-    else if (s <= 0.05) L.push('TRIM START keep from  ' + fmt(er) + '   (drops ' + e.toFixed(1) + ' s)');
-    else L.push('CUT  ' + fmt(sr) + '  ->  ' + fmt(er) + '   (' + (e-s).toFixed(1) + ' s)'); }
-  return L; }
+function tc(f) { const F = DATA.fps, s = Math.floor(f / F);
+  return Math.floor(s/3600) + ':' + String(Math.floor(s%3600/60)).padStart(2,'0') + ':' +
+         String(s%60).padStart(2,'0') + ':' + String(f%F).padStart(2,'0'); }
+function studio(iv) {   // Studio's Cut 1..N (by start), whole frames rounded inward, listed last first
+  const F = DATA.fps;
+  const rows = iv.map(([s,e], i) => [i+1, Math.ceil(s*F - 1e-6), Math.floor(e*F + 1e-6)]);
+  return rows.reverse().map(([n,fs,fe]) => 'Cut ' + String(n).padStart(2) + '   ' + tc(fs) + '  ->  ' + tc(fe) +
+                                         '   (' + ((fe-fs)/F).toFixed(2) + ' s)'); }
 function refresh() {
   const on = DATA.cuts.filter(active);
   const content = on.filter(c => c.source === 'content');
@@ -939,9 +941,7 @@ function refresh() {
   }
   const iv = union(on.map(c => [c.start, c.end]));
   const removed = iv.reduce((a,[s,e]) => a + e - s, 0);
-  const cuts = iv.filter(([s,e]) => s > 0.05 && e < DATA.duration - 0.05).length;
-  document.getElementById('n-cuts').textContent = cuts;
-  document.getElementById('n-trims').textContent = iv.length - cuts;
+  document.getElementById('n-cuts').textContent = iv.length;
   document.getElementById('t-removed').textContent = fmt(removed, 0);
   document.getElementById('t-new').textContent = fmt(DATA.duration - removed, 0);
   document.getElementById('export').value = studio(iv).join('\n');

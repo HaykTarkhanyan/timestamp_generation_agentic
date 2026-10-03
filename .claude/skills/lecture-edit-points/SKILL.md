@@ -37,6 +37,12 @@ On the first run this downloads the audio (yt-dlp, ~80 MB for 1h45m) and convert
 to `audio/<id>_16k.wav`, so it takes a few minutes: run it with `run_in_background`.
 It writes `edit_points.json` (the record), `studio_cuts.txt` and the two review pages.
 
+**Order of runs:** this first run is silence-only. It warns that `content_cuts.json` is
+missing, which is expected. It also gives you the audio that `--speech-map` needs in
+Stage 3. After writing `content_cuts.json`, rerun the same command (a fresh analysis,
+not `--report-only`, which never rereads `content_cuts.json`) and rerun it after every
+edit to that file.
+
 - **Silence threshold:** noise floor (5th percentile) + 20 dB. Check the log line.
   ML48 was noise-gated: floor -94 dB, 26% of frames silent. Run counts barely moved
   between -80 and -60 dB, so the threshold was not sensitive. If a recording is not
@@ -44,6 +50,9 @@ It writes `edit_points.json` (the record), `studio_cuts.txt` and the two review 
   trusting it.
 - **Default minimum silence: 3 s** (the user's choice). Each cut leaves 0.35 s of pause on each side.
   At 2 s ML48 needed 68 edits for 16.4 min removed; at 3 s it was 24 edits for 15.2 min.
+- **To cut shorter pauses too**, rerun with `--min-silence 2` (or any value). The analysis
+  only looks at silences at least that long, so the page's minimum-silence menu can raise
+  the threshold but never lower it below the value of the run.
 - Clicks under 0.2 s count as silence. Louder ones become "short sound - listen" flags.
 
 ## Stage 3: content cuts (your judgment)
@@ -61,7 +70,8 @@ Read `transcript.txt` in full, then write `<output_dir>/content_cuts.json`:
 
 `kind` is `safe` (dead air, logistics) or `judgment` (the user's call). `default` sets
 whether the cut is pre-ticked. `"end": "end"` means up to the end of the video. Write
-`reason` in English; the user reads it on the review page.
+`reason` in English; the user reads it on the review page. After writing the file,
+rerun the full Stage 2 command (see "Order of runs").
 
 **What to cut** (from the user's own ML48 adjustments; when in doubt, cut more, they did):
 
@@ -90,7 +100,6 @@ python scripts/find_edit_points.py --output-dir <output_dir> --speech-map 0:16:0
 Each line is 10 s, one character per 0.1 s: `#` sound, `.` a click, `_` silence. Pick
 an edge on `_`. The script then snaps it to the speech edge and keeps the pad. It
 **raises** if an edge sits on speech; move the edge and rerun, never work around it.
-Rerun the full command (not `--report-only`) after editing the JSON.
 
 ## Stage 4: review pages
 
@@ -105,11 +114,14 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
   - One player per cut over the full lecture WAV, with a bar to click or drag on the spectrogram.
   - A "skip the cut (hear the result)" toggle, and "play here" buttons on flagged sounds.
   - It reads `../audio/<id>_16k.wav`, so the audio folder has to stay where it is.
-- **`index.html`:** every source cut with tick/untick, a minimum-silence menu and a copyable list.
-- **`studio_cuts.txt`:** the same cuts, last first, for typing into Studio.
+- **`index.html`:** every source cut with tick/untick and a minimum-silence menu. Its
+  copyable list follows the ticks, in the same Studio numbering and frame times.
+- **`studio_cuts.txt`:** the pre-ticked cuts, same numbering and frames, last first,
+  for typing into Studio.
 
-Tell the user how many edits there are and how many minutes they remove. Mention what
-the 2-3 s silences cost in edits.
+Tell the user how many edits there are and how many minutes they remove. If they're
+thinking about a lower threshold, rerun at that value and compare the counts (ML48:
+going from 3 s to 2 s added 44 edits to save another 1.2 min).
 
 ## Stage 5: apply in Studio
 
@@ -127,12 +139,21 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
 
 - **Getting in:** `https://studio.youtube.com/video/<ID>/editor`, then the "Add trim"
   button (Trim & cut), then "New Cut".
-- **Times:** the boxes take `H:MM:SS:FF` at the video's frame rate (25 fps for this
-  channel). Studio keeps the **original timeline** while you edit, so the times in the
-  list stay valid.
+- **Times:** the boxes take `H:MM:SS:FF` at the video's frame rate. ML48 was 25 fps;
+  the script reads the rate per video. Studio keeps the **original timeline** while you
+  edit, so the times in the list stay valid.
 - **Typing a time:** `fill()` does not stick. Click the box, press Ctrl+A, type the time with
   `keyboard.type`, then press Tab. The editing row's boxes are `#panel-container input:visible`.
-  Set the **end first, then the start**, then confirm with the panel's "Cut" button.
+- **Order for each cut:**
+  1. Move the playhead to the cut's start with the time box outside the panel.
+  2. Press New Cut. A new cut starts at the playhead.
+  3. Set the end, then the start.
+  4. Confirm with the panel's "Cut" button.
+
+  On ML48 the playhead was always before the target cut, so typing the end first was
+  safe. What Studio does when a typed end lands before the cut's current start was not
+  tested; starting at the cut's start avoids that case. It also avoids the greyed-out
+  New Cut below.
 - **Numbering:** Studio sorts the list by start time and renumbers it Cut 1..N. Our
   `studio_cuts()` numbering matches.
 - **"New Cut" greys out when the playhead sits inside an existing cut.** Move the
