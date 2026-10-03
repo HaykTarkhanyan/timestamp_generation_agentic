@@ -2,7 +2,7 @@
 """Find edit points (cuts) in an unedited lecture recording and build a review page.
 
 Two sources of cuts:
-  1. Silence runs in the audio, >= --min-silence seconds (default 2.0). Each cut
+  1. Silence runs in the audio, >= --min-silence seconds (default 3.0). Each cut
      leaves --pad seconds of pause on both sides, so speech is never clipped.
   2. Content cuts picked from the transcript (<output-dir>/content_cuts.json,
      written by the LLM stage: dead air, "any questions?" + silence, logistics).
@@ -27,6 +27,8 @@ The audio is <output-dir>/audio/<id>_16k.wav. If it is missing it gets downloade
 Usage:
   python scripts/find_edit_points.py --output-dir output/<date>_<slug>_<id>
   python scripts/find_edit_points.py --output-dir ... --report-only   # page from JSON
+  python scripts/find_edit_points.py --output-dir ... --speech-map 0:16:00 0:16:50
+      # where the pauses are, to place content-cut edges (~10-25 s, reads the audio)
 
 Runtime (ML48: 1h46m, 120 cuts, this laptop): 1.5-3.5 min wall, and it varied a
 lot from run to run - the render loop took 80-137 s although an idle-machine probe
@@ -658,20 +660,50 @@ Each cut plays its whole segment plus 3 s either side; space bar pauses. To drop
 """, encoding="utf-8")
 
 
-def analyse(out_dir: Path, min_silence: float, pad: float) -> dict:
+def levels(out_dir: Path):
+    """Audio, 10 ms speech-band levels, the silence threshold (noise floor + 20 dB)
+    and the sound mask - shared by the analysis and --speech-map."""
     meta = json.loads((out_dir / "metadata.json").read_text(encoding="utf-8"))
     wav = ensure_wav(out_dir, meta)
     log.info(f"Reading {wav.name} and measuring levels")
     x, sr = sf.read(wav, dtype="float32")
     if sr != SR:
         raise ValueError(f"{wav} is {sr} Hz, expected {SR}")
-    duration = len(x) / SR
     db = frame_levels(x)
     floor = float(np.percentile(db, 5))
     thr = floor + 20
     sound = sound_mask(db, thr)
-    log.info(f"{duration / 60:.1f} min audio, noise floor {floor:.1f} dB, silence threshold {thr:.1f} dB, "
+    log.info(f"{len(x) / SR / 60:.1f} min audio, noise floor {floor:.1f} dB, silence threshold {thr:.1f} dB, "
              f"{100 * (~sound).mean():.0f}% of frames silent")
+    return meta, x, db, floor, thr, sound
+
+
+def speech_map(out_dir: Path, start: str, end: str) -> None:
+    """Print where the speech and the pauses are, 0.1 s per character, so a content
+    cut's edges can be put inside a pause. '#' sound, '.' a click or short sound
+    (under 0.2 s, counts as silence), '_' silence. One line per 10 s."""
+    _, _, db, _, thr, sound = levels(out_dir)
+    i0, i1 = int(parse_t(start) * 100), min(int(parse_t(end) * 100), len(sound))
+    if i1 <= i0:
+        raise ValueError(f"--speech-map end {end} is not after start {start}")
+    for row in range(i0 - i0 % 1000, i1, 1000):
+        chars = []
+        for k in range(row, min(row + 1000, i1), 10):
+            if k < i0:
+                chars.append(" ")
+            elif sound[k:k + 10].any():
+                chars.append("#")
+            elif (db[k:k + 10] > thr).any():
+                chars.append(".")
+            else:
+                chars.append("_")
+        line = "".join(chars)
+        print(f"{fmt_t(row / 100, 0)}  " + "|".join(line[j:j + 10] for j in range(0, len(line), 10)))
+
+
+def analyse(out_dir: Path, min_silence: float, pad: float) -> dict:
+    meta, x, db, floor, thr, sound = levels(out_dir)
+    duration = len(x) / SR
 
     cuts = silence_cuts(db, sound, thr, min_silence, pad)
     log.info(f"{len(cuts)} silences >= {min_silence:g} s ({sum(c['run_len'] for c in cuts) / 60:.1f} min raw)")
@@ -699,13 +731,19 @@ def analyse(out_dir: Path, min_silence: float, pad: float) -> dict:
 def main():
     ap = argparse.ArgumentParser(description="Find cut points in an unedited lecture and build a review page.")
     ap.add_argument("--output-dir", required=True, type=Path)
-    ap.add_argument("--min-silence", type=float, help="shortest silence to cut, seconds (default 2.0)")
+    ap.add_argument("--min-silence", type=float, help="shortest silence to cut, seconds (default 3.0)")
     ap.add_argument("--pad", type=float, help="pause left on each side of a cut, seconds (default 0.35)")
     ap.add_argument("--report-only", action="store_true", help="rebuild the page and clips from edit_points.json")
+    ap.add_argument("--speech-map", nargs=2, metavar=("START", "END"),
+                    help="print speech/pause map between two times (H:MM:SS) and exit")
     args = ap.parse_args()
+    if args.speech_map:
+        setup_logging()
+        speech_map(args.output_dir, *args.speech_map)
+        return
     if args.report_only and (args.min_silence is not None or args.pad is not None):
         ap.error("--min-silence/--pad only apply to a fresh analysis; --report-only reuses edit_points.json as is")
-    args.min_silence = 2.0 if args.min_silence is None else args.min_silence
+    args.min_silence = 3.0 if args.min_silence is None else args.min_silence   # the user's pick, ML48
     args.pad = 0.35 if args.pad is None else args.pad
     setup_logging()
     t0 = time.time()

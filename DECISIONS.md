@@ -2,6 +2,31 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 3. Edit points default to a 3 s minimum silence; Studio entry is by the user, Playwright only on request
+
+- **Decision:** `find_edit_points.py` defaults to cutting silences of 3 s and
+  longer (was 2 s). Cut lists are rounded inward to whole frames and numbered the way
+  Studio numbers them. The user applies cuts in Studio themselves unless they ask for
+  Playwright for that video, and Playwright never presses Save.
+- **Date / status:** 2026-10-03, active. Revises the 2 s default in #2.
+- **Why:**
+  - **3 s:** on ML48, 2 s gave 68 edits for 16.4 min removed and 3 s gave 24 edits for
+    15.2 min. The 44 extra edits bought 1.2 min, and the user picked 3 s.
+  - **Frames and numbering:** Studio's time boxes are `H:MM:SS:FF` and its list is sorted
+    by start time, so frame-exact times numbered like Studio let the user match the
+    review page to Studio directly.
+  - **Save stays with the user:** Studio edits can't be undone after Save. After I
+    entered ML48's cuts, the user adjusted them by hand and asked that Studio not be
+    changed through Playwright again.
+- **Alternatives rejected:**
+  - *Keep 2 s* - too many manual edits for little time.
+  - *0.1 s rounding* - Studio counts frames, so 0.1 s times don't map exactly.
+  - *Playwright by default, or pressing Save* - irreversible and outward-facing.
+- **What would change this:**
+  - the user preferring every pause tightened (lower the threshold);
+  - a channel frame rate other than 25 fps (the frame rate is read per video already);
+  - a Studio change that shifts the timeline during editing (then enter cuts last-first).
+
 ## 2. Edit points for unedited recordings: audio silences + transcript content cuts, applied by hand in Studio
 
 - **Decision:** `scripts/find_edit_points.py` proposes cuts from two sources -
@@ -11,7 +36,7 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   `edit_points.json` first, then a review page with a spectrogram and two clips per
   cut ("after the cut" and "what gets removed", boosted) and a cut list ordered
   last-first for the YouTube Studio editor.
-- **Date / status:** 2026-10-03, active (first used on ML48).
+- **Date / status:** 2026-10-03, active (first used on ML48); revisited 2026-10-03, see #3 (default 3 s, frame-exact Studio list).
 - **Why:** The user edits in YouTube Studio's built-in editor, so the output has to
   be times typed into Studio's boxes, not an EDL or a rendered file. Last-first
   order keeps every remaining time valid whether or not Studio re-times the

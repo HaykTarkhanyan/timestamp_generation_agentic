@@ -7,6 +7,8 @@ description: Fetch YouTube subtitles via yt-dlp and propose chapter timestamps (
 
 Generate YouTube-style chapter timestamps, a short abstract, and hashtags for a video by fetching its (auto-generated) subtitles and reasoning about content structure, then assemble everything into one paste-ready description. Built for Armenian (`hy`) by default, works for any language yt-dlp can pull.
 
+**If the video is an unedited recording, run the `lecture-edit-points` skill first.** Chapters come after the user saves the cuts in Studio, because every cut shifts the times after it.
+
 The workflow is split into **five explicit stages, plus a final correctness review**. Run them in order — do not try to do everything in one shot. Each stage's output is the next stage's input, and the user can inspect/edit between stages.
 
 ```
