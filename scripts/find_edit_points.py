@@ -31,6 +31,7 @@ re-renders the media too, so it costs about the same. Add ~1 min for the
 download and conversion on the first run.
 """
 import argparse
+import hashlib
 import html
 import json
 import logging
@@ -86,7 +87,7 @@ def parse_t(text: str) -> float:
 
 def fmt_t(sec: float, digits: int = 1) -> str:
     sign = "-" if sec < 0 else ""
-    sec = abs(sec)
+    sec = round(abs(sec), digits)          # round first, so 59.96 s can't print as ":60.0"
     h, rem = divmod(sec, 3600)
     m, s = divmod(rem, 60)
     width = 3 + digits if digits else 2
@@ -173,7 +174,8 @@ def silence_cuts(db, sound, thr, min_len, pad):
 
 
 def snap_content(cut: dict, sound: np.ndarray, duration: float, pad_default: float) -> dict:
-    """Move each edge outward to the speech edge next to it, leaving the pad of pause."""
+    """Put each edge at the speech edge next to it, leaving the pad of pause. Usually
+    that widens the cut; an edge asked for within the pad of speech moves inward."""
     pad = float(cut.get("pad", pad_default))
     n = len(sound)
     s_req = parse_t(cut["start"])
@@ -349,12 +351,12 @@ ul.how li { margin: 4px 0; }
 
 PAGE_JS = """
 const DATA = JSON.parse(document.getElementById('data').textContent);
-const KEY = 'edit-points-' + DATA.video_id;
+const KEY = 'edit-points-' + DATA.video_id + '-' + DATA.signature;   // a changed cut list starts from the defaults
 const byId = Object.fromEntries(DATA.cuts.map(c => [c.id, c]));
 let ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id));
 try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) ticked = new Set(saved); } catch (e) {}
 const minSel = document.getElementById('minsil');
-function fmt(sec, d=1) { const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60;
+function fmt(sec, d=1) { sec = Math.round(sec * 10**d) / 10**d; const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60;
   return h + ':' + String(m).padStart(2,'0') + ':' + s.toFixed(d).padStart(d ? 3+d : 2, '0'); }
 function active(c) { return ticked.has(c.id) && (c.source !== 'silence' || c.run_len >= +minSel.value); }
 function union(iv) { const out=[]; iv.sort((a,b)=>a[0]-b[0]);
@@ -462,7 +464,8 @@ def build_page(data, rows, page: Path):
     toc = "".join(f'<li><a href="#{sid}">{html.escape(title)}</a></li>' for sid, title, _ in sections)
     body = "".join(f'<details open id="{sid}"><summary>{html.escape(title)}</summary>{inner}</details>'
                    for sid, title, inner in sections)
-    blob = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    sig = hashlib.sha1(json.dumps([[c["id"], c["start"], c["end"]] for c in data["cuts"]]).encode()).hexdigest()[:12]
+    blob = json.dumps({**data, "signature": sig}, ensure_ascii=False).replace("</", "<\\/")
     page.write_text(f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -529,10 +532,14 @@ def analyse(out_dir: Path, min_silence: float, pad: float) -> dict:
 def main():
     ap = argparse.ArgumentParser(description="Find cut points in an unedited lecture and build a review page.")
     ap.add_argument("--output-dir", required=True, type=Path)
-    ap.add_argument("--min-silence", type=float, default=2.0, help="shortest silence to cut, seconds (default 2.0)")
-    ap.add_argument("--pad", type=float, default=0.35, help="pause left on each side of a cut, seconds (default 0.35)")
+    ap.add_argument("--min-silence", type=float, help="shortest silence to cut, seconds (default 2.0)")
+    ap.add_argument("--pad", type=float, help="pause left on each side of a cut, seconds (default 0.35)")
     ap.add_argument("--report-only", action="store_true", help="rebuild the page and clips from edit_points.json")
     args = ap.parse_args()
+    if args.report_only and (args.min_silence is not None or args.pad is not None):
+        ap.error("--min-silence/--pad only apply to a fresh analysis; --report-only reuses edit_points.json as is")
+    args.min_silence = 2.0 if args.min_silence is None else args.min_silence
+    args.pad = 0.35 if args.pad is None else args.pad
     setup_logging()
     t0 = time.time()
     out_dir = args.output_dir
