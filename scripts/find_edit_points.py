@@ -523,8 +523,83 @@ def build_page(data, rows, page: Path):
 
 # ---------------------------------------------------------------- main
 
-def build_studio_page(data, scuts, rows, page: Path):
-    """One collapsible section per cut, numbered exactly like Studio's Cut 1..N list."""
+STUDIO_CSS = """
+.specwrap { position: relative; cursor: ew-resize; touch-action: none; user-select: none; margin-top: 6px; }
+.specwrap img { display: block; width: 100%; height: auto; border-radius: 6px; pointer-events: none; }
+.bar { position: absolute; top: -3px; bottom: -3px; width: 3px; margin-left: -1px; background: #fff;
+       box-shadow: 0 0 0 1px #000; border-radius: 2px; pointer-events: none; }
+.axis { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted);
+        font-variant-numeric: tabular-nums; }
+.ctl { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 8px 0 4px; }
+.ctl .now { font-variant-numeric: tabular-nums; font-weight: 650; min-width: 90px; }
+.play { min-width: 74px; }
+.flag button { font-size: 12px; padding: 0 6px; margin-left: 6px; }
+.err { color: var(--red); }
+nav ol { columns: 2; font-variant-numeric: tabular-nums; }
+summary { font-variant-numeric: tabular-nums; }
+"""
+
+STUDIO_JS = """
+const A = document.getElementById('audio');
+const FPS = +document.body.dataset.fps;
+let cur = null, raf = null;
+function tc(t) { const f = Math.floor(t * FPS + 1e-6), s = Math.floor(f / FPS);
+  return Math.floor(s / 3600) + ':' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' +
+         String(s % 60).padStart(2, '0') + ':' + String(f % FPS).padStart(2, '0'); }
+const num = (el, k) => parseFloat(el.dataset[k]);
+function show(el, t) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1');
+  t = Math.min(w1, Math.max(w0, t));
+  el.querySelector('.bar').style.left = (100 * (t - w0) / (w1 - w0)) + '%';
+  el.querySelector('.now').textContent = tc(t);
+  el.dataset.pos = t;
+  return t;
+}
+function tick() {
+  if (!cur) return;
+  let t = A.currentTime;
+  if (cur.querySelector('.skip').checked && t >= num(cur, 's') && t < num(cur, 'e')) { A.currentTime = num(cur, 'e'); t = num(cur, 'e'); }
+  if (t >= num(cur, 'w1')) A.pause();
+  show(cur, t);
+  if (!A.paused) raf = requestAnimationFrame(tick);
+}
+function label(el, playing) { el.querySelector('.play').textContent = playing ? 'Pause' : 'Play'; }
+function play(el) {
+  if (cur && cur !== el) { A.pause(); label(cur, false); }
+  cur = el;
+  let t = num(el, 'pos');
+  if (t >= num(el, 'w1') - 0.05) t = show(el, num(el, 'w0'));
+  A.currentTime = t;
+  A.play().then(() => { label(el, true); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); })
+          .catch(err => { if (err.name !== 'AbortError') el.querySelector('.err').textContent = 'Could not play: ' + err.message; });  // AbortError = paused before playback began
+}
+A.addEventListener('pause', () => { if (cur) label(cur, false); cancelAnimationFrame(raf); });
+A.addEventListener('error', () => document.querySelectorAll('.err').forEach(e => e.textContent = 'Audio failed to load: ' + A.src));
+document.querySelectorAll('details.cut').forEach(el => {
+  show(el, num(el, 'w0'));
+  el.querySelector('.play').addEventListener('click', () => (cur === el && !A.paused) ? A.pause() : play(el));
+  const wrap = el.querySelector('.specwrap');
+  const seek = ev => { const r = wrap.getBoundingClientRect();
+    const t = show(el, num(el, 'w0') + (ev.clientX - r.left) / r.width * (num(el, 'w1') - num(el, 'w0')));
+    if (cur === el && !A.paused) A.currentTime = t; };
+  let drag = false;
+  wrap.addEventListener('pointerdown', ev => { drag = true; wrap.setPointerCapture(ev.pointerId); seek(ev); });
+  wrap.addEventListener('pointermove', ev => { if (drag) seek(ev); });
+  wrap.addEventListener('pointerup', () => { drag = false; });
+  el.querySelectorAll('.jump').forEach(b => b.addEventListener('click', () => { show(el, parseFloat(b.dataset.t)); play(el); }));
+});
+document.addEventListener('keydown', ev => {
+  if (ev.code === 'Space' && cur && !['INPUT', 'BUTTON'].includes(document.activeElement.tagName)) {
+    ev.preventDefault(); A.paused ? play(cur) : A.pause(); } });
+"""
+
+
+def build_studio_page(data, scuts, rows, page: Path, wav: Path):
+    """One collapsible section per cut, numbered exactly like Studio's Cut 1..N list.
+    One shared player streams the full lecture WAV; each cut's spectrogram has a
+    draggable bar, and "skip the cut" plays the window as it will sound after the edit."""
+    if not wav.exists():
+        raise FileNotFoundError(f"The Studio page plays {wav}, which is missing")
     esc = html.escape
     by_id = {c["id"]: c for c in data["cuts"]}
     sections = []
@@ -536,7 +611,12 @@ def build_studio_page(data, scuts, rows, page: Path):
                f'{esc(c["reason"])}</div>' for c in content]
         if sil and not content:
             why.append(f'<div class="reason">{esc(sil[0]["reason"]) if len(sil) == 1 else f"{len(sil)} silences"}</div>')
-        flags = "".join(f'<div class="flag">{esc(f)}</div>' for c in sil for f in c["flags"])
+        flags = []
+        for c in sil:
+            for f in c["flags"]:
+                m = re.search(r"at (\d+:\d\d:\d\d(?:\.\d)?)", f)
+                jump = f'<button class="jump" data-t="{parse_t(m.group(1)) - 1.0:.2f}">play here</button>' if m else ""
+                flags.append(f'<div class="flag">{esc(f)}{jump}</div>')
         tx = []
         for r in snippet(rows, sc["start"], sc["end"]):
             if r is None:
@@ -544,34 +624,37 @@ def build_studio_page(data, scuts, rows, page: Path):
                 continue
             cls = "in" if sc["start"] - 1 <= r[0] <= sc["end"] else ""
             tx.append(f'<div class="{cls}"><span class="t">{esc(r[1])}</span>{esc(r[2])}</div>')
-        gain = sc.get("removed_gain_db", 0)
-        capped = " - first 15 s + last 15 s" if sc["end"] - sc["start"] > REMOVED_CAP_S else ""
-        sections.append((f"cut-{sc['n']}", f"Cut {sc['n']}   {sc['start_tc']} → {sc['end_tc']}   ({sc['end'] - sc['start']:.1f} s)", f"""
-{''.join(why)}{flags}
-<img class="spec" loading="lazy" src="media/{sc['id']}_spec.png" alt="spectrogram cut {sc['n']}">
-<div class="note">spectrogram 0-5 kHz, {fmt_t(sc['spec_window'][0], 0)} to {fmt_t(sc['spec_window'][1], 0)}, cut part in red</div>
-<div class="players">
-  <span>after the cut <audio controls preload="none" src="media/{sc['id']}_after.wav"></audio></span>
-  <span>what gets removed{f" (boosted +{gain:.0f} dB)" if gain >= 1 else ""}{capped} <audio controls preload="none" src="media/{sc['id']}_removed.wav"></audio></span>
-</div>
-<div class="tx">{''.join(tx)}</div>"""))
+        w0, w1 = sc["spec_window"]
+        title = f"Cut {sc['n']}   {sc['start_tc']} \u2192 {sc['end_tc']}   ({sc['end'] - sc['start']:.1f} s)"
+        sections.append((f"cut-{sc['n']}", title, f"""
+<details open class="cut" id="cut-{sc['n']}" data-w0="{w0}" data-w1="{w1}" data-s="{sc['start']}" data-e="{sc['end']}">
+<summary>{esc(title)}</summary>
+{''.join(why)}{''.join(flags)}
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cut (hear the result)</label><span class="err"></span></div>
+<div class="specwrap"><img loading="lazy" src="media/{sc['id']}_spec.png" alt="spectrogram cut {sc['n']}"><div class="bar"></div></div>
+<div class="axis"><span>{fmt_t(w0)}</span><span>cut part in red, 0-5 kHz; click or drag to move the bar</span><span>{fmt_t(w1)}</span></div>
+<div class="tx">{''.join(tx)}</div>
+</details>"""))
     removed = sum(c["end"] - c["start"] for c in scuts)
     toc = "".join(f'<li><a href="#{sid}">{esc(title)}</a></li>' for sid, title, _ in sections)
-    body = "".join(f'<details open id="{sid}"><summary>{esc(title)}</summary>{inner}</details>'
-                   for sid, title, inner in sections)
+    rel_wav = Path("..") / wav.relative_to(page.parent.parent)
     page.write_text(f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Studio cuts {esc(data['video_id'])}</title>
-<style>{PAGE_CSS} nav ol {{ columns: 2; font-variant-numeric: tabular-nums; }} summary {{ font-variant-numeric: tabular-nums; }}</style></head>
-<body><main>
+<style>{PAGE_CSS}{STUDIO_CSS}</style></head>
+<body data-fps="{data['fps']:g}"><main>
 <h1>Studio cuts: {esc(data['title'])}</h1>
 <p class="sub">{len(scuts)} cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
 ({data['fps']:g} fps, H:MM:SS:FF). Removes {fmt_t(removed, 0)}: {fmt_t(data['duration'], 0)} &rarr; {fmt_t(data['duration'] - removed, 0)}.
-To drop one, delete that Cut N in Studio before saving.</p>
+Each cut plays its whole segment plus 3 s either side; space bar pauses. To drop one, delete that Cut N in Studio before saving.</p>
+<audio id="audio" preload="metadata" src="{rel_wav.as_posix()}"></audio>
 <nav><ol>{toc}</ol></nav>
-{body}
-</main></body></html>
+{''.join(inner for _, _, inner in sections)}
+</main>
+<script>{STUDIO_JS}</script>
+</body></html>
 """, encoding="utf-8")
 
 
@@ -647,14 +730,16 @@ def main():
     media = review / "media"
     media.mkdir(parents=True, exist_ok=True)
     x, _ = sf.read(out_dir / "audio" / f"{data['video_id']}_16k.wav", dtype="float32")
-    for c in tqdm(data["cuts"] + scuts, desc="clips + spectrograms"):
+    for c in tqdm(data["cuts"], desc="clips + spectrograms"):
         write_clips(x, c, media)
+        draw_spectrogram(x, c, data["duration"], media)
+    for c in scuts:                       # the Studio page plays the full WAV, so no clips
         draw_spectrogram(x, c, data["duration"], media)
     data["studio_cuts"] = scuts
     jpath.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
     rows = load_transcript(out_dir / "transcript.txt")
     build_page(data, rows, review / "index.html")
-    build_studio_page(data, scuts, rows, review / "studio.html")
+    build_studio_page(data, scuts, rows, review / "studio.html", out_dir / "audio" / f"{data['video_id']}_16k.wav")
     log.info(f"Pre-ticked: {len(scuts)} Studio cuts removing {removed / 60:.1f} min "
              f"({fmt_t(data['duration'], 0)} -> {fmt_t(data['duration'] - removed, 0)})")
     log.info(f"Wrote {jpath}, {out_dir / 'studio_cuts.txt'}, {review / 'index.html'}, "
