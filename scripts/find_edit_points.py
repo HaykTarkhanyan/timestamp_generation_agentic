@@ -294,6 +294,8 @@ def studio_cuts(data: dict, fps: int) -> list[dict]:
     out = []
     for n, (s, e) in enumerate(union([[c["start"], c["end"]] for c in ticked]), 1):
         fs, fe = math.ceil(s * fps - 1e-6), math.floor(e * fps + 1e-6)
+        if e >= data["duration"] - 0.05:    # the end trim: Studio's last frame, not one short (ML49: :04 vs :03)
+            fe = round(data["duration"] * fps)
         out.append({
             "id": f"studio{n:02d}", "n": n, "start": fs / fps, "end": fe / fps,
             "start_tc": tc(fs), "end_tc": tc(fe),

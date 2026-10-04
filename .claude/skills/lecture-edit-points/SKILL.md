@@ -175,7 +175,14 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
   On ML48 the playhead was always before the target cut, so typing the end first was
   safe. What Studio does when a typed end lands before the cut's current start was not
   tested; starting at the cut's start avoids that case. It also avoids the greyed-out
-  New Cut below.
+  New Cut below. **ML49 used this order for all 16 cuts, ascending, with no problems.**
+- **The playhead box's label says "1 hour" once the time is between 1 and 2 hours**
+  (" 1 hour 3 minutes 19 seconds 14 frames"), not "hours". Select it with
+  `input[aria-label*="hour"]:visible:not(#panel-container input)`, never `*="hours"`. On ML49
+  `*="hours"` stopped finding the box after the first cut past 1:00:00.
+- **The end trim's last frame comes from Studio.** Read the whole-video "End trim marker"
+  and make sure the final cut ends exactly there. `studio_cuts()` now rounds the end
+  trim to the nearest frame; ML49's list had said `1:29:51:03` against Studio's `:04`.
 - **Numbering:** Studio sorts the list by start time and renumbers it Cut 1..N. Our
   `studio_cuts()` numbering matches.
 - **"New Cut" greys out when the playhead sits inside an existing cut.** Move the
