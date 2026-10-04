@@ -1587,6 +1587,13 @@ def draw_ml48_feature_hierarchy(fig, bbox):
                     gap=0.014, max_h=row_h, lift=row_h + vgap)
 
 
+def draw_ml49_imagenet_race(fig, bbox):
+    """ML 49: ILSVRC top-5 error by year, 28.2% (2010) down to ResNet's 3.57% under the
+    5.1% human line - the arc of the lecture. fig/imagenet_error.pdf with its title band
+    and source line cropped (pdf_to_asset.py --crop-top 0.098 --crop-bottom 0.047)."""
+    _draw_image_row(fig, bbox, ["ml49_imagenet_error.png"], max_h=bbox[3], lift=0.0)
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -1962,6 +1969,14 @@ LESSONS = [
         "draw": draw_ml48_feature_hierarchy,
         "bar_color": DL_BAR,
         "chart_bbox": (0.04, 0.03, 0.92, 0.66), "out": "ML48.png",
+    },
+    # ML 49 - CNN architectures (lecture): the ImageNet error race, AlexNet to ResNet.
+    {
+        "tag": "ML 49", "title": "CNN Architectures",
+        "title_size": 50, "title_max": 80, "title_latin": True,
+        "draw": draw_ml49_imagenet_race,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.03, 0.92, 0.62), "out": "ML49.png",
     },
 ]
 
