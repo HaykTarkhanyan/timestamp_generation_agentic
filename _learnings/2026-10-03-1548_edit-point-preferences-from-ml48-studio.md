@@ -40,3 +40,20 @@ cut longer, in a few repeatable ways. Total removed: mine 15.2 min, theirs
 **How this was measured:** I read the trim markers from the Studio editor page
 (read only, before Save) and diffed them against my list frame by frame.
 Positive d_end or negative d_start means the user cut more.
+
+## ML49 (2026-10-04): same direction, plus pauses inside a demo
+
+From 16 entered cuts to 17: +25.6 s removed, final length 1:10:07. File:
+`output/2026-10-04_49-cnn-archit-Meqenayakan-usucum_OojZjVYzMiM/studio_final_cuts.json`.
+
+- **Short sounds next to a cut get swallowed again (rule 3):**
+  - Cut 2 and Cut 3 were joined into 0:14:27.7-0:14:46.8. That removed 4 s of uncaptioned
+    speech between them and the "Դե" before the lecture starts.
+  - Cut 13's end moved +2.6 s, to 1:22:20.2.
+  - Cut 14 widened from 4.0 s to 12.0 s (1:23:53.7-1:24:05.7).
+- **Pauses inside a live demo are cut too.** I had suggested keeping the two 3 s pauses in
+  the snake demo, because viewers watch the screen there. The user added one cut over both,
+  1:27:49.0-1:27:57.0. The screen activity doesn't save a pause.
+- **A misread to avoid:** the user answered "lets keep the snake demo" to my suggestion to
+  untick those pauses. I read it as "keep the demo uncut" and removed the cuts. They meant
+  the opposite. Restate verbal changes as concrete cut times before rebuilding.

@@ -109,7 +109,10 @@ rerun the full Stage 2 command (see "Order of runs").
    wrong", mumbling): cut it in full, up to where the clean explanation restarts. Pre-tick it.
 6. **Self-interruptions and false restarts:** cut through the restart.
 7. **Short non-content sounds (under about 2 s) at or between cut edges** ("but OK",
-   "yes", fillers, a sentence trailing off) belong inside the cut.
+   "yes", fillers, a sentence trailing off) belong inside the cut. ML49 confirmed it again:
+   the user joined two cuts over 4 s of chatter and widened a 4 s cut to 12 s.
+8. **Pauses inside a live demo are cut too** (ML49: the user cut the pauses in the
+   gesture-controlled snake demo that I had suggested keeping).
 
 **Keep:** student questions and their answers, content tangents, and course-plan announcements.
 
@@ -124,6 +127,11 @@ an edge on `_`. The script then snaps it to the speech edge and keeps the pad. I
 **raises** if an edge sits on speech; move the edge and rerun, never work around it.
 
 ## Stage 4: review pages
+
+**When the user changes the list in words, restate it as concrete cuts before rebuilding.**
+For example: "so I remove the cuts at 1:27:48 and 1:27:54, giving 16 cuts - right?". On ML49
+"lets keep the snake demo" meant "keep those cuts", and I removed them. `studio.html` carries
+a stamp (cut count, list ID, build time), so tell the user to reload an open tab after any rebuild.
 
 Open the Studio-numbered page for the user:
 
@@ -190,8 +198,18 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
 - **Reading cuts back:** the timeline markers carry
   `aria-label="Start trim marker H:MM:SS:FF"` / `"End trim marker ..."`. The first pair
   is the whole-video trim box.
-- **Verify by diffing every marker against the plan in a script, not by eye.** On ML48
-  I left a cut out of a batch; only the full diff caught it.
+- **Verify with `--check-studio`, not by eye.** Save the markers with Playwright
+  (`browser_evaluate` of the `[aria-label^="Start trim marker"], [aria-label^="End trim marker"]`
+  labels, with `filename=.playwright-mcp/<name>.json`), then run:
+
+  ```bash
+  python scripts/find_edit_points.py --output-dir <output_dir> --check-studio .playwright-mcp/<name>.json
+  ```
+
+  It prints the counts in Studio, in the plan and on `studio.html` (all must match), plus the
+  list ID. It lists every cut that is only in one place and exits 1 on any mismatch. Report
+  the three counts and the list ID to the user. On ML48 I left a cut out of a batch, and only
+  a full diff caught it.
 - **Never press Save, and never navigate the Studio tab away** (it holds unsaved
   edits). Open anything else in a new tab. "Discard changes" drops everything.
 

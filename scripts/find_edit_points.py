@@ -32,6 +32,8 @@ Usage:
   python scripts/find_edit_points.py --output-dir ... --report-only   # page from JSON
   python scripts/find_edit_points.py --output-dir ... --speech-map 0:16:00 0:16:50
       # where the pauses are, to place content-cut edges (~10-25 s, reads the audio)
+  python scripts/find_edit_points.py --output-dir ... --check-studio .playwright-mcp/<markers>.json
+      # after entering cuts: Studio vs plan vs studio.html, exits 1 on any mismatch (<1 s)
 
 Runtime (ML48: 1h46m, 120 cuts, this laptop): 1.5-3.5 min wall, and it varied a
 lot from run to run - the render loop took 80-137 s although an idle-machine probe
@@ -573,6 +575,8 @@ STUDIO_CSS = """
 .err { color: var(--red); }
 nav ol { columns: 2; font-variant-numeric: tabular-nums; }
 summary { font-variant-numeric: tabular-nums; }
+.stamp { font-size: 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--red);
+         border-radius: 6px; padding: 6px 10px; display: inline-block; }
 """
 
 STUDIO_JS = """
@@ -630,6 +634,48 @@ document.addEventListener('keydown', ev => {
 """
 
 
+def list_id(scuts) -> str:
+    """Short fingerprint of a Studio cut list, shown on studio.html and by --check-studio."""
+    return hashlib.sha1(json.dumps([[c["start_tc"], c["end_tc"]] for c in scuts]).encode()).hexdigest()[:8]
+
+
+def check_studio(out_dir: Path, markers_file: Path) -> None:
+    """Compare the cuts in Studio (the timeline markers, saved from Playwright) with the
+    plan in edit_points.json and with the cut count of studio.html on disk. Lists every
+    difference and exits non-zero on any mismatch."""
+    data = json.loads((out_dir / "edit_points.json").read_text(encoding="utf-8"))
+    plan = [(c["start_tc"], c["end_tc"]) for c in data["studio_cuts"]]
+    text = markers_file.read_text(encoding="utf-8")
+    first = min(i for i in (text.find("["), text.find("{")) if i >= 0)
+    obj = json.loads(text[first: max(text.rfind("]"), text.rfind("}")) + 1])
+    labels = obj["markers"] if isinstance(obj, dict) else obj
+    vals = [lab.split("marker ")[1] for lab in labels]
+    if len(vals) < 2 or len(vals) % 2:
+        raise ValueError(f"{markers_file}: expected start/end marker pairs, got {len(vals)} labels")
+    pairs = list(zip(vals[0::2], vals[1::2]))
+    whole = pairs[0]
+    fps = int(data["fps"])
+
+    def sec(tc):
+        h, m, s_, f = map(int, tc.split(":"))
+        return h * 3600 + m * 60 + s_ + f / fps
+    studio = sorted(pairs[1:], key=lambda c: sec(c[0]))
+    page_n = (out_dir / "edit_review" / "studio.html").read_text(encoding="utf-8").count('<details open class="cut"')
+    log.info(f"Studio: {len(studio)} cuts | plan (edit_points.json): {len(plan)} | studio.html: {page_n} "
+             f"| list {list_id(data['studio_cuts'])} | whole video {whole[0]} - {whole[1]}")
+    only_plan = [c for c in plan if c not in studio]
+    only_studio = [c for c in studio if c not in plan]
+    for c in only_plan:
+        log.error(f"in the plan, not in Studio: {c[0]} -> {c[1]} ({sec(c[1]) - sec(c[0]):.2f} s)")
+    for c in only_studio:
+        log.error(f"in Studio, not in the plan: {c[0]} -> {c[1]} ({sec(c[1]) - sec(c[0]):.2f} s)")
+    if page_n != len(plan):
+        log.error(f"studio.html shows {page_n} cuts but the plan has {len(plan)}: rebuild the page (--report-only)")
+    if only_plan or only_studio or page_n != len(plan) or len(studio) != len(plan):
+        raise SystemExit(1)
+    log.info(f"OK: Studio holds exactly the {len(plan)} planned cuts, frame for frame")
+
+
 def build_studio_page(data, scuts, rows, page: Path, wav: Path):
     """One collapsible section per cut, numbered exactly like Studio's Cut 1..N list.
     One shared player streams the full lecture WAV; each cut's spectrogram has a
@@ -682,6 +728,8 @@ def build_studio_page(data, scuts, rows, page: Path, wav: Path):
 <style>{PAGE_CSS}{STUDIO_CSS}</style></head>
 <body data-fps="{data['fps']:g}"><main>
 <h1>Studio cuts: {esc(data['title'])}</h1>
+<p class="stamp"><b>{len(scuts)} cuts</b> &middot; list {list_id(scuts)} &middot; built {time.strftime("%Y-%m-%d %H:%M")}
+ - reload this tab if the list changed since you opened it</p>
 <p class="sub">{len(scuts)} cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
 ({data['fps']:g} fps, H:MM:SS:FF). Removes {fmt_t(removed, 0)}: {fmt_t(data['duration'], 0)} &rarr; {fmt_t(data['duration'] - removed, 0)}.
 Each cut plays its whole segment plus 3 s either side; space bar pauses. To drop one, delete that Cut N in Studio before saving.</p>
@@ -772,12 +820,19 @@ def main():
     ap.add_argument("--audio", type=Path,
                     help="the local recording that was uploaded (e.g. the Zoom download); "
                          "converted instead of downloading the audio from YouTube")
+    ap.add_argument("--check-studio", type=Path, metavar="MARKERS_JSON",
+                    help="compare Studio's cuts (timeline marker labels saved from Playwright) "
+                         "with the plan and studio.html, then exit")
     ap.add_argument("--speech-map", nargs=2, metavar=("START", "END"),
                     help="print speech/pause map between two times (H:MM:SS) and exit")
     args = ap.parse_args()
     if args.speech_map:
         setup_logging()
         speech_map(args.output_dir, *args.speech_map, source=args.audio)
+        return
+    if args.check_studio:
+        setup_logging()
+        check_studio(args.output_dir, args.check_studio)
         return
     if args.report_only and (args.min_silence is not None or args.pad is not None):
         ap.error("--min-silence/--pad only apply to a fresh analysis; --report-only reuses edit_points.json as is")
