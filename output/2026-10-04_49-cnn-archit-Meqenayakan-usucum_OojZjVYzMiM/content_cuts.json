@@ -1,0 +1,31 @@
+{
+  "note": "Content cuts picked from the transcript (LLM stage), following _learnings/2026-10-03-1548_edit-point-preferences-from-ml48-studio.md. Edges are points inside pauses (checked with --speech-map); find_edit_points.py snaps them to the speech edge minus the pad. kind: safe = dead air / logistics, judgment = the user's call. default = pre-ticked.",
+  "cuts": [
+    {"start": "0:00:00.0", "end": "0:01:40.6", "kind": "safe", "default": true,
+     "reason": "Dead air, mic check, 'let's wait a few minutes for people'"},
+    {"start": "0:01:40.6", "end": "0:11:50.3", "kind": "judgment", "default": true,
+     "reason": "Pre-lecture Q&A: a student's question on model calibration (thresholds, precision/recall, Platt scaling). Not about CNNs; my pick is to cut it"},
+    {"start": "0:11:50.3", "end": "0:12:36.0", "kind": "safe", "default": true,
+     "reason": "A student joins ('the CNN squad is you two'), the worry about attendance, 'any questions before the lecture'"},
+    {"start": "0:12:36.0", "end": "0:14:44.5", "kind": "judgment", "default": false,
+     "reason": "Course-plan update: lecture only today, maybe no class Wed/Fri, a Claude Code session on Sunday, two practicals next, RNNs shorter, autoencoders moved after LLMs. Kept by default as a course-plan announcement; tick it if it is too schedule-specific"},
+    {"start": "0:29:52.8", "end": "0:30:08.0", "kind": "safe", "default": true,
+     "reason": "'Any questions up to here?' then 9 s of silence. Short sound at 0:30:04-0:30:07 - listen"},
+    {"start": "0:39:57.4", "end": "0:40:11.5", "kind": "safe", "default": true,
+     "reason": "'Any question up to here, people?' then 10 s of silence. Short sound at 0:40:10 - listen"},
+    {"start": "0:52:17.5", "end": "0:52:28.3", "kind": "safe", "default": true,
+     "reason": "'OK so far?' then 7 s of silence"},
+    {"start": "0:52:33.5", "end": "0:54:22.15", "kind": "judgment", "default": false,
+     "reason": "Note to viewers: ResNet is 2015 not 2014, Claude now reviews each video for mistakes, check YouTube for them (you say 'comments'; they now go in the description), the mouse-vs-cat slip. Aimed at YouTube viewers, so kept by default"},
+    {"start": "1:10:52.0", "end": "1:11:27.3", "kind": "safe", "default": true,
+     "reason": "End of the first part: 'that's all, any questions? then a break', a student can't stay after the break"},
+    {"start": "1:18:03.0", "end": "1:20:19.2", "kind": "safe", "default": true,
+     "reason": "Trying to remember a name (King Julien, the lemur), then deciding with the student to skip the second part (transfer learning) today"},
+    {"start": "1:21:59.0", "end": "1:22:17.5", "kind": "safe", "default": true,
+     "reason": "'One second' while the snake game starts. Short sounds at about 1:22:10 and 1:22:14 - listen"},
+    {"start": "1:26:18.0", "end": "1:27:33.0", "kind": "judgment", "default": true,
+     "reason": "'Any questions?', 20 s of silence, then starting the demo ('let me quickly show', waited for the command). Speech at 1:26:21-1:26:24 - listen"},
+    {"start": "1:28:53.4", "end": "end", "kind": "safe", "default": true, "pad": 0.6,
+     "reason": "Outro after the demo: 'questions? if not, we're done', see you Sunday, goodbyes"}
+  ]
+}

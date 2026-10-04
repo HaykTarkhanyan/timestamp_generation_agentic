@@ -117,9 +117,10 @@ def ensure_wav(out_dir: Path, meta: dict, source: Path | None = None) -> Path:
     audio_dir = out_dir / "audio"
     wav = audio_dir / f"{meta['id']}_16k.wav"
     if wav.exists():
-        if source is not None:
-            log.warning(f"{wav} already exists, so --audio {source.name} is not reconverted; "
-                        f"delete the WAV to rebuild it from that file")
+        made_from = audio_source(wav)
+        if source is not None and made_from != str(source.resolve()):
+            raise ValueError(f"{wav.name} was made from {made_from}, not from --audio {source}. "
+                             f"Delete the WAV to rebuild it from that file.")
         return wav
     audio_dir.mkdir(exist_ok=True)
     if source is not None:
@@ -142,7 +143,14 @@ def ensure_wav(out_dir: Path, meta: dict, source: Path | None = None) -> Path:
     log.info(f"Converting {src[0].name} -> {wav.name} (mono 16 kHz)")
     subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", str(src[0]),
                     "-vn", "-ac", "1", "-ar", str(SR), str(wav)], check=True)
+    wav.with_suffix(".source.txt").write_text(str(src[0].resolve()), encoding="utf-8")
     return wav
+
+
+def audio_source(wav: Path) -> str:
+    """Which recording the WAV was converted from (written next to it at conversion)."""
+    side = wav.with_suffix(".source.txt")
+    return side.read_text(encoding="utf-8").strip() if side.exists() else "unknown (WAV made before 2026-10-04)"
 
 
 def frame_levels(x: np.ndarray) -> np.ndarray:
@@ -747,7 +755,7 @@ def analyse(out_dir: Path, min_silence: float, pad: float, source: Path | None =
     return {
         "video_id": meta["id"], "title": meta["title"], "duration": round(duration, 2),
         "params": {"min_silence": min_silence, "pad": pad, "floor_db": round(floor, 1),
-                   "audio_source": str(source) if source else "existing WAV or YouTube audio",
+                   "audio_source": audio_source(out_dir / "audio" / f"{meta['id']}_16k.wav"),
                    "threshold_db": round(thr, 1), "blip_s": BLIP_FRAMES / 100},
         "cuts": all_cuts,
     }

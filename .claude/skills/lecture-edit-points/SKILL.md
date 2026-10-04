@@ -50,7 +50,10 @@ python scripts/find_edit_points.py --output-dir <output_dir> --audio "C:/Users/h
 
 `--audio` converts the file to `audio/<id>_16k.wav` (ML49: 12 s, no download) and
 **refuses it if its length differs from the YouTube video's by more than 2 s** (tested:
-ML48's recording was rejected for ML49, 6352.8 s vs 5391 s). Without `--audio` the
+ML48's recording was rejected for ML49, 6352.8 s vs 5391 s). The source path is saved
+next to the WAV (`audio/<id>_16k.source.txt`) and goes into `edit_points.json` as
+`audio_source`. Passing a different `--audio` once the WAV exists raises; delete the
+WAV to rebuild it. Without `--audio` the
 script falls back to downloading the audio from YouTube (yt-dlp, ~80 MB for 1h45m,
 a few minutes). It writes `edit_points.json` (the record, including `audio_source`),
 `studio_cuts.txt` and the two review pages. The pages need `transcript.txt`, so before
