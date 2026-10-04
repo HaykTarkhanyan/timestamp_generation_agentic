@@ -4,7 +4,9 @@ Sources: `ml/12_cnn/50_cnn_architectures.tex` (slide text and its source notes),
 `fig/most_cited_top20.pdf`, both caption passes (raw and edited timeline; times below
 are on the edited video), web search for the news items. Reviewed 2026-10-05.
 
-## Clear mistakes (in the draft corrections)
+**Published 2026-10-05 in the description, above the chapters** (both clear mistakes, as approved).
+
+## Clear mistakes (in the corrections)
 
 | When | Said | Correct | Evidence |
 |---|---|---|---|
