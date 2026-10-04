@@ -2,6 +2,27 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 5. Edit-point audio comes from the local Zoom recording, checked against YouTube's length
+
+- **Decision:** `find_edit_points.py --audio <file>` converts the recording the user
+  uploaded (the Zoom download in `~/Downloads`), instead of downloading the audio from
+  YouTube. It refuses a file whose length differs from the YouTube video's by more than 2 s.
+- **Date / status:** 2026-10-04, active. YouTube download stays as the fallback when no
+  `--audio` is given.
+- **Why:**
+  - The user asked for it. They download from Zoom and upload that exact file, so it is
+    the same timeline. ML49: Zoom file 5391.16 s, YouTube 5391 s.
+  - It is faster: 12 s to convert, against about 30 s of download plus about 45 s of
+    conversion on ML48.
+  - The length check catches picking the wrong file: ML48's recording was rejected for
+    ML49, 6352.8 s against 5391 s.
+- **Alternatives rejected:**
+  - *Always download from YouTube* - slower, and unnecessary when the original is on disk.
+  - *Auto-pick the newest Zoom file without a check* - one wrong pick puts every cut on
+    the wrong audio.
+- **What would change this:** the user editing the file before uploading (then the
+  timelines differ and the length check fires), or recording somewhere other than Zoom.
+
 ## 4. Lecture corrections go in the description, above the chapters, with minutes instead of timestamps
 
 - **Decision:** The confirmed corrections from the stage-6 review go in the video

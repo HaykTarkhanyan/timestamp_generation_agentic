@@ -27,15 +27,34 @@ python .claude/skills/youtube-timestamps/scripts/fetch_subtitles.py https://yout
 
 Unlisted videos work without cookies. Note the `output_dir` it prints.
 
+**Captions take a while after upload.** ML49 had none 20 minutes after the upload
+(`yt-dlp --list-subs <url>` says "has no automatic captions"). The silence pass doesn't
+need them, so start it right away, and run a light background check (one
+`--list-subs` every 5 minutes, exit when captions exist) that wakes you for Stage 3.
+
 ## Stage 2: silence pass
 
+**Audio comes from the user's own recording, not from YouTube.** The user downloads the
+Zoom cloud recording and uploads that file, so it sits in `C:\Users\hayk_\Downloads`
+as `GMT<YYYYMMDD>-<HHMMSS>_Recording_<WxH>.mp4` (the newest one is usually the video).
+Don't list or search Downloads recursively, it holds 1,000+ media files and `ls -lt` hung.
+List only the newest top-level items:
+
 ```bash
-python scripts/find_edit_points.py --output-dir <output_dir>
+powershell -NoProfile -Command 'Get-ChildItem -LiteralPath "C:\Users\hayk_\Downloads" -Filter "GMT*_Recording*" | Sort-Object LastWriteTime -Descending | Select-Object -First 5 Name, Length, LastWriteTime'
 ```
 
-On the first run this downloads the audio (yt-dlp, ~80 MB for 1h45m) and converts it
-to `audio/<id>_16k.wav`, so it takes a few minutes: run it with `run_in_background`.
-It writes `edit_points.json` (the record), `studio_cuts.txt` and the two review pages.
+```bash
+python scripts/find_edit_points.py --output-dir <output_dir> --audio "C:/Users/hayk_/Downloads/GMT..._Recording_1920x1080.mp4"
+```
+
+`--audio` converts the file to `audio/<id>_16k.wav` (ML49: 12 s, no download) and
+**refuses it if its length differs from the YouTube video's by more than 2 s** (tested:
+ML48's recording was rejected for ML49, 6352.8 s vs 5391 s). Without `--audio` the
+script falls back to downloading the audio from YouTube (yt-dlp, ~80 MB for 1h45m,
+a few minutes). It writes `edit_points.json` (the record, including `audio_source`),
+`studio_cuts.txt` and the two review pages. The pages need `transcript.txt`, so before
+the captions exist, use `--speech-map 0:00:00 0:00:10` just to convert the audio.
 
 **Order of runs:** this first run is silence-only. It warns that `content_cuts.json` is
 missing, which is expected. It also gives you the audio that `--speech-map` needs in
@@ -201,5 +220,5 @@ new length before trusting the transcript.
 - Playwright blocks `file://`. To test `studio.html` there, serve the output folder
   with `scripts/non_essential/range_server.py`, since plain `http.server` can't seek in the WAV.
 - **Runtime:** varies a lot with machine load. A full run took 15 s to 3.5 min on ML48,
-  `--speech-map` takes 10-25 s, and the first download plus conversion adds about 1 min.
+  `--speech-map` takes 10-25 s. Converting the Zoom file takes about 12 s; downloading from YouTube instead adds about 1 min.
 - Don't delete `audio/`: the review page plays from it. It is gitignored, as is `edit_review/media/`.

@@ -21,11 +21,14 @@ Writes, artifact of record first:
 The frame rate comes from yt-dlp once and is kept in edit_points.json.
 Clips and spectrograms (edit_review/media/) are regenerable and gitignored.
 
-The audio is <output-dir>/audio/<id>_16k.wav. If it is missing it gets downloaded
-(yt-dlp, audio only, ~80 MB for 1h45m) and converted (ffmpeg, mono 16 kHz).
+The audio is <output-dir>/audio/<id>_16k.wav. If it is missing it is converted
+(ffmpeg, mono 16 kHz) from --audio <file>, the local recording the user uploaded
+(the Zoom download in ~/Downloads, GMT<date>-<time>_Recording_<res>.mp4); its length
+must match the YouTube video's within 2 s. Without --audio the audio is downloaded
+from YouTube (yt-dlp, audio only, ~80 MB for 1h45m).
 
 Usage:
-  python scripts/find_edit_points.py --output-dir output/<date>_<slug>_<id>
+  python scripts/find_edit_points.py --output-dir output/<date>_<slug>_<id> --audio <recording.mp4>
   python scripts/find_edit_points.py --output-dir ... --report-only   # page from JSON
   python scripts/find_edit_points.py --output-dir ... --speech-map 0:16:00 0:16:50
       # where the pauses are, to place content-cut edges (~10-25 s, reads the audio)
@@ -102,13 +105,34 @@ def fmt_t(sec: float, digits: int = 1) -> str:
 
 # ---------------------------------------------------------------- audio
 
-def ensure_wav(out_dir: Path, meta: dict) -> Path:
+def media_duration(path: Path) -> float:
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
+                          str(path)], check=True, capture_output=True, text=True).stdout.strip()
+    return float(out)
+
+
+def ensure_wav(out_dir: Path, meta: dict, source: Path | None = None) -> Path:
+    """The 16 kHz mono WAV everything reads. Made from `source` (the local recording the
+    user uploaded, e.g. the Zoom download) when given, else from the YouTube audio."""
     audio_dir = out_dir / "audio"
     wav = audio_dir / f"{meta['id']}_16k.wav"
     if wav.exists():
+        if source is not None:
+            log.warning(f"{wav} already exists, so --audio {source.name} is not reconverted; "
+                        f"delete the WAV to rebuild it from that file")
         return wav
     audio_dir.mkdir(exist_ok=True)
-    src = sorted(p for p in audio_dir.glob(f"{meta['id']}.*") if p.suffix in (".webm", ".m4a", ".opus", ".mp3"))
+    if source is not None:
+        if not source.is_file():
+            raise FileNotFoundError(f"--audio file not found: {source}")
+        dur = media_duration(source)
+        if abs(dur - meta["duration"]) > 2.0:
+            raise ValueError(f"{source.name} is {dur:.1f} s long but the YouTube video is {meta['duration']} s - "
+                             f"not the recording that was uploaded?")
+        log.info(f"Using the local recording {source} ({dur:.1f} s, YouTube says {meta['duration']} s)")
+        src = [source]
+    else:
+        src = sorted(p for p in audio_dir.glob(f"{meta['id']}.*") if p.suffix in (".webm", ".m4a", ".opus", ".mp3"))
     if not src:
         log.info(f"Downloading audio for {meta['id']} (yt-dlp, audio only)")
         subprocess.run(["yt-dlp", "-f", "bestaudio", "-o", str(audio_dir / "%(id)s.%(ext)s"), meta["url"]], check=True)
@@ -117,7 +141,7 @@ def ensure_wav(out_dir: Path, meta: dict) -> Path:
             raise FileNotFoundError(f"yt-dlp finished but no audio file appeared in {audio_dir}")
     log.info(f"Converting {src[0].name} -> {wav.name} (mono 16 kHz)")
     subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", str(src[0]),
-                    "-ac", "1", "-ar", str(SR), str(wav)], check=True)
+                    "-vn", "-ac", "1", "-ar", str(SR), str(wav)], check=True)
     return wav
 
 
@@ -660,11 +684,11 @@ Each cut plays its whole segment plus 3 s either side; space bar pauses. To drop
 """, encoding="utf-8")
 
 
-def levels(out_dir: Path):
+def levels(out_dir: Path, source: Path | None = None):
     """Audio, 10 ms speech-band levels, the silence threshold (noise floor + 20 dB)
     and the sound mask - shared by the analysis and --speech-map."""
     meta = json.loads((out_dir / "metadata.json").read_text(encoding="utf-8"))
-    wav = ensure_wav(out_dir, meta)
+    wav = ensure_wav(out_dir, meta, source)
     log.info(f"Reading {wav.name} and measuring levels")
     x, sr = sf.read(wav, dtype="float32")
     if sr != SR:
@@ -678,11 +702,11 @@ def levels(out_dir: Path):
     return meta, x, db, floor, thr, sound
 
 
-def speech_map(out_dir: Path, start: str, end: str) -> None:
+def speech_map(out_dir: Path, start: str, end: str, source: Path | None = None) -> None:
     """Print where the speech and the pauses are, 0.1 s per character, so a content
     cut's edges can be put inside a pause. '#' sound, '.' a click or short sound
     (under 0.2 s, counts as silence), '_' silence. One line per 10 s."""
-    _, _, db, _, thr, sound = levels(out_dir)
+    _, _, db, _, thr, sound = levels(out_dir, source)
     i0, i1 = int(parse_t(start) * 100), min(int(parse_t(end) * 100), len(sound))
     if i1 <= i0:
         raise ValueError(f"--speech-map end {end} is not after start {start}")
@@ -701,8 +725,8 @@ def speech_map(out_dir: Path, start: str, end: str) -> None:
         print(f"{fmt_t(row / 100, 0)}  " + "|".join(line[j:j + 10] for j in range(0, len(line), 10)))
 
 
-def analyse(out_dir: Path, min_silence: float, pad: float) -> dict:
-    meta, x, db, floor, thr, sound = levels(out_dir)
+def analyse(out_dir: Path, min_silence: float, pad: float, source: Path | None = None) -> dict:
+    meta, x, db, floor, thr, sound = levels(out_dir, source)
     duration = len(x) / SR
 
     cuts = silence_cuts(db, sound, thr, min_silence, pad)
@@ -723,6 +747,7 @@ def analyse(out_dir: Path, min_silence: float, pad: float) -> dict:
     return {
         "video_id": meta["id"], "title": meta["title"], "duration": round(duration, 2),
         "params": {"min_silence": min_silence, "pad": pad, "floor_db": round(floor, 1),
+                   "audio_source": str(source) if source else "existing WAV or YouTube audio",
                    "threshold_db": round(thr, 1), "blip_s": BLIP_FRAMES / 100},
         "cuts": all_cuts,
     }
@@ -734,12 +759,15 @@ def main():
     ap.add_argument("--min-silence", type=float, help="shortest silence to cut, seconds (default 3.0)")
     ap.add_argument("--pad", type=float, help="pause left on each side of a cut, seconds (default 0.35)")
     ap.add_argument("--report-only", action="store_true", help="rebuild the page and clips from edit_points.json")
+    ap.add_argument("--audio", type=Path,
+                    help="the local recording that was uploaded (e.g. the Zoom download); "
+                         "converted instead of downloading the audio from YouTube")
     ap.add_argument("--speech-map", nargs=2, metavar=("START", "END"),
                     help="print speech/pause map between two times (H:MM:SS) and exit")
     args = ap.parse_args()
     if args.speech_map:
         setup_logging()
-        speech_map(args.output_dir, *args.speech_map)
+        speech_map(args.output_dir, *args.speech_map, source=args.audio)
         return
     if args.report_only and (args.min_silence is not None or args.pad is not None):
         ap.error("--min-silence/--pad only apply to a fresh analysis; --report-only reuses edit_points.json as is")
@@ -753,7 +781,7 @@ def main():
     if args.report_only:
         data = json.loads(jpath.read_text(encoding="utf-8"))
     else:
-        data = analyse(out_dir, args.min_silence, args.pad)
+        data = analyse(out_dir, args.min_silence, args.pad, args.audio)
         jpath.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
 
     fps = video_fps(data, f"https://youtu.be/{data['video_id']}")
