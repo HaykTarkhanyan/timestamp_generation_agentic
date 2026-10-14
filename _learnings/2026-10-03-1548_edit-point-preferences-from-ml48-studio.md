@@ -57,3 +57,45 @@ From 16 entered cuts to 17: +25.6 s removed, final length 1:10:07. File:
 - **A misread to avoid:** the user answered "lets keep the snake demo" to my suggestion to
   untick those pauses. I read it as "keep the demo uncut" and removed the cuts. They meant
   the opposite. Restate verbal changes as concrete cut times before rebuilding.
+
+## ML50 (2026-10-14): edited on studio.html, same direction
+
+From my 12 cuts to 15 (6 changed, 3 new), 0:36:47 -> 0:36:24 (+23 s removed). File:
+`output/2026-10-14_50-transfer-ggradcam-Meqenayakan_yBi1pbk4j2M/studio_cuts_edited.txt`.
+
+- **Fumbles start earlier than the captions show.** My "forgot the term" cut began at
+  0:22:52; the user started it at 0:22:43, where the captions only had garble ("կարո ենք
+  բանդուն", "վայ մոդունդ"), and split it to keep 0:23:05.6-0:23:10.3 (probably the term itself).
+  Garbled captions right before a fumble are part of the fumble.
+- **Thanks exchanges after a student question go** (new cut 0:19:12.7-0:19:15.9, "OK OK
+  thanks" / "thank you"): rule 3 applies to the closing of an answer too.
+- **A mumbled transition goes in full:** 0:37:41-0:38:10 ("we'll try fine-tuning on ResNet,
+  the future models... we'll talk") became a new 3.7 s cut plus a cut widened from 6 s to 16 s.
+- Three cut ends moved 0.04-0.9 s later: trailing bits get swallowed (rule 3 again).
+
+## ML51 (2026-10-14): where the user kept more
+
+From my 21 cuts to 23 (5 changed, 2 new). File:
+`output/2026-10-14_51-vision-tasks-Meqenayakan-usucum_bPYSyraccrE/studio_cuts_edited.txt`.
+
+- **A candid remark about the course stays; only the prompt goes.** My judgment cut
+  1:35:07-1:35:56 ("honestly I'm a bit tired of these topics... I want us to get back to
+  current topics, but if questions remain, welcome") became 1:35:43.6-1:35:56.5: the remark
+  is kept, only "people" and the silence after it are cut.
+- **The last content sentence is kept whole:** the outro cut moved from 1:42:14.7 to
+  1:42:16.2, keeping all of "let me not dig into the term".
+- **Two tiny new cuts (1.8-1.9 s)** mid-explanation, at 1:02:46.6 and 1:07:21.4.
+- **The user cut the 1:23:22 mumble on their own** ("...uh, but yes, that's nothing"),
+  while I was adding the same cut from the ML50 learning, a sign the rule is right.
+- **Asked whether to add two thanks-exchange cuts at 1:40** (my reassurance to a student,
+  "a very natural, pragmatic question", and the student's "thanks"), they declined - but only
+  because they didn't want to check the list again: "i declined extra thanks just becuase didnt
+  want to check again, that was a one time thing". The ML50 "thanks exchanges go" rule stands;
+  put such cuts in the plan before the user reviews, not after. (I first wrote this down as a
+  preference against the rule; that was a misread.)
+- **Process lesson:** they reviewed the page I had built before adding three cuts (they
+  hadn't reloaded), so the pasted list's "was" times matched the old plan. Check every
+  pasted list against the plan it came from, and after a rebuild say plainly that an open
+  tab is out of date.
+- **End frame, both videos:** the page said 1:50:10:06, Studio's End trim marker was :07.
+  Enter the last cut to Studio's marker (as on ML49).

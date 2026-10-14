@@ -2,6 +2,85 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 9. studio.html can play a 360p proxy of the recording, made on request
+
+- **Decision:** `find_edit_points.py --video-preview` encodes the local recording to a
+  640x360, 15 fps H.264 copy with a keyframe every 2 s and mono AAC
+  (`<output_dir>/video/<id>_360p.mp4`, Quick Sync by default). studio.html plays it in
+  a pinned panel instead of the WAV. It is opt-in, and reused once made.
+- **Date / status:** 2026-10-12, active (the user picked "real video, synced" over a
+  frame strip).
+- **Why:**
+  - Zoom's recording has a keyframe every ~26 s (mean of 11 gaps, max 31 s). Played
+    directly, 8 seeks took 0.35-11 s (median ~2 s) and Play took 2.4 s to start.
+  - On a proxy with 2 s keyframes, 8 seeks took 11-138 ms and Play started in 64 ms.
+  - A 90 s clip encoded in 19 s with Quick Sync. The full encode is heavy (2-3x
+    realtime measured with the CPU at 100% from other work), hence opt-in.
+- **Alternatives rejected:**
+  - *Play the Zoom file directly* - no encode, but seconds per seek.
+  - *Frame strip + live frame* - cheaper, but the user wanted real video.
+  - *Encode only the cut windows* - about half the length here (long cuts dominate) and
+    a player that switches files per card.
+- **What would change this:** Zoom recordings with frequent keyframes (then play the
+  original), or the encode proving too slow to bother with.
+
+## 8. Videos outside the ML series get their own thumbnail, rendered from HTML
+
+- **Decision:** The Claude Code workshop thumbnail is an HTML page
+  (`thumbnails/src/claude_code_thumb.py` builds it) screenshotted at 1280x720 with
+  Playwright, not a `make_thumbnails_final.py` lesson. The locked ML design stays for
+  the ML series.
+- **Date / status:** 2026-10-12, active (the user: "come up with something new... u dont
+  need to use the old templates").
+- **Why:** The concept is text-led (a lyric card of Claude's rap verse, the Claude
+  symbol, a falling mic). HTML gives text highlight bars, the workshop's own fonts
+  (IBM Plex, Noto Sans Armenian, embedded as base64) and a colour emoji mic directly;
+  the matplotlib template has none of that, and its title font has no lowercase Armenian.
+- **Alternatives rejected:**
+  - *The ML template* - the user asked for something new, and "ML NN" doesn't apply.
+  - *PIL by hand* - text highlights, emoji and kerning would all be manual work.
+- **What would change this:** more non-series videos (then make the HTML route a
+  skill), or the user wanting them in the ML look after all.
+
+## 7. The Claude Code workshop cuts silences of 4.5 s and longer; the default stays 3 s
+
+- **Decision:** KdtXO7Pj9DI's edit points use `--min-silence 4.5`. The 3 s default in #3
+  is unchanged.
+- **Date / status:** 2026-10-11, active (the user's pick for this video).
+- **Why:** At 3 s the plan was 68 Studio cuts. Counted from `edit_points.json` with the
+  same 20 pre-ticked content cuts:
+
+  | Minimum silence | Studio cuts | Edited video |
+  |---|---|---|
+  | 3 s | 68 | 1:40:52 |
+  | 3.5 s | 55 | 1:41:24 |
+  | 4 s | 47 | 1:41:48 |
+  | 4.5 s | 42 | 1:42:06 |
+  | 5 s | 38 | 1:42:22 |
+
+  4.5 s drops 26 cuts to type for 74 s more video. Kept pauses stay at full length.
+- **Alternatives rejected:**
+  - *3 s (the default)* - 68 cuts.
+  - *4 s (my recommendation)* - 5 more cuts for 18 s less video.
+  - *5 s* - 4 fewer cuts than 4.5 s for 16 s more video.
+- **What would change this:** the user picking a higher threshold on the next videos too
+  (then raise the default in #3); the kept 3-4.5 s pauses sounding slow in the edited video.
+
+## 6. Private things on screen are blurred by the user, not cut
+
+- **Decision:** Edit points report private on-screen spots (raw and post-cut times, what
+  is visible) and leave them in the video. No default cut covers them; the user blurs
+  them in YouTube Studio.
+- **Date / status:** 2026-10-11, active (the user's call, Claude Code workshop video).
+- **Why:**
+  - The user said: "im gonna blur that parts and not cut".
+  - The spots sit inside demos: Telegram 0:26:14-0:26:26, the calendar week view
+    0:35:07-0:35:13, the home address 1:17:45-1:18:38. Cutting them would cut the demo
+    narration with them.
+- **Alternatives rejected:** *cut each spot* - loses the demo explanation around it.
+- **What would change this:** a spot too long or too spread out to blur, or Studio's
+  Blur tool failing on it.
+
 ## 5. Edit-point audio comes from the local Zoom recording, checked against YouTube's length
 
 - **Decision:** `find_edit_points.py --audio <file>` converts the recording the user
@@ -29,7 +108,10 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   description, in a `⚠️ Ուղղումներ՝` block just above `⏳ Թեմաներ՝`. Each line starts
   with the minute in words, `N-րդ րոպեին - ...` (rounded to the nearest minute), never a
   `H:MM:SS` timestamp. A comment is posted only when the user asks for one.
-- **Date / status:** 2026-10-03, active. Supersedes #1 in part.
+- **Date / status:** 2026-10-03, active, revisited 2026-10-15. Supersedes #1 in part.
+  - Revisited 2026-10-15 (ML50/ML51): each line now starts with a `- ` bullet,
+    `- N-րդ րոպեին - ...`. The user asked for it "so its easier to read, also in future":
+    the corrections are long, and without a marker they run together.
 - **Why:** On ML48 the user looked for the corrections in the description, asked for
   them "before chapters", then asked for "at minute x" wording instead of timestamps.
   There is room for them: ML48 went from 2,586 to 3,139 characters out of 5,000.

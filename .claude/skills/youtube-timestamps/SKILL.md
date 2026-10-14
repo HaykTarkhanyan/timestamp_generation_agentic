@@ -419,9 +419,10 @@ review was real and not a fishing trip.
 - `<output-dir>/review.md`: one row per finding - timestamp, what was said,
   what is correct, the evidence (notebook cell output, slide, URL), category.
 - `<output-dir>/corrections.txt`: the draft corrections, in **Armenian, first
-  person** (the lecturer speaking). One line per clear mistake, starting with the
-  **minute in words**, `N-րդ րոպեին - ...` (rounded to the nearest minute), **never a
-  `H:MM:SS` timestamp** (the user asked for this on ML48). Plain hyphens, no ASCII
+  person** (the lecturer speaking). One line per clear mistake, starting with a
+  **`- ` bullet and the minute in words**, `- N-րդ րոպեին - ...` (rounded to the nearest
+  minute), **never a `H:MM:SS` timestamp** (the user asked for minutes on ML48 and for the
+  bullet on ML50, 2026-10-15: long lines run together without it). Plain hyphens, no ASCII
   `<` `>`. Clear mistakes only by default; framing items and news corrections only if
   they matter to a viewer.
 
@@ -440,8 +441,8 @@ The corrections go **in the description, above the chapters** (DECISIONS.md #4):
 
 ```
 ⚠️ Ուղղումներ՝ (Opus 5.5)
-15-րդ րոպեին - ...
-73-րդ րոպեին - ...
+- 15-րդ րոպեին - ...
+- 73-րդ րոպեին - ...
 
 ⏳ Թեմաներ՝ (Opus 5.5)
 0:00:00 ...
@@ -489,3 +490,17 @@ Present to the user:
 6. Confirm the copy landed in `final/ML<NN>.txt`.
 7. The stage-6 correctness review and the draft corrections - and ask whether to
    add them to the description. Never publish them in the same breath as presenting them.
+
+## Last step: the line for the students' Telegram group
+
+Once the title and description are live, end with one line per video in a code block, for
+the user to paste into the students' Telegram group (asked for on ML50/ML51, 2026-10-15):
+
+```
+Lecture [50] Transfer Learning & Grad-CAM (36 min) - https://youtu.be/yBi1pbk4j2M
+```
+
+- **Title:** the published title without the series suffix (`| Մեքենայական ուսուցում`).
+- **Minutes:** the published video's length (`duration` in the fetched `metadata.json`; for an
+  edited video, the one in `edited/`), rounded to the nearest minute.
+- **URL:** `https://youtu.be/<ID>`. Nothing else goes in the block.

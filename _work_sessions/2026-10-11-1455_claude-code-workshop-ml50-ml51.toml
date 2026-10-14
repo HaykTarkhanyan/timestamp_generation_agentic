@@ -1,0 +1,70 @@
+title = "Claude Code workshop video, studio.html video preview, ML50/ML51 split, edited and published"
+date = "2026-10-11"
+time = "14:55"   # approximate: the workshop's audio folder was created 15:01; the session ran until 2026-10-15 00:35
+areas = [
+  "scripts/",
+  "thumbnails/",
+  "thumbnails/src/",
+  "thumbnails/assets/",
+  ".claude/skills/lecture-edit-points/",
+  ".claude/skills/youtube-timestamps/",
+  ".claude/skills/lecture-thumbnails/",
+  "output/",
+  "final/",
+  "_learnings/",
+]
+
+done = [
+  "Claude Code workshop (KdtXO7Pj9DI): edit points at a 4.5 s minimum silence (DECISIONS #7); the user edited the cut list on studio.html; 40 cuts entered in Studio via Playwright and verified frame by frame; the user saved.",
+  "studio.html: Play no longer stops early (runs to the window end), spectrogram zoom (1x-64x, Ctrl+wheel, 80 px/s), and an opt-in synced video preview, --video-preview, a 360p proxy with a keyframe every 2 s (DECISIONS #9).",
+  "find_edit_points.py: the noise floor ignores digital silence (ML50's break pulled it to -120 dB, so only 2 pauses were found); the band-pass filter runs in 60 s chunks (ML51 raised a MemoryError allocating 403 MB).",
+  "Claude Code workshop after the edit: 47 chapters, title, description with 4 corrections, light lyric-card HTML thumbnail (DECISIONS #8), all published.",
+  "ML50/ML51: one Zoom recording uploaded twice and cut into two parts. [50] 12 planned cuts -> 15 after the user's review, [51] 21 -> 23; both entered via Playwright, verified, saved by the user. Edited lengths 2184 s and 2446 s, as predicted.",
+  "ML50/ML51 thumbnails (vertical ResNet-18 + Grad-CAM; detection panel + stacked segmentation/classification) rendered and published after two rounds of 'too much empty space'.",
+  "ML50/ML51 chapters (22 and 27, all parsed by YouTube), titles '[50] Transfer Learning & Grad-CAM' and '[51] CNNs: Detection & Segmentation', descriptions, correctness reviews; corrections published (2 on [50], 1 on [51]).",
+  "Correction lines now start with a '- ' bullet (youtube-timestamps skill, DECISIONS #4 revisited).",
+  "youtube-timestamps skill: new last step, one 'Lecture [NN] title (x min) - URL' line per video for the students' Telegram group.",
+  "Learnings: ML50/ML51 sections in the edit-point preferences file; new _learnings/2026-10-15-0030_thumbnail-band-fill-it.md.",
+]
+
+pending = [
+  "ML47, ML48, ML49 and the Claude Code video still have correction lines without the '- ' bullet; asked the user whether to update them (4 description pushes), no answer yet.",
+  "Left untracked on purpose: thumbnails/ClaudeCode_dark_v1.png and ClaudeCode_light_v1.png (rejected drafts), thumbnails/assets/ml51_task_loc.png (used only by the rejected one-row ML51 design), .vscode/ (not ours).",
+  "Not requested, only noted: ML50's thumbnail title could get the 'CNNs:' prefix to match ML51.",
+]
+
+next = [
+  "Next lecture: lecture-edit-points end to end. --video-preview is heavy (2-3x realtime): ask before running it, in the background.",
+  "After publishing any video: give the user the Telegram line (youtube-timestamps 'Last step').",
+]
+
+files = [
+  "scripts/find_edit_points.py",
+  "scripts/make_thumbnails_final.py",
+  "thumbnails/src/claude_code_thumb.py",
+  "thumbnails/src/ml51_task_assets.py",
+  ".claude/skills/lecture-edit-points/SKILL.md",
+  ".claude/skills/youtube-timestamps/SKILL.md",
+  ".claude/skills/lecture-thumbnails/SKILL.md",
+  "DECISIONS.md",
+  ".gitignore",
+  "_learnings/2026-10-03-1548_edit-point-preferences-from-ml48-studio.md",
+  "_learnings/2026-10-15-0030_thumbnail-band-fill-it.md",
+  "output/2026-10-11_Claude-Code_KdtXO7Pj9DI/",
+  "output/2026-10-14_50-transfer-ggradcam-Meqenayakan_yBi1pbk4j2M/",
+  "output/2026-10-14_51-vision-tasks-Meqenayakan-usucum_bPYSyraccrE/",
+  "final/ML50.txt", "final/ML51.txt",
+  "thumbnails/ML50.png", "thumbnails/ML51.png", "thumbnails/ClaudeCode_light.png", "thumbnails/ClaudeCode_dark.png",
+]
+
+commits = [
+  "the commit that adds this file",
+]
+
+notes = [
+  "Never call setViewportSize on the user's Studio tab: it shrinks the page and only a reload undoes it (the user: 'why did u minimie yt studio?'). Workaround in the lecture-edit-points skill.",
+  "Studio's End trim marker was a frame later than the list's rounded end on both ML50 and ML51 (:07 vs :06): enter the last cut to Studio's marker.",
+  "A pasted cut list can come from a stale studio.html tab: check its 'was' times against the plan it came from (ML51).",
+  "Three caption passes exist when one recording is uploaded twice and edited: agreement across them separates 'said' from 'misheard' (ML50's '117 million').",
+  "Course deck numbers differ from video numbers here: video [50] = deck 51_transfer_learning, video [51] = deck 52_vision_tasks; materials page ml/12_cnn/12_cnn.html.",
+]

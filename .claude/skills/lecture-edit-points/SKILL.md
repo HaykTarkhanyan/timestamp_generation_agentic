@@ -16,7 +16,7 @@ fetch captions -> silence pass (audio) -> content cuts (LLM) -> review pages -> 
 
 **Read first:** `_learnings/2026-10-03-1548_edit-point-preferences-from-ml48-studio.md`
 (what the user changed in my ML48 cuts - the rules below come from it) and
-DECISIONS.md #2 and #3.
+DECISIONS.md #2, #3 and #6.
 
 ## Stage 1: captions
 
@@ -70,6 +70,12 @@ edit to that file.
   between -80 and -60 dB, so the threshold was not sensitive. If a recording is not
   gated (floor above about -75 dB), check the run counts at a few thresholds before
   trusting it.
+  - **The floor ignores exact digital silence** (all-zero samples, -120 dB), since 2026-10-14.
+    ML50's 11-min break was pure digital silence, 10% of the frames, and dragged the floor to
+    -120 dB: the threshold became -100 dB and only 2 pauses were found. Without it the floor was
+    -94.1 dB and 61-62 pauses of 3 s+ came out at any threshold from -90 to -65 dB. The log line
+    now says how much digital silence was excluded; if a run still finds almost no pauses,
+    suspect the floor first.
 - **Default minimum silence: 3 s** (the user's choice). Each cut leaves 0.35 s of pause on each side.
   At 2 s ML48 needed 68 edits for 16.4 min removed; at 3 s it was 24 edits for 15.2 min.
 - **To cut shorter pauses too**, rerun with `--min-silence 2` (or any value). The analysis
@@ -116,6 +122,14 @@ rerun the full Stage 2 command (see "Order of runs").
 
 **Keep:** student questions and their answers, content tangents, and course-plan announcements.
 
+**One recording uploaded as two videos** (ML50 + ML51, 2026-10-14): the user splits a long
+session by uploading the same file twice and cutting each copy down to its part. Give each
+video its own output dir and `content_cuts.json`, with the same `--audio`. Video 1's last cut
+runs from its last content sentence to `"end"`, and video 2's first cut from `0:00:00` to its
+first content sentence; the break between the parts is cut in both. Find the split in the
+transcript (the "let's take a break, then the other part" line), and expect the plan for both
+parts at the start of video 1.
+
 **Put every edge inside a pause.** Check each one with:
 
 ```bash
@@ -125,6 +139,31 @@ python scripts/find_edit_points.py --output-dir <output_dir> --speech-map 0:16:0
 Each line is 10 s, one character per 0.1 s: `#` sound, `.` a click, `_` silence. Pick
 an edge on `_`. The script then snaps it to the speech edge and keeps the pad. It
 **raises** if an edge sits on speech; move the edge and rerun, never work around it.
+
+### Private things on screen: the user blurs them, don't cut them
+
+The user's choice (2026-10-11, Claude Code workshop): they blur these themselves in Studio.
+
+- **Find them in the transcript.** Listen for remarks like "I'll edit this out later",
+  "this needs blurring", or "Claude, remind me". Also look for opened private apps
+  (Telegram, the calendar, mail) and files with personal data (the global CLAUDE.md
+  holds the home address).
+- **Pin each one down roughly with frames from the local recording.** One fast-seek frame each, a few per spot on a contact sheet:
+  `ffmpeg -v error -ss H:MM:SS -i <recording> -frames:v 1 -vf scale=640:-1 f.jpg`.
+  - Within a second or two is enough; the user finds the exact frames in Studio.
+  - Don't decode keyframes only to prove something never shows up: a static screen
+    has one keyframe about every 30 s.
+- **Report each spot** with three things:
+  - what is visible;
+  - its raw time;
+  - its time after the default cuts (subtract every cut that ends before it).
+
+  It is not known whether Studio's Blur tool shows the original or the trimmed timeline
+  while cuts are unsaved, so give both.
+- **Say a visible secret (password, key) plainly** and tell the user to change it. The
+  raw upload is already on YouTube.
+- **No default cut may cover a private spot.** A remark about the spot ("I'll delete this
+  later") can be a `judgment` cut, off by default when it overlaps the spot.
 
 ## Stage 4: review pages
 
@@ -141,9 +180,33 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
 
 - **`studio.html`:**
   - Cut 1..N with Studio's exact `H:MM:SS:FF` times (the frame rate comes from yt-dlp and is kept in the JSON).
-  - One player per cut over the full lecture WAV, with a bar to click or drag on the spectrogram.
-  - A "skip the cut (hear the result)" toggle, and "play here" buttons on flagged sounds.
+  - One player per cut over the full lecture WAV, with a bar to click or drag on the spectrogram
+    (20 s either side of the cut; Play starts 3 s before the cut and runs to the window's end -
+    it used to stop 3 s after the cut, which the user took for a bug once the window grew; arrow keys move the bar).
+  - Zoom: +/- buttons or Ctrl+wheel (1x to 64x), the spectrogram scrolls sideways and follows the
+    bar while playing. Studio-page spectrograms are drawn at 80 px/s (max 16000 px) so zooming
+    shows detail, not bigger pixels.
+  - A "skip the cuts (hear the result)" toggle, and "play here" buttons on flagged sounds.
+  - **The user can edit the list there** (added 2026-10-11 at their request):
+    - Drag a cut's edge, or press Start = bar / End = bar.
+    - "Add a cut at the bar" makes a new cut inside that window. Every Cut number on the page follows Studio's order.
+    - Neighbouring cuts show in grey.
+    - Edits stay in the browser's localStorage, keyed by the list ID.
+    - A copyable list at the bottom marks cuts CHANGED (with the old times) or NEW. If the
+      user pastes it back, those are the times to use. `--check-studio` compares Studio with
+      `edit_points.json`, so cuts changed on the page show up there as differences.
   - It reads `../audio/<id>_16k.wav`, so the audio folder has to stay where it is.
+  - **Video preview** (added 2026-10-12 at the user's request, opt-in): `--video-preview` makes
+    `<output_dir>/video/<id>_360p.mp4` from the local recording, and studio.html then plays it
+    in a panel that stays at the top while scrolling (with a Hide video button) instead of the WAV.
+    Everything else on the page works the same. Made once; later runs reuse it automatically.
+    - **Heavy: ask the user first and run it in the background.** Measured 2-3x realtime with the
+      CPU at 100% from other work (up to ~1 h for a 2 h recording); a 90 s clip took 19 s.
+      Quick Sync (`h264_qsv`) is the default; `--video-encoder x264` encodes on the CPU instead.
+    - Why a proxy and not the Zoom file itself: Zoom puts a keyframe only every ~26 s, so seeks in
+      the original took 0.35-11 s (median ~2 s). The proxy has one every 2 s: seeks took 11-138 ms.
+    - It needs the local recording (`audio_source` in the JSON). If the audio came from YouTube,
+      rerun the analysis with `--audio <recording>` first.
 - **`index.html`:** every source cut with tick/untick and a minimum-silence menu. Its
   copyable list follows the ticks, in the same Studio numbering and frame times.
 - **`studio_cuts.txt`:** the pre-ticked cuts, same numbering and frames, last first,
@@ -212,6 +275,16 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
   a full diff caught it.
 - **Never press Save, and never navigate the Studio tab away** (it holds unsaved
   edits). Open anything else in a new tab. "Discard changes" drops everything.
+- **Don't call `setViewportSize` on the user's Studio tab.** On ML51 it shrank the page the
+  user was watching ("why did u minimize yt studio? it was full just now"). Inside the page the
+  screen size is emulated too, so the real window size can't be read back. A later "restore"
+  made it smaller still, and only a reload undoes it, which an unsaved tab can't have.
+  `Emulation.clearDeviceMetricsOverride` from a new CDP session does nothing (it only clears its
+  own session's override). What worked: read the real window with CDP `Browser.getWindowForTarget`
+  (ML51: maximized, 2576x1456 bounds; `outerHeight` 1434) and `setViewportSize` to about the
+  content area, 2554x1310 (window minus ~125 px of tab strip, address bar and automation bar).
+  The entry routine has so far only run at 1500x950 (untested at the window's own size); try the
+  window as it is first, and tell the user before resizing anything.
 
 ## Stage 6: read back and learn
 

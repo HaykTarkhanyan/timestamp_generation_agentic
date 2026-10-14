@@ -1,0 +1,21 @@
+{
+  "note": "ML50 and ML51 are one Zoom recording uploaded twice (GMT20261014-160056). This video ([50] transfer learning + Grad-CAM) keeps part 1, up to the end of Grad-CAM at 0:43:11; the last cut removes the break and all of part 2, which is [51]. Edges are points inside pauses (speech map with the threshold fixed to ignore the break's digital silence); find_edit_points.py snaps them to the speech edge minus the pad.",
+  "cuts": [
+    {"start": "0:00:00.0", "end": "0:04:29.0", "kind": "safe", "default": true,
+     "reason": "Dead air and pre-lecture chat: 'have you watched the previous CNN videos or slides', 'can you hear me', 'let's wait a couple of minutes', then 'նաև արի'. The video starts at the course-plan update, 'մի քիչ պլանային փոփոխություն է մեր մոտ' (kept, as on ML49)"},
+    {"start": "0:08:17.5", "end": "0:08:36.5", "kind": "safe", "default": true,
+     "reason": "'And yes, that's our plan. Questions, anything?' and 14 s of silence (two short sounds at 0:08:30 and 0:08:33), up to 'imagine...'"},
+    {"start": "0:22:52.6", "end": "0:23:21.0", "kind": "judgment", "default": true,
+     "reason": "Searching for a term: 'tk, I forgot the term, OK', with silences, up to 'on the slide it was counting parameters, but the idea is what matters'. Listen to 0:22:53-0:23:00 in case there is a content word in it"},
+    {"start": "0:26:07.0", "end": "0:26:18.5", "kind": "safe", "default": true,
+     "reason": "'And yes', 'any questions from here, people?' and the silence after it"},
+    {"start": "0:27:51.2", "end": "0:27:59.8", "kind": "safe", "default": true,
+     "reason": "'And yes' and silence, up to the student's question 'may I ask...' (kept)"},
+    {"start": "0:30:28.3", "end": "0:30:35.2", "kind": "safe", "default": true,
+     "reason": "'A bit abstract maybe, but was the idea OK?', a short reply and silence, up to 'If we sum up'"},
+    {"start": "0:34:09.5", "end": "0:34:31.0", "kind": "safe", "default": true,
+     "reason": "'Uh-huh, thank you, good question', 'anything else, people?' and 9 s of silence, up to 'before starting transfer learning, a few things to think about'"},
+    {"start": "0:43:11.2", "end": "end", "kind": "safe", "default": true,
+     "reason": "Part 2 is the other video ([51] vision tasks): 'OK people, let's take a break, then our other part', the 11-min break, and everything after it. This video ends on the last Grad-CAM sentence, '...that everything is normal with the model'"}
+  ]
+}

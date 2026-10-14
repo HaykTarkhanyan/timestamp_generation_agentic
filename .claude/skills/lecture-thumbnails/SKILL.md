@@ -142,6 +142,12 @@ A stray `Glyph NN (x) missing from font Adamathuz` warning during title fitting 
    python scripts/make_thumbnails_final.py MLNN
    ```
 8. **VIEW the PNG** (Read tool) - always. Iterate on layout/sizes.
+   - **Fill the band, no empty space.** A band of `chart_bbox` (0.05, 0.02, 0.92, 0.66) is
+     about 2.5:1, and a single row of photo panels leaves much of it empty. Use one big panel
+     plus a stacked column, with tags inside the panels
+     (`_learnings/2026-10-15-0030_thumbnail-band-fill-it.md`).
+   - To show the user several PNGs, open **one stacked preview image**: the Photos app reuses
+     its window, so opening two files shows only the last.
 9. **Confirm the FINAL version with the user before pushing.** Do not publish a thumbnail the user hasn't signed off on - they care and will (rightly) reject a surprise push.
 10. **Publish** only after the go-ahead:
     ```bash

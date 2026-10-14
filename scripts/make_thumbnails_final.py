@@ -759,10 +759,12 @@ def draw_ml06_slides(fig, bbox):
 # --- generic embed of course-slide figures (ML 07-09) ---
 
 def _draw_image_row(fig, bbox, asset_names, captions=None, gap=0.04,
-                    max_h=0.42, lift=0.06):
+                    max_h=0.42, lift=0.06, center=False):
     """Place one or more course-slide PNGs (from thumbnails/assets/) in a
     centered row. Heights are matched, so each panel's width follows its image
-    aspect and the row fills the band; optional bold captions sit above."""
+    aspect and the row fills the band; optional bold captions sit above.
+    center=True centers the row vertically in the band instead of using `lift`
+    (for wide rows that can't fill the band's height, ML 50/51)."""
     x0, y0, w, _h = bbox
     imgs = [plt.imread(str(OUT_DIR / "assets" / a)) for a in asset_names]
     aspects = [im.shape[1] / im.shape[0] for im in imgs]
@@ -771,6 +773,8 @@ def _draw_image_row(fig, bbox, asset_names, captions=None, gap=0.04,
     fh = min(max_h, (w - total_gap) / (sum(aspects) * k))
     widths = [a * fh * k for a in aspects]
     cx = x0 + (w - (sum(widths) + total_gap)) / 2.0     # center the row
+    if center:
+        lift = (_h - fh - (0.06 if captions else 0.0)) / 2.0
     iy = y0 + lift
     cap_y = iy + fh + 0.018
     for i, (im, wd) in enumerate(zip(imgs, widths)):
@@ -1594,6 +1598,86 @@ def draw_ml49_imagenet_race(fig, bbox):
     _draw_image_row(fig, bbox, ["ml49_imagenet_error.png"], max_h=bbox[3], lift=0.0)
 
 
+def _place_asset(fig, name, x, y, h, caption=None, tag=None):
+    """One thumbnails/assets image at figure fractions (x, y) with height h; its width follows
+    the image's aspect. Optional bold caption just above, or a `tag` label inside the image's
+    bottom-left corner (takes no extra height). Returns the width used."""
+    im = plt.imread(str(OUT_DIR / "assets" / name))
+    w = im.shape[1] / im.shape[0] * h * (7.2 / 12.8)
+    ax = fig.add_axes([x, y, w, h])
+    ax.imshow(im)
+    ax.axis("off")
+    if caption:
+        fig.text(x + w / 2, y + h + 0.012, caption, ha="center", va="bottom", fontsize=19,
+                 fontweight="bold", color=TITLE_COLOR, family="DejaVu Sans")
+    if tag:
+        fig.text(x + 0.008, y + 0.016, tag, ha="left", va="bottom", fontsize=20, fontweight="bold",
+                 color="white", family="DejaVu Sans",
+                 bbox=dict(boxstyle="square,pad=0.3", fc=TITLE_COLOR, ec="none", alpha=0.85))
+    return w
+
+
+def _aspect(name):
+    im = plt.imread(str(OUT_DIR / "assets" / name))
+    return im.shape[1] / im.shape[0]
+
+
+def draw_ml50_transfer_gradcam(fig, bbox):
+    """ML 50: both halves of the lecture, filling the band. Right: Grad-CAM on the pomegranate,
+    large (fig/gradcam.pdf). Left: ResNet-18 as transfer learning uses it - frozen trunk, new
+    3-class head - redrawn as a vertical stack in the deck's colours, because the deck's own
+    fig/resnet18_arch.pdf is a wide strip that left most of the band empty (the user, twice)."""
+    x0, y0, w, h = bbox
+    k = 7.2 / 12.8
+    gc_w = _aspect("ml50_gradcam.png") * h * k
+    col_w = w - gc_w - 0.02
+    _place_asset(fig, "ml50_gradcam.png", x0 + col_w + 0.02, y0, h)
+    ax = fig.add_axes([x0, y0, col_w, h])
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
+    photo = plt.imread(str(OUT_DIR / "assets" / "ml50_photo.png"))
+    ax.imshow(photo, extent=(0.18, 0.82, 0.0, 0.14), aspect="auto", zorder=2)
+    trunk_fc, trunk_ec = "#cfdaf0", "#1f2d4d"
+    names = ["conv1", "block 1", "block 2", "block 3", "block 4"]
+    y, bh, gap = 0.18, 0.085, 0.022
+    for n in names:
+        ax.add_patch(Rectangle((0.12, y), 0.76, bh, fc=trunk_fc, ec=trunk_ec, lw=1.6, zorder=2))
+        ax.text(0.5, y + bh / 2, n, ha="center", va="center", fontsize=16, color=trunk_ec, zorder=3)
+        y += bh + gap
+    top_trunk = y - gap
+    ax.annotate("", xy=(0.5, 0.18), xytext=(0.5, 0.14), arrowprops=dict(arrowstyle="-|>", color="#333", lw=1.5))
+    ax.text(0.02, (0.18 + top_trunk) / 2, "frozen", rotation=90, ha="center", va="center",
+            fontsize=17, fontweight="bold", color=POINT_COLOR)
+    ax.plot([0.07, 0.07], [0.18, top_trunk], color=POINT_COLOR, lw=2.5)
+    ax.add_patch(Rectangle((0.12, top_trunk + 0.012), 0.76, 0.022, fc=BAR, ec="none", zorder=2))
+    hy = top_trunk + 0.05
+    ax.add_patch(Rectangle((0.12, hy), 0.76, 0.1, fc="#d4f0dc", ec="#1e7a46", lw=2.2, zorder=2))
+    ax.text(0.5, hy + 0.05, "new head", ha="center", va="center", fontsize=17, fontweight="bold",
+            color="#1e7a46", zorder=3)
+    ax.text(0.5, hy + 0.13, "ResNet-18", ha="center", va="center", fontsize=17, fontweight="bold",
+            color=TITLE_COLOR)
+
+
+def draw_ml51_task_zoo(fig, bbox):
+    """ML 51: detection big on the left (the lecture's main thread: boxes, IoU, NMS, YOLO),
+    segmentation and plain classification stacked on the right, so the band is filled (a row of
+    four and a 2x2 grid both left a lot of it empty, the user said). Photo panels of
+    fig/task_zoo.pdf, cropped without their headings (the captions replace them)."""
+    x0, y0, w, h = bbox
+    k = 7.2 / 12.8
+    cap, gx, gy = 0.0, 0.025, 0.03              # captions are tags inside the panels
+    h_big = h - cap
+    h_small = (h - 2 * cap - gy) / 2
+    w_big = _aspect("ml51_task_det.png") * h_big * k
+    w_col = max(_aspect(a) for a in ("ml51_task_seg.png", "ml51_task_cls.png")) * h_small * k
+    xs = x0 + (w - (w_big + gx + w_col)) / 2
+    _place_asset(fig, "ml51_task_det.png", xs, y0, h_big, tag="Detection")
+    xc = xs + w_big + gx
+    for name, cap_text, yy in (("ml51_task_seg.png", "Segmentation", y0 + h_small + cap + gy),
+                               ("ml51_task_cls.png", "Classification", y0)):
+        ww = _aspect(name) * h_small * k
+        _place_asset(fig, name, xc + (w_col - ww) / 2, yy, h_small, tag=cap_text)
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -1977,6 +2061,22 @@ LESSONS = [
         "draw": draw_ml49_imagenet_race,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.03, 0.92, 0.62), "out": "ML49.png",
+    },
+    # ML 50 - transfer learning + Grad-CAM (lecture; same recording as ML 51, cut in two).
+    {
+        "tag": "ML 50", "title": "Transfer Learning & Grad-CAM",
+        "title_size": 40, "title_max": 74, "title_latin": True,
+        "draw": draw_ml50_transfer_gradcam,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.02, 0.92, 0.66), "out": "ML50.png",
+    },
+    # ML 51 - vision tasks (lecture): detection and segmentation, the second half of ML 50's recording.
+    {
+        "tag": "ML 51", "title": "CNNs: Detection & Segmentation",
+        "title_size": 40, "title_max": 74, "title_latin": True,
+        "draw": draw_ml51_task_zoo,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.02, 0.92, 0.66), "out": "ML51.png",
     },
 ]
 
