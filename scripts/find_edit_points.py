@@ -17,7 +17,9 @@ Writes, artifact of record first:
                                          "what gets removed" clips per cut, tick/untick,
                                          copy the final list
   <output-dir>/edit_review/studio.html   the same clips per merged cut, numbered and timed
-                                         exactly like Studio's Cut 1..N list
+                                         exactly like Studio's Cut 1..N list, under a timeline
+                                         of the whole lecture (zoomable spectrogram, every cut,
+                                         the silences no cut covers, editable like the cards)
 The frame rate comes from yt-dlp once and is kept in edit_points.json.
 Clips and spectrograms (edit_review/media/) are regenerable and gitignored.
 
@@ -36,15 +38,22 @@ Usage:
       # after entering cuts: Studio vs plan vs studio.html, exits 1 on any mismatch (<1 s)
   python scripts/find_edit_points.py --output-dir ... --report-only --video-preview
       # studio.html plays a 360p copy of the recording (<output-dir>/video/, made once and
-      # reused). HEAVY: 2-3x realtime under load (2026-10-12), up to ~1 h for a 2 h recording
+      # reused). HEAVY: 2-3x realtime under load (2026-10-12), up to ~1 h for a 2 h recording;
+      # 9x realtime on an idle machine (a 120 s sample of Arnak 12 in 13 s, 2026-10-21)
+  python scripts/find_edit_points.py --output-dir ... --report-only --video-preview --video <recording.mp4>
+      # when the audio came from an audio-only file (Zoom's .m4a): the .mp4 of the same recording,
+      # its length checked against the WAV's (Arnak 12: the two tracks were 0 ms apart)
 
 Runtime (ML48: 1h46m, 120 cuts, this laptop): 1.5-3.5 min wall, and it varied a
 lot from run to run - the render loop took 80-137 s although an idle-machine probe
 rendered a short cut in ~0.15 s and the 7-min chat cut in ~5 s. --report-only
 re-renders the media too, so it costs about the same. Add ~1 min for the
-download and conversion on the first run.
+download and conversion on the first run. The timeline tiles (edit_review/media/timeline/,
+~12 MB for 70 min) took 16-23 s the first time (Arnak 12, 13, 2025 on 2026-10-21) and are
+reused while the WAV is unchanged; a whole --report-only run of a 70-min lecture took 40 s.
 """
 import argparse
+import bisect
 import hashlib
 import html
 import json
@@ -78,6 +87,10 @@ PLAY_CONTEXT_S = 3.0       # studio.html Play starts this long before the cut (a
 STUDIO_PX_PER_S = 80       # studio.html spectrogram detail, so zooming in shows more than bigger pixels (12.5 ms/px)
 STUDIO_SPEC_MAX_W = 16000  # ...capped for the long cuts (a 10-min window gets ~40 ms/px, about one frame)
 SPEC_W, SPEC_H = 960, 130  # spectrogram image size, px
+TL_HI_PX_PER_S, TL_HI_TILE_S = 80, 30   # studio.html timeline: 30-s tiles at the cards' detail (2400 px each)
+TL_LO_PER_HI = 10          # ...and 300-s tiles at 8 px/s, the same pixels shrunk, for the zoomed-out views
+TL_PAUSE_MIN_S = 2.0       # timeline: silences this long are marked wherever no cut covers them
+TL_VERSION = 1             # bump when the tile drawing changes, so the reused tiles get redrawn
 MAGMA = colormaps["magma"]
 
 log = logging.getLogger("find_edit_points")
@@ -180,25 +193,32 @@ def existing_video_proxy(out_dir: Path, data: dict) -> Path | None:
     dest = video_proxy_path(out_dir, data["video_id"])
     if not dest.exists():
         return None
-    made_from = dest.with_suffix(".source.txt").read_text(encoding="utf-8").strip()
-    if made_from != data["audio_source"]:
-        raise ValueError(f"{dest.name} was made from {made_from}, but the audio comes from "
-                         f"{data['audio_source']}. Delete {dest} and rerun with --video-preview.")
+    # line 1: the file it was encoded from; line 2 (since --video): "audio: <the WAV's source it matched>"
+    lines = dest.with_suffix(".source.txt").read_text(encoding="utf-8").splitlines()
+    checked = lines[1].removeprefix("audio: ").strip() if len(lines) > 1 else lines[0].strip()
+    if checked != data["params"]["audio_source"]:
+        raise ValueError(f"{dest.name} was made for the audio of {checked}, but the audio comes from "
+                         f"{data['params']['audio_source']}. Delete {dest} and rerun with --video-preview.")
     return dest
 
 
-def make_video_proxy(out_dir: Path, data: dict, encoder: str) -> Path:
+def make_video_proxy(out_dir: Path, data: dict, encoder: str, video: Path | None = None) -> Path:
     """A small H.264 copy of the recording that studio.html plays instead of the WAV:
     VIDEO_PROXY_H p, VIDEO_PROXY_FPS fps, a keyframe every 2 s, mono AAC. Encoded once and
-    reused while it matches the WAV's source recording."""
+    reused while it matches the WAV's source recording. `video`: the recording's video file when
+    the WAV came from an audio-only file (Zoom's separate .m4a); it must be as long as the WAV."""
     existing = existing_video_proxy(out_dir, data)
     if existing:
         log.info(f"Video preview: reusing {existing}")
         return existing
-    src = Path(data["audio_source"])
+    src = video or Path(data["params"]["audio_source"])
     if not src.is_file():
         raise FileNotFoundError(f"--video-preview needs the local recording, and the audio came from "
-                                f"{data['audio_source']!r}: rerun the analysis with --audio <recording>")
+                                f"{data['params']['audio_source']!r}: rerun the analysis with --audio <recording>, "
+                                f"or pass the video file with --video")
+    if video and abs(media_duration(video) - data["duration"]) > 1.0:
+        raise ValueError(f"--video {video} is {media_duration(video):.1f} s long, the audio {data['duration']:.1f} s: "
+                         "not the same recording")
     size = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
                            "-of", "csv=p=0", str(src)], check=True, capture_output=True, text=True).stdout.strip()
     if not size:
@@ -238,7 +258,7 @@ def make_video_proxy(out_dir: Path, data: dict, encoder: str) -> Path:
         raise ValueError(f"{part.name} is {dur:.1f} s long but the audio is {data['duration']:.1f} s: "
                          f"the page would play out of sync")
     part.replace(dest)
-    dest.with_suffix(".source.txt").write_text(str(src), encoding="utf-8")
+    dest.with_suffix(".source.txt").write_text(f"{src}\naudio: {data['params']['audio_source']}\n", encoding="utf-8")
     log.info(f"Video preview: wrote {dest} ({dest.stat().st_size / 2**20:.0f} MB) in {time.time() - t0:.0f} s")
     return dest
 
@@ -465,7 +485,125 @@ def draw_spectrogram(x, cut, duration, media: Path, margin: float = 3.0, shade: 
     cut["spec_px"] = width
 
 
+def timeline_tiles(x, duration: float, media: Path, wav: Path) -> dict:
+    """0-5 kHz spectrogram of the whole lecture for studio.html's timeline, as JPEG tiles in
+    media/timeline/: 30-s tiles at 80 px/s for the zoomed-in views and 300-s tiles at 8 px/s (the
+    same pixels, shrunk) for the zoomed-out ones. One colour scale for the whole lecture, so a quiet
+    stretch looks quiet next to a loud one (the cards scale each window on its own). The tiles depend
+    only on the audio, so they are drawn once per WAV and reused (media/timeline/manifest.json)."""
+    out = media / "timeline"
+    st = wav.stat()
+    key = {"version": TL_VERSION, "wav_bytes": st.st_size, "wav_mtime": int(st.st_mtime), "duration": duration}
+    mf = out / "manifest.json"
+    if mf.exists():
+        m = json.loads(mf.read_text(encoding="utf-8"))
+        if m.get("key") == key:
+            log.info(f"Timeline: reusing {m['hi']['n']} + {m['lo']['n']} tiles in {out}")
+            return m
+    out.mkdir(parents=True, exist_ok=True)
+    nper, hop = 512, 128
+    n_hi = math.ceil(duration / TL_HI_TILE_S)
+
+    def tile_db(i):
+        w0 = i * TL_HI_TILE_S
+        w1 = min(duration, w0 + TL_HI_TILE_S)
+        seg = x[int(w0 * SR): int(w1 * SR)]
+        if len(seg) < nper:
+            seg = np.pad(seg, (0, nper - len(seg)))
+        f, _, sxx = spectrogram(seg, fs=SR, nperseg=nper, noverlap=nper - hop)
+        return w1 - w0, 10 * np.log10(sxx[f <= 5000] + 1e-12)
+
+    t0 = time.time()
+    peaks = [np.percentile(tile_db(i)[1], 99.5) for i in range(0, n_hi, 4)]   # the scale: speech peaks of a sample
+    vmax = float(np.percentile(peaks, 90))
+    lo_parts, n_lo = [], 0
+    for i in tqdm(range(n_hi), desc="timeline tiles"):
+        span, sdb = tile_db(i)
+        width = max(1, round(span * TL_HI_PX_PER_S))
+        norm = np.clip((sdb - (vmax - 70)) / 70, 0, 1)[::-1]          # low frequencies at the bottom
+        small = np.asarray(Image.fromarray(np.ascontiguousarray(norm, dtype=np.float32)).resize((width, SPEC_H), Image.BILINEAR))
+        Image.fromarray((MAGMA(small)[..., :3] * 255).astype(np.uint8)).save(out / f"hi_{i:04d}.jpg", quality=82)
+        lo_parts.append(small)
+        if len(lo_parts) == TL_LO_PER_HI or i == n_hi - 1:
+            strip = np.ascontiguousarray(np.concatenate(lo_parts, axis=1), dtype=np.float32)
+            lo = np.asarray(Image.fromarray(strip).resize((max(1, round(strip.shape[1] / TL_LO_PER_HI)), SPEC_H), Image.BILINEAR))
+            Image.fromarray((MAGMA(lo)[..., :3] * 255).astype(np.uint8)).save(out / f"lo_{n_lo:04d}.jpg", quality=82)
+            n_lo += 1
+            lo_parts = []
+    m = {"key": key, "vmax_db": round(vmax, 1),
+         "hi": {"px_per_s": TL_HI_PX_PER_S, "tile_s": TL_HI_TILE_S, "n": n_hi, "src": "media/timeline/hi_"},
+         "lo": {"px_per_s": TL_HI_PX_PER_S / TL_LO_PER_HI, "tile_s": TL_HI_TILE_S * TL_LO_PER_HI, "n": n_lo,
+                "src": "media/timeline/lo_"}}
+    mf.write_text(json.dumps(m, indent=1), encoding="utf-8")
+    mb = sum(p.stat().st_size for p in out.glob("*.jpg")) / 1e6
+    log.info(f"Timeline: {n_hi} + {n_lo} tiles ({mb:.1f} MB) in {time.time() - t0:.0f} s")
+    return m
+
+
+def pause_groups(sound: np.ndarray, vtt: Path) -> list[list[tuple[float, float]]]:
+    """Silence runs (0.3 s+) chained across hums: a sound under HUM_MAX_SOUND_S with no real caption
+    word between two runs joins them (hum_join.py's test). Arnak's "ըըը" is as loud as speech, so
+    without this, 1.8 s + hum + 1.8 s is two short silences. Groups with TL_PAUSE_MIN_S+ of silence."""
+    if not vtt.exists():
+        raise FileNotFoundError(f"The timeline needs the captions to tell hums from words: {vtt} is missing")
+    real = sorted(t for t, w in caption_words(vtt.read_text(encoding="utf-8")) if w and not FILLER.match(w))
+    has_word = lambda p, q: bisect.bisect_right(real, q + 0.2) > bisect.bisect_left(real, p - 0.2)
+    a, b = runs(~sound)
+    groups = []
+    for s, e in ((s / 100, e / 100) for s, e in zip(a, b) if e - s >= 30):
+        if groups and s - groups[-1][-1][1] < HUM_MAX_SOUND_S and not has_word(groups[-1][-1][1], s):
+            groups[-1].append((s, e))
+        else:
+            groups.append([(s, e)])
+    return [g for g in groups if sum(e - s for s, e in g) >= TL_PAUSE_MIN_S]
+
+
+def timeline_data(x, data: dict, scuts: list[dict], rows, media: Path, wav: Path, vtt: Path) -> dict:
+    """Everything studio.html's timeline needs besides the cuts: the tiles, the pauses of
+    TL_PAUSE_MIN_S+ of silence, hum-split ones as one group (so the page can mark the ones no cut
+    covers, as the cuts change), loudness per second for the overview, each Studio cut's kind and
+    reason, the unticked suggestions, the transcript."""
+    tiles = timeline_tiles(x, data["duration"], media, wav)
+    db = frame_levels(x)
+    sound = sound_mask(db, data["params"]["threshold_db"])
+    groups = pause_groups(sound, vtt)
+    pauses = [[[round(s, 2), round(e, 2)] for s, e in g] for g in groups]
+    n = len(db) // 100
+    loud = np.clip((db[: n * 100].reshape(n, 100).max(axis=1) - data["params"]["floor_db"]) / 60 * 100, 0, 100)
+    by_id = {c["id"]: c for c in data["cuts"]}
+    kinds = {}
+    for sc in scuts:
+        src = [by_id[i] for i in sc["sources"]]
+        content = [c for c in src if c["source"] == "content"]
+        reason = "; ".join(c["reason"] for c in content) or (src[0]["reason"] if len(src) == 1 else f"{len(src)} silences")
+        kinds[f"cut-{sc['n']}"] = {"kind": "judgment" if any(c["kind"] == "judgment" for c in content) else "safe",
+                                   "reason": reason}
+    suggestions = [{"s": c["start"], "e": c["end"], "reason": c["reason"]} for c in data["cuts"] if not c["default"]]
+    log.info(f"Timeline: {len(pauses)} pauses of {TL_PAUSE_MIN_S:g} s+ silence ({sum(len(g) > 1 for g in groups)} "
+             f"split by a hum), {len(suggestions)} unticked suggestions")
+    return {"tiles": tiles, "pauses": pauses, "loud": loud.round().astype(int).tolist(), "kinds": kinds,
+            "suggestions": suggestions, "rows": [[r[0], r[2]] for r in rows], "pause_min": TL_PAUSE_MIN_S}
+
+
 # ---------------------------------------------------------------- transcript
+
+HUM_MAX_SOUND_S = 1.2      # a sound this short between two silences, with no real caption word, is a hum (DECISIONS #17)
+# caption "words" that are hums, not words; also capitalised at a sentence start ("Ըը") and with punctuation ("Ըհը,")
+FILLER = re.compile(r"^(ը+|ըհը|ըմ|հմ+|է+|ա+|մմ+|ըը+մ)[,.:;!?։՝՞]*$", re.IGNORECASE)
+
+
+def caption_words(vtt: str) -> list[tuple[float, str]]:
+    """(time, word) of every word in a YouTube auto-caption VTT. Shared with hum_join.py."""
+    hms = lambda t: int(t[:2]) * 3600 + int(t[3:5]) * 60 + float(t[6:])
+    words = [(hms(t), w.strip()) for t, w in re.findall(r"<(\d\d:\d\d:\d\d\.\d\d\d)><c>([^<]*)</c>", vtt)]
+    # The first word of each line carries no <c> tag: take it with its cue's start time, up to the next
+    # word's timing tag. A line of ONE word has no tag at all, so it ends at the line end. Until 2026-10-21
+    # this was (\S+)<: the tag stuck to the word ("ըը<00:42:51.680>", never a FILLER) and one-word lines
+    # were lost (Arnak lesson 12: 131, among them "կորելացիա", which hum_join then joined a cut across).
+    # Placeholder cues repeat the line above a blank one, so their second line doesn't match.
+    words += [(hms(t), w.strip()) for t, w in re.findall(r"^(\d\d:\d\d:\d\d\.\d\d\d) --> .*\n.*\n([^\s<]+)", vtt, flags=re.M)]
+    return words
+
 
 def load_transcript(path: Path):
     rows = []
@@ -686,6 +824,9 @@ STUDIO_CSS = """
 .was, .warn, .msg { font-size: 13px; color: var(--muted); }
 .warn, .msg { color: var(--red); }
 details.cut.changed > summary { color: var(--red); }
+details.cut.removed > summary { color: var(--muted); text-decoration: line-through; }
+.shade.gone { background: none; border: 2px dashed var(--red); }
+.edit button:disabled { opacity: .4; cursor: not-allowed; }
 #export { width: 100%; min-height: 220px; font: 13px/1.4 ui-monospace, Consolas, monospace; }
 #player { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 8px 0 10px; display: flex;
           gap: 12px; align-items: flex-end; border-bottom: 1px solid var(--line); }
@@ -705,6 +846,10 @@ nav ol { columns: 2; font-variant-numeric: tabular-nums; }
 summary { font-variant-numeric: tabular-nums; }
 .stamp { font-size: 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--red);
          border-radius: 6px; padding: 6px 10px; display: inline-block; }
+#worktimer { position: fixed; right: 12px; bottom: 12px; z-index: 20; display: flex; gap: 8px; align-items: center;
+             background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px;
+             font-size: 14px; font-variant-numeric: tabular-nums; box-shadow: 0 1px 4px rgba(0, 0, 0, .25); }
+#worktimer.on { border-color: var(--red); }
 """
 
 STUDIO_JS = """
@@ -721,10 +866,10 @@ function tc(t) { const f = Math.floor(t * FPS + 1e-6), s = Math.floor(f / FPS);
 const num = (el, k) => parseFloat(el.dataset[k]);
 const snap = t => Math.round(t * FPS) / FPS;   // Studio works in whole frames
 // Every cut on the page: each card's planned cut, plus the cuts added on this page (host = the card).
-const plan = cards.map(el => ({ host: el, s: num(el, 's0'), e: num(el, 'e0'), s0: num(el, 's0'), e0: num(el, 'e0'), added: false }));
+const plan = cards.map(el => ({ host: el, s: num(el, 's0'), e: num(el, 'e0'), s0: num(el, 's0'), e0: num(el, 'e0'), added: false, removed: false }));
 cards.forEach((el, i) => { el.plan = plan[i]; });
 let added = [];
-const all = () => plan.concat(added);
+const all = () => plan.filter(c => !c.removed).concat(added);   // a removed cut is out of the list and the numbering
 const own = el => [el.plan, ...added.filter(c => c.host === el)];
 const changed = c => !c.added && (Math.abs(c.s - c.s0) > 1e-6 || Math.abs(c.e - c.e0) > 1e-6);
 function storageError(what, err) {
@@ -733,7 +878,8 @@ function storageError(what, err) {
 function save() {
   const edits = {};
   plan.forEach(c => { if (changed(c)) edits[c.host.id] = [c.s, c.e]; });
-  try { localStorage.setItem(KEY, JSON.stringify({ edits, added: added.map(c => ({ host: c.host.id, s: c.s, e: c.e })) })); }
+  try { localStorage.setItem(KEY, JSON.stringify({ edits, added: added.map(c => ({ host: c.host ? c.host.id : null, s: c.s, e: c.e })),
+                                                   removed: plan.filter(c => c.removed).map(c => c.host.id) })); }
   catch (err) { storageError('saved', err); }
 }
 function load() {
@@ -741,8 +887,9 @@ function load() {
   try { o = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (err) { storageError('loaded', err); return; }
   const edits = 'edits' in o ? o.edits : o;    // the first version stored only {cardId: [s, e]}
   plan.forEach(c => { if (edits[c.host.id]) [c.s, c.e] = edits[c.host.id]; });
-  (o.added || []).forEach(a => { const h = document.getElementById(a.host);
-    if (h) added.push({ id: ++uid, host: h, s: a.s, e: a.e, added: true }); });
+  (o.added || []).forEach(a => { const h = a.host === null ? null : document.getElementById(a.host);   // null: added on the timeline
+    if (h || a.host === null) added.push({ id: ++uid, host: h, s: a.s, e: a.e, added: true }); });
+  (o.removed || []).forEach(id => { const c = plan.find(p => p.host.id === id); if (c) c.removed = true; });
 }
 function show(el, t) {
   const w0 = num(el, 'w0'), w1 = num(el, 'w1');
@@ -792,47 +939,64 @@ function renderCard(el) {
     d.style.width = (100 * (b - a) / (w1 - w0)) + '%';
     box.appendChild(d);
   });
-  el.querySelector('.times').textContent = `start ${tc(p.s)}  end ${tc(p.e)}  (${(p.e - p.s).toFixed(2)} s)`;
-  el.querySelector('.was').textContent = changed(p) ? `was ${tc(p.s0)} - ${tc(p.e0)}` : '';
+  if (p.removed) {                                              // where the removed cut was: a dashed outline
+    const d = document.createElement('div');
+    d.className = 'shade gone';
+    d.style.left = (100 * (p.s - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (p.e - p.s) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  }
+  el.querySelector('.times').textContent = p.removed ? `removed on this page (planned ${tc(p.s0)} - ${tc(p.e0)})`
+    : `start ${tc(p.s)}  end ${tc(p.e)}  (${(p.e - p.s).toFixed(2)} s)`;
+  el.querySelector('.was').textContent = changed(p) && !p.removed ? `was ${tc(p.s0)} - ${tc(p.e0)}` : '';
   el.querySelector('.warn').textContent = p.warn.length ? p.warn.join(', ') + OVERLAP : '';
+  el.querySelector('.rm').textContent = p.removed ? 'Restore cut' : 'Remove cut';
+  ['.set-s', '.set-e', '.reset'].forEach(k => { el.querySelector(k).disabled = p.removed; });
   el.querySelector('.added-cuts').innerHTML = mine.slice(1).map(c =>
     `<div class="added-row"><span class="tag">New Cut ${c.n}</span><span class="times">start ${tc(c.s)}  end ${tc(c.e)}  (${(c.e - c.s).toFixed(2)} s)</span>` +
     `<button data-id="${c.id}" data-do="s">Start = bar</button><button data-id="${c.id}" data-do="e">End = bar</button>` +
     `<button data-id="${c.id}" data-do="x">Remove</button><span class="warn">${c.warn.length ? c.warn.join(', ') + OVERLAP : ''}</span></div>`).join('');
   const extra = mine.length > 1 ? `   + new ${mine.slice(1).map(c => 'Cut ' + c.n).join(', ')}` : '';
-  const title = `Cut ${p.n}   ${span(p)}` + (changed(p) ? '   changed' : '') + extra;
-  el.classList.toggle('changed', changed(p) || mine.length > 1);
+  const title = (p.removed ? `Removed   ${tc(p.s0)} \\u2192 ${tc(p.e0)}` : `Cut ${p.n}   ${span(p)}` + (changed(p) ? '   changed' : '')) + extra;
+  el.classList.toggle('changed', (changed(p) && !p.removed) || mine.length > 1);
+  el.classList.toggle('removed', p.removed);
   el.querySelector('summary').textContent = title;
-  document.querySelector(`nav a[href="#${el.id}"]`).textContent = title;
+  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none when the cards are hidden behind the timeline
+  if (toc) toc.textContent = title;
 }
 function renderAll() {
   const sorted = all().sort((a, b) => a.s - b.s || a.e - b.e);   // Studio numbers its list by start time
+  plan.forEach(c => { c.n = null; c.warn = []; });              // removed cuts get no number and no warnings
   sorted.forEach((c, i) => { c.n = i + 1; c.warn = []; });
   for (let i = 1; i < sorted.length; i++) if (sorted[i].s < sorted[i - 1].e) {
     sorted[i].warn.push(`overlaps Cut ${sorted[i - 1].n}`); sorted[i - 1].warn.push(`overlaps Cut ${sorted[i].n}`); }
   cards.forEach(renderCard);
-  const nChanged = plan.filter(changed).length, nNew = added.length;
+  const gone = plan.filter(c => c.removed);
+  const nChanged = plan.filter(c => changed(c) && !c.removed).length, nNew = added.length, nRemoved = gone.length;
   let removed = 0, end = -1;                                    // union, so overlaps count once
   sorted.forEach(c => { removed += Math.max(0, c.e - Math.max(c.s, end)); end = Math.max(end, c.e); });
   const dur = +document.body.dataset.duration;
   const hms = t => { t = Math.round(t); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
-  document.getElementById('nchanged').textContent = nChanged || nNew ? ` \\u00b7 on this page: ${nChanged} changed, ${nNew} new` : '';
+  document.getElementById('nchanged').textContent = nChanged || nNew || nRemoved
+    ? ` \\u00b7 on this page: ${nChanged} changed, ${nNew} new, ${nRemoved} removed` : '';
   document.getElementById('removed').textContent = `${hms(removed)}: ${hms(dur)} \\u2192 ${hms(dur - removed)}`;
   document.getElementById('export').value =
-    `# ${sorted.length} cuts (${nChanged} changed, ${nNew} new on studio.html), numbered as in Studio, listed last first for entry\\n` +
+    `# ${sorted.length} cuts (${nChanged} changed, ${nNew} new, ${nRemoved} removed on studio.html), numbered as in Studio, listed last first for entry\\n` +
     sorted.slice().reverse().map(c =>
       `Cut ${String(c.n).padStart(2)}   ${tc(c.s)}  ->  ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)` +
-      (c.added ? '   NEW' : changed(c) ? `   CHANGED, was ${tc(c.s0)} -> ${tc(c.e0)}` : '')).join('\\n');
+      (c.added ? '   NEW' : changed(c) ? `   CHANGED, was ${tc(c.s0)} -> ${tc(c.e0)}` : '')).join('\\n') +
+    gone.map(c => `\\n# REMOVED, was ${tc(c.s0)} -> ${tc(c.e0)}`).join('');      // planned cuts dropped on the page
+  if (window.tlRefresh) tlRefresh();                            // the timeline view, when the page has one
 }
-function setEdge(c, k, t, fromButton = false) {
-  const el = c.host;
-  t = snap(Math.min(num(el, 'w1'), Math.max(num(el, 'w0'), t)));
+function setEdge(c, k, t, fromButton = false, lim = null, msgEl = null) {   // lim, msgEl: the timeline's (whole video)
+  const el = c.host, [lo, hi] = lim || [num(el, 'w0'), num(el, 'w1')], msg = msgEl || el.querySelector('.msg');
+  t = snap(Math.min(hi, Math.max(lo, t)));
   const s = k === 's' ? t : c.s, e = k === 'e' ? t : c.e;
   if (e - s < 1 / FPS - 1e-6) {
-    if (fromButton) el.querySelector('.msg').textContent = `Cut ${c.n}: the start has to stay before the end - move the bar first.`;
+    if (fromButton) msg.textContent = `Cut ${c.n}: the start has to stay before the end - move the bar first.`;
     return;
   }
-  el.querySelector('.msg').textContent = '';
+  msg.textContent = '';
   c[k] = t;
   renderAll();
   if (fromButton) save();
@@ -858,10 +1022,11 @@ function tick() {
 }
 function label(el, playing) { el.querySelector('.play').textContent = playing ? 'Pause' : 'Play'; }
 function play(el) {
+  if (window.tlStop) tlStop();                                  // the timeline was playing
   if (cur && cur !== el) { A.pause(); label(cur, false); }
   cur = focusEl = el;
   const nowcut = document.getElementById('nowcut');
-  if (nowcut) nowcut.textContent = `Playing Cut ${el.plan.n}`;
+  if (nowcut) nowcut.textContent = el.plan.removed ? 'Playing a removed cut' : `Playing Cut ${el.plan.n}`;
   let t = num(el, 'pos');
   if (t >= num(el, 'w1') - 0.05) t = show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
   follow(el, t);
@@ -882,6 +1047,27 @@ if (player) {                                                   // video preview
     try { localStorage.setItem('studio-video-hidden', h ? '1' : '0'); } catch (err) { storageError('saved', err); }
   });
 }
+// Work timer: Start/Stop adds up the time spent reviewing, kept in this browser per video (a reload
+// or a rebuilt page keeps it). It counts wall-clock time, so it keeps running while the tab is closed.
+const TKEY = 'studio-timer-' + document.body.dataset.video;
+let tTotal = 0, tSince = null;                                  // ms so far, and when the running stretch began
+try { const o = JSON.parse(localStorage.getItem(TKEY) || 'null'); if (o) ({ total: tTotal, since: tSince } = o); }
+catch (err) { storageError('loaded', err); }
+const tBtn = document.getElementById('wt-btn');
+function tShow() {
+  const s = Math.floor((tTotal + (tSince ? Date.now() - tSince : 0)) / 1000);
+  document.getElementById('wt-time').textContent = Math.floor(s / 3600) + ':' +
+    String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  tBtn.textContent = tSince ? 'Stop timer' : 'Start timer';
+  document.getElementById('worktimer').classList.toggle('on', tSince !== null);
+}
+tBtn.addEventListener('click', () => {
+  if (tSince !== null) { tTotal += Date.now() - tSince; tSince = null; } else tSince = Date.now();
+  try { localStorage.setItem(TKEY, JSON.stringify({ total: tTotal, since: tSince })); } catch (err) { storageError('saved', err); }
+  tShow(); tBtn.blur();                                         // so the space bar pauses playback, not the timer
+});
+setInterval(tShow, 1000);
+tShow();
 load();
 cards.forEach(el => {
   el.dataset.zoom = 1;
@@ -893,7 +1079,7 @@ cards.forEach(el => {
   const px = t => { const r = wrap.getBoundingClientRect(); return r.left + (t - num(el, 'w0')) / (num(el, 'w1') - num(el, 'w0')) * r.width; };
   const edgeAt = ev => {   // within 8 px of an edge of this card's cuts: drag that edge instead of the bar
     let best = null, bd = 8;
-    own(el).forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(ev.clientX - px(c[k])); if (d <= bd) { bd = d; best = { c, k }; } }));
+    own(el).filter(c => !c.removed).forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(ev.clientX - px(c[k])); if (d <= bd) { bd = d; best = { c, k }; } }));
     return best; };
   const sc = el.querySelector('.specscroll');
   const barX = () => { const x = px(num(el, 'pos')) - sc.getBoundingClientRect().left;   // bar off screen: centre it
@@ -922,6 +1108,8 @@ cards.forEach(el => {
   el.querySelector('.set-s').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 's', num(el, 'pos'), true); });
   el.querySelector('.set-e').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 'e', num(el, 'pos'), true); });
   el.querySelector('.reset').addEventListener('click', () => { el.plan.s = el.plan.s0; el.plan.e = el.plan.e0; renderAll(); save(); });
+  el.querySelector('.rm').addEventListener('click', ev => { focusEl = el; ev.currentTarget.blur();
+    el.plan.removed = !el.plan.removed; renderAll(); save(); });
   el.querySelector('.add').addEventListener('click', () => { focusEl = el; addCut(el); });
   el.querySelector('.added-cuts').addEventListener('click', ev => {   // buttons of the added cuts, rebuilt on every render
     const b = ev.target.closest('button');
@@ -940,8 +1128,8 @@ document.getElementById('copy').addEventListener('click', () =>
     .then(() => document.getElementById('copied').textContent = 'copied')
     .catch(err => document.getElementById('copied').textContent = 'Copy failed: ' + err.message + ' - select the text and copy it by hand'));
 document.getElementById('reset-all').addEventListener('click', () => {
-  if (!confirm('Put every cut back to the planned times and remove the cuts you added?')) return;
-  plan.forEach(c => { c.s = c.s0; c.e = c.e0; }); added = []; renderAll(); save(); });
+  if (!confirm('Put every cut back to the planned times, restore the removed ones and drop the cuts you added?')) return;
+  plan.forEach(c => { c.s = c.s0; c.e = c.e0; c.removed = false; }); added = []; renderAll(); save(); });
 document.addEventListener('keydown', ev => {
   const tag = document.activeElement.tagName;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
@@ -951,6 +1139,388 @@ document.addEventListener('keydown', ev => {
     const t = show(focusEl, num(focusEl, 'pos') + (ev.code === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2));
     follow(focusEl, t);
     if (cur === focusEl && !A.paused) A.currentTime = t; } });
+"""
+
+
+TL_CSS = """
+.tlsec { width: calc(100vw - 48px); margin-left: calc(50% - 50vw + 16px); }
+.tlsec canvas { display: block; width: 100%; touch-action: none; user-select: none; border-radius: 4px; }
+.tl-over { margin: 6px 0 4px; cursor: pointer; background: var(--absorbed); }
+.tl-main { cursor: crosshair; }
+.tl-sel { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; min-height: 34px; font-size: 14px; margin: 6px 0 2px; }
+.tl-sel .times { font-variant-numeric: tabular-nums; }
+.tl-sel .why { color: var(--muted); flex-basis: 100%; }
+.tl-sel .tag { font-weight: 650; }
+.tl-line { font-size: 14px; min-height: 22px; }
+.tl-line .t { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tl-line .nx { color: var(--muted); }
+.tl-gaps, .tl-keys { font-size: 13px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.legend i { display: inline-block; width: 18px; height: 10px; margin-right: 5px; vertical-align: -1px; border-radius: 2px; }
+body.has-video #timeline { scroll-margin-top: 300px; }
+"""
+
+# The timeline: the whole lecture on one wide, zoomable spectrogram, drawn on two canvases from the
+# tiles of timeline_tiles(). It uses the cut list of STUDIO_JS (plan, added, all(), setEdge, save,
+# renderAll), so an edit in either view shows in both and in the copyable list.
+TL_JS = r"""
+const TLD = JSON.parse(document.getElementById('tl-data').textContent);
+const TLS = document.getElementById('timeline'), DUR = +document.body.dataset.duration;
+const ov = TLS.querySelector('.tl-over'), mc = TLS.querySelector('.tl-main');
+const AX_H = 18, SP_H = 130, GAP_H = 15, TX_H = 22, MAIN_H = AX_H + SP_H + GAP_H + TX_H, OV_H = 56;
+const ZL = [0.5, 1, 2, 4, 8, 16, 32, 80, 160, 320];        // zoom levels, px per second
+const GAP_MIN = 1.5;                                       // shortest uncovered piece of a pause that gets marked
+const COL = { safe: '#D90012', judg: '#F2A800', mine: '#0033A0', gap: '#FFD60A' };
+const FILL = { safe: 'rgba(217,0,18,.33)', judg: 'rgba(242,168,0,.40)', mine: 'rgba(0,51,160,.45)' };
+const rootCss = getComputedStyle(document.documentElement);
+const FG = rootCss.getPropertyValue('--fg').trim(), MUTED = rootCss.getPropertyValue('--muted').trim();
+const ROWS = TLD.rows, PAUSES = TLD.pauses;
+const TL = { t0: 0, z: 5, bar: 0, sel: null, on: false, focus: false };
+let gapList = [], md = null, lineAt = -2, pending = false;
+const pps = () => ZL[TL.z], viewW = () => mc.clientWidth, vspan = () => viewW() / pps();
+const clampT0 = t => Math.max(0, Math.min(Math.max(0, DUR - vspan()), t));
+const xOf = t => (t - TL.t0) * pps();
+const hms = t => { t = Math.max(0, Math.floor(t)); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
+const kindOf = c => c.added || changed(c) ? 'mine' : ((TLD.kinds[c.host.id] || {}).kind === 'judgment' ? 'judg' : 'safe');
+const tlMsg = t => { TLS.querySelector('.tl-msg').textContent = t; };
+function rowAt(t) {                                        // the last transcript line starting at or before t
+  let lo = 0, hi = ROWS.length - 1, ans = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (ROWS[m][0] <= t) { ans = m; lo = m + 1; } else hi = m - 1; }
+  return ans;
+}
+function uncovered(s, e, cs) {                             // the parts of [s, e] that no cut covers (cs sorted)
+  const out = [];
+  let a = s;
+  for (const [x, y] of cs) {
+    if (y <= a) continue;
+    if (x >= e) break;
+    if (x > a) out.push([a, x]);
+    a = Math.max(a, y);
+    if (a >= e) break;
+  }
+  if (e > a) out.push([a, e]);
+  return out;
+}
+function gaps() {   // per pause (its silences, joined across hums): what no cut covers, as [start, end, silent s, hum]
+  const cs = all().map(c => [c.s, c.e]).sort((a, b) => a[0] - b[0]), out = [];
+  for (const g of PAUSES) {
+    let m = null;
+    const flush = () => { if (m && m[2] >= GAP_MIN) out.push(m); m = null; };
+    for (const [s, e] of g) for (const [a, b] of uncovered(s, e, cs)) {
+      if (m && !cs.some(([x, y]) => x < a && y > m[1])) { m[1] = b; m[2] += b - a; m[3] = true; }   // across a hum
+      else { flush(); m = [a, b, b - a, false]; }                                                   // a cut in between
+    }
+    flush();
+  }
+  return out;
+}
+const cache = new Map();                                   // decoded tiles, the 64 used last
+function tile(lv, i) {
+  const k = lv.src + i;
+  let im = cache.get(k);
+  if (im) { cache.delete(k); cache.set(k, im); return im; }
+  im = new Image();
+  im.onload = drawSoon;
+  im.onerror = () => tlMsg('Could not load ' + im.src + ' - rebuild the page with find_edit_points.py');
+  im.src = lv.src + String(i).padStart(4, '0') + '.jpg';
+  cache.set(k, im);
+  while (cache.size > 64) cache.delete(cache.keys().next().value);
+  return im;
+}
+function fit(cv, h) {
+  const d = window.devicePixelRatio || 1, w = cv.clientWidth;
+  if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+  const g = cv.getContext('2d');
+  g.setTransform(d, 0, 0, d, 0, 0);
+  return g;
+}
+function drawSoon() { if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; draw(); }); } }
+function drawMain() {
+  const g = fit(mc, MAIN_H), W = viewW(), p = pps(), t0 = TL.t0, t1 = t0 + W / p;
+  g.clearRect(0, 0, W, MAIN_H);
+  g.font = '11px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  const step = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800].find(s => s * p >= 90) || 3600;
+  for (let t = Math.ceil(t0 / step) * step; t <= t1; t += step) { const x = xOf(t); g.fillRect(x, AX_H - 5, 1, 5); g.fillText(hms(t), x + 3, 2); }
+  const lv = p > TLD.tiles.lo.px_per_s ? TLD.tiles.hi : TLD.tiles.lo;
+  const xa = Math.max(0, xOf(0)), xz = Math.min(W, xOf(DUR));
+  g.fillStyle = '#000'; g.fillRect(xa, AX_H, xz - xa, SP_H);
+  const i0 = Math.max(0, Math.floor(t0 / lv.tile_s)), i1 = Math.min(lv.n - 1, Math.floor(t1 / lv.tile_s));
+  for (let i = i0; i <= i1; i++) {
+    const im = tile(lv, i);
+    if (im.complete && im.naturalWidth) g.drawImage(im, xOf(i * lv.tile_s), AX_H, Math.min(lv.tile_s, DUR - i * lv.tile_s) * p, SP_H);
+  }
+  if (i1 + 1 < lv.n) tile(lv, i1 + 1);                     // the neighbours, so panning finds them loaded
+  if (i0 > 0) tile(lv, i0 - 1);
+  const box = (a, b) => [xOf(a), Math.max(2, xOf(b) - xOf(a))];
+  g.save(); g.lineWidth = 2; g.setLineDash([6, 4]);
+  TLD.suggestions.forEach((s, i) => {                      // unticked suggestions: dashed orange
+    if (s.e < t0 || s.s > t1) return;
+    const [x, w] = box(s.s, s.e);
+    if (TL.sel && TL.sel.sug === i) { g.fillStyle = 'rgba(242,168,0,.22)'; g.fillRect(x, AX_H, w, SP_H); }
+    g.strokeStyle = COL.judg; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  plan.filter(c => c.removed).forEach(c => {                // removed planned cuts: dashed red
+    if (c.e < t0 || c.s > t1) return;
+    const [x, w] = box(c.s, c.e);
+    g.strokeStyle = COL.safe; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  g.restore();
+  all().forEach(c => {
+    if (c.e < t0 || c.s > t1) return;
+    const k = kindOf(c), [x, w] = box(c.s, c.e);
+    g.fillStyle = FILL[k]; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = COL[k]; g.fillRect(x, AX_H, 3, SP_H); g.fillRect(x + w - 3, AX_H, 3, SP_H);
+    if (w > 46) { g.fillStyle = '#fff'; g.font = '600 11px system-ui, sans-serif'; g.fillText('Cut ' + c.n, x + 6, AX_H + 4); }
+    if (c.warn && c.warn.length) { g.fillStyle = '#fff'; g.fillRect(x, AX_H + SP_H - 4, w, 4); }
+  });
+  const sc = TL.sel && TL.sel.c;
+  if (sc && !(sc.e < t0 || sc.s > t1)) {
+    const [x, w] = box(sc.s, sc.e);
+    g.save(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.setLineDash([4, 3]); g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2); g.restore();
+  }
+  if (md && md.kind === 'new') {                           // the cut being drawn
+    const [x, w] = box(Math.min(md.t, md.t1), Math.max(md.t, md.t1));
+    g.fillStyle = FILL.mine; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = '#fff'; g.fillRect(x, AX_H, 2, SP_H); g.fillRect(x + w - 2, AX_H, 2, SP_H);
+  }
+  const gy = AX_H + SP_H + 2;
+  gapList.forEach(([s, e, silent, hum]) => {               // silences no cut covers (the label counts silence only)
+    if (e < t0 || s > t1) return;
+    const [x, w] = box(s, e);
+    g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(x, gy, w, GAP_H - 4); g.globalAlpha = 1;
+    const txt = silent.toFixed(1) + ' s' + (hum ? ' + hum' : '');
+    if (w > (hum ? 66 : 38)) { g.fillStyle = '#1d1d1f'; g.font = '10px system-ui, sans-serif'; g.fillText(txt, x + 3, gy); }
+  });
+  const ty = AX_H + SP_H + GAP_H + 3;
+  g.font = '12px system-ui, sans-serif';
+  for (let i = Math.max(0, rowAt(t0)); i < ROWS.length && i >= 0; i++) {
+    const x = xOf(ROWS[i][0]);
+    if (x > W) break;
+    const xn = i + 1 < ROWS.length ? xOf(ROWS[i + 1][0]) : W;
+    g.fillStyle = MUTED; g.fillRect(x, ty - 2, 1, TX_H - 4);
+    if (p < 8 || xn - x < 24) continue;                   // too little room for words at this zoom
+    g.save(); g.beginPath(); g.rect(x, ty - 2, xn - x - 4, TX_H); g.clip();
+    g.fillStyle = FG; g.fillText(ROWS[i][1], x + 3, ty); g.restore();
+  }
+  const xb = xOf(TL.bar);
+  if (xb >= -2 && xb <= W + 2) { g.fillStyle = '#000'; g.fillRect(xb - 2, AX_H - 3, 5, SP_H + GAP_H + 3); g.fillStyle = '#fff'; g.fillRect(xb - 1, AX_H - 3, 3, SP_H + GAP_H + 3); }
+}
+function drawOver() {
+  const g = fit(ov, OV_H), W = ov.clientWidth, k = W / DUR, L = TLD.loud;
+  g.clearRect(0, 0, W, OV_H);
+  g.fillStyle = MUTED; g.globalAlpha = 0.6;
+  for (let x = 0; x < W; x++) {                            // loudness, the loudest second under each pixel
+    let m = 0;
+    for (let i = Math.floor(x / k); i < Math.max(Math.floor(x / k) + 1, Math.floor((x + 1) / k)) && i < L.length; i++) m = Math.max(m, L[i]);
+    const h = m / 100 * 17; g.fillRect(x, 31 - h, 1, h);
+  }
+  g.globalAlpha = 1;
+  all().forEach(c => { g.fillStyle = COL[kindOf(c)]; g.fillRect(c.s * k, 3, Math.max(1, (c.e - c.s) * k), 9); });
+  gapList.forEach(([s, e, silent]) => { g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(s * k, 33, Math.max(1, (e - s) * k), 8); });
+  g.globalAlpha = 1;
+  g.font = '10px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  for (let t = 600; t < DUR; t += 600) { g.fillRect(t * k, OV_H - 12, 1, 12); g.fillText(hms(t).replace(/:00$/, ''), t * k + 3, OV_H - 12); }
+  g.strokeStyle = FG; g.lineWidth = 2; g.strokeRect(TL.t0 * k + 1, 1, Math.max(4, vspan() * k - 2), OV_H - 15);
+  g.fillStyle = COL.safe; g.fillRect(TL.bar * k - 1, 0, 2, OV_H - 13);
+}
+function draw() {
+  drawMain(); drawOver();
+  TLS.querySelector('.tl-now').textContent = tc(TL.bar);
+  const s = vspan();
+  TLS.querySelector('.tl-zl').textContent = (s < 120 ? Math.round(s) + ' s' : (s / 60).toFixed(s < 600 ? 1 : 0) + ' min') + ' on screen';
+  const i = rowAt(TL.bar);
+  if (i !== lineAt) {                                      // the transcript line under the bar, in full
+    lineAt = i;
+    const r = ROWS[i], n = ROWS[i + 1];
+    TLS.querySelector('.tl-line').innerHTML = r ? `<span class="t">${hms(r[0])}</span>${esc(r[1])}` +
+      (n ? `   <span class="nx"><span class="t">${hms(n[0])}</span>${esc(n[1])}</span>` : '') : '';
+  }
+}
+function renderSel() {
+  const box = TLS.querySelector('.tl-selbox'), s = TL.sel;
+  if (s && s.c && s.c.added && !added.includes(s.c)) TL.sel = null;   // deleted elsewhere on the page
+  if (!TL.sel) { box.innerHTML = '<span class="note">Click a cut to select it; drag across the spectrogram to draw a new one.</span>'; return; }
+  if (s.sug !== undefined) {
+    const g = TLD.suggestions[s.sug];
+    box.innerHTML = `<span class="tag" style="color:${COL.judg}">Suggested, not ticked</span><span class="times">${tc(g.s)} → ${tc(g.e)}   (${(g.e - g.s).toFixed(1)} s)</span>` +
+      `<button data-do="adds">Add as a cut</button><span class="why">${esc(g.reason)}</span>`;
+    return;
+  }
+  const c = s.c, k = kindOf(c), info = c.host && !c.added ? TLD.kinds[c.host.id] : null;
+  const name = c.removed ? 'Removed cut' : (c.added ? 'New Cut ' : 'Cut ') + c.n;
+  const tag = c.removed ? '' : c.added ? 'yours' : changed(c) ? 'changed by you' : k === 'judg' ? 'your call' : 'safe';
+  box.innerHTML = `<b>${name}</b><span class="tag" style="color:${COL[k]}">${tag}</span>` +
+    `<span class="times">${c.removed ? `planned ${tc(c.s0)} → ${tc(c.e0)}` : `${tc(c.s)} → ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)`}</span>` +
+    (changed(c) && !c.removed ? `<span class="was">was ${tc(c.s0)} - ${tc(c.e0)}</span>` : '') +
+    (c.removed ? '' : '<button data-do="s">Start = bar</button><button data-do="e">End = bar</button>') +
+    (!c.added && changed(c) && !c.removed ? '<button data-do="reset">Reset</button>' : '') +
+    (c.added ? '<button data-do="del">Delete</button>' : `<button data-do="rm">${c.removed ? 'Restore cut' : 'Remove cut'}</button>`) +
+    (c.warn && c.warn.length ? `<span class="warn">${c.warn.join(', ')}${OVERLAP}</span>` : '') +
+    (info ? `<span class="why">${esc(info.reason)}</span>` : '');
+}
+window.tlRefresh = () => {                                 // after every change to the cut list (renderAll)
+  gapList = gaps();
+  const n4 = gapList.filter(g => g[2] >= 4).length, nh = gapList.filter(g => g[3]).length;
+  TLS.querySelector('.tl-gaps').textContent = `${gapList.length} silences no cut covers (${n4} of 4 s or more, ${nh} split by a hum)`;
+  renderSel(); drawSoon();
+};
+function tlTouch() { TL.focus = true; focusEl = null; tlMsg(''); }   // keys now go to the timeline, not a card
+function keepBar() { if (TL.bar < TL.t0 || TL.bar > TL.t0 + vspan()) TL.t0 = clampT0(TL.bar - 0.1 * vspan()); }
+function center(t) { TL.t0 = clampT0(t - 0.35 * vspan()); }
+function zoomAt(z, t, x) { TL.z = Math.max(0, Math.min(ZL.length - 1, z)); TL.t0 = clampT0(t - x / pps()); drawSoon(); }
+function tlLabel() { TLS.querySelector('.tl-play').textContent = TL.on && !A.paused ? 'Pause' : 'Play'; }
+function tlLoop() {
+  if (!TL.on || A.paused) return;
+  let t = A.currentTime;
+  if (TLS.querySelector('.tl-skip').checked) { const c = all().find(c => t >= c.s && t < c.e); if (c) { A.currentTime = c.e; t = c.e; } }
+  const seen = TL.bar >= TL.t0 && TL.bar <= TL.t0 + vspan();   // scrolled away from the bar: look around, don't pull back
+  TL.bar = t;
+  if (seen && (t > TL.t0 + 0.92 * vspan() || t < TL.t0)) TL.t0 = clampT0(t - 0.1 * vspan());   // page along
+  draw();
+  requestAnimationFrame(tlLoop);
+}
+function tlPlay() {
+  if (cur) { A.pause(); label(cur, false); cur = null; }   // one player: a card that was playing stops
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = 'Playing the timeline';
+  keepBar();
+  TL.on = true;
+  A.currentTime = TL.bar;
+  A.play().then(() => { tlLabel(); requestAnimationFrame(tlLoop); })
+          .catch(err => { if (err.name !== 'AbortError') tlMsg('Could not play: ' + err.message); });
+}
+window.tlStop = () => { TL.on = false; tlLabel(); };
+A.addEventListener('pause', tlLabel);
+const evT = (ev, cv) => (ev.clientX - cv.getBoundingClientRect().left);
+function hit(ev) {                                          // what is under the pointer on the spectrogram
+  const x = evT(ev, mc), t = TL.t0 + x / pps();
+  let best = null, bd = 7;
+  all().forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(xOf(c[k]) - x); if (d <= bd) { bd = d; best = { edge: k, c }; } }));
+  if (best) return best;
+  const c = all().find(c => t >= c.s && t < c.e) || plan.find(c => c.removed && t >= c.s && t < c.e);
+  if (c) return { c };
+  const i = TLD.suggestions.findIndex(s => t >= s.s && t < s.e);
+  return i >= 0 ? { sug: i } : null;
+}
+mc.addEventListener('pointerdown', ev => {
+  tlTouch(); mc.setPointerCapture(ev.pointerId);
+  const h = hit(ev), t = TL.t0 + evT(ev, mc) / pps();
+  md = h && h.edge ? { kind: 'edge', c: h.c, k: h.edge } : { kind: 'press', x: ev.clientX, t, t1: t, h };
+  if (md.kind === 'edge') TL.sel = { c: h.c };
+});
+mc.addEventListener('pointermove', ev => {
+  if (!md) { const h = hit(ev); mc.style.cursor = h && h.edge ? 'col-resize' : h ? 'pointer' : 'crosshair'; return; }
+  const t = TL.t0 + evT(ev, mc) / pps();
+  if (md.kind === 'edge') { setEdge(md.c, md.k, t, false, [0, DUR], TLS.querySelector('.tl-msg')); return; }
+  if (md.kind === 'press' && Math.abs(ev.clientX - md.x) > 4) md.kind = 'new';
+  if (md.kind === 'new') { md.t1 = Math.max(0, Math.min(DUR, t)); drawSoon(); }
+});
+mc.addEventListener('pointerup', () => {
+  if (!md) return;
+  const m = md;
+  md = null;
+  if (m.kind === 'edge') { save(); tlRefresh(); return; }
+  if (m.kind === 'new') {
+    const a = snap(Math.min(m.t, m.t1)), b = snap(Math.max(m.t, m.t1));
+    if (b - a >= 0.2) { const c = { id: ++uid, host: null, s: a, e: b, added: true }; added.push(c); TL.sel = { c }; renderAll(); save(); }
+    else drawSoon();
+    return;
+  }
+  TL.bar = m.t;                                            // a click: the bar goes there, and what is under it is selected
+  if (TL.on && !A.paused) A.currentTime = m.t;
+  TL.sel = m.h ? (m.h.c ? { c: m.h.c } : { sug: m.h.sug }) : null;
+  tlRefresh();
+});
+let wacc = 0;
+mc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer; Shift+wheel or a sideways swipe scrolls
+  if (ev.ctrlKey) {
+    ev.preventDefault();
+    wacc += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;
+    if (Math.abs(wacc) < 50) return;
+    const dir = wacc < 0 ? 1 : -1;
+    wacc = 0; tlTouch();
+    zoomAt(TL.z + dir, TL.t0 + evT(ev, mc) / pps(), evT(ev, mc));
+    return;
+  }
+  const dx = ev.shiftKey ? ev.deltaY : ev.deltaX;
+  if (!dx) return;
+  ev.preventDefault();
+  TL.t0 = clampT0(TL.t0 + (ev.deltaMode === 1 ? dx * 33 : dx) / pps()); drawSoon();
+}, { passive: false });
+let ovDrag = false;
+const ovMove = ev => { TL.t0 = clampT0(evT(ev, ov) / ov.clientWidth * DUR - vspan() / 2); drawSoon(); };
+ov.addEventListener('pointerdown', ev => { tlTouch(); ovDrag = true; ov.setPointerCapture(ev.pointerId); ovMove(ev); });
+ov.addEventListener('pointermove', ev => { if (ovDrag) ovMove(ev); });
+ov.addEventListener('pointerup', () => { ovDrag = false; });
+const btn = (cls, f) => TLS.querySelector(cls).addEventListener('click', ev => { tlTouch(); ev.currentTarget.blur(); f(); });
+btn('.tl-play', () => (TL.on && !A.paused) ? A.pause() : tlPlay());
+btn('.tl-left', () => { TL.t0 = clampT0(TL.t0 - 0.8 * vspan()); drawSoon(); });
+btn('.tl-right', () => { TL.t0 = clampT0(TL.t0 + 0.8 * vspan()); drawSoon(); });
+const anchor = () => { const x = xOf(TL.bar); return x >= 0 && x <= viewW() ? [TL.bar, x] : [TL.t0 + vspan() / 2, viewW() / 2]; };
+btn('.tl-zin', () => zoomAt(TL.z + 1, ...anchor()));
+btn('.tl-zout', () => zoomAt(TL.z - 1, ...anchor()));
+btn('.tl-add', () => {
+  const s = snap(Math.min(TL.bar, DUR - 1)), c = { id: ++uid, host: null, s, e: snap(s + NEW_LEN), added: true };
+  added.push(c); TL.sel = { c }; keepBar(); renderAll(); save();
+});
+TLS.querySelectorAll('[data-j]').forEach(b => b.addEventListener('click', () => {
+  tlTouch(); b.blur();
+  const fwd = b.dataset.d === '1';
+  if (b.dataset.j === 'gap') {
+    const g = fwd ? gapList.find(g => g[0] > TL.bar + 1.05) : [...gapList].reverse().find(g => g[0] < TL.bar + 0.95);
+    if (!g) { tlMsg(`No uncovered silence ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, g[0] - 1); TL.sel = null; center(g[0]);
+  } else {
+    const cs = all().sort((a, b) => a.s - b.s);
+    const c = fwd ? cs.find(c => c.s > TL.bar + 1.05) : cs.reverse().find(c => c.s < TL.bar + 0.95);
+    if (!c) { tlMsg(`No cut ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, c.s - 1); TL.sel = { c }; center(c.s);
+  }
+  if (TL.on && !A.paused) A.currentTime = TL.bar;
+  tlRefresh();
+}));
+TLS.querySelector('.tl-selbox').addEventListener('click', ev => {
+  const b = ev.target.closest('button');
+  if (!b) return;
+  tlTouch(); b.blur();
+  const s = TL.sel, d = b.dataset.do;
+  if (d === 'adds') {                                      // whole frames inside the suggestion, as Studio cuts are
+    const g = TLD.suggestions[s.sug];
+    const c = { id: ++uid, host: null, s: Math.ceil(g.s * FPS - 1e-6) / FPS, e: Math.floor(g.e * FPS + 1e-6) / FPS, added: true };
+    added.push(c); TL.sel = { c }; renderAll(); save(); return;
+  }
+  const c = s.c;
+  if (d === 's' || d === 'e') setEdge(c, d, TL.bar, true, [0, DUR], TLS.querySelector('.tl-msg'));
+  else if (d === 'reset') { c.s = c.s0; c.e = c.e0; renderAll(); save(); }
+  else if (d === 'rm') { c.removed = !c.removed; renderAll(); save(); }
+  else if (d === 'del') { added = added.filter(x => x !== c); TL.sel = null; renderAll(); save(); }
+});
+document.addEventListener('pointerdown', ev => { if (!TLS.contains(ev.target)) TL.focus = false; }, true);
+document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's (the cards are hidden)
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag) || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  const take = () => { ev.preventDefault(); ev.stopPropagation(); if (tag === 'BUTTON') document.activeElement.blur(); };
+  const c = ev.code;                                        // key positions, so the Armenian layout works too
+  if (c === 'Space') { take(); (TL.on && !A.paused) ? A.pause() : tlPlay(); }
+  else if (c === 'ArrowLeft' || c === 'ArrowRight') {
+    take();
+    TL.bar = Math.max(0, Math.min(DUR, TL.bar + (c === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2)));
+    if (TL.on && !A.paused) A.currentTime = TL.bar;
+    keepBar(); drawSoon();
+  }
+  else if (c === 'Digit2' || c === 'Numpad2') { take(); zoomAt(TL.z + 1, ...anchor()); }   // the user's pick (was + / -)
+  else if (c === 'Digit1' || c === 'Numpad1') { take(); zoomAt(TL.z - 1, ...anchor()); }
+  else if (c === 'KeyS') {
+    take();
+    const b = TLS.querySelector('.tl-skip');
+    b.checked = !b.checked; tlMsg(b.checked ? 'Skipping the cuts (S to play everything)' : 'Playing everything (S to skip the cuts)');
+  }
+}, true);
+mc.style.height = MAIN_H + 'px'; ov.style.height = OV_H + 'px';
+window.addEventListener('resize', drawSoon);
+TLS.addEventListener('toggle', drawSoon);
+tlRefresh();
 """
 
 
@@ -969,7 +1539,9 @@ def check_studio(out_dir: Path, markers_file: Path) -> None:
     first = min(i for i in (text.find("["), text.find("{")) if i >= 0)
     obj = json.loads(text[first: max(text.rfind("]"), text.rfind("}")) + 1])
     labels = obj["markers"] if isinstance(obj, dict) else obj
+    # Studio drops the hour on videos under an hour ("19:12:18"); the plan always has it ("0:19:12:18")
     vals = [lab.split("marker ")[1] for lab in labels]
+    vals = [v if v.count(":") == 3 else f"0:{v}" for v in vals]
     if len(vals) < 2 or len(vals) % 2:
         raise ValueError(f"{markers_file}: expected start/end marker pairs, got {len(vals)} labels")
     pairs = list(zip(vals[0::2], vals[1::2]))
@@ -996,21 +1568,50 @@ def check_studio(out_dir: Path, markers_file: Path) -> None:
     log.info(f"OK: Studio holds exactly the {len(plan)} planned cuts, frame for frame")
 
 
-def build_studio_page(data, scuts, rows, page: Path, wav: Path, video: Path | None = None):
+def timeline_section(tl: dict) -> str:
+    sw = lambda css, text: f'<span><i style="{css}"></i>{text}</span>'
+    return f"""
+<details open class="tlsec" id="timeline"><summary>Timeline: the whole lecture</summary>
+<div class="ctl"><button class="tl-play play">Play</button><span class="now tl-now"></span>
+  <label><input type="checkbox" class="tl-skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="tl-zout">-</button> <span class="tl-zl"></span> <button class="tl-zin">+</button></span>
+  <span><button class="tl-left" title="back">&larr;</button><button class="tl-right" title="forward">&rarr;</button></span>
+  <span>silence no cut covers <button data-j="gap" data-d="0">&lsaquo; prev</button><button data-j="gap" data-d="1">next &rsaquo;</button></span>
+  <span>cut <button data-j="cut" data-d="0">&lsaquo; prev</button><button data-j="cut" data-d="1">next &rsaquo;</button></span>
+  <button class="tl-add">Add a cut at the bar</button> <span class="tl-gaps"></span>
+  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in &middot; &larr;/&rarr; move the bar (Shift: 1 s)</span></div>
+<canvas class="tl-over"></canvas>
+<canvas class="tl-main"></canvas>
+<div class="tl-sel tl-selbox"></div>
+<p class="msg tl-msg"></p>
+<div class="tl-line"></div>
+<div class="legend">{sw("background:#D90012", "cut, safe")}{sw("background:#F2A800", "cut, your call")}{sw("border:2px dashed #F2A800", "suggested, not ticked")}{sw("background:#0033A0", "yours: new or changed")}{sw("border:2px dashed #D90012", "removed")}{sw("background:#FFD60A", f"silence of {tl['pause_min']:g} s+ that no cut covers (+ hum: split by a hum, counted as one)")}{sw("background:#fff;border:1px solid #888", "white strip: overlaps another cut")}</div>
+<p class="note">The strip on top is the whole lecture: drag it to move the view. On the spectrogram: click to put the bar
+there (and select what is under it), drag across to draw a new cut, drag a cut's edge to move it. Ctrl+wheel zooms, Shift+wheel
+or a sideways swipe scrolls, the arrow buttons page. While it plays, the view follows the bar until you scroll away from it;
+scroll back to the bar (or click) and it follows again. Every change goes into the list at the bottom.</p>
+</details>"""
+
+
+def build_studio_page(data, scuts, rows, page: Path, wav: Path, video: Path | None = None, timeline: dict | None = None):
     """One collapsible section per cut, numbered exactly like Studio's Cut 1..N list.
     One shared player streams the full lecture: the 360p video preview in a panel that
     stays at the top while scrolling when `video` is given (--video-preview), else the WAV.
     Each cut's spectrogram has a draggable bar, and "skip the cut" plays the window as it
     will sound after the edit.
-    The cut's edges can be moved on the page (drag an edge, or Start/End = bar) and new cuts
-    added inside a cut's window; the numbering follows Studio's order. The changes stay in
-    the browser's localStorage and feed a copyable list at the bottom."""
+    The cut's edges can be moved on the page (drag an edge, or Start/End = bar), a planned cut
+    removed (and restored), and new cuts added inside a cut's window; the numbering follows
+    Studio's order. The changes stay in
+    the browser's localStorage and feed a copyable list at the bottom.
+    With `timeline` (timeline_data()) the page shows the whole lecture on one zoomable
+    spectrogram instead, and the cards stay in the page hidden, holding the cut list it edits."""
     media_file = video or wav
     if not media_file.exists():
         raise FileNotFoundError(f"The Studio page plays {media_file}, which is missing")
     esc = html.escape
     by_id = {c["id"]: c for c in data["cuts"]}
-    sections = []
+    sections = [("timeline", "Timeline: the whole lecture", timeline_section(timeline))] if timeline else []
+    cards = []
     for sc in scuts:
         src = [by_id[i] for i in sc["sources"]]
         content = [c for c in src if c["source"] == "content"]
@@ -1034,7 +1635,7 @@ def build_studio_page(data, scuts, rows, page: Path, wav: Path, video: Path | No
             tx.append(f'<div class="{cls}"><span class="t">{esc(r[1])}</span>{esc(r[2])}</div>')
         w0, w1 = sc["spec_window"]
         title = f"Cut {sc['n']}   {sc['start_tc']} \u2192 {sc['end_tc']}   ({sc['end'] - sc['start']:.1f} s)"
-        sections.append((f"cut-{sc['n']}", title, f"""
+        cards.append((f"cut-{sc['n']}", title, f"""
 <details open class="cut" id="cut-{sc['n']}" data-w0="{w0}" data-w1="{w1}" data-s0="{sc['start']}" data-e0="{sc['end']}" data-pxw="{sc['spec_px']}">
 <summary>{esc(title)}</summary>
 {''.join(why)}{''.join(flags)}
@@ -1044,50 +1645,61 @@ def build_studio_page(data, scuts, rows, page: Path, wav: Path, video: Path | No
 <div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/{sc['id']}_spec.png" alt="spectrogram cut {sc['n']}"><div class="shades"></div><div class="bar"></div></div></div>
 <div class="axis"><span class="a0">{fmt_t(w0)}</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">{fmt_t(w1)}</span></div>
 <div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
-  <button class="reset">Reset</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
 <div class="added-cuts"></div>
 <div class="tx">{''.join(tx)}</div>
 </details>"""))
+    if timeline:   # the user reviews on the timeline only; the hidden cards still hold the cut list STUDIO_JS builds (DECISIONS #21)
+        sections.append(("cards", "", '<div id="cards" hidden>' + "".join(inner for _, _, inner in cards) + "</div>"))
+    else:
+        sections += cards
     removed = sum(c["end"] - c["start"] for c in scuts)
     sections.append(("export-list", "Cut list with your changes (last first)", f"""
 <details open id="export-list"><summary>Cut list with your changes (last first)</summary>
 <p class="note">The same format as <code>studio_cuts.txt</code>, renumbered in Studio's order. Changed cuts say what they
-were, added ones say NEW. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
+were, added ones say NEW, removed ones are listed at the end as REMOVED. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
 this list to Claude.</p>
 <p><button id="copy">Copy list</button> <span id="copied"></span> <button id="reset-all">Put all cuts back</button></p>
 <textarea id="export" readonly></textarea>
 </details>"""))
-    toc = "".join(f'<li><a href="#{sid}">{esc(title)}</a></li>' for sid, title, _ in sections)
+    toc = "".join(f'<li><a href="#{sid}">{esc(title)}</a></li>' for sid, title, _ in sections if title)
+    tl_scripts = ""
+    if timeline:
+        blob = json.dumps(timeline, ensure_ascii=False).replace("</", "<\\/")   # a caption can't close the tag
+        tl_scripts = f'<script id="tl-data" type="application/json">{blob}</script>\n<script>{TL_JS}</script>'
     rel_media = (Path("..") / media_file.relative_to(page.parent.parent)).as_posix()
     if video:
         player = (f'<div id="player"><video id="media" preload="metadata" playsinline src="{rel_media}"></video>'
-                  '<div class="pinfo"><span id="nowcut">Press Play on a cut</span>'
+                  f'<div class="pinfo"><span id="nowcut">{"Space plays the timeline" if timeline else "Press Play on a cut"}</span>'
                   '<button id="vtoggle">Hide video</button></div></div>')
     else:
         player = f'<audio id="media" preload="metadata" src="{rel_media}"></audio>'
-    page.write_text(f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Studio cuts {esc(data['video_id'])}</title>
-<style>{PAGE_CSS}{STUDIO_CSS}</style></head>
-<body{' class="has-video"' if video else ''} data-fps="{data['fps']:g}" data-ctx="{PLAY_CONTEXT_S:g}" data-duration="{data['duration']}" data-list="{list_id(scuts)}"><main>
-<h1>Studio cuts: {esc(data['title'])}</h1>
-<p class="stamp"><b>{len(scuts)} cuts</b> &middot; list {list_id(scuts)} &middot; built {time.strftime("%Y-%m-%d %H:%M")}<span id="nchanged"></span>
- - reload this tab if the list changed since you opened it</p>
-<p class="warn" id="storage"></p>
-<p class="sub">{len(scuts)} cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
-({data['fps']:g} fps, H:MM:SS:FF). Removes <span id="removed">{fmt_t(removed, 0)}: {fmt_t(data['duration'], 0)} &rarr; {fmt_t(data['duration'] - removed, 0)}</span>.
+    howto = "" if timeline else f"""
 Play starts {PLAY_CONTEXT_S:g} s before the cut and runs to the end of the spectrogram; space bar pauses, &larr;/&rarr; move the bar
 0.2 s (Shift: 1 s). <b>Zoom</b> with the +/- buttons or Ctrl+mouse wheel; the spectrogram then scrolls sideways
 (scrollbar or Shift+wheel) and follows the bar while playing. <b>To move a cut's edge</b>, drag it, or put the bar there and press Start = bar / End = bar
 (whole frames; the spectrogram has {STUDIO_MARGIN_S:g} s of room either side). <b>Add a cut at the bar</b> makes a new 1 s cut
-there, to drag into shape; every Cut number on the page and in the list follows Studio's order. To drop a cut, delete that
-Cut N in Studio before saving.</p>
+there, to drag into shape; every Cut number on the page and in the list follows Studio's order. <b>Remove cut</b> drops a
+planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it back)."""
+    page.write_text(f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio cuts {esc(data['video_id'])}</title>
+<style>{PAGE_CSS}{STUDIO_CSS}{TL_CSS if timeline else ''}</style></head>
+<body{' class="has-video"' if video else ''} data-fps="{data['fps']:g}" data-ctx="{PLAY_CONTEXT_S:g}" data-duration="{data['duration']}" data-list="{list_id(scuts)}" data-video="{esc(data['video_id'])}"><main>
+<h1>Studio cuts: {esc(data['title'])}</h1>
+<p class="stamp"><b>{len(scuts)} cuts</b> &middot; list {list_id(scuts)} &middot; built {time.strftime("%Y-%m-%d %H:%M")}<span id="nchanged"></span>
+ - reload this tab if the list changed since you opened it</p>
+<p class="warn" id="storage"></p>
+<div id="worktimer"><span id="wt-time">0:00:00</span><button id="wt-btn">Start timer</button></div>
+<p class="sub">{len(scuts)} cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
+({data['fps']:g} fps, H:MM:SS:FF). Removes <span id="removed">{fmt_t(removed, 0)}: {fmt_t(data['duration'], 0)} &rarr; {fmt_t(data['duration'] - removed, 0)}</span>.{howto}</p>
 {player}
 <nav><ol>{toc}</ol></nav>
 {''.join(inner for _, _, inner in sections)}
 </main>
 <script>{STUDIO_JS}</script>
+{tl_scripts}
 </body></html>
 """, encoding="utf-8")
 
@@ -1184,7 +1796,12 @@ def main():
                          "so studio.html plays video instead of the WAV. Later runs reuse it")
     ap.add_argument("--video-encoder", choices=["qsv", "x264"], default="qsv",
                     help="for --video-preview: Intel Quick Sync on the iGPU (default) or libx264 on the CPU")
+    ap.add_argument("--video", type=Path,
+                    help="for --video-preview: the recording's video file, when the audio came from an audio-only "
+                         "file (Zoom's .m4a next to the .mp4); its length must match the audio's within 1 s")
     args = ap.parse_args()
+    if args.video and not args.video_preview:
+        ap.error("--video only applies with --video-preview")
     if args.speech_map:
         setup_logging()
         speech_map(args.output_dir, *args.speech_map, source=args.audio)
@@ -1229,10 +1846,13 @@ def main():
     jpath.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
     rows = load_transcript(out_dir / "transcript.txt")
     build_page(data, rows, review / "index.html")
-    video = make_video_proxy(out_dir, data, args.video_encoder) if args.video_preview else existing_video_proxy(out_dir, data)
+    video = (make_video_proxy(out_dir, data, args.video_encoder, args.video) if args.video_preview
+             else existing_video_proxy(out_dir, data))
     log.info(f"studio.html plays the video preview {video}" if video
              else "studio.html plays the WAV (--video-preview makes a video preview)")
-    build_studio_page(data, scuts, rows, review / "studio.html", out_dir / "audio" / f"{data['video_id']}_16k.wav", video)
+    wav = out_dir / "audio" / f"{data['video_id']}_16k.wav"
+    timeline = timeline_data(x, data, scuts, rows, media, wav, out_dir / f"{data['video_id']}.hy.vtt")
+    build_studio_page(data, scuts, rows, review / "studio.html", wav, video, timeline)
     log.info(f"Pre-ticked: {len(scuts)} Studio cuts removing {removed / 60:.1f} min "
              f"({fmt_t(data['duration'], 0)} -> {fmt_t(data['duration'] - removed, 0)})")
     log.info(f"Wrote {jpath}, {out_dir / 'studio_cuts.txt'}, {review / 'index.html'}, "

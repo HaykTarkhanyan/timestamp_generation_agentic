@@ -153,7 +153,8 @@ def parse_vtt(vtt_path: Path) -> str:
     YouTube auto-generated VTT uses a two-line scrolling window:
         Cue A (with <c> per-word timing): top = previous settled line, bottom = new line
         Cue B (a 10ms "placeholder", no timing tags): the just-settled bottom line alone
-    So we keep only cues with <c> tags (the "real" ones) and take their LAST text line.
+    So we keep the real cues and take their LAST text line. A real cue has <c> tags, or (a new
+    line of one word, which has no tag) two text lines with the bottom one non-blank.
 
     For manual subtitles (no <c> tags anywhere) we fall back to a simple prefix-dedup
     that handles the older incremental-growth pattern.
@@ -172,12 +173,15 @@ def parse_vtt(vtt_path: Path) -> str:
         start = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))
         i += 1
         block: list[str] = []
-        while i < len(lines) and lines[i].strip():
+        while i < len(lines) and lines[i] != "":  # a " " top line (after a pause) is cue text, not the cue end
             block.append(lines[i])
             i += 1
 
         if is_auto:
-            if not any("<c>" in line for line in block):
+            # A placeholder repeats the settled line with a blank line under it. A real cue whose new
+            # line is ONE word has no <c> tag either (tags sit between words), but its last line has text
+            # (Arnak lesson 12, 37:34 "կորելացիա": 131 such lines were dropped before 2026-10-21).
+            if not any("<c>" in line for line in block) and (len(block) < 2 or not block[-1].strip()):
                 continue  # skip placeholder cue
             new_line = TAG_RE.sub("", block[-1]).strip()
             new_line = re.sub(r"\s+", " ", new_line)

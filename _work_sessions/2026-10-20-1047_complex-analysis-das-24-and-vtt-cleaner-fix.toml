@@ -1,0 +1,79 @@
+title = "Կոմպլեքս անալիզ Դաս 24: audio, title, description and chapters redone; VTT cleaner bug fixed"
+date = "2026-10-20"
+time = "10:47"
+areas = [
+  ".claude/skills/youtube-timestamps/scripts/",
+  "output/",
+  "_learnings/",
+]
+
+done = [
+  "Side task outside the ML channel: Դաս 24 (DqUPATmU_9s, 'Համալսարանական մաթեմատիկա', unlisted, 62:53). Audio saved as-is: audio/DqUPATmU_9s.m4a (AAC ~129 kbps, 58 MB).",
+  "Chapters redone in the Դաս 17 reference style (0VcwMteJCxo): 21 chapters on exact seconds, U+2024 separators; verifier valid, boundary audit clean. Replaces the June Opus 4.7 draft (12 chapters, 5 round-number boundaries).",
+  "description.txt is paste-ready with the 🎬 title header on top; titles.txt has 4 candidates, first one recommended.",
+  "Found and fixed fetch_subtitles.parse_vtt dropping the first caption line after every pause (cue top line ' '). Reproduced with a fixture (HEAD parser 1/3 lines, fixed 3/3); measured on all 66 VTTs: median 1.5% of words lost, Complex Analysis 8-23%.",
+  "Learnings: vtt-cleaner-dropped-first-line-after-pause.md, complex-analysis-reference-is-das-17.md. DEFERRED_TODO: redo Դաս 20-23/25, a permanent parse_vtt test.",
+  "Դաս 25 (VppTi0mtRWI): already edited (intro/outro music, no pause over 2.8 s vs ML48 raw's 29 pauses of 3 s+), so no cuts; learning complex-analysis-uploads-are-already-edited.md. Audio m4a, 19 chapters (verifier valid, mid-line boundaries set from VTT word times), 4 titles, paste-ready description.txt.",
+  "The user pasted both by hand. Checked live with yt-dlp at 12:49: titles and descriptions byte-identical to our files (below the header), YouTube parsed 21 and 19 chapters, thumbnails show the same topics in the Դաս 17 template.",
+  "Found Sevak's address in Gmail and drafted a Gmail reply in Armenian (apology, all 25 published, Rearmenia gift card, offer to help with his linear algebra videos). Draft only, not sent.",
+  "Playlist order fixed through the API: new yt_publish.py sort-playlist (dry run by default), 21 moves, now Դաս 1-25; the old order is in logs/yt_publish.log. DECISIONS #12.",
+  "Information Theory (Ashot Harutyunyan): rebuilt the recording timeline from three Telegram chats, the Drive screenshot, the slides zip and YouTube (_knowledge/info_theory/recording_timeline.md). Դաս 4 and 5: new chapters (26, 27), titles and dates pushed with --channel umath and read back identical; no editing needed (pause stats in the knowledge file).",
+  "Multivariate Statistics (Arnak Dalalyan): state of all 11 lessons in _knowledge/arnak_multivariate/status.md; lessons 7-9 dated from the Zoom clock, lesson 6 is probably the 2025 recording ('Mercredi 12 mars'). A background agent drafts chapters/titles/descriptions and an edit review for lessons 6-9 (local files only).",
+  "Complex Analysis Դաս 20-23: the June chapters were the round-number LLM draft; a second agent rewrote them in the Դաս 17/18 style on fresh transcripts (16, 15, 20, 17 chapters, glossary terms); pushed and read back identical. Titles and date lines untouched.",
+  "Canva design 'thumbnails - մաթեմ' (498 pages, opened via the share link, not logged in): Ashot's Win95 thumbnails are pages 89-93 (Դաս 0-4, Դաս 4 already made; text in an ArmSCII legacy font, decoder in the scratchpad), Arnak's are pages 84-88 (Դաս 1-5). Nothing edited.",
+  "yt_publish.py --channel metric|umath: one OAuth client, one token per channel, auth checks the channel id and deletes a wrong token. Համալսարանական մաթեմատիկա authorized on try 3 (Brand Account second picker). Runbook, DECISIONS #11, learning written.",
+  "Arnak: the user re-uploaded lessons 10 (part 2, 20 min), 11, 12, 13 and a '2025' file; placeholder titles set. All local Zoom files match the uploads to within 1 s, so every silence pass ran on local audio (L10 part 2 audio was first downloaded from YouTube for nothing; same recording).",
+  "The '2025' file is the 2025 course's Դաս 12 (iPad header, 'Mercredi 7 mai'), not lesson 10's missing first part (an R regression practical per 10a.pdf, never recorded). Renamed on YouTube to '2025-ի Դաս 12 (...)'. Lesson-by-lesson content map from the PDFs in status.md.",
+  "Plans only (nothing applied or pushed) for 10 part 2, 11, 12, 13 and the 2025 video: content_cuts.json with --min-silence 150 (no automatic pause cuts; every silence of 15 s+ checked with frames, writing stays), studio_cuts.txt, edit_review.md, and chapters/titles/description on the predicted edited timeline in edited_predicted/. 11 and the 2025 video by two background agents (one network drop, resumed).",
+  "Lesson 6 after the user's blur: 58:57, captions serving, chapters stand.",
+  "sort-playlist --by lesson (DECISIONS #13): dry runs only. Complex Analysis 0 of 25 moves either way; Arnak's raises on the 2025 title, by design.",
+  "Arnak titles for 6-13 redone from the section headers in his notes/slides, chosen by the user (DECISIONS #14); chapters and descriptions switched to his terms (հիմնական, կանոնիկ, կորելյացիա).",
+  "Thumbnails in the Canva copy DAHYkiiz7hc: Arnak 6-13 from the lesson 5 page, Ashot Դաս 4 and 5 from the Win95 page (ArmSCII text; joke button texts replaced with '< Back' / 'Finish' as on the published ones). User exported; files in thumbnails/umath/.",
+  "Pushed (user 'go'): titles 6-13, thumbnails for Ashot 4-5 and Arnak 6-13, descriptions of Arnak 6 and 9 (term swap only, diffed against live first). Read back: titles and 6-9 descriptions match; 9 of 10 thumbnails visible at once, Ashot Դաս 5 lagging (recheck).",
+  "Lesson 10 cut in Studio (user's 13 cuts + 2 they added), saved, 996 s; chapters checked against its new captions; description pushed. find_edit_points --check-studio now accepts Studio's MM:SS:FF labels on videos under an hour.",
+  "Cut rule rebuilt from the user's own edits: lesson 10 (8 s, DECISIONS #16), then lesson 11's 48-cut list (4 s + hum joins, DECISIONS #17); 'any questions?' stays, only the silence after it goes. Plans for 11-13 and the 2025 recording redone, chapters remapped and verified (two review agents ran the 8 s pass).",
+  "Lecture PDFs: one public Drive folder in the math team account (12 PDFs named 'NN topic', 10 and 12 merged from two files, README with the lecturer's original folder as backup); descriptions of 1-10 relinked and read back; 11, 12, 2025 linked locally; 13's PDF line dropped.",
+]
+
+pending = [
+  "Date line '16 դեկտեմբեր, 2025' taken from the live description, not verified.",
+  "Դաս 25 date is an estimate, Fri 19 Dec 2025: lessons 1-17 ran Tue/Fri, Դաս 24 (Tue 16 Dec) announced the next lesson as the last, and Դաս 25 opens where 24 stopped. 17 or 18 Dec also possible.",
+  "Դաս 20, 21, 23 show 2026 dates on YouTube. Gmail shows Sevak re-voiced lesson 20 around 9 Feb 2026 and promised two more, so these are most likely re-recording dates, not errors (DEFERRED_TODO updated).",
+  "Nothing committed.",
+  "Arnak 10-13 + 2025: the user reviews the cut plans (studio.html per folder), then applies them in Studio; chapters get remapped if the cuts change.",
+  "2025 recording: private frames in the raw unlisted upload (Drive folder URL, Outlook window title, iPad home screen) until its cuts 2-3 are saved; students' names in the Zoom strip all through it (blur).",
+  "Lesson 10 composition and the 2025 video's fate (DEFERRED_TODO).",
+  "Descriptions of Arnak 10-13 not pushed: after the user saves the cuts, map the transcript through the entered cut list, recheck chapters, then push.",
+]
+
+next = [
+  "PLANNER.md at the repo root is the live task board (user's request, 2026-10-21): read it first, update it at every status change.",
+  "Before reusing any old transcript.txt, re-run fetch_subtitles.py --output-dir <dir> so it gets the fixed parser.",
+  "Not copied to final/: finalize_description.py would name it final/ML24.txt and collide with the ML series.",
+]
+
+files = [
+  ".claude/skills/youtube-timestamps/scripts/fetch_subtitles.py",
+  "output/2026-10-20_Das-24-ToDo-Kompleqs-analiz_DqUPATmU_9s/",
+  "output/2026-10-20_Das-25-toDo-Kompleqs-analiz_VppTi0mtRWI/",
+  "_learnings/2026-10-20-1125_complex-analysis-uploads-are-already-edited.md",
+  "_learnings/2026-10-20-1102_vtt-cleaner-dropped-first-line-after-pause.md",
+  "_learnings/2026-10-20-1102_complex-analysis-reference-is-das-17.md",
+  "DEFERRED_TODO.md",
+  "scripts/yt_publish.py",
+  "scripts/YT_PUBLISH_RUNBOOK.md",
+  "DECISIONS.md",
+  "_learnings/2026-10-20-1320_youtube-oauth-token-belongs-to-a-channel-not-an-account.md",
+  "_knowledge/arnak_multivariate/status.md",
+  "output/2026-10-20_Das-10-mas-2-2026-ToDo-Bazmachap_Hv7Jux-KYBk/",
+  "output/2026-10-20_Das-11-ToDo-Bazmachap_WFMoX0xRU6I/",
+  "output/2026-10-20_Das-12-ToDo-Bazmachap_Bz6aVzkrqbM/",
+  "output/2026-10-20_Das-13-ToDo-Bazmachap_syeGoSopVM0/",
+  "output/2026-10-20_2025-i-Das-12-korelyacianeri_kJMKNFHYlFU/",
+  "thumbnails/umath/",
+  "_knowledge/info_theory/recording_timeline.md",
+]
+
+commits = []
+
+notes = "transcript_full.txt in the Դաս 24 folder is the scratch-wrapper rebuild; transcript.txt from the fixed parser is byte-identical to it."

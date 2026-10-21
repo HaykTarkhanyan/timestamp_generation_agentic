@@ -1,0 +1,56 @@
+title = "Arnak (Բազմաչափ վիճակագրություն 1) finished: lessons 11-13 and the 2025 recording edited, chaptered and public"
+date = "2026-10-21"
+time = "00:30"   # approximate; this continues the session of 2026-10-20 10:47
+areas = [
+  "scripts/",
+  "scripts/non_essential/",
+  ".claude/skills/lecture-edit-points/",
+  ".claude/skills/youtube-timestamps/scripts/",
+  "output/",
+  "_learnings/",
+  "_knowledge/arnak_multivariate/",
+]
+
+done = [
+  "Lesson 11: 70 cuts entered in Studio with the new batch files (scripts/studio_enter_cuts.js + cut_list.py entry-js, DECISIONS #18), diff identical; the user saved; chapters moved onto the real captions, description pushed.",
+  "Repo scripts from scratch versions: remap_chapters.py, hum_join.py (identical outputs verified). PLANNER.md started and kept current.",
+  "studio.html: whole-lecture timeline (DECISIONS #19), then at the user's request: per-cut cards hidden (DECISIONS #21), keys Space / S / 1 zoom out / 2 zoom in / arrows on ev.code, the view no longer snaps back to the bar while playing, a work timer. Video previews for 12, 13, 2025 (--video for the .m4a + .mp4 case).",
+  "Bug found and fixed: both caption parsers dropped one-word caption lines (no <c> tag) and caption_words kept a stray tag on the first word; FILLER now case-insensitive with punctuation. It had made two false hum joins (12: 'կորելացիա', 13: 'Ներողություն'). Learning 2026-10-21-1330.",
+  "Lesson 12: 66 cuts, 13: 34 (11+12 merged), 2025: 73 (cut 5 dropped, 2 merges) entered in Studio, each diff identical, saved by the user; YouTube lengths matched the predictions (3625, 3625, 4385 s) and the new captions matched to 0 +- 1 s. Chapters moved onto the real timeline and nudged onto the first word of their topic (7, 6, 2 chapters, 1 s each); descriptions pushed and read back (37, 30, 35 chapters).",
+  "Entry stalls: a covered Playwright window stops drawing and clicks hang after taking effect; template now brings the tab to the front and refuses a half-made cut; half-made cuts finished by hand (12 cut 3, 2025 cut 14 and 72).",
+  "2025 recording: 'Sparse PCA' -> his own 'Նոսր ՀԲՎ' in title, 3 chapters, note; thumbnail from the user's Canva export pushed. Local thumbnail generator for this series parked (DEFERRED_TODO: topic font fitted, lesson-line font missing).",
+  "Blurs: Playwright attempt on 13 discarded; the user did 2025 and lesson 7; 11 and 13 not needed (user's call).",
+  "Playlist: ordering set to 'Manually sorted in YouTube' in Studio, sorted by lesson (1-11, 12, 12 (2025), 13); PDF folder link added to its description (read back after the API's read lag).",
+  "New scripts/non_essential/playlist_overview.py: standalone overview page of a playlist (thumbnails, titles, descriptions) with a signed-out link check (Drive public + PDF number vs lesson, YouTube via oEmbed): output/arnak_overview/overview.html, 16 links all OK.",
+  "All 14 Arnak videos set to public via videos.update(part=status) with the existing status fields sent back; read back all public.",
+  "Lesson 1 end screen made and saved (Subscribe + playlist + next lesson, last 10 s); the other 13 parked with endscreen_template.js + make_endscreen_jobs.py (not yet run).",
+  "Found the Arnak email thread, drafted the closing update in Armenian; the user sent it. Leftover buggy lesson 11 folder deleted (user's OK, ~280 MB).",
+]
+
+pending = [
+  "End screens for Arnak 2-13 and the 2025 recording (parked; DEFERRED_TODO, scripts ready, untested).",
+  "Arnak's reply about lesson 13's notes, if any (add the PDF line then).",
+  "Nothing from 2026-10-21 is committed (user to decide).",
+  "Ashot: Դաս 5 thumbnail recheck, playlist sort (3 moves, needs OK), Դաս 6-8 downloads (Drive sign-in).",
+]
+
+next = "Read PLANNER.md first. Arnak is done; Ashot's rows are the open umath work."
+
+files = [
+  "scripts/studio_enter_cuts.js", "scripts/cut_list.py", "scripts/remap_chapters.py", "scripts/hum_join.py",
+  "scripts/find_edit_points.py", ".claude/skills/youtube-timestamps/scripts/fetch_subtitles.py",
+  "scripts/non_essential/playlist_overview.py", "scripts/non_essential/endscreen_template.js",
+  "scripts/non_essential/make_endscreen_jobs.py", "scripts/non_essential/README.md",
+  ".claude/skills/lecture-edit-points/SKILL.md", "DECISIONS.md", "DEFERRED_TODO.md", "PLANNER.md",
+  "_learnings/2026-10-21-1330_one-word-caption-lines-have-no-tags.md",
+  "_learnings/2026-10-20-2221_playlist-reorder-needs-manual-sort.md",
+  "_knowledge/arnak_multivariate/status.md", "thumbnails/umath/bazmachap_12_2025.png",
+]
+
+commits = ["Arnak course done: lessons 10-13 and the 2025 recording edited and public; edit tooling (2026-10-21 16:5x; other sessions' work left uncommitted)"]
+
+notes = [
+  "YouTube API reads right after a write can be stale for seconds (playlist description, lesson 13 status): reread before concluding a write failed.",
+  "Studio at 150% browser zoom: page coordinates are CSS px; Playwright screenshots can come out cropped to its own viewport idea; a small window switches Studio to a narrow layout that breaks the end screen editor.",
+  "Python's http.server cannot seek media: test studio.html with scripts/non_essential/range_server.py instead.",
+]

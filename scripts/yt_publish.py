@@ -7,6 +7,10 @@ By design this tool exposes ONLY these write operations (never destructive):
   - add-comment     (commentThreads.insert) - the lecture-correction comment of
                     the youtube-timestamps skill's last stage, posted only after
                     the user confirms its content. The API cannot pin comments.
+  - sort-playlist   (playlistItems.update, position only) - order a playlist by
+                    publish date, oldest first, or with --by lesson by the "Դաս N"
+                    number that starts each title. Dry run unless --apply; ~1 s and
+                    50 quota units per moved video.
 plus one read-only helper:
   - recent          (list the channel's newest uploads, so you can grab a video id)
 
@@ -16,6 +20,10 @@ scope for it (YouTube has no "edit-but-not-delete" scope - see YT_PUBLISH_SETUP.
 
 One-time setup: see scripts/YT_PUBLISH_SETUP.md
 
+Two channels share one OAuth client, each with its own token. --channel picks it
+(before the command); the default is Metric Academy:
+  python scripts/yt_publish.py --channel umath recent    # Համալսարանական մաթեմատիկա
+
 Usage:
   python scripts/yt_publish.py auth
   python scripts/yt_publish.py recent [N]
@@ -23,6 +31,7 @@ Usage:
   python scripts/yt_publish.py set-description  <VIDEO_ID> final/ML18.txt
   python scripts/yt_publish.py set-thumbnail   <VIDEO_ID> thumbnails/ML18.png
   python scripts/yt_publish.py add-comment     <VIDEO_ID> output/<dir>/correction_comment.txt
+  python scripts/yt_publish.py sort-playlist   <PLAYLIST_ID> [--by published|lesson] [--apply]
 
 set-description uploads the description WITHOUT its leading title header. The
 local final/ML*.txt files open with "🎬 Վերնագիր՝ <title>", a blank line, a
@@ -33,7 +42,9 @@ that header by hand in YouTube Studio after every push (ML36-41).
 
 import argparse
 import logging
+import re
 import sys
+import time
 from pathlib import Path
 
 # Single scope. force-ssl is required for videos.update (description) and also
@@ -45,7 +56,22 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 SECRETS_DIR = SCRIPT_DIR / ".secrets"
 CLIENT_SECRET_FILE = SECRETS_DIR / "client_secret.json"
-TOKEN_FILE = SECRETS_DIR / "token.json"
+# --channel -> its OAuth token and the channel id that token must belong to. All
+# channels use the one client_secret.json above.
+TOKEN_FILES = {
+    "metric": SECRETS_DIR / "token.json",        # Metric Academy (the original token)
+    "umath": SECRETS_DIR / "token_umath.json",   # Համալսարանական մաթեմատիկա
+}
+CHANNEL_IDS = {
+    "metric": "UC5BavugdnUkti3Es7-deZDg",
+    "umath": "UCMFONp28jEDHXDBWJyRVYcA",
+}
+TOKEN_FILE = TOKEN_FILES["metric"]  # set from --channel in main()
+
+# sort-playlist --by lesson: the lesson number that starts a title, "Դաս 12 | ..." -> 12.
+# "Դաս 12 (2025) | ..." (another year's recording of that lesson) sorts after the lesson's own video.
+LESSON_NUMBER = re.compile(r"^Դաս (\d+)")
+OTHER_YEAR = re.compile(r"^Դաս \d+ \(\d{4}\)")
 
 # YouTube hard limits - validate up front so we fail loudly, not mid-upload.
 MAX_TITLE_CHARS = 100
@@ -262,6 +288,72 @@ def add_comment(video_id: str, comment_file: str) -> None:
              f"The API cannot pin it - pin it in YouTube Studio if wanted.")
 
 
+def _playlist_items(yt, playlist_id: str) -> list:
+    items, page = [], None
+    while True:
+        resp = yt.playlistItems().list(part="snippet,contentDetails", playlistId=playlist_id,
+                                       maxResults=50, pageToken=page).execute()
+        items += resp.get("items", [])
+        page = resp.get("nextPageToken")
+        if not page:
+            return items
+
+
+def sort_playlist(playlist_id: str, apply: bool, by: str = "published") -> None:
+    """Order a playlist oldest first: by publish date (what Studio's "Date published
+    (oldest)" sort shows), or by the lesson number that starts each title ("Դաս 12 | ...";
+    equal numbers keep their current order). Without apply it only logs the moves. With
+    apply it moves the out-of-place items, re-reads the playlist and raises if the order is
+    still wrong."""
+    yt = get_service()
+    items = _playlist_items(yt, playlist_id)
+    if not items:
+        raise ValueError(f"Playlist {playlist_id!r} is empty or not found")
+    log.info("Order now: " + " | ".join(it["snippet"]["title"].split(" | ")[0] for it in items))
+
+    if by == "published":
+        unpublished = [it["snippet"]["title"] for it in items
+                       if "videoPublishedAt" not in it["contentDetails"]]
+        if unpublished:
+            raise ValueError(f"No publish date for {unpublished} (private or deleted?) - can't sort")
+        target = sorted(items, key=lambda it: it["contentDetails"]["videoPublishedAt"])
+    else:
+        unnumbered = [it["snippet"]["title"] for it in items if not LESSON_NUMBER.match(it["snippet"]["title"])]
+        if unnumbered:
+            raise ValueError(f"No 'Դաս N' at the start of {unnumbered} - can't sort by lesson")
+        target = sorted(items, key=lambda it: (int(LESSON_NUMBER.match(it["snippet"]["title"]).group(1)),
+                                               bool(OTHER_YEAR.match(it["snippet"]["title"]))))
+    order = [it["id"] for it in items]
+    moves = 0
+    for pos, item in enumerate(target):
+        if order[pos] == item["id"]:
+            continue
+        order.remove(item["id"])
+        order.insert(pos, item["id"])  # the API inserts the same way: later items shift down
+        moves += 1
+        log.info(f"{'Move' if apply else 'Would move'} {item['snippet']['title']!r} to position {pos}")
+        if apply:
+            body = {"id": item["id"], "snippet": {"playlistId": playlist_id, "position": pos,
+                                                  "resourceId": item["snippet"]["resourceId"]}}
+            yt.playlistItems().update(part="snippet", body=body).execute()
+
+    if not apply:
+        log.info(f"Dry run: {moves} of {len(items)} videos would move. Rerun with --apply.")
+        return
+    # The list lags behind the updates: read 11 s after 21 moves, it still showed the old
+    # order, and 30 s later the new one (2026-10-20). So retry before calling it a failure.
+    for _ in range(6):
+        time.sleep(5)
+        after = _playlist_items(yt, playlist_id)
+        if [it["id"] for it in after] == [it["id"] for it in target]:
+            break
+    else:
+        raise RuntimeError(f"Playlist order 30 s after the moves still does not match the "
+                           f"{by} order")
+    log.info(f"Moved {moves} of {len(after)} videos. Order now: "
+             + " | ".join(it["snippet"]["title"].split(" | ")[0] for it in after))
+
+
 def list_recent(n: int) -> None:
     """List the channel's n most recent uploads (read-only) as: id  url  [published]  title."""
     yt = get_service()
@@ -286,6 +378,8 @@ def list_recent(n: int) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Update YouTube titles, descriptions, thumbnails; post comments (no delete).")
+    parser.add_argument("--channel", choices=sorted(TOKEN_FILES), default="metric",
+                        help="Which channel's token to use (default: metric)")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("auth", help="Run the one-time OAuth consent and store the token")
@@ -309,11 +403,30 @@ def main() -> None:
     p_comment.add_argument("video_id")
     p_comment.add_argument("comment_file", help="UTF-8 file with the comment text")
 
+    p_sort = sub.add_parser("sort-playlist", help="Order a playlist by publish date or lesson number")
+    p_sort.add_argument("playlist_id")
+    p_sort.add_argument("--by", choices=["published", "lesson"], default="published",
+                        help="publish date (default) or the 'Դաս N' number at the start of each title")
+    p_sort.add_argument("--apply", action="store_true", help="Make the moves (default: dry run)")
+
     args = parser.parse_args()
+    global TOKEN_FILE
+    TOKEN_FILE = TOKEN_FILES[args.channel]
+    log.info(f"Channel: {args.channel} (token {TOKEN_FILE.name})")
 
     if args.command == "auth":
-        get_service()
-        log.info("Authorized. Token stored - you won't need to consent again.")
+        yt = get_service()
+        # Show which channel the token belongs to: picking the wrong account at consent
+        # is the classic mistake (YT_PUBLISH_RUNBOOK.md gotcha 4).
+        mine = yt.channels().list(part="snippet", mine=True).execute().get("items", [])
+        got = f"{mine[0]['snippet']['title']!r} ({mine[0]['id']})" if mine else "no channel"
+        if not mine or mine[0]["id"] != CHANNEL_IDS[args.channel]:
+            TOKEN_FILE.unlink()  # a token for the wrong account; drop it so the next auth asks again
+            raise ValueError(f"Authorized as {got}, but --channel {args.channel} is "
+                             f"{CHANNEL_IDS[args.channel]} - removed {TOKEN_FILE.name}. Run auth "
+                             f"again and pick that channel (a Brand Account is its own entry).")
+        log.info(f"Authorized as channel {got}. "
+                 f"Token stored in {TOKEN_FILE.name} - you won't need to consent again.")
     elif args.command == "recent":
         list_recent(args.n)
     elif args.command == "set-title":
@@ -324,6 +437,8 @@ def main() -> None:
         set_thumbnail(args.video_id, args.image_path)
     elif args.command == "add-comment":
         add_comment(args.video_id, args.comment_file)
+    elif args.command == "sort-playlist":
+        sort_playlist(args.playlist_id, args.apply, args.by)
 
 
 if __name__ == "__main__":

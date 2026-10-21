@@ -120,7 +120,29 @@ rerun the full Stage 2 command (see "Order of runs").
 8. **Pauses inside a live demo are cut too** (ML49: the user cut the pauses in the
    gesture-controlled snake demo that I had suggested keeping).
 
+**Practicals (live coding) differ on rules 5 and 6.** On ML52 the user kept every
+thinking-aloud and file-hunting cut I proposed: the viewer is watching the notebook while the
+file or the word is found. On a practical, put those in as `judgment` cuts **unticked**; prompts,
+pauses and logistics are cut as usual. Details in the preferences learning (ML52 section).
+
 **Keep:** student questions and their answers, content tangents, and course-plan announcements.
+
+**A lecturer whose hums read as speech** (Arnak, DECISIONS #17): his "ըըը" is as loud as speech,
+so a hum splits one long pause into two cuts. After the silence pass, join them through the captions:
+
+```bash
+python scripts/hum_join.py --output-dir <output_dir> [--cuts studio_cuts.txt] [--write]
+# logs each pair of cuts with under 1.2 s of sound and no real caption word between them;
+# --write adds the joins to content_cuts.json (backed up first), then rerun the full analysis
+```
+
+Run it on **every** list that gets new pause cuts, extra proposals included. Arnak lesson 11's 18
+extra proposals skipped it, and the 70 entered cuts still had 2 joins open (21:50, 37:25).
+
+**Read the transcript at every join before writing it.** Until 2026-10-21 the caption parser lost
+every one-word caption line, so a single spoken word between two pauses looked like a hum: lesson 12
+joined across "կորելացիա" (37:34) and lesson 13 across "Ներողություն" (28:23). Fixed in
+`caption_words()` and in `fetch_subtitles.py`; see `_learnings/2026-10-21-1330_one-word-caption-lines-have-no-tags.md`.
 
 **One recording uploaded as two videos** (ML50 + ML51, 2026-10-14): the user splits a long
 session by uploading the same file twice and cutting each copy down to its part. Give each
@@ -179,6 +201,37 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
 ```
 
 - **`studio.html`:**
+  - **The timeline comes first** (added 2026-10-21 at the user's request, DECISIONS #19): the whole
+    lecture as one wide spectrogram, so the review also covers what no cut touches.
+    - An overview strip of the whole lecture (loudness, every cut, a box for the view; drag it to move).
+    - The main view: zoom from 0.5 to 320 px/s (tiles at 80 px/s, 8 px/s when zoomed out), the
+      transcript under the spectrogram, the full line at the bar below it.
+    - Colours: red = safe cut, orange = "your call" cut, dashed orange = an unticked suggestion
+      ("Add as a cut"), blue = the user's new or changed cuts, dashed red = removed, **yellow = a
+      silence of 2 s+ that no cut covers** (updates as cuts change; "silence no cut covers: next"
+      jumps there). Silences split by a hum count as one pause (`pause_groups()`, the same test as
+      `hum_join.py`; the label says "+ hum" and counts only the silent seconds). Arnak 12: 49 marks
+      before the hum grouping, 67 after; 4 of them hum-split pauses of 4.0-4.9 s of silence that the
+      4 s rule never cut, since no single piece reached 4 s. One of the 4 (10:29) was really a pause,
+      the word "գումար", a pause: until 2026-10-21 `caption_words()` lost one-word caption lines, so the
+      word looked like a hum. **Before calling a "+ hum" mark a hum, read the transcript there.**
+    - Editing: click puts the bar there and selects what is under it, dragging across draws a new
+      cut, dragging an edge moves it; the panel under it has Start/End = bar, Remove/Restore,
+      Delete. Cuts drawn here are stored with `host: null`; `cut_list.py` reads the paste unchanged.
+    - **The per-cut cards are hidden** when the page has the timeline (the user, 2026-10-21: "i dont
+      need the old view"; DECISIONS #21). They stay in the DOM because STUDIO_JS builds the cut list
+      from them; the contents list shows only the timeline and the copyable list.
+    - **Keys anywhere on the page** (except in a text box): Space play/pause, S skip the cuts, 1 zoom
+      out, 2 zoom in (the user's pick, 2026-10-21; + / - before, then 1 in / 2 out, which the user
+      found backwards), arrows move the bar (Shift: 1 s).
+      Matched on `ev.code`, so they work on the Armenian layout.
+    - **While playing, the view follows the bar only while the bar is on screen**: scroll away and it
+      stays where you put it; scroll back to the bar and it follows again. Before 2026-10-21 every
+      frame pulled the view back, so the user could look ahead only while paused.
+    - Tested with Playwright on a copy of Arnak 12 (draw, drag an edge, reload, clean-up). Two things
+      in that test are the test setup, not the page: `python -m http.server` has no Range requests, so
+      the WAV can't seek (playback restarts at 0; from disk it seeks), and the automated window gets
+      about one frame a second, so labels lag.
   - Cut 1..N with Studio's exact `H:MM:SS:FF` times (the frame rate comes from yt-dlp and is kept in the JSON).
   - One player per cut over the full lecture WAV, with a bar to click or drag on the spectrogram
     (20 s either side of the cut; Play starts 3 s before the cut and runs to the window's end -
@@ -193,9 +246,39 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
     - Neighbouring cuts show in grey.
     - Edits stay in the browser's localStorage, keyed by the list ID.
     - A copyable list at the bottom marks cuts CHANGED (with the old times) or NEW. If the
-      user pastes it back, those are the times to use. `--check-studio` compares Studio with
+      user pastes it back, those are the times to use.
+    - **Remove cut / Restore cut** on each planned cut (added 2026-10-17 at the user's request):
+      a removed cut leaves the numbering and the total, shows as a dashed outline, and is listed
+      at the end of the copyable list as `# REMOVED, was <start> -> <end>` (the planned times),
+      so a pasted list still accounts for every planned cut. Before the button, the user shrank
+      cuts to nothing instead (ML52): still drop pasted cuts under 0.5 s, merge cuts that overlap
+      or leave at most one frame between them, and say both back before entering.
+    - **A pasted list goes through `scripts/cut_list.py`** (save it as `studio_cuts_edited.txt` first):
+      ```bash
+      python scripts/cut_list.py check    --output-dir <output_dir>   # vs the plan: every planned cut once, numbering, gaps, tiny cuts
+      python scripts/cut_list.py to-enter --output-dir <output_dir> [--studio-end H:MM:SS:FF]
+      #   -> studio_cuts_to_enter.txt: drops cuts < 0.5 s, merges touching pairs, verifies frame by frame,
+      #      prints the ascending [n, start, end] array for the Playwright loop
+      ```
+      `check` fails on a list made on an older tab (ML51: the "was" times matched the 21-cut plan,
+      not the rebuilt one). Pass `--studio-end` when Studio's End trim marker differs from the
+      list's last frame (ML51: `:07` against `:06`). `--check-studio` compares Studio with
       `edit_points.json`, so cuts changed on the page show up there as differences.
+    - **Chapters drafted on an older list move with it** (don't redraft): map the transcript again,
+      then move the chapters from the list they were drafted on to the new one:
+      ```bash
+      python scripts/map_transcript_to_edit.py --output-dir <output_dir>
+      python scripts/remap_chapters.py --output-dir <output_dir> --from-cuts studio_cuts_v1_content_only.txt
+      #   [--from edited_predicted/timestamps_v1_content_only.txt] [--to-cuts studio_cuts_to_enter.txt]
+      ```
+      It rewrites `edited_predicted/timestamps.txt` and the description's chapter block, logs every
+      chapter that sat inside a new cut (it moves to the cut's end), and raises under 10 s apart.
+      Back up both files first if they hold anything not derived from `--from`.
   - It reads `../audio/<id>_16k.wav`, so the audio folder has to stay where it is.
+  - **Work timer** (added 2026-10-21 at the user's request, lesson 12): a Start/Stop box in the bottom-right
+    corner. The total is kept in localStorage per video (`studio-timer-<id>`), so reloads and rebuilt pages
+    keep it. It counts wall-clock time, so a running timer keeps going while the tab is closed. Ask the user
+    for the time when a review comes back; it tells how long a review takes per cut.
   - **Video preview** (added 2026-10-12 at the user's request, opt-in): `--video-preview` makes
     `<output_dir>/video/<id>_360p.mp4` from the local recording, and studio.html then plays it
     in a panel that stays at the top while scrolling (with a Hide video button) instead of the WAV.
@@ -206,7 +289,12 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
     - Why a proxy and not the Zoom file itself: Zoom puts a keyframe only every ~26 s, so seeks in
       the original took 0.35-11 s (median ~2 s). The proxy has one every 2 s: seeks took 11-138 ms.
     - It needs the local recording (`audio_source` in the JSON). If the audio came from YouTube,
-      rerun the analysis with `--audio <recording>` first.
+      rerun the analysis with `--audio <recording>` first. If it came from an audio-only file (the
+      lecturer's Zoom folder has a `.m4a` next to the `.mp4`, Arnak 12 and 13), pass the `.mp4` with
+      `--video <file>`: its length must match the WAV's within 1 s. Arnak 12's two tracks were 0 ms
+      apart at 5, 33 and 63 min (envelope cross-correlation, peak 1.00).
+    - Cost measured on 2026-10-21: ~0.8 MB per minute (Arnak 12 at 344x360: 40 kbps video + 64 kbps
+      audio), and 9x realtime on an idle machine (120 s in 13 s).
 - **`index.html`:** every source cut with tick/untick and a minimum-silence menu. Its
   copyable list follows the ticks, in the same Studio numbering and frame times.
 - **`studio_cuts.txt`:** the pre-ticked cuts, same numbering and frames, last first,
@@ -228,6 +316,39 @@ going from 3 s to 2 s added 44 edits to save another 1.2 min).
 
 If the Playwright tools are missing, tell the user to run `/mcp`; don't work around it.
 
+**Enter the cuts with the batch files, not by hand and not with a loop retyped each time**
+(DECISIONS #18). The loop is `scripts/studio_enter_cuts.js`; it encodes everything below.
+
+```bash
+python scripts/cut_list.py entry-js --output-dir <output_dir>    # -> .playwright-mcp/studio_entry_<id>_dryrun.js, _01of05.js, ...
+```
+
+1. In the signed-in Studio tab, open the editor and the Trim & cut panel.
+2. `browser_run_code_unsafe` with `filename=<absolute path of _dryrun.js>`. It only reads: the
+   URL is this video's editor, there is one playhead box, its label fits the video's length, the
+   New Cut button is there, and how many of the list's cuts Studio already has.
+3. Run `_01ofNN.js`, `_02ofNN.js`, ... one at a time. Each returns `done`, `already` and the cut
+   count in Studio; any surprise throws with the cuts done so far. A batch that stopped can be run
+   again as it is: cuts already in Studio are skipped. 14 cuts per batch. A call over ~120 s moves
+   to the background; that is fine (the result arrives as a notification), just run the next batch
+   only after reading it.
+4. Read the markers back and run `cut_list.py diff` (below). Never Save.
+
+First run, Arnak lesson 11 (2026-10-21, 70 cuts, 1:13:04): dry run plus 5 batches, all without an
+error, `diff` identical frame for frame. Batches took 76, 174, 103, 121 and 145 s (5.4-12.4 s per
+cut, not growing steadily with the cuts in Studio): 10 min for 70 cuts. The playhead selector
+`input[aria-label*="frame"]` (replacing `*="hour"`, so videos under an hour work too) held on both
+sides of 1:00:00, and cut 1 from `0:00:00:00` went in like any other.
+
+Second run, Arnak lesson 12 (2026-10-21, 66 cuts, 1:08:38): batch 1 stopped on cut 3. The click on
+New Cut timed out *after* it took effect (cut 3's row was open at 2:26:19 with Studio's default end
+9:18:14), and a screenshot timed out too: the Playwright window was behind other windows and drew no
+frames. `page.bringToFront()` fixed it. I finished the open row by hand (end, start, Cut; not Cancel,
+whose scope wasn't known) and reran the batch, which skipped cuts 1-3. The template now brings the
+tab to the front and refuses to start a cut while an editing row is open. Batches 1-5 then took 54,
+91, 102, 125 and 144 s; `diff` identical frame for frame. The window was 1280x720 (853x384 CSS px
+inside, the Playwright browser's default after a restart), smaller than in the first run, and it worked.
+
 How Studio's editor behaves (measured on ML48, 2026-10-03):
 
 - **Getting in:** `https://studio.youtube.com/video/<ID>/editor`, then the "Add trim"
@@ -235,6 +356,9 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
 - **Times:** the boxes take `H:MM:SS:FF` at the video's frame rate. ML48 was 25 fps;
   the script reads the rate per video. Studio keeps the **original timeline** while you
   edit, so the times in the list stay valid.
+  - **Under one hour Studio has no hour field:** type `MM:SS:FF` (Arnak lesson 10, 2026-10-20:
+    `00:36:05`, `19:12:18`), and the markers read `End trim marker 19:34:23`. `--check-studio`
+    adds the `0:` itself since that day; before, it crashed on these labels.
 - **Typing a time:** `fill()` does not stick. Click the box, press Ctrl+A, type the time with
   `keyboard.type`, then press Tab. The editing row's boxes are `#panel-container input:visible`.
 - **Order for each cut:**
@@ -273,6 +397,9 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
   list ID. It lists every cut that is only in one place and exits 1 on any mismatch. Report
   the three counts and the list ID to the user. On ML48 I left a cut out of a batch, and only
   a full diff caught it.
+  - `--check-studio` compares Studio with the **plan**. When the user edited the list on
+    studio.html (ML50-ML52 all did), compare with what was entered instead:
+    `python scripts/cut_list.py diff --output-dir <output_dir> --markers .playwright-mcp/<name>.json`.
 - **Never press Save, and never navigate the Studio tab away** (it holds unsaved
   edits). Open anything else in a new tab. "Discard changes" drops everything.
 - **Don't call `setViewportSize` on the user's Studio tab.** On ML51 it shrank the page the
@@ -295,24 +422,33 @@ After the user adjusts cuts by hand, **only read** the page.
 
 Remind the user that nothing is saved until they press Save.
 
-## After Save: chapters
+## After Save: chapters - start at once, don't wait for YouTube (DECISIONS.md #10)
 
-Wait until YouTube finishes processing the edit, then run the youtube-timestamps
-skill on the edited video.
+Right after the user saves, map the raw transcript through the entered cut list:
 
-**YouTube regenerates the auto-captions for the edited timeline** (verified on ML48:
-the new length was 5327 s, as predicted from the cuts, and the captions started at the
-first kept sentence). Still compare the fetched `duration_seconds` with the predicted
-new length before trusting the transcript.
+```bash
+python scripts/map_transcript_to_edit.py --output-dir <output_dir>
+# writes <output_dir>/edited_predicted/{transcript.txt,metadata.json}; --times 0:14:13 ... maps single raw times
+```
 
-- Fetch into a subfolder, `--output-dir <output_dir>/edited`, so the raw-timeline
-  `transcript.txt` and `metadata.json` that `find_edit_points.py` reads stay intact.
-- If you already read the raw transcript for the content cuts, you can pick chapter
-  boundaries on the raw timeline. Map each one through `studio_final_cuts.json`
-  (subtract the length of every cut that ends before it; raise if it falls inside a
-  cut), then check every boundary against the edited captions with the verifier's
-  `--audit-boundaries`. On ML48 all 35 mapped boundaries landed on the right sentence;
-  5 moved back 1-3 s to the line where the topic is named.
+Run the youtube-timestamps skill on `edited_predicted/` straight away: chapters, verifier,
+title, description, correctness review. Measured against YouTube's real edited captions:
+median offset 0.0 s, 99-100% of lines within 1 s, worst 2 s (ML50, ML51).
+
+**Publish only after YouTube has processed the edit.** The live video stays raw until then,
+so chapters pushed earlier point to the wrong places. Then:
+
+- Fetch the regenerated captions into a subfolder, `--output-dir <output_dir>/edited`,
+  so the raw-timeline `transcript.txt` and `metadata.json` that `find_edit_points.py`
+  reads stay intact. YouTube regenerates the auto-captions for the edited timeline
+  (ML48: the new length was 5327 s, as predicted from the cuts).
+- Check that `duration_seconds` matches the predicted length, and run the verifier with
+  `--audit-boundaries` on `edited/` with the drafted `timestamps.txt`. Move a boundary only
+  if the audit shows the topic sentence on the other side of it.
+- The second caption pass also helps the correctness review: a number every pass agrees
+  on was probably said (ML50's "117 million").
+- Before this script, boundaries were mapped by hand through `studio_final_cuts.json`
+  (ML48: all 35 landed on the right sentence; 5 moved back 1-3 s to where the topic is named).
 
 ## Gotchas
 

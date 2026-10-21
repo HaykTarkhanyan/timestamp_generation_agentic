@@ -99,3 +99,61 @@ From my 21 cuts to 23 (5 changed, 2 new). File:
   tab is out of date.
 - **End frame, both videos:** the page said 1:50:10:06, Studio's End trim marker was :07.
   Enter the last cut to Studio's marker (as on ML49).
+
+## ML52 (2026-10-16): a practical - the on-screen fumbles stay
+
+From my 48 Studio cuts to 41 entered (1:39:00 -> 1:16:26, 22.6 min removed; mine was 24.2).
+The user's list had 49 cuts (20 changed, 1 new); 5 of them were shrunk to under 0.5 s and 3
+pairs touched or overlapped by a frame. Files: `output/2026-10-16_52-Meqenayakan-usucum_q8JM6nR03-Q/`
+`studio_cuts_edited.txt` (their paste) and `studio_cuts_to_enter.txt` (what went into Studio).
+
+- **Kept, against rules 5 and 6:** hunting the folder for an example (16:19-16:45), the false
+  start "I can show the capture process now... OK no" (only the pause before it was cut), "if
+  I'm not mistaken... I won't check now" (54:51), the cosine/normalization aside (56:08), a
+  forgotten class name (1:08:42), looking for frames in the data folder (1:26:56), and one plain
+  2.7 s pause (15:29). In a practical the screen is the content: the viewer watches the notebook
+  while the file or the word is being found. On practicals, default these cuts to unticked;
+  on lectures, rule 5 stands (ML48, ML49).
+- **Cut, as planned:** every "questions?" prompt with its silence, the whole pre-lecture block
+  (including a 9-min off-topic Q&A about a student's job), an inaudible exchange (49:02), the
+  end-of-class scheduling. The closing course-plan announcement stayed (it was unticked).
+- **The end of the live demo stayed:** my cut started at 1:20:23 ("ah no, OK"); theirs at 1:20:41,
+  "until you ask questions I'll just play".
+- Six pause cuts got 1-2.5 s longer, and a new 2.4 s pause cut (rule 3 again).
+- **Mechanics:** studio.html has no delete button, so the user shrinks a cut to nothing. Treat
+  cuts under 0.5 s as dropped, merge cuts that overlap or leave at most one frame between them,
+  and say both back before entering. Studio's End trim marker matched the list this time
+  (1:38:59:15).
+
+## Arnak Dalalyan, lesson 10 (2026-10-20): silent writing goes, questions and one-word narration stay
+
+Another channel (Համալսարանական մաթեմատիկա), another lecturer, but the same reading of what a
+viewer should not sit through. I had planned only start/end trims, assuming the long pauses were
+fine because he writes on the iPad during them. The user, in Studio, cut 0:36-7:49 themselves and
+explained: "he says something and then slowly writes it ... it just basically says nothing".
+
+- **Cut:** every silence of 9 s or more while he writes (9.1-40.4 s, ten of them) and one of
+  6.2 s; at 4:02 the 40 s pause, a 3 s pause and the "ըը" between them in one cut.
+- **Kept:** 3.3-7.5 s pauses; a single word said while writing ("that can stay"); his remark
+  that the first part was not recorded and last year's will be uploaded (0:11-0:31; only the
+  "I thought I had pressed it" before it went); "let's end here, continue next week" (only the
+  goodbyes went).
+- **Edges:** within a frame or two of `find_edit_points.py`'s own (0.35 s pad).
+- **Rule taken:** `--min-silence 8` for his raw recordings (DECISIONS #16). Student questions still
+  stay, as before.
+
+## Arnak Dalalyan, lesson 11 (2026-10-21): pauses from about 4 s go, and his "ommm"
+
+The user reviewed the 8 s plan on studio.html and sent back 48 cuts (19 new, 2 widened), with:
+"he often just says ommm thats why u may thing he said something".
+
+- **Where they listened, they cut most pauses of 4 s and up:** inside the three stretches with new
+  cuts, 93% of 4-6 s pauses, 57% of 3-4 s, 11% of 2-3 s, all 8 s+. Outside them, nothing new: an
+  untouched stretch on a returned list means "not reviewed", not "keep". Measure inside the
+  reviewed windows before reading a rule off a list.
+- **The hums are not quieter than speech** (median -30 vs -25 dB), so the detector hears them as
+  speech and splits one empty stretch into two cuts. The two widened cuts (+2.0 and +2.4 s at
+  15:09 and 15:31) took a hum in.
+- **Rule taken:** `--min-silence 4` plus a narrow join of two cuts across an un-worded sound under
+  1.2 s (DECISIONS #17). The lesson 10 data (kept 3.3-7.5 s pauses) came from the first 8 minutes
+  only.

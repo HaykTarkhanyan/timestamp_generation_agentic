@@ -143,6 +143,29 @@ python scripts/yt_publish.py set-thumbnail  <VIDEO_ID> thumbnails/ML18.png
 
 ---
 
+## Another channel on the same project (~2 min)
+
+Steps 1-7 are needed only once per GCP project. An OAuth client can authorize any Google
+account, and the app is already in Production, so a second channel needs only its own token:
+
+1. Add a name to `TOKEN_FILES` and the channel's id to `CHANNEL_IDS` in `yt_publish.py`
+   (`yt-dlp --print "%(channel_id)s" <any video url>` gives the id).
+2. `python -u scripts/yt_publish.py --channel <name> auth`. Append `&prompt=select_account%20consent`
+   to the printed URL and open that, so Google shows the pickers instead of reusing a past choice.
+3. **Brand Accounts: two screens.** First choose the Google account that manages the channel
+   (the user's personal Google account, for Համալսարանական մաթեմատիկա). Then a **channel list** follows:
+   choose the channel there. The token belongs to that channel, not to the Google account.
+4. auth checks the channel id. On a mismatch it deletes the token and fails; run step 2 again.
+
+Measured 2026-10-20 for `umath`: try 1 gave a token with no channel, try 2 gave the personal
+channel "Aik Tarkhanyan" (same Google account, wrong entry on the second screen), and try 3
+gave Համալսարանական մաթեմատիկա.
+
+Every later command takes `--channel <name>` before the command name. Without it, the script
+uses Metric Academy. Both channels share the project's 10,000 units/day.
+
+---
+
 ## Gotchas summary (all of these bit us once)
 
 1. **Secret hashing** - full secret only at creation or via Add-secret copy button. Step 6.
