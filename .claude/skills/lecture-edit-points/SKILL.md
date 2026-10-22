@@ -334,6 +334,13 @@ python scripts/cut_list.py entry-js --output-dir <output_dir>    # -> .playwrigh
    only after reading it.
 4. Read the markers back and run `cut_list.py diff` (below). Never Save.
 
+**If batch 1 fails on cut 1 with "not in Studio after Cut" and the markers show that cut one frame
+later at both ends,** the upload is one where Studio stores cuts a frame late (Papikian Դաս 20 and 22,
+2026-10-22; learning 2026-10-22-1640). Delete that cut (panel Delete, then "Delete Cut"), regenerate
+with `entry-js --type-shift -1` and run again; the checks still use the planned times. Do not re-run
+unshifted: the exact "already in Studio" check would enter cut 1 twice. Cancelling a batch call in the
+chat does not stop it in the browser: read Studio's state before re-running anything.
+
 First run, Arnak lesson 11 (2026-10-21, 70 cuts, 1:13:04): dry run plus 5 batches, all without an
 error, `diff` identical frame for frame. Batches took 76, 174, 103, 121 and 145 s (5.4-12.4 s per
 cut, not growing steadily with the cuts in Studio): 10 min for 70 cuts. The playhead selector
@@ -402,6 +409,12 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
     `python scripts/cut_list.py diff --output-dir <output_dir> --markers .playwright-mcp/<name>.json`.
 - **Never press Save, and never navigate the Studio tab away** (it holds unsaved
   edits). Open anything else in a new tab. "Discard changes" drops everything.
+  - **Exception: the user asks for Save for this video** (ML53, 2026-10-21: "double check press
+    save and acknowledge, i will be away"). Save only if `cut_list.py diff` says identical frame for
+    frame. The dialog that follows says "Adjust video to new length: H:MM:SS"; go on only if that is
+    the predicted length, then tick "I acknowledge that these changes are permanent" and press
+    "Confirm changes". The page then reads "Video editing is in progress...". On any mismatch,
+    don't save; leave it for the user.
 - **Don't call `setViewportSize` on the user's Studio tab.** On ML51 it shrank the page the
   user was watching ("why did u minimize yt studio? it was full just now"). Inside the page the
   screen size is emulated too, so the real window size can't be read back. A later "restore"

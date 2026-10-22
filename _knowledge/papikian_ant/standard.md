@@ -28,9 +28,13 @@ goes into the next lecture's label, in the title and the thumbnail alike: lectur
 
 
 📚 Դասախոսության ֆայլը՝
-https://sites.google.com/view/mpapikian/teaching/algebra-and-number-theory#h.gej4b75dpiyv
+https://drive.google.com/file/d/<this lesson's notes in the math-team folder>
 Տնային աշխատանք՝
-https://drive.google.com/file/d/1uKmNo0ZS8Wvz-s3tPHG16SQ9LuWmV6bA
+https://drive.google.com/file/d/<our copy of the current homework>
+Դասընթացի բոլոր նյութերը՝
+https://drive.google.com/drive/folders/1b8yBCAiiZgftMziYFeVQlvv8sf4Qqi04
+Դասախոսի կայքը՝
+https://sites.google.com/view/mpapikian/teaching/algebra-and-number-theory#h.gej4b75dpiyv
 Դասագրքեր և այլ նյութեր՝
 https://mathteam.notion.site/algebra
 
@@ -57,6 +61,13 @@ https://www.youtube.com/playlist?list=PLz3NrXxHz_CDF0l5rTCoxEqYoG3_na6Cs
 - Homework line: each video links the homework current at the time (13: the project, 14: the
   Lecture 14 problems, 15: Homework 5). Homework 5 (due 3 Dec) is the last one on the course
   page, so lectures 16, 17 and 19 link it as above; lectures 20-23 drop the two homework lines.
+- Materials (since 2026-10-22, `drive_materials.md`): the files link our copies in the math-team
+  Drive folder; the folder and the lecturer's site are both linked as well, so either can serve as
+  the backup (user: "point both to site and to folder so there is backup").
+- When the next item in the course schedule after a lecture is the midterm, the project or an exam,
+  that lecture also links its file, after the homework lines (user, 2026-10-22): Դաս 10 ->
+  `Միջանկյալ քննություն (լուծումներ)՝` (midterm, week 7), Դաս 11-12 -> `Նախագիծ՝` (project, week 8).
+  This course has no final-exam file.
 - The music credits stay: the intro and outro are the same clips (`assets/asof/`).
 - Locally, `description.txt` starts with the repo's title header (`🎬 Վերնագիր՝ <title>`, blank,
   divider, blank), which `yt_publish.py set-description` strips before upload.
@@ -69,11 +80,20 @@ https://www.youtube.com/playlist?list=PLz3NrXxHz_CDF0l5rTCoxEqYoG3_na6Cs
 - Labels: Armenian, with the lecture's math notation (`ℤ`, `ℚ`, `F[x]`, `⊕`, `≃`, `⇒`, `↔`,
   `φ[a]`, `a_1 | ... | a_m`), and step words with the separator `․` (U+2024 ONE DOT LEADER):
   `Հիշեցում․ ...`, `Օրինակ․ ...`, `Ապացույց․ ...`, `Թեորեմ․ ...`, `Լեմմա․ ...`, `Հարց․ ...`,
-  `Քայլ 1․ ...`, `Չօրինակ․ ...`, `Դիտողություն`. Abbreviation used: `վ․ծ․` (վերջավոր ծնված).
+  `Քայլ 1․ ...`, `Հակաօրինակ․ ...` (counterexample; never "Չօրինակ", user 2026-10-22), `Դիտողություն`. Abbreviation used: `վ․ծ․` (վերջավոր ծնված).
 - Start every label with a letter (YouTube strips leading symbols), no ASCII `<` or `>`.
 - No nesting in this series so far: flat lists.
 - Glossary: `.claude/skills/youtube-timestamps/assets/glossary.csv`; keep the terms the series
   already uses (PID, UFD, Դրինֆելդի մոդուլ, Քարլիցի մոդուլ, ոլորման էլեմենտներ).
+- One notation across lectures (settled in the Դաս 16-23 reviews, 2026-10-22,
+  `_knowledge/papikian_ant/review_16-23.json`): `disc(K)` (not d(K)); `Nr(α)` for the element norm,
+  `N(I)` for the ideal norm; ideals in parentheses `(2, 1+√-5)`, `pO_K` (not ⟨ ⟩); class group `H(K)`
+  (not Cl(K)); "վերլուծում" for factorization, "տրոհվել" only for split; "Գալուայի ընդլայնում"
+  ("Գալուայի դաշտ" means a finite field); "պրիմիտիվ տարր"; compound exponents in parentheses
+  `P^(n_1)`; no English glosses in parentheses.
+- State the hypotheses the claim needs, even when the lecturer drops them: `I ≠ 0`, `P ≠ 0`,
+  "քառակուսային K", `p ∤ 2m`, `p ∤ [O_K : ℤ[α]]`. Both reviews of 16-23 flagged these, and a label
+  that is false as written is worse than a longer one.
 
 ## Edges and cuts
 

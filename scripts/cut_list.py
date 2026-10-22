@@ -212,7 +212,7 @@ def to_enter(d: Path, studio_end: str | None) -> int:
     return 1 if problems else 0
 
 
-def entry_js(d: Path, batch_size: int) -> int:
+def entry_js(d: Path, batch_size: int, type_shift: int = 0) -> int:
     data, fr = load(d)
     cuts = sorted((s, e) for _, s, e, _ in read_cuts(d / TO_ENTER, fr))
     template = ENTRY_TEMPLATE.read_text(encoding="utf-8")
@@ -224,12 +224,14 @@ def entry_js(d: Path, batch_size: int) -> int:
     ENTRY_DIR.mkdir(exist_ok=True)
     jobs = [("dryrun", 0, rows, True)] + [(f"{k:02d}of{len(batches):02d}", k, b, False) for k, b in enumerate(batches, 1)]
     for tag, k, b, dry in jobs:
-        job = {"video": vid, "overOneHour": over, "batch": k, "batches": len(batches), "dryRun": dry, "cuts": b}
+        job = {"video": vid, "overOneHour": over, "batch": k, "batches": len(batches), "dryRun": dry,
+               "fps": fr.fps, "typeShift": type_shift, "cuts": b}
         path = ENTRY_DIR / f"studio_entry_{vid}_{tag}.js"
         path.write_text(template.replace("__JOB__", json.dumps(job)), encoding="utf-8")
         log.info(f"{path}: {'dry run, ' if dry else ''}cuts {b[0][0]}-{b[-1][0]}")
     log.info(f"{len(rows)} cuts from {d / TO_ENTER} in {len(batches)} batches of up to {batch_size} "
-             f"(~{6 * batch_size} s each at ~6 s per cut); over an hour: {over}")
+             f"(~{6 * batch_size} s each at ~6 s per cut); over an hour: {over}; typed times shifted by "
+             f"{type_shift} frame(s)")
     return 0
 
 
@@ -269,13 +271,16 @@ def main() -> None:
             p.add_argument("--studio-end", help="Studio's End trim marker, if the last cut must end on it")
         if name == "entry-js":
             p.add_argument("--batch-size", type=int, default=14, help="cuts per batch (~6 s each; stay under ~100 s)")
+            p.add_argument("--type-shift", type=int, default=0,
+                           help="frames added to every typed time; -1 for an upload on which Studio stores each cut "
+                                "one frame later than typed (Papikian Դաս 20); cuts are still checked at the planned times")
         if name == "diff":
             p.add_argument("--markers", type=Path, required=True)
     a = ap.parse_args()
     t0 = time.time()
     code = (check(a.output_dir) if a.cmd == "check" else
             to_enter(a.output_dir, a.studio_end) if a.cmd == "to-enter" else
-            entry_js(a.output_dir, a.batch_size) if a.cmd == "entry-js" else diff(a.output_dir, a.markers))
+            entry_js(a.output_dir, a.batch_size, a.type_shift) if a.cmd == "entry-js" else diff(a.output_dir, a.markers))
     log.info(f"done in {time.time() - t0:.1f} s")
     sys.exit(code)
 

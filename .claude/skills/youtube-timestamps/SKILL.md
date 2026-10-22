@@ -248,6 +248,34 @@ python .claude/skills/youtube-timestamps/scripts/verify_timestamps.py \
 
 Use this to confirm the topic transition actually happens **at** the chapter stamp, not 5-10s before or after. If you see the topic-naming sentence sitting in the "before" block, the boundary is late; tighten it.
 
+### Glossary cross-check (required before anything is published)
+
+Run it on every file that will reach YouTube: the chapters, the titles, the assembled description
+and any chapter comment.
+
+```bash
+python .claude/skills/youtube-timestamps/scripts/glossary_check.py \
+    <output-dir>/timestamps.txt <output-dir>/titles.txt <output-dir>/description.txt
+```
+
+It reports three kinds of finding (details in the script's docstring):
+- `DENY`: a term from `assets/glossary_denylist.csv`, i.e. a word the user has already corrected
+  (`չօրինակ` -> `հակաօրինակ`, `վայրեջք` -> `վայրէջք`, ...). Exit code 1. **Fix every one.**
+- `NEAR`: a word one letter off a glossary term (`կոմումատիվ` for `կոմուտատիվ`). Usually a typo;
+  some are ordinary words that happen to be close (`սպասում`, `ներսում`), so judge each.
+- `ENG`: an English glossary term with none of its Armenian forms on the line. Use the glossary's
+  Armenian term unless the series deliberately keeps English (the ML course does).
+
+**When the user corrects a term, add it to `assets/glossary_denylist.csv`** (wrong, right, why) in the
+same step, so the next run catches it everywhere. To re-check everything already published on both
+channels: `python scripts/non_essential/glossary_scan_channels.py` (~100 s, read-only, writes
+`output/glossary_scan/scan.json`).
+
+The checker sees words, not mathematics: it passed `gcd(f, Df)=1` (should be `≠ 1`) and
+`ℤ[i]` for `ℤ[x]`. Also **read every label once as a reader would**, checking each formula and
+hypothesis; the 2026-10-22 cross-check of Papikian found 6 such slips that no word check could
+(learning `2026-10-22-2052_counterexample-is-hakaorinak-not-chorinak.md`).
+
 ### What to do on failure
 
 If verification fails or a spot-check looks wrong, **go back to stage 2 and revise**. Don't silently "fix" timestamps without re-checking against the transcript — the whole point of separate stages is that each one is auditable.

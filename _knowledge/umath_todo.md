@@ -6,6 +6,19 @@ they get done. Private source links (Zoom shares, the Drive access key) are in t
 
 Last updated: 2026-10-20 23:45.
 
+## Both channels: description audit (2026-10-22)
+
+All 614 public/unlisted descriptions read line by line; details and findings #1-#61 in
+`_knowledge/description_audit_2026-10-22.md`.
+
+- [ ] Push the 60 remaining batch-2 fixes after the API quota reset (09:00 Munich): scratchpad
+      `audit_fix_batch2.py push`, then `check`; planned texts also in
+      `_knowledge/description_audit_2026-10-22_batch2_pending.json`
+- [ ] Rerun `scripts/non_essential/glossary_scan_channels.py` after that push (expect 0 DENY)
+- [ ] User decisions: the "user" and "verify" rows of the findings table
+- [ ] Local copies older than live (ML 2-10, 18-20, ML-math 51-52, Complex 20-25; Papikian not yet compared):
+      sync from live? Rerun the comparison after the quota reset (audit file, "Local vs live")
+
 ## Arnak Dalalyan - Բազմաչափ վիճակագրություն
 
 Status (user, 2026-10-20): only editing and thumbnails remain; the professor has not been messaged.
@@ -79,17 +92,45 @@ Lectures 11 (midterm, probably) and 18 have no recording. Checked twice against 
 - [x] Դաս 16: the user's own edit (`studio_cuts_edited.txt`, 128 cuts after one merge, 16.0 min)
       entered in Studio by Playwright 2026-10-22 02:58, diff identical frame for frame; saved by the
       user the same night
-- [ ] Դաս 16: once YouTube has processed the edit (length 1:17:10), check the chapters against
-      the edited video, then push title and description
+- [x] Դաս 16: edit processed (1:17:10); chapters checked against the edited video (2026-10-22, below)
 - [x] Դաս 17, 19-23: 6 s plans (`*_v3_6s`) chosen by the user 2026-10-22 ("6 is fine", DECISIONS #23)
-- [ ] Դաս 17, 19-23: review the cut plans with the video previews, apply in Studio
-- [ ] After the cuts are saved: remap chapters if the cut list changed, then push titles and
-      descriptions (DECISIONS #10: wait until YouTube has processed the edit)
-- [ ] Thumbnails: `python scripts/make_umath_thumbnails.py --series ant --lesson N --topic "..."`
-      (local copy of the Canva template, `_knowledge/umath_thumbnails.md`); upload with
-      `yt_publish.py --channel umath set-thumbnail`. Long titles need a shorter thumbnail topic.
-- [ ] Possible correction notes: Դաս 23 slide "m^n ≤ N(I) ＜ m^(n+1)" should be (m+1)^n
-      (~0:41:39); Դաս 16 "Carlitz wrote ~1000 papers" and "1936" unchecked
+- [x] Դաս 17: the user's 100-cut edit (`studio_cuts_edited_user.txt`; overlaps 74+75, 80+81,
+      94+95 and a 0.24 s sliver 90+91 merged -> 96 cuts, 22.9 min, 1:27:36 -> 1:04:42) entered by
+      Playwright 2026-10-22, read back against the user's list frame by frame, saved by the user
+- [x] Դաս 18-19 (33 cuts -> 1:07:52), 20 (65 -> 1:19:56), 21 (82 -> 75 after merging the chain
+      33-39 and 63+64 -> 1:14:30), 22 (72 -> 71, -> 1:15:12), 23 (88 -> 83: two overlaps and three
+      silent/filler slivers of 1.1-1.5 s merged, -> 1:07:42): user's lists saved, checked, chapters
+      remapped (all valid), entered by Playwright, read back against the user's lists, saved
+      2026-10-22 (18-19 by the user; 20-23 by Claude with the user's permission after all checks
+      passed: entry diff identical, user-list diff identical apart from the noted merges, Save dialog
+      length = prediction). 20 and 22 needed `--type-shift -1` (learning 2026-10-22-1640)
+- [x] All 7 processed by 17:46 (YouTube lengths = predictions, +1 s rounding)
+- [x] 2026-10-22 run (`_knowledge/papikian_ant/finish_16-23.md`): new captions; chapters snapped
+      onto them (cut list confirmed 0 +-1 s); independent Claude and Codex reviews, every claim checked
+      against the transcript, then reconciled: 4 titles changed (16, 17, 18-19, 20), 67 chapters
+      changed + 6 added + 6 merged away, all 7 lists verifier-valid. Final files in each `<folder>/edited/` (`titles.txt`,
+      `timestamps.txt`, `description.txt`, `review_notes.md`); thumbnails `thumbnails/umath/ant_*.png`
+      (16, 17, 18-19, 20-23); one review page `_knowledge/papikian_ant/review_16-23.html`
+- [x] Pushed 2026-10-22 18:24 on the user's go ("upload everything, never change the visibility"):
+      titles, descriptions (homework line as drafted, no correction notes) and thumbnails of all 7;
+      read back from the API: all match the local files, all still unlisted. Final check before the
+      push caught one leftover (Դաս 20 01:17:58 Cl(K) -> H(K))
+- [x] All course files (notes, homework, midterm solutions, project, lecture 14 problems) in one
+      public math-team Drive folder; the 📚 block of all 21 videos links them, plus his site as a backup (2026-10-22 18:40 / 20:41,
+      read back: all match). `_knowledge/papikian_ant/drive_materials.md`
+- [x] All 21 videos public (2026-10-22 20:43, user: "make all videos public"; 16-23 via videos.update(part=status), own status fields sent back; read back 21 of 21 public)
+- [x] 2026-10-22 20:49-20:52: midterm link on Դաս 10, project link on Դաս 11-12; "Չօրինակ" -> "Հակաօրինակ" on both channels (learning 2026-10-22-2052)
+- [x] 2026-10-22 21:00 glossary cross-check of all Papikian labels and the Sevak comments: 7 fixes live (learning 2026-10-22-2052)
+- [ ] Decide the open terms (learning 2026-10-22-2052): division ring, elementary divisors / invariant factors, Cayley-Hamilton, Eisenstein, Դաս 5 title Z[i]
+- [x] 2026-10-22 21:35: glossary check in the workflow (glossary_check.py, denylist, SKILL.md); scan of both channels: 0 DENY; 10 description typos + 7 title typos fixed (learning 2026-10-22-2052)
+- [ ] Open terms from the scan (learning 2026-10-22-2052, follow-up 2): Ֆուրիե/Ֆուրյե, կորելացիա/կոռելացիա, BRIGHTNESS title, ...
+- [ ] Optional: plain read of the ~7,450 chapter labels outside Papikian
+- [ ] Sort the playlist into lesson order
+- [ ] Possible correction notes (the user decides): Դաս 23 slide "m^n ≤ N(I) ＜ m^(n+1)" should be
+      (m+1)^n (~0:41:39); Դաս 16 "Carlitz wrote ~1000 papers" and "1936" unchecked; Դաս 21: N(I)
+      missing a square (31:21), "Noetherian ⇒ finite Krull dimension" (23:10), split primes
+      determine K only if Galois (01:13:02). Full list on the review page
+- [ ] Դաս 22: Armenian spelling of Eisenstein ("Այզենշտայնի" kept; "Էյզենշտեյնի"?) unverified
 - [x] Lecture 19 is "Դաս 18-19", like "Դաս 11-12" (user, 2026-10-22, DECISIONS #24); drafts updated
 - [ ] Decide: homework line (draft: 16, 17, 19 link Homework 5; 20-23 have none) (later)
 - [x] Series standard written: `_knowledge/papikian_ant/standard.md` (no pause cuts: he writes
@@ -120,6 +161,7 @@ videos for "Գալուա" / "Galois" finds nothing).
 
 ## Anush Tserunyan - Մետրիկական տարածություններ և տոպոլոգիա (ASOF, spring 2023)
 
+Lessons from finishing Papikian, step by step: `_knowledge/umath_course_playbook.md`.
 Playlist `PLz3NrXxHz_CA3NjE0D_amd_QcTMx5HJvZ`. Course page
 https://www.math.mcgill.ca/atserunyan/Courses/2023_S.Yerevan.Metric&Top/ (27 lectures; 1 and 7
 never recorded). On YouTube before: Դաս 1-2 (= lecture 2), 3-6, 8-14. Source: McGill Zoom
