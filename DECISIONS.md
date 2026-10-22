@@ -2,6 +2,63 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 24. Papikian's lecture 19 is "Դաս 18-19", following the existing "Դաս 11-12"
+
+- **Decision:** The missing lecture number goes into the next lecture's label: lecture 19's title
+  and thumbnail say "Դաս 18-19"; 20-23 keep the course numbers. No note about the gap.
+- **Date / status:** 2026-10-22, active (the user: "lets do like precedent").
+- **Why:** The course page has no lecture 18 at all (no notes, no recording; the slot is Fri
+  22 Nov 2024; Դաս 19 picks up where 17 ended), like lecture 11 (its week lists the midterm
+  solutions). The public lecture 12 video is "Դաս 11-12" in both the title and the thumbnail
+  (`khvL7pQif3c`), so the playlist shows no gap. `sort-playlist --by lesson` reads the leading
+  number, so 18-19 sorts as 18.
+- **Alternatives rejected:**
+  - *"Դաս 19"* - course numbering, but a visible gap that reads as a missing video.
+  - *"Դաս 18"* - no gap, but every later number would differ from the course page and notes.
+- **What would change this:** a lecture 18 recording turning up.
+
+## 23. Papikian's lectures 17 and 19-23 cut pauses from 6 s plus hums; Դաս 16 takes the user's own edit
+
+- **Decision:** For Հանրահաշիվ և թվերի տեսություն 17 and 19-23 the active plan is content cuts +
+  pauses of 6 s or more (`--min-silence 6`) + `hum_join.py --write`, saved as `*_v3_6s`. Դաս 16
+  uses the user's hand edit (`studio_cuts_edited.txt`, 128 cuts, 16.0 min). Metric (#22) is unchanged.
+- **Date / status:** 2026-10-22, active. Supersedes #22 for Papikian only.
+- **Why:** The user edited Դաս 16 by hand after the content-only plan ("jesus, mihran is awful at
+  this i had to add cuts"), asked for the others "with 6 second threshold, but he does hmmm and
+  slowly write A LOT", and on the 4 s vs 6 s question answered "6 is fine". The 6 s plans remove
+  1.6-18.9 min per lecture (17: 78 cuts, 18:54; 19: 16, 2:21; 20: 26, 3:38; 21: 20, 2:38;
+  22: 13, 1:38; 23: 17, 2:51), all chapter verifiers valid.
+- **Alternatives rejected:**
+  - *4 s (#17, `*_v2_4s`)* - closer to the user's Դաս 16 hand edit (4 s plan for 16: 122 cuts,
+    13:09 against the user's 16.0 min) and recommended, but the user chose 6 s. 17-23 at 4 s:
+    301 cuts, 42.3 min against 170 cuts, 32.0 min at 6 s.
+  - *Content cuts only (#22)* - the user found Դաս 16 needed many more cuts after watching it.
+- **What would change this:** the user adding many cuts by hand to a 6 s plan on review, as on Դաս 16.
+
+## 22. Papikian's and Tserunyan's new lectures keep their pauses, like the older uploads: content cuts only
+
+- **Decision:** Lectures 16-23 of Հանրահաշիվ և թվերի տեսություն and 15-27 of Մետրիկական
+  տարածություններ և տոպոլոգիա get content cuts only (for Metric the generous non-math cuts of its
+  standard); no `--min-silence 4` pause cuts and no hum joins. Arnak's rule (#17) does not apply to
+  these series. Both versions are kept in each output folder: `*_v1_content_only` (active) and
+  `*_v2_4s` (pauses from 4 s + hums).
+- **Metric** (the user: "yes revert the metric one", 2026-10-22): edited Դաս 5 / 10 / 14 have
+  0.93 / 0.44 / 0.79 pauses of 3 s+ per minute, longest 11.4 / 9.0 / 10.9 s, against 0.94 and
+  10.6 s in raw Դաս 15: never silence-trimmed either. The 4 s rule would have removed 1215 cuts,
+  3 h 1 min over the 13.
+- **Date / status:** 2026-10-21/22, active for Metric; superseded by #23 for Papikian (the user: "match the style of older papikian videso no
+  need to overdo it", after first asking for the 4 s rule because 1-5 cuts per video looked "suspiciously low").
+- **Why:** The older uploads were never silence-trimmed. Pause stats (10 ms speech-band levels,
+  floor + 20 dB): edited Դաս 5 / 10 / 15 have 0.36 / 0.57 / 1.37 pauses of 3 s+ per minute and
+  longest pauses of 9.9 / 16.2 / 14.1 s, against 1.49 and 17.3 s in raw Դաս 16; a trimmed series
+  (Complex Analysis Դաս 25) has 0 and 2.9 s. With the 4 s rule the new lectures would have lost
+  3-22 min each (423 cuts over the 7) and sat visibly tighter than 1-15 in the same playlist.
+- **Alternatives rejected:**
+  - *The 4 s rule (#17)* - consistent with the user's own Arnak edit, not with this playlist.
+    Kept as `*_v2_4s` in each output folder.
+- **What would change this:** the user deciding to re-edit the older lessons too, or asking for
+  pause cuts on these after watching one.
+
 ## 21. studio.html with a timeline hides the per-cut cards and keeps them as the page's data
 
 - **Decision:** when the page has the timeline (#19), the per-cut cards are no longer shown or

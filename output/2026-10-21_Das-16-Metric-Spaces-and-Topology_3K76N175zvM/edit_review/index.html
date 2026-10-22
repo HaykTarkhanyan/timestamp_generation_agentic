@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit points 3K76N175zvM</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+</style></head>
+<body><main>
+<h1>Edit points: Das 16   Metric Spaces and Topology   Tserunyan   2023 04 12</h1>
+<p class="sub">1:42:35 raw recording, https://youtu.be/3K76N175zvM</p>
+<div class="stats">
+  <span>Studio cuts <b id="n-cuts"></b></span>
+  <span>removed <b id="t-removed"></b></span>
+  <span>new length <b id="t-new"></b></span>
+  <span>min silence <select id="minsil"><option value="150" selected>150 s</option></select></span>
+</div>
+<nav><ol><li><a href="#how">How to apply this in YouTube Studio</a></li><li><a href="#content">Content cuts (9)</a></li><li><a href="#sil-long">Silence cuts, 5 s and longer (0)</a></li><li><a href="#sil-short">Silence cuts, under 5 s (0)</a></li><li><a href="#export">Final cut list for Studio (last first)</a></li></ol></nav>
+<details open id="how"><summary>How to apply this in YouTube Studio</summary>
+<ul class="how">
+  <li>Listen to <b>after the cut</b> first: it is 4 s before the cut joined to 4 s after, so you hear exactly how the edit will sound. <b>What gets removed</b> is the cut part itself, boosted so faint sounds are audible.</li>
+  <li>Untick anything you want to keep. Ticks are remembered in this browser. The minimum-silence menu at the top hides the shorter silence cuts.</li>
+  <li>In Studio: Editor &rarr; Trim &amp; cut &rarr; New Cut for each line of the list in the last section. It uses Studio's own numbering (Cut 1..N by start time) and its <code>H:MM:SS:FF</code> frame times, the same as <code>studio.html</code>, listed last first. Studio keeps the original timeline while you edit, so the times stay valid.</li>
+  <li>Times are rounded inward to whole frames, so a cut never eats into speech.</li>
+  <li>Studio edits can't be undone after saving. Keep your original recording.</li>
+  <li>Chapters come after the edit: every cut shifts the times after it.</li>
+</ul>
+<p class="note">Silence = speech-band level below -75 dB (noise floor -95 dB + 20) for at least 150 s; clicks under 0.2 s count as silence. Each silence cut leaves 0.35 s of pause on both sides. Content cuts come from the transcript, with edges snapped to the speech edge.</p></details><details open id="content"><summary>Content cuts (9)</summary>
+<div class="card" id="card-C01">
+  <div class="head">
+    <label><input type="checkbox" data-id="C01"> C01 &nbsp; 0:00:08.9 &rarr; 0:01:18.9</label>
+    <span>70.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">Before the lecture: her camera only, &#x27;hello everyone&#x27;, ~1 min of waiting (two silences of 24-25 s), then &#x27;OK let&#x27;s start; Aram forgot he has a seminar, won&#x27;t attend, will watch the recording&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C01_spec.png" alt="spectrogram C01">
+  <div class="note">spectrogram 0-5 kHz, 0:00:06 to 0:01:22, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C01_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C01_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">0:00:33</span>Բարև ձեզ,</div><div class="in"><span class="t">0:00:35</span>բարև բոլորին.</div><div class="in"><span class="t">0:01:08</span>Օքեյ, երևի սկսենք: Արամը սեմինարի</div><div class="in"><span class="t">0:01:12</span>մոռացել էր, որ սեմինար ունի, դրա համար</div><div class="in"><span class="t">0:01:15</span>չի մասնակցի, հետո recորդինգը կնայի:</div><div class=""><span class="t">0:01:19</span>Օքեյ, ի՞նչ էինք անում անցյալ անգամ:</div></div>
+</div>
+<div class="card" id="card-C02">
+  <div class="head">
+    <label><input type="checkbox" data-id="C02"> C02 &nbsp; 0:15:55.1 &rarr; 0:17:42.2</label>
+    <span>107.1 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Thinking aloud about which way to draw the fiber of the order (&#x27;wait, I drew the graph wrong&#x27;, &#x27;I can&#x27;t tell from which side&#x27;), with the room&#x27;s &#x27;which is the upper triangle?&#x27;; picture static, then redrawn; resumes on the clean &#x27;so this is x, this is y...&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C02_spec.png" alt="spectrogram C02">
+  <div class="note">spectrogram 0-5 kHz, 0:15:52 to 0:17:45, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C02_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C02_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:15:51</span>չէ սա Fiber է, սա հենց այս Fiber-ն է,</div><div class="in"><span class="t">0:15:55</span>կներեք ինչի եմ x գրում less than a</div><div class="in"><span class="t">0:16:00</span>այ ս ոնց որ աս բազմությունը ինքը xի</div><div class="in"><span class="t">0:16:04</span>ենթաբազմություն կներեք վերևը պետք է նշեմ</div><div class="in"><span class="t">0:16:09</span>չէ դ ոնց որ հա սխալ նկարեցի մի րոպե</div><div>...</div><div class="in"><span class="t">0:17:31</span>Այս XY-ների բազմությունն է, որտեղ X-ը</div><div class="in"><span class="t">0:17:35</span>Y-ից փոքր է, չէ՞։</div><div class="in"><span class="t">0:17:42</span>Հա, այսինքն Սա x-ն է, սա y-ն ա, օքեյ, սո</div><div class=""><span class="t">0:17:46</span>սա էսենը,</div></div>
+</div>
+<div class="card" id="card-C03">
+  <div class="head">
+    <label><input type="checkbox" data-id="C03"> C03 &nbsp; 0:40:17.4 &rarr; 0:40:52.0</label>
+    <span>34.7 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;Questions about this proof?&#x27; with ~10 s of silence, then &#x27;hope it was clear, please ask, I want you to digest it&#x27;; nobody asks. Resumes on &#x27;OK, we finished this claim&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C03_spec.png" alt="spectrogram C03">
+  <div class="note">spectrogram 0-5 kHz, 0:40:14 to 0:40:55, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C03_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C03_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:40:12</span>պիտի հլը որ միգրել, թերևս միգրն էր ու դա</div><div class=""><span class="t">0:40:16</span>է հակասությունը</div><div class="in"><span class="t">0:40:21</span>ըըը օքեյ</div><div class="in"><span class="t">0:40:23</span>հարցեր ունե՞ք էս ապացույցից</div><div class="in"><span class="t">0:40:34</span>ինչ-որ ինչ-որ շատ դժվար է վաբշե զգալը</div><div>...</div><div class="in"><span class="t">0:40:43</span>էլի էսի հավես ապացուցա լավ կլիներ</div><div class="in"><span class="t">0:40:48</span>ուզում եմ մարսած մարսած լինեք</div><div class="in"><span class="t">0:40:52</span>օքեյ լավ էս միս մի պնդումը վերջացրինք</div><div class=""><span class="t">0:40:55</span>ուզում եմ հիմա ուրիշ կիրառություններ տամ</div></div>
+</div>
+<div class="card" id="card-C04">
+  <div class="head">
+    <label><input type="checkbox" data-id="C04"> C04 &nbsp; 0:51:52.4 &rarr; 0:52:34.7</label>
+    <span>42.2 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Searching her Nankai colloquium slides for the picture of graph(T) and pasting it (&#x27;let me find and copy it, wait, sorry... maybe it&#x27;s here... let&#x27;s enlarge it&#x27;)</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C04_spec.png" alt="spectrogram C04">
+  <div class="note">spectrogram 0-5 kHz, 0:51:49 to 0:52:38, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C04_after.wav"></audio></span>
+    <span>what gets removed (boosted +5 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/C04_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">0:51:53</span>ունեմ եկեք գտնեմ copy անեմ էլի մի րոպե</div><div class="in"><span class="t">0:51:58</span>ներողներող Կող</div><div class="in"><span class="t">0:52:02</span>կարող է այստեղ կա։</div><div class="in"><span class="t">0:52:07</span>Մի րոպե, հեսա գտնեմ էլի այդ</div><div class="in"><span class="t">0:52:14</span>ասեք արտագրեմ սա</div><div class="in"><span class="t">0:52:32</span>Մեզացնենք ըհը</div><div class=""><span class="t">0:52:35</span>ըհը իմ համար գրաթի գրաֆիկ գրաֆը սա է</div></div>
+</div>
+<div class="card" id="card-C05">
+  <div class="head">
+    <label><input type="checkbox" data-id="C05"> C05 &nbsp; 0:56:50.7 &rarr; 0:57:07.0</label>
+    <span>16.3 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Fumbling with the drawing after a student&#x27;s question (&#x27;wait, I&#x27;m doing something horrible... didn&#x27;t get what happened, OK whatever&#x27;); resumes on her answer &#x27;Yes, you&#x27;re right&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C05_spec.png" alt="spectrogram C05">
+  <div class="note">spectrogram 0-5 kHz, 0:56:48 to 0:57:10, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C05_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/C05_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:56:45</span>Ինչ-որ M ու N թիվ կա, որ T-M&amp;gt;-ը հավասար</div><div class=""><span class="t">0:56:48</span>է T-N yդ հա՞:</div><div class="in"><span class="t">0:56:51</span>Հա, մի րոպե, սա ինչ-որ մի հատ ահավոր նտո</div><div class="in"><span class="t">0:56:54</span>բաներ եմ անում, մի րոպե:</div><div class="in"><span class="t">0:57:02</span>Չջոգի՝ ինչ եղավ, լավ, ինչ-որ է:</div><div class=""><span class="t">0:57:07</span>Հա, ճիշտ ես ասում, Եթե այս ասենք թե, էս</div></div>
+</div>
+<div class="card" id="card-C06">
+  <div class="head">
+    <label><input type="checkbox" data-id="C06"> C06 &nbsp; 1:00:44.2 &rarr; 1:02:50.6</label>
+    <span>126.5 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Drifting back-and-forth with the room on the orbit size of a rational rotation (LCM of p and q, &#x27;isn&#x27;t it q?&#x27;, 3/4, 7/12, parity of p) before she writes &#x27;orbits are finite and of the same size&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C06_spec.png" alt="spectrogram C06">
+  <div class="note">spectrogram 0-5 kHz, 1:00:41 to 1:02:54, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C06_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C06_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:00:39</span>ոնց ա, ինչ-որ ռացիոնալ թիվ ա լինում</div><div class=""><span class="t">1:00:42</span>p/q-ի վրա, չէ՞,</div><div class="in"><span class="t">1:00:45</span>էդ վախտ որ եթե վերցնենք</div><div class="in"><span class="t">1:00:48</span>ոնց են նրան ասում, list common multiple</div><div class="in"><span class="t">1:00:51</span>p-ի ու q-ի,</div><div>...</div><div class="in"><span class="t">1:02:32</span>այսինքն երկուսի ու q բանը հա</div><div class="in"><span class="t">1:02:35</span>հա հա հա ճիշտ է ճիշտ է ճիշտ է ինչ-որ</div><div class="in"><span class="t">1:02:38</span>կախվածություն կա pլիթկուզ փոքր</div><div class=""><span class="t">1:02:51</span>rational rotation</div></div>
+</div>
+<div class="card" id="card-C07">
+  <div class="head">
+    <label><input type="checkbox" data-id="C07"> C07 &nbsp; 1:03:23.7 &rarr; 1:05:04.6</label>
+    <span>100.9 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Second round of the same confusion (&#x27;wait, I always mix up 2q and q&#x27;, 3pi/8, pi/2 needs 4); resumes on &#x27;OK I&#x27;ll solve the problem: divide by 2pi, write it as p/q, then q is enough&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C07_spec.png" alt="spectrogram C07">
+  <div class="note">spectrogram 0-5 kHz, 1:03:21 to 1:05:08, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C07_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C07_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:03:20</span>finite and have the same size</div><div class="in"><span class="t">1:03:23</span>Չէ մի վայրկյան ես էլի պտույտներին հետ</div><div class="in"><span class="t">1:03:27</span>գնանք էլի ոնց որ երկու քյու միշտ</div><div class="in"><span class="t">1:03:31</span>էլի խառնում եմ ես ինչ-որ բան չեմ ջոկում</div><div class="in"><span class="t">1:03:33</span>ինչի պետք ա պապ ունենա խոսքի երկու qերդ</div><div>...</div><div class="in"><span class="t">1:04:58</span>հա սա պի կես ա պի կես անկյան համար չորս</div><div class="in"><span class="t">1:05:01</span>հատ է պետք</div><div class="in"><span class="t">1:05:04</span>հա ճիշտ է, ճիշտ է միշտ էլ բանը սպս ասեմ</div><div class=""><span class="t">1:05:07</span>պրոբլեմը լավ հեսա պրոբլեմը լուծում եմ</div></div>
+</div>
+<div class="card" id="card-C08">
+  <div class="head">
+    <label><input type="checkbox" data-id="C08"> C08 &nbsp; 1:05:33.3 &rarr; 1:06:36.1</label>
+    <span>62.8 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;P doesn&#x27;t matter... we&#x27;re spending time on this for nothing&#x27;, then a group-theory aside (coprime p and q, cosets); resumes on &#x27;all I need is that the orbits are finite and of the same size&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C08_spec.png" alt="spectrogram C08">
+  <div class="note">spectrogram 0-5 kHz, 1:05:30 to 1:06:39, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C08_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C08_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:05:28</span>Եթե կրճատած տեսքով ես գրում։</div><div class=""><span class="t">1:05:32</span>Երևի էլի։</div><div class="in"><span class="t">1:05:33</span>Ոբշմ P-ն կապ չունի, P-ն պիտի կապ չափ։</div><div class="in"><span class="t">1:05:35</span>Ոնց է ուղղակի մենք անկապ ժամանակ ենք</div><div class="in"><span class="t">1:05:37</span>ծախսում սրա վրա։</div><div>...</div><div class="in"><span class="t">1:06:24</span>Լավ էդ ձեզ բանը հանրաժշտական թեթև բանը</div><div class="in"><span class="t">1:06:29</span>ոնց են դրան ասում ա բան հարակից դասերի</div><div class=""><span class="t">1:06:37</span>այնքան որ ինձ ընդամենը հետաքրքրում որ</div><div class=""><span class="t">1:06:39</span>օրբիտները վերջավորեն ու նույն չափը ունեն</div></div>
+</div>
+<div class="card" id="card-C09">
+  <div class="head">
+    <label><input type="checkbox" data-id="C09"> C09 &nbsp; 1:41:51.9 &rarr; 1:42:26.3</label>
+    <span>34.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">End: &#x27;OK, I won&#x27;t drag on; next class we&#x27;ll finish this and finally move on to topology&#x27;, &#x27;Any questions?&#x27;, homework will be added today, thanks and goodbye, up to the outro</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C09_spec.png" alt="spectrogram C09">
+  <div class="note">spectrogram 0-5 kHz, 1:41:49 to 1:42:29, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C09_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C09_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:41:46</span>աքսիմումով չորսով երկու գույն է պետք,</div><div class=""><span class="t">1:41:48</span>beasurable համարում հատ է պետք</div><div class="in"><span class="t">1:41:52</span>օքեյ լավ</div><div class="in"><span class="t">1:41:54</span>էլ չերկարացնեմ</div><div class="in"><span class="t">1:41:56</span>մյուս դասին դա էլ կխոսանք ու փաստորեն</div><div>...</div><div class="in"><span class="t">1:42:05</span>վերջապես: Հարցեր ունե՞ք էլի:</div><div class="in"><span class="t">1:42:13</span>Օքեյ, դե ես հեսա այսօրվա ընթացքում</div><div class="in"><span class="t">1:42:16</span>տնայինը կավելացնեմ: Տնայինի խնդիրներ</div><div class="in"><span class="t">1:42:19</span>եղավ: Մերսի, որ եկաք: Ցտեսություն</div></div>
+</div></details><details open id="sil-long"><summary>Silence cuts, 5 s and longer (0)</summary></details><details open id="sil-short"><summary>Silence cuts, under 5 s (0)</summary></details><details open id="export"><summary>Final cut list for Studio (last first)</summary>
+<p><button id="copy">Copy list</button> <button id="reset">Reset to my picks</button></p>
+<textarea id="export" readonly></textarea></details>
+</main>
+<script id="data" type="application/json">{"video_id": "3K76N175zvM", "title": "Das 16   Metric Spaces and Topology   Tserunyan   2023 04 12", "duration": 6154.52, "params": {"min_silence": 150.0, "pad": 0.35, "floor_db": -94.7, "audio_source": "C:\\Users\\hayk_\\OneDrive\\Desktop\\misc\\YSU OpenCourseWare\\metric_spaces\\Das 16 - Metric Spaces and Topology - Tserunyan - 2023-04-12.mp4", "threshold_db": -74.7, "blip_s": 0.2}, "cuts": [{"source": "content", "kind": "safe", "default": true, "start": 8.92, "end": 78.94, "requested": ["0:00:09.5", "0:01:18.9"], "reason": "Before the lecture: her camera only, 'hello everyone', ~1 min of waiting (two silences of 24-25 s), then 'OK let's start; Aram forgot he has a seminar, won't attend, will watch the recording'", "flags": [], "id": "C01", "removed_gain_db": 0.5, "spec_window": [5.92, 81.94], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 955.1, "end": 1062.17, "requested": ["0:15:55.05", "0:17:42.2"], "reason": "Thinking aloud about which way to draw the fiber of the order ('wait, I drew the graph wrong', 'I can't tell from which side'), with the room's 'which is the upper triangle?'; picture static, then redrawn; resumes on the clean 'so this is x, this is y...'", "flags": [], "id": "C02", "removed_gain_db": -1.1, "spec_window": [952.1, 1065.17], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 2417.35, "end": 2452.04, "requested": ["0:40:18.5", "0:40:52.0"], "reason": "'Questions about this proof?' with ~10 s of silence, then 'hope it was clear, please ask, I want you to digest it'; nobody asks. Resumes on 'OK, we finished this claim'", "flags": [], "id": "C03", "removed_gain_db": 0.9, "spec_window": [2414.35, 2455.04], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 3112.44, "end": 3154.68, "requested": ["0:51:52.4", "0:52:34.3"], "reason": "Searching her Nankai colloquium slides for the picture of graph(T) and pasting it ('let me find and copy it, wait, sorry... maybe it's here... let's enlarge it')", "flags": [], "id": "C04", "removed_gain_db": 5.1, "spec_window": [3109.44, 3157.68], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 3410.66, "end": 3426.97, "requested": ["0:56:50.6", "0:57:06.0"], "reason": "Fumbling with the drawing after a student's question ('wait, I'm doing something horrible... didn't get what happened, OK whatever'); resumes on her answer 'Yes, you're right'", "flags": [], "id": "C05", "removed_gain_db": 0.4, "spec_window": [3407.66, 3429.97], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 3644.2, "end": 3770.65, "requested": ["1:00:44.1", "1:02:50.6"], "reason": "Drifting back-and-forth with the room on the orbit size of a rational rotation (LCM of p and q, 'isn't it q?', 3/4, 7/12, parity of p) before she writes 'orbits are finite and of the same size'", "flags": [], "id": "C06", "removed_gain_db": -1.6, "spec_window": [3641.2, 3773.65], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 3803.7, "end": 3904.61, "requested": ["1:03:23.6", "1:05:03.0"], "reason": "Second round of the same confusion ('wait, I always mix up 2q and q', 3pi/8, pi/2 needs 4); resumes on 'OK I'll solve the problem: divide by 2pi, write it as p/q, then q is enough'", "flags": [], "id": "C07", "removed_gain_db": -1.0, "spec_window": [3800.7, 3907.61], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 3933.29, "end": 3996.09, "requested": ["1:05:33.4", "1:06:36.15"], "reason": "'P doesn't matter... we're spending time on this for nothing', then a group-theory aside (coprime p and q, cosets); resumes on 'all I need is that the orbits are finite and of the same size'", "flags": [], "id": "C08", "removed_gain_db": -3.0, "spec_window": [3930.29, 3999.09], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 6111.87, "end": 6146.26, "requested": ["1:41:51.8", "1:42:26.2"], "reason": "End: 'OK, I won't drag on; next class we'll finish this and finally move on to topology', 'Any questions?', homework will be added today, thanks and goodbye, up to the outro", "flags": [], "id": "C09", "removed_gain_db": -0.8, "spec_window": [6108.87, 6149.26], "spec_px": 960}], "fps": 25.0, "studio_cuts": [{"id": "studio01", "n": 1, "start": 8.92, "end": 78.92, "start_tc": "0:00:08:23", "end_tc": "0:01:18:23", "sources": ["C01"], "spec_window": [0.0, 98.92], "spec_px": 7914}, {"id": "studio02", "n": 2, "start": 955.12, "end": 1062.16, "start_tc": "0:15:55:03", "end_tc": "0:17:42:04", "sources": ["C02"], "spec_window": [935.12, 1082.16], "spec_px": 11763}, {"id": "studio03", "n": 3, "start": 2417.36, "end": 2452.04, "start_tc": "0:40:17:09", "end_tc": "0:40:52:01", "sources": ["C03"], "spec_window": [2397.36, 2472.04], "spec_px": 5974}, {"id": "studio04", "n": 4, "start": 3112.44, "end": 3154.68, "start_tc": "0:51:52:11", "end_tc": "0:52:34:17", "sources": ["C04"], "spec_window": [3092.44, 3174.68], "spec_px": 6579}, {"id": "studio05", "n": 5, "start": 3410.68, "end": 3426.96, "start_tc": "0:56:50:17", "end_tc": "0:57:06:24", "sources": ["C05"], "spec_window": [3390.68, 3446.96], "spec_px": 4502}, {"id": "studio06", "n": 6, "start": 3644.2, "end": 3770.64, "start_tc": "1:00:44:05", "end_tc": "1:02:50:16", "sources": ["C06"], "spec_window": [3624.2, 3790.64], "spec_px": 13315}, {"id": "studio07", "n": 7, "start": 3803.72, "end": 3904.6, "start_tc": "1:03:23:18", "end_tc": "1:05:04:15", "sources": ["C07"], "spec_window": [3783.72, 3924.6], "spec_px": 11270}, {"id": "studio08", "n": 8, "start": 3933.32, "end": 3996.08, "start_tc": "1:05:33:08", "end_tc": "1:06:36:02", "sources": ["C08"], "spec_window": [3913.32, 4016.08], "spec_px": 8221}, {"id": "studio09", "n": 9, "start": 6111.88, "end": 6146.24, "start_tc": "1:41:51:22", "end_tc": "1:42:26:06", "sources": ["C09"], "spec_window": [6091.88, 6154.52], "spec_px": 5011}], "signature": "9e65ad903c0d"}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const KEY = 'edit-points-' + DATA.video_id + '-' + DATA.signature;   // a changed cut list starts from the defaults
+const byId = Object.fromEntries(DATA.cuts.map(c => [c.id, c]));
+let ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id));
+try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) ticked = new Set(saved); } catch (e) {}
+const minSel = document.getElementById('minsil');
+function fmt(sec, d=1) { sec = Math.round(sec * 10**d) / 10**d; const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60;
+  return h + ':' + String(m).padStart(2,'0') + ':' + s.toFixed(d).padStart(d ? 3+d : 2, '0'); }
+function active(c) { return ticked.has(c.id) && (c.source !== 'silence' || c.run_len >= +minSel.value); }
+function union(iv) { const out=[]; iv.sort((a,b)=>a[0]-b[0]);
+  for (const [s,e] of iv) { if (out.length && s <= out[out.length-1][1]+0.05) out[out.length-1][1]=Math.max(out[out.length-1][1],e); else out.push([s,e]); }
+  return out; }
+function tc(f) { const F = DATA.fps, s = Math.floor(f / F);
+  return Math.floor(s/3600) + ':' + String(Math.floor(s%3600/60)).padStart(2,'0') + ':' +
+         String(s%60).padStart(2,'0') + ':' + String(f%F).padStart(2,'0'); }
+function studio(iv) {   // Studio's Cut 1..N (by start), whole frames rounded inward, listed last first
+  const F = DATA.fps;
+  const rows = iv.map(([s,e], i) => [i+1, Math.ceil(s*F - 1e-6), Math.floor(e*F + 1e-6)]);
+  return rows.reverse().map(([n,fs,fe]) => 'Cut ' + String(n).padStart(2) + '   ' + tc(fs) + '  ->  ' + tc(fe) +
+                                         '   (' + ((fe-fs)/F).toFixed(2) + ' s)'); }
+function refresh() {
+  const on = DATA.cuts.filter(active);
+  const content = on.filter(c => c.source === 'content');
+  for (const c of DATA.cuts) {
+    const el = document.getElementById('card-' + c.id); if (!el) continue;
+    const hidden = c.source === 'silence' && c.run_len < +minSel.value;
+    el.style.display = hidden ? 'none' : '';
+    el.classList.toggle('off', !ticked.has(c.id));
+    const host = c.source === 'silence' && content.find(k => k.start <= c.start && k.end >= c.end);
+    el.classList.toggle('absorbed', !!host);
+    const n = el.querySelector('.absorbed-note'); if (n) n.textContent = host ? 'inside ' + host.id + ', which is ticked' : '';
+    el.querySelector('input').checked = ticked.has(c.id);
+  }
+  const iv = union(on.map(c => [c.start, c.end]));
+  const removed = iv.reduce((a,[s,e]) => a + e - s, 0);
+  document.getElementById('n-cuts').textContent = iv.length;
+  document.getElementById('t-removed').textContent = fmt(removed, 0);
+  document.getElementById('t-new').textContent = fmt(DATA.duration - removed, 0);
+  document.getElementById('export').value = studio(iv).join('\n');
+  try { localStorage.setItem(KEY, JSON.stringify([...ticked])); } catch (e) {}
+}
+document.querySelectorAll('.card input').forEach(cb => cb.addEventListener('change', e => {
+  const id = e.target.dataset.id; if (e.target.checked) ticked.add(id); else ticked.delete(id); refresh(); }));
+minSel.addEventListener('change', refresh);
+document.getElementById('reset').addEventListener('click', () => {
+  ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id)); refresh(); });
+document.getElementById('copy').addEventListener('click', async () => {
+  const ta = document.getElementById('export');
+  try { await navigator.clipboard.writeText(ta.value); } catch (e) { ta.select(); document.execCommand('copy'); }
+  document.getElementById('copy').textContent = 'Copied'; setTimeout(() => document.getElementById('copy').textContent = 'Copy list', 1500); });
+refresh();
+</script>
+</body></html>

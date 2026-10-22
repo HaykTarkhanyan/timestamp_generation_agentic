@@ -463,7 +463,10 @@ python scripts/yt_publish.py add-comment <VIDEO_ID> <output-dir>/correction_comm
 It refuses to post a duplicate of a comment already on the video (the tool has
 no delete, so a re-run must not double-post). **The YouTube Data API cannot pin
 comments** - tell the user to pin it in YouTube Studio if they want it on top.
-A posted comment can only be deleted by hand in Studio.
+A posted comment can only be deleted by hand in Studio, but its text can be replaced in place:
+`python scripts/yt_publish.py update-comment <COMMENT_ID> <file>` (the id is printed by
+`add-comment`; YouTube marks the comment "(edited)"). It only edits the channel's own comments
+and is a no-op when the text is already identical.
 
 ---
 
@@ -498,8 +501,13 @@ the user to paste into the students' Telegram group (asked for on ML50/ML51, 202
 
 ```
 Lecture [50] Transfer Learning & Grad-CAM (36 min) - https://youtu.be/yBi1pbk4j2M
+Project [52] CNN: Playing Zmeyka (76 min) - https://youtu.be/q8JM6nR03-Q
 ```
 
+- **First word:** `Lecture` for a lecture, `Project` for a practical (Գործնական), the same call
+  as the thumbnail's practical pill (`"practical": True` in its LESSONS entry). Learned
+  2026-10-17: I wrote "Lecture [52]" for the snake practical; the user: "this was not a lecture
+  this is practical ... actually saying project would have been even better".
 - **Title:** the published title without the series suffix (`| Մեքենայական ուսուցում`).
 - **Minutes:** the published video's length (`duration` in the fetched `metadata.json`; for an
   edited video, the one in `edited/`), rounded to the nearest minute.

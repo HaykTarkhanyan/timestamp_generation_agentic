@@ -1,0 +1,54 @@
+title = "umath: Papikian 16-23 and Tserunyan 15-27 uploaded and planned, Դաս 16 cut in Studio, Sevak's linear algebra chapters posted, Papikian site snapshot"
+date = "2026-10-20"
+time = "21:32"   # ran into 2026-10-22 ~13:20, across two Claude accounts and one context compaction
+areas = [
+  "output/ (Papikian Das 16-23, Tserunyan Das 15-27, edited ANT/Metric 13-15 transcripts)",
+  "_knowledge/papikian_ant/", "_knowledge/tserunyan_metric/", "_knowledge/papikian_site/",
+  "_knowledge/sevak_linalg_honors/", "_knowledge/umath_todo.md", "_knowledge/umath_thumbnails.md",
+  "scripts/", "scripts/non_essential/", "thumbnails/umath/", "assets/asof/", "fonts/",
+  ".claude/skills/youtube-timestamps/", "_learnings/",
+]
+
+done = [
+  "Papikian ANT: the 7 missing lectures (16, 17, 19-23) downloaded from PSU Kaltura (small mp42 flavor = Zoom original), ASOF intro/outro joined by stream copy (scripts/concat_intro_outro.py), uploaded unlisted by the user; transcripts; cut plans, chapters, titles, descriptions drafted by agents; series standard written.",
+  "Papikian cut policy went v1 content-only -> v2 4 s pauses + hums -> back to v1 (DECISIONS #22) -> v3 6 s + hums after the user hand-edited Դաս 16 ('6 is fine', DECISIONS #23). All versions kept per folder (*_v1_content_only, *_v2_4s, *_v3_6s).",
+  "Դաս 16: the user's own 128-cut edit entered in Studio by Playwright in 9 batches (~35 min), diff identical frame for frame; the user saved. Clicks hung after ~90 cuts: studio_enter_cuts.js click timeout 5 -> 30 s.",
+  "Video previews (360p) for Papikian 17, 19-23 rendered; studio.html pages rebuilt.",
+  "Lecture 18 does not exist on the course page (no notes, no recording); lecture 19 named 'Դաս 18-19' like the public 'Դաս 11-12' (DECISIONS #24), title and thumbnail alike.",
+  "Tserunyan Metric: lectures 15-27 downloaded from Zoom, joined (white padding to 1920x1342), uploaded unlisted by the user; plans/chapters/titles/descriptions by agents; 4 s re-plan reverted to content-only (DECISIONS #22); series standard with blur notes.",
+  "Local umath thumbnails (scripts/make_umath_thumbnails.py, DECISIONS #20): ant/metric/linalg templates fitted to the YouTube references; this session also fixed the Bebas digit spacing (num_track 1.6 for ant, measured on Դաս 11-12/13/14/15).",
+  "Mihran Papikian's site snapshot in _knowledge/papikian_site/: all page texts, manifest of every link, 104 PDFs (both courses' notes/homework/exams + 46 papers, 402 MB) git-ignored; scripts/non_essential/fetch_papikian_site.py --download restores them. Found his Galois Theory course (ARCS-ai, fall 2025, 22 recordings), parked as a candidate.",
+  "Sevak Mkrtchyan's own channel (Honors Linear Algebra, 10 lectures) stored for later; transcripts fetched through Playwright because yt-dlp hit the bot check (learning 2026-10-22-0338).",
+  "Sevak chapters: 2 agents wrote them (680k tokens), my review fixed 5 labels, an independent Claude agent (557k) found 7 theorem labels missing hypotheses (39 edits), Codex via `codex exec` with transcripts inline (its Windows sandbox could not start a shell; ~370k ChatGPT-plan tokens) -> 81 more edits, 232 chapters, all verifier-valid; side-by-side review page chapters_review.html.",
+  "Posted the 10 chapter lists as umath-channel comments under Sevak's videos (13:03-13:06 on 2026-10-22), then added a lesson title line to each in place; all checked through the API (public, exact text, 232/232 timestamps linked).",
+  "yt_publish.py: add-comment's duplicate guard now compares the posting channel (it compared the video's owner, wrong on someone else's video); new update-comment command (own comments only, no-op on identical text, verified via the update response because comments.list lags a few seconds).",
+  "Vahagn Mikaelian linear algebra: 24 missing pieces listed; Vahan 'խմբեր' left unresolved.",
+]
+
+pending = [
+  "Papikian Դաս 16: once YouTube has processed the edit (1:17:10), check chapters against the edited video, then push title and description (DECISIONS #10).",
+  "Papikian 17, 19-23: user reviews the 6 s plans with the previews, then Studio entry and save; then chapters and descriptions; thumbnails; homework line; Դաս 4 date fix; playlist sort.",
+  "Tserunyan 15-27: review and enter the content-only cuts; blur checks (15, 22; 20/26/27 if a start cut is unticked); Egorov vs Lusin in Դաս 18; homework line for 27; playlist sort.",
+  "Sevak: only he can pin the comments; chapters on the progress bar need the lists in his descriptions. Decide what else to do with his course.",
+  "Galois course (Papikian, ARCS-ai 2025): publish or not, which intro/outro.",
+  "Vahagn: download the missing pieces (gdown not installed).",
+  "Other sessions' uncommitted work left untouched: ML48-53 outputs and finals, ML52/53 and Claude Code thumbnails, PLANNER.md, make_thumbnails_final.py, the lecture-edit-points ML53 save note.",
+]
+
+next = "Read _knowledge/umath_todo.md. First: Papikian Դաս 16 processed? then its chapters/description; then the user's review of 17, 19-23."
+
+files = [
+  "scripts/concat_intro_outro.py", "scripts/make_umath_thumbnails.py", "scripts/studio_enter_cuts.js",
+  "scripts/find_edit_points.py", "scripts/yt_publish.py", "scripts/non_essential/build_umath_plates.py",
+  "scripts/non_essential/fetch_papikian_site.py", "_knowledge/umath_todo.md",
+  "_knowledge/sevak_linalg_honors/README.md", "_knowledge/papikian_site/README.md", "DECISIONS.md (#20, #22-#24)",
+]
+
+commits = ["umath: Papikian 16-23 and Tserunyan 15-27 plans, Sevak linear algebra chapters posted, Papikian site snapshot (2026-10-22); pushed together with 3aa7ccb from another session"]
+
+notes = [
+  "Codex CLI on Windows: the read-only sandbox fails every command ('Failed to create unified exec process: helper_unknown_error: setup refresh had errors'); passing the material inline in the prompt works.",
+  "YouTube comments.list returns the old text for a few seconds after comments.update; verify with the update response.",
+  "Pinned comments never make progress-bar chapters; only the description does.",
+  "Token spend on the Sevak chapters: ~1.24M Claude (2 writers + 1 reviewer) + ~370k Codex on the ChatGPT plan. Earlier: 1.07M (Papikian drafts), 2.01M (Tserunyan drafts).",
+]

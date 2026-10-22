@@ -21,6 +21,9 @@ async (page) => {
   // A window behind other windows stops drawing frames, and a click then hangs after it took effect
   // (lesson 12, 2026-10-21: New Cut opened cut 3's row, the click timed out, the screenshot too)
   await page.bringToFront();
+  // With ~90+ cuts on the timeline Studio takes over 5 s to take a click (Papikian Դաս 16, 2026-10-22:
+  // the clicks on cuts 73, 92 and 93 timed out after they took effect), so allow 30 s
+  const CLICK_MS = 30000;
   const editRow = page.locator('#panel-container input:visible');
   const openRow = async n => { if (await editRow.count() !== 0)
     fail(`${n ? `cut ${n}: ` : ''}a cut's editing row is already open (a half-made cut): finish it (end, start, Cut) or cancel it first`); };
@@ -36,7 +39,7 @@ async (page) => {
     return pairs;
   };
   const typeIn = async (loc, tc) => {
-    await loc.click({ timeout: 5000 });
+    await loc.click({ timeout: CLICK_MS });
     await page.keyboard.press('Control+A');
     await page.keyboard.type(typed(tc));
     await page.keyboard.press('Tab');
@@ -59,13 +62,13 @@ async (page) => {
     if (await playhead.count() !== 1) fail(`cut ${n}: playhead time box not unique`);
     await openRow(n);
     await typeIn(playhead, s);
-    await page.getByRole('button', { name: 'New Cut' }).click({ timeout: 5000 });
+    await page.getByRole('button', { name: 'New Cut' }).click({ timeout: CLICK_MS });
     await page.waitForTimeout(700);
     const nr = await editRow.count();
     if (nr !== 2) fail(`cut ${n}: the editing row has ${nr} inputs, expected 2`);
     await typeIn(editRow.nth(1), e);
     await typeIn(editRow.nth(0), s);
-    await page.locator('#panel-container').getByRole('button', { name: 'Cut', exact: true }).click({ timeout: 5000 });
+    await page.locator('#panel-container').getByRole('button', { name: 'Cut', exact: true }).click({ timeout: CLICK_MS });
     await page.waitForTimeout(800);
     if (!(await cutsInStudio()).includes(`${s}-${e}`)) fail(`cut ${n} (${s}-${e}) not in Studio after Cut`);
     done.push(n);

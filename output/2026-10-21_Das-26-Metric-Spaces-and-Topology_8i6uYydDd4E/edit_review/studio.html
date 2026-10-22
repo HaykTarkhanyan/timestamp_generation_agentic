@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio cuts 8i6uYydDd4E</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+
+.specscroll { overflow-x: auto; overflow-y: hidden; padding: 3px 0; margin-top: 3px; }
+.specwrap { position: relative; width: 100%; cursor: ew-resize; touch-action: none; user-select: none; }
+.specwrap img { display: block; width: 100%; height: 130px; border-radius: 6px; pointer-events: none; }
+.zoom button { min-width: 28px; }
+.zoom .zl { display: inline-block; min-width: 34px; text-align: center; font-variant-numeric: tabular-nums; }
+.bar { position: absolute; top: -3px; bottom: -3px; width: 3px; margin-left: -1px; background: #fff;
+       box-shadow: 0 0 0 1px #000; border-radius: 2px; pointer-events: none; z-index: 2; }
+.shade { position: absolute; top: 0; bottom: 0; background: rgba(217, 0, 18, .38); pointer-events: none;
+         border-left: 3px solid var(--red); border-right: 3px solid var(--red); box-sizing: border-box; }
+.shade.added { background: rgba(242, 168, 0, .40); border-color: var(--orange); }
+.shade.other { background: rgba(150, 150, 150, .40); border: none; }
+.edit, .added-row { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin: 4px 0; font-size: 14px; }
+.edit .times, .added-row .times { font-variant-numeric: tabular-nums; }
+.edit button, .added-row button { font-size: 13px; }
+.added-row .tag { color: var(--orange); font-weight: 650; }
+.was, .warn, .msg { font-size: 13px; color: var(--muted); }
+.warn, .msg { color: var(--red); }
+details.cut.changed > summary { color: var(--red); }
+details.cut.removed > summary { color: var(--muted); text-decoration: line-through; }
+.shade.gone { background: none; border: 2px dashed var(--red); }
+.edit button:disabled { opacity: .4; cursor: not-allowed; }
+#export { width: 100%; min-height: 220px; font: 13px/1.4 ui-monospace, Consolas, monospace; }
+#player { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 8px 0 10px; display: flex;
+          gap: 12px; align-items: flex-end; border-bottom: 1px solid var(--line); }
+#player video { width: 480px; max-width: 62vw; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; display: block; }
+#player.hidden video { display: none; }
+#player .pinfo { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
+body.has-video details.cut { scroll-margin-top: 300px; }
+.axis { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted);
+        font-variant-numeric: tabular-nums; }
+.axis .a0, .axis .a1 { white-space: nowrap; }
+.ctl { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 8px 0 4px; }
+.ctl .now { font-variant-numeric: tabular-nums; font-weight: 650; min-width: 90px; }
+.play { min-width: 74px; }
+.flag button { font-size: 12px; padding: 0 6px; margin-left: 6px; }
+.err { color: var(--red); }
+nav ol { columns: 2; font-variant-numeric: tabular-nums; }
+summary { font-variant-numeric: tabular-nums; }
+.stamp { font-size: 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--red);
+         border-radius: 6px; padding: 6px 10px; display: inline-block; }
+#worktimer { position: fixed; right: 12px; bottom: 12px; z-index: 20; display: flex; gap: 8px; align-items: center;
+             background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px;
+             font-size: 14px; font-variant-numeric: tabular-nums; box-shadow: 0 1px 4px rgba(0, 0, 0, .25); }
+#worktimer.on { border-color: var(--red); }
+
+.tlsec { width: calc(100vw - 48px); margin-left: calc(50% - 50vw + 16px); }
+.tlsec canvas { display: block; width: 100%; touch-action: none; user-select: none; border-radius: 4px; }
+.tl-over { margin: 6px 0 4px; cursor: pointer; background: var(--absorbed); }
+.tl-main { cursor: crosshair; }
+.tl-sel { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; min-height: 34px; font-size: 14px; margin: 6px 0 2px; }
+.tl-sel .times { font-variant-numeric: tabular-nums; }
+.tl-sel .why { color: var(--muted); flex-basis: 100%; }
+.tl-sel .tag { font-weight: 650; }
+.tl-line { font-size: 14px; min-height: 22px; }
+.tl-line .t { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tl-line .nx { color: var(--muted); }
+.tl-gaps, .tl-keys { font-size: 13px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.legend i { display: inline-block; width: 18px; height: 10px; margin-right: 5px; vertical-align: -1px; border-radius: 2px; }
+body.has-video #timeline { scroll-margin-top: 300px; }
+</style></head>
+<body data-fps="25" data-ctx="3" data-duration="6215.36" data-list="769f04d6" data-video="8i6uYydDd4E"><main>
+<h1>Studio cuts: Das 26   Metric Spaces and Topology   Tserunyan   2023 05 16</h1>
+<p class="stamp"><b>7 cuts</b> &middot; list 769f04d6 &middot; built 2026-10-22 02:04<span id="nchanged"></span>
+ - reload this tab if the list changed since you opened it</p>
+<p class="warn" id="storage"></p>
+<div id="worktimer"><span id="wt-time">0:00:00</span><button id="wt-btn">Start timer</button></div>
+<p class="sub">7 cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
+(25 fps, H:MM:SS:FF). Removes <span id="removed">0:04:51: 1:43:35 &rarr; 1:38:44</span>.</p>
+<nav><ol><li><a href="#timeline">Timeline: the whole lecture</a></li><li><a href="#export-list">Cut list with your changes (last first)</a></li></ol></nav>
+<audio id="media" preload="metadata" src="../audio/8i6uYydDd4E_16k.wav"></audio>
+
+<details open class="tlsec" id="timeline"><summary>Timeline: the whole lecture</summary>
+<div class="ctl"><button class="tl-play play">Play</button><span class="now tl-now"></span>
+  <label><input type="checkbox" class="tl-skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="tl-zout">-</button> <span class="tl-zl"></span> <button class="tl-zin">+</button></span>
+  <span><button class="tl-left" title="back">&larr;</button><button class="tl-right" title="forward">&rarr;</button></span>
+  <span>silence no cut covers <button data-j="gap" data-d="0">&lsaquo; prev</button><button data-j="gap" data-d="1">next &rsaquo;</button></span>
+  <span>cut <button data-j="cut" data-d="0">&lsaquo; prev</button><button data-j="cut" data-d="1">next &rsaquo;</button></span>
+  <button class="tl-add">Add a cut at the bar</button> <span class="tl-gaps"></span>
+  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in (at the mouse when it is on the spectrogram) &middot; &larr;/&rarr; move the bar (Shift: 1 s) &middot; Delete remove the selected cut &middot; Z or Ctrl+Z bring back the last removed one</span></div>
+<canvas class="tl-over"></canvas>
+<canvas class="tl-main"></canvas>
+<div class="tl-sel tl-selbox"></div>
+<p class="msg tl-msg"></p>
+<div class="tl-line"></div>
+<div class="legend"><span><i style="background:#D90012"></i>cut, safe</span><span><i style="background:#F2A800"></i>cut, your call</span><span><i style="border:2px dashed #F2A800"></i>suggested, not ticked</span><span><i style="background:#0033A0"></i>yours: new or changed</span><span><i style="border:2px dashed #D90012"></i>removed</span><span><i style="background:#FFD60A"></i>silence of 2 s+ that no cut covers (+ hum: split by a hum, counted as one)</span><span><i style="background:#fff;border:1px solid #888"></i>white strip: overlaps another cut</span></div>
+<p class="note">The strip on top is the whole lecture: drag it to move the view. On the spectrogram: click to put the bar
+there (and select what is under it), drag across to draw a new cut, drag a cut's edge to move it. Ctrl+wheel zooms, Shift+wheel
+or a sideways swipe scrolls, the arrow buttons page. While it plays, the view follows the bar until you scroll away from it;
+scroll back to the bar (or click) and it follows again. Every change goes into the list at the bottom.</p>
+</details><div id="cards" hidden>
+<details open class="cut" id="cut-1" data-w0="0.0" data-w1="102.76" data-s0="8.92" data-e0="82.76" data-pxw="8221">
+<summary>Cut 1   0:00:08:23 → 0:01:22:19   (73.8 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> Pre-lecture: camera off, the classroom camera, &#x27;hello&#x27;, a chat with the room about doing things properly, Zoom screen-broadcast setup, the iPad home screen and Safari (Gmail tab with her address in the title, see the private-spot note), then &#x27;and the new problem I posted, yes, OK&#x27; over the homework PDF. Ends before &#x27;OK, today I want to prove the theorem&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio01_spec.png" alt="spectrogram cut 1"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:00:00.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:01:42.8</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class="in"><span class="t">0:00:38</span>Բարև ձեզ</div><div class="in"><span class="t">0:00:40</span>բարև ձեզ</div><div class="in"><span class="t">0:00:46</span>հա բայց դա գտնի պրակտ չեն ծառայում է</div><div class="in"><span class="t">0:00:49</span>ի՞նչ է</div><div class="in"><span class="t">0:00:52</span>ուզում եմ ասել որ ամեն բանի համար քոի</div><div class="in"><span class="t">0:00:55</span>համար իր բաբաթները</div><div class="in"><span class="t">0:01:02</span>եթե բան անես, պիտի որակի բան անել</div><div class="in"><span class="t">0:01:18</span>ու էն նոր խնդիրը, որ դրել էի, հա, օքեյ</div><div class=""><span class="t">0:01:23</span>ըըը օքեյ էսօր ուզում եմ քննվի թեորեմը</div></div>
+</details>
+<details open class="cut" id="cut-2" data-w0="730.44" data-w1="790.44" data-s0="750.44" data-e0="770.44" data-pxw="4800">
+<summary>Cut 2   0:12:30:11 → 0:12:50:11   (20.0 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Copy-pastes Tychonoff&#x27;s theorem from Lecture 25&#x27;s notes (&#x27;let me copy-paste it from somewhere... here&#x27;), then 10 s of silence while placing it</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio02_spec.png" alt="spectrogram cut 2"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:12:10.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:13:10.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class="in"><span class="t">0:12:32</span>ասենք copy p անեմ տեղից մի տեղ</div><div class="in"><span class="t">0:12:37</span>հեսա որովիթ</div><div class="in"><span class="t">0:12:50</span>Օքեյ ինքը ասում է, որ ցանկացած</div><div class=""><span class="t">0:12:52</span>արտադրյալը կոմպակտների թեկուզcounable,</div></div>
+</details>
+<details open class="cut" id="cut-3" data-w0="2525.88" data-w1="2612.64" data-s0="2545.88" data-e0="2592.64" data-pxw="6941">
+<summary>Cut 3   0:42:25:22 → 0:43:12:16   (46.8 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> False start: tries to draw a refinement of a cover of [0,1] (&#x27;no, I can&#x27;t draw this... I drew the wrong things&#x27;), then erases it and calls the picture meaningless. The definition right before it is kept</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio03_spec.png" alt="spectrogram cut 3"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:42:05.9</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:43:32.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:42:21</span>such that V is a subset of U</div><div class="in"><span class="t">0:42:27</span>so for example ասենք կարող է սա 01ալ</div><div class="in"><span class="t">0:42:30</span>ունենք ու սա ծածկում ենք կարմիր</div><div class="in"><span class="t">0:42:39</span>ասենք սպս</div><div class="in"><span class="t">0:42:42</span>Հա չէ չեմ կարող նկարեմ սա</div><div>...</div><div class="in"><span class="t">0:43:02</span>ասենք ս ինչ-որ մի բան</div><div class="in"><span class="t">0:43:05</span>մեջը սցս</div><div class=""><span class="t">0:43:13</span>Օքեյ, ասենք թե ինչ-որ ոչ մի բան չի</div><div class=""><span class="t">0:43:15</span>երևում, հասկացա, այս նկարը լրիվ անիմաստ</div></div>
+</details>
+<details open class="cut" id="cut-4" data-w0="3461.64" data-w1="3524.36" data-s0="3481.64" data-e0="3504.36" data-pxw="5018">
+<summary>Cut 4   0:58:01:16 → 0:58:24:09   (22.7 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;Any ideas?&#x27; and 21 s of silence on a static page; ends right before a student&#x27;s suggestion (replace each rectangle by cylinders)</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio04_spec.png" alt="spectrogram cut 4"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:57:41.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:58:44.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:57:56</span>կկարողանանք Finance subcover գտնենք ու</div><div class=""><span class="t">0:57:59</span>դա պիտի ինչ-որ ձևով օգտագործենք,</div><div class="in"><span class="t">0:58:01</span>ինչ-որ մտքեր կան</div><div class="in"><span class="t">0:58:24</span>որ ամեն ռեթանգլ ներկայացնենք ցիլների հա</div></div>
+</details>
+<details open class="cut" id="cut-5" data-w0="3604.88" data-w1="3701.44" data-s0="3624.88" data-e0="3681.44" data-pxw="7725">
+<summary>Cut 5   1:00:24:22 → 1:01:21:11   (56.6 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Thinking aloud on a static page: &#x27;OK&#x27;, 16 s of silence, &#x27;one minute, let me think what we do here&#x27;, more silence. Ends where a student in the room starts the next idea (a cover &#x27;fallen from the sky&#x27;)</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio05_spec.png" alt="spectrogram cut 5"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:00:04.9</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:01:41.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:00:19</span>վերցրել ենք մի հատ ռեկտանգլներով</div><div class=""><span class="t">1:00:21</span>ծածկույթ, ուզում ենք դրանից վերջավոր</div><div class=""><span class="t">1:00:23</span>ենթածկույթ հանենք Oké.</div><div class="in"><span class="t">1:01:02</span>Մի րոպե մտածեմ ինչ ենք անում այստեղ, ոնց</div></div>
+</details>
+<details open class="cut" id="cut-6" data-w0="4730.8" data-w1="4831.88" data-s0="4750.8" data-e0="4811.88" data-pxw="8086">
+<summary>Cut 6   1:19:10:20 → 1:20:11:22   (61.1 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> &#x27;OK, questions?&#x27; and 10 s of silence, then a false start: writes &#x27;Proof of Tychonoff&#x27;s theorem. By Alexander&#x27;s...&#x27;, says &#x27;this is not needed&#x27;, erases it. Kept from &#x27;before Tychonoff I want to show how Alexander&#x27;s theorem trivialises compactness&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio06_spec.png" alt="spectrogram cut 6"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:18:50.8</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:20:31.9</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:19:06</span>ստացվում է, որ հետներն էլ մի հատ յու</div><div class=""><span class="t">1:19:07</span>ավելացնես, պրծնում ես</div><div class="in"><span class="t">1:19:16</span>օքեյ հարցեր էր:</div><div class="in"><span class="t">1:19:28</span>Օքեյ, լավ, եկեք ուրեմնքով</div><div class="in"><span class="t">1:19:31</span>ապացուցենք proof of ticken of the</div><div class="in"><span class="t">1:19:49</span>Սա պետք չի</div><div class="in"><span class="t">1:19:56</span>it&#x27;s enough by by Alexander theem</div><div class=""><span class="t">1:20:12</span>հատ Տիխնովից առաջ հեսա Տիխնովը կանենք</div><div class=""><span class="t">1:20:14</span>ուղղակի ուզում եմ ցույց տամ այս</div><div class=""><span class="t">1:20:15</span>Ալեքսանդրի թեորեմը ինչքան է տրիվացնում</div></div>
+</details>
+<details open class="cut" id="cut-7" data-w0="6177.4" data-w1="6215.36" data-s0="6197.4" data-e0="6207.8" data-pxw="3037">
+<summary>Cut 7   1:43:17:10 → 1:43:27:20   (10.4 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> Tail after her advice to redo the proof by hand for two factors: &#x27;OK, for now, until Friday&#x27; and the room&#x27;s goodbyes. Stops in the pause before the outro (1:43:27.9)</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio07_spec.png" alt="spectrogram cut 7"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:42:57.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:43:35.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:43:14</span>մի հատ զգաք ինչ եմ անում որովհետև կար</div><div class="in"><span class="t">1:43:21</span>լավ առայժմ ուրեմն մինչև ուրբաթ</div></div>
+</details></div>
+<details open id="export-list"><summary>Cut list with your changes (last first)</summary>
+<p class="note">The same format as <code>studio_cuts.txt</code>, renumbered in Studio's order. Changed cuts say what they
+were, added ones say NEW, removed ones are listed at the end as REMOVED. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
+this list to Claude.</p>
+<p><button id="copy">Copy list</button> <span id="copied"></span> <button id="reset-all">Put all cuts back</button></p>
+<textarea id="export" readonly></textarea>
+</details>
+</main>
+<script>
+const A = document.getElementById('media');                  // the 360p video preview, or the WAV
+const FPS = +document.body.dataset.fps, CTX = +document.body.dataset.ctx;
+const NEW_LEN = 1.0;                                          // a cut added at the bar starts 1 s long
+const KEY = 'studio-edits-' + document.body.dataset.list;   // a new cut list starts with no edits
+const OVERLAP = ' - Studio would join them, adjust one of the two';
+const cards = [...document.querySelectorAll('details.cut')];
+let cur = null, raf = null, focusEl = null, uid = 0;
+function tc(t) { const f = Math.floor(t * FPS + 1e-6), s = Math.floor(f / FPS);
+  return Math.floor(s / 3600) + ':' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' +
+         String(s % 60).padStart(2, '0') + ':' + String(f % FPS).padStart(2, '0'); }
+const num = (el, k) => parseFloat(el.dataset[k]);
+const snap = t => Math.round(t * FPS) / FPS;   // Studio works in whole frames
+// Every cut on the page: each card's planned cut, plus the cuts added on this page (host = the card).
+const plan = cards.map(el => ({ host: el, s: num(el, 's0'), e: num(el, 'e0'), s0: num(el, 's0'), e0: num(el, 'e0'), added: false, removed: false }));
+cards.forEach((el, i) => { el.plan = plan[i]; });
+let added = [];
+const all = () => plan.filter(c => !c.removed).concat(added);   // a removed cut is out of the list and the numbering
+const own = el => [el.plan, ...added.filter(c => c.host === el)];
+const changed = c => !c.added && (Math.abs(c.s - c.s0) > 1e-6 || Math.abs(c.e - c.e0) > 1e-6);
+function storageError(what, err) {
+  document.getElementById('storage').textContent = `Edits can't be ${what} in this browser (${err.message}) - copy the list below before closing the tab.`;
+}
+function save() {
+  const edits = {};
+  plan.forEach(c => { if (changed(c)) edits[c.host.id] = [c.s, c.e]; });
+  try { localStorage.setItem(KEY, JSON.stringify({ edits, added: added.map(c => ({ host: c.host ? c.host.id : null, s: c.s, e: c.e })),
+                                                   removed: plan.filter(c => c.removed).map(c => c.host.id) })); }
+  catch (err) { storageError('saved', err); }
+}
+function load() {
+  let o;
+  try { o = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (err) { storageError('loaded', err); return; }
+  const edits = 'edits' in o ? o.edits : o;    // the first version stored only {cardId: [s, e]}
+  plan.forEach(c => { if (edits[c.host.id]) [c.s, c.e] = edits[c.host.id]; });
+  (o.added || []).forEach(a => { const h = a.host === null ? null : document.getElementById(a.host);   // null: added on the timeline
+    if (h || a.host === null) added.push({ id: ++uid, host: h, s: a.s, e: a.e, added: true }); });
+  (o.removed || []).forEach(id => { const c = plan.find(p => p.host.id === id); if (c) c.removed = true; });
+}
+function show(el, t) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1');
+  t = Math.min(w1, Math.max(w0, t));
+  el.querySelector('.bar').style.left = (100 * (t - w0) / (w1 - w0)) + '%';
+  el.querySelector('.now').textContent = tc(t);
+  el.dataset.pos = t;
+  return t;
+}
+const ZOOMS = [1, 2, 4, 8, 16, 32, 64];
+const parts = el => ({ sc: el.querySelector('.specscroll'), wrap: el.querySelector('.specwrap'), w0: num(el, 'w0'), w1: num(el, 'w1') });
+function axis(el) {        // the times at the visible edges of the spectrogram
+  const { sc, wrap, w0, w1 } = parts(el), W = wrap.offsetWidth;
+  el.querySelector('.a0').textContent = tc(W ? w0 + sc.scrollLeft / W * (w1 - w0) : w0);
+  el.querySelector('.a1').textContent = tc(W ? Math.min(w1, w0 + (sc.scrollLeft + sc.clientWidth) / W * (w1 - w0)) : w1);
+}
+function zoomTo(el, z, t, x) {   // zoom level z, keeping time t at x px from the visible left edge
+  const { sc, wrap, w0, w1 } = parts(el);
+  el.dataset.zoom = z;
+  wrap.style.width = (100 * z) + '%';
+  sc.scrollLeft = (t - w0) / (w1 - w0) * wrap.offsetWidth - x;
+  el.querySelector('.zl').textContent = z + '\u00d7';
+  axis(el);
+}
+function zoomStep(el, dir, t, x) {   // one level in (+1) or out (-1), up to 4 screen px per image px
+  const zs = ZOOMS.filter(z => z === 1 || z * parts(el).sc.clientWidth <= 4 * num(el, 'pxw'));
+  let i = zs.indexOf(num(el, 'zoom'));
+  if (i < 0) i = zs.length - 1;                                 // the window got narrower since
+  zoomTo(el, zs[Math.max(0, Math.min(zs.length - 1, i + dir))], t, x);
+}
+function follow(el, t) {   // zoomed in: page the view along so the bar stays visible
+  const { sc, wrap, w0, w1 } = parts(el);
+  if (num(el, 'zoom') === 1) return;
+  const x = (t - w0) / (w1 - w0) * wrap.offsetWidth;
+  if (x < sc.scrollLeft || x > sc.scrollLeft + sc.clientWidth - 2) sc.scrollLeft = x - sc.clientWidth * 0.1;
+}
+const span = c => `${tc(c.s)} \u2192 ${tc(c.e)}   (${(c.e - c.s).toFixed(1)} s)`;
+function renderCard(el) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1'), p = el.plan, mine = own(el);
+  const box = el.querySelector('.shades');
+  box.textContent = '';
+  all().forEach(c => {
+    if (c.e <= w0 || c.s >= w1) return;
+    const d = document.createElement('div'), a = Math.max(c.s, w0), b = Math.min(c.e, w1);
+    d.className = 'shade' + (c.host !== el ? ' other' : c.added ? ' added' : '');
+    d.style.left = (100 * (a - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (b - a) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  });
+  if (p.removed) {                                              // where the removed cut was: a dashed outline
+    const d = document.createElement('div');
+    d.className = 'shade gone';
+    d.style.left = (100 * (p.s - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (p.e - p.s) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  }
+  el.querySelector('.times').textContent = p.removed ? `removed on this page (planned ${tc(p.s0)} - ${tc(p.e0)})`
+    : `start ${tc(p.s)}  end ${tc(p.e)}  (${(p.e - p.s).toFixed(2)} s)`;
+  el.querySelector('.was').textContent = changed(p) && !p.removed ? `was ${tc(p.s0)} - ${tc(p.e0)}` : '';
+  el.querySelector('.warn').textContent = p.warn.length ? p.warn.join(', ') + OVERLAP : '';
+  el.querySelector('.rm').textContent = p.removed ? 'Restore cut' : 'Remove cut';
+  ['.set-s', '.set-e', '.reset'].forEach(k => { el.querySelector(k).disabled = p.removed; });
+  el.querySelector('.added-cuts').innerHTML = mine.slice(1).map(c =>
+    `<div class="added-row"><span class="tag">New Cut ${c.n}</span><span class="times">start ${tc(c.s)}  end ${tc(c.e)}  (${(c.e - c.s).toFixed(2)} s)</span>` +
+    `<button data-id="${c.id}" data-do="s">Start = bar</button><button data-id="${c.id}" data-do="e">End = bar</button>` +
+    `<button data-id="${c.id}" data-do="x">Remove</button><span class="warn">${c.warn.length ? c.warn.join(', ') + OVERLAP : ''}</span></div>`).join('');
+  const extra = mine.length > 1 ? `   + new ${mine.slice(1).map(c => 'Cut ' + c.n).join(', ')}` : '';
+  const title = (p.removed ? `Removed   ${tc(p.s0)} \u2192 ${tc(p.e0)}` : `Cut ${p.n}   ${span(p)}` + (changed(p) ? '   changed' : '')) + extra;
+  el.classList.toggle('changed', (changed(p) && !p.removed) || mine.length > 1);
+  el.classList.toggle('removed', p.removed);
+  el.querySelector('summary').textContent = title;
+  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none when the cards are hidden behind the timeline
+  if (toc) toc.textContent = title;
+}
+function renderAll() {
+  const sorted = all().sort((a, b) => a.s - b.s || a.e - b.e);   // Studio numbers its list by start time
+  plan.forEach(c => { c.n = null; c.warn = []; });              // removed cuts get no number and no warnings
+  sorted.forEach((c, i) => { c.n = i + 1; c.warn = []; });
+  for (let i = 1; i < sorted.length; i++) if (sorted[i].s < sorted[i - 1].e) {
+    sorted[i].warn.push(`overlaps Cut ${sorted[i - 1].n}`); sorted[i - 1].warn.push(`overlaps Cut ${sorted[i].n}`); }
+  cards.forEach(renderCard);
+  const gone = plan.filter(c => c.removed);
+  const nChanged = plan.filter(c => changed(c) && !c.removed).length, nNew = added.length, nRemoved = gone.length;
+  let removed = 0, end = -1;                                    // union, so overlaps count once
+  sorted.forEach(c => { removed += Math.max(0, c.e - Math.max(c.s, end)); end = Math.max(end, c.e); });
+  const dur = +document.body.dataset.duration;
+  const hms = t => { t = Math.round(t); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+  document.getElementById('nchanged').textContent = nChanged || nNew || nRemoved
+    ? ` \u00b7 on this page: ${nChanged} changed, ${nNew} new, ${nRemoved} removed` : '';
+  document.getElementById('removed').textContent = `${hms(removed)}: ${hms(dur)} \u2192 ${hms(dur - removed)}`;
+  document.getElementById('export').value =
+    `# ${sorted.length} cuts (${nChanged} changed, ${nNew} new, ${nRemoved} removed on studio.html), numbered as in Studio, listed last first for entry\n` +
+    sorted.slice().reverse().map(c =>
+      `Cut ${String(c.n).padStart(2)}   ${tc(c.s)}  ->  ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)` +
+      (c.added ? '   NEW' : changed(c) ? `   CHANGED, was ${tc(c.s0)} -> ${tc(c.e0)}` : '')).join('\n') +
+    gone.map(c => `\n# REMOVED, was ${tc(c.s0)} -> ${tc(c.e0)}`).join('');      // planned cuts dropped on the page
+  if (window.tlRefresh) tlRefresh();                            // the timeline view, when the page has one
+}
+function setEdge(c, k, t, fromButton = false, lim = null, msgEl = null) {   // lim, msgEl: the timeline's (whole video)
+  const el = c.host, [lo, hi] = lim || [num(el, 'w0'), num(el, 'w1')], msg = msgEl || el.querySelector('.msg');
+  t = snap(Math.min(hi, Math.max(lo, t)));
+  const s = k === 's' ? t : c.s, e = k === 'e' ? t : c.e;
+  if (e - s < 1 / FPS - 1e-6) {
+    if (fromButton) msg.textContent = `Cut ${c.n}: the start has to stay before the end - move the bar first.`;
+    return;
+  }
+  msg.textContent = '';
+  c[k] = t;
+  renderAll();
+  if (fromButton) save();
+}
+function addCut(el) {
+  const w1 = num(el, 'w1');
+  let s = snap(num(el, 'pos')), e = snap(Math.min(w1, s + NEW_LEN));
+  if (e - s < NEW_LEN / 2) s = snap(e - NEW_LEN);                 // bar at the window's end: grow to the left
+  added.push({ id: ++uid, host: el, s, e, added: true });
+  renderAll(); save();
+}
+function tick() {
+  if (!cur) return;
+  let t = A.currentTime;
+  if (cur.querySelector('.skip').checked) {                      // jump over every cut, added ones too
+    const c = all().find(c => t >= c.s && t < c.e);
+    if (c) { A.currentTime = c.e; t = c.e; }
+  }
+  if (t >= num(cur, 'w1')) A.pause();                            // the end of the spectrogram
+  show(cur, t);
+  follow(cur, t);
+  if (!A.paused) raf = requestAnimationFrame(tick);
+}
+function label(el, playing) { el.querySelector('.play').textContent = playing ? 'Pause' : 'Play'; }
+function play(el) {
+  if (window.tlStop) tlStop();                                  // the timeline was playing
+  if (cur && cur !== el) { A.pause(); label(cur, false); }
+  cur = focusEl = el;
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = el.plan.removed ? 'Playing a removed cut' : `Playing Cut ${el.plan.n}`;
+  let t = num(el, 'pos');
+  if (t >= num(el, 'w1') - 0.05) t = show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  follow(el, t);
+  A.currentTime = t;
+  A.play().then(() => { label(el, true); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); })
+          .catch(err => { if (err.name !== 'AbortError') el.querySelector('.err').textContent = 'Could not play: ' + err.message; });  // AbortError = paused before playback began
+}
+A.addEventListener('pause', () => { if (cur) label(cur, false); cancelAnimationFrame(raf); });
+A.addEventListener('error', () => document.querySelectorAll('.err').forEach(e => e.textContent = 'Media failed to load: ' + A.src));
+const player = document.getElementById('player');
+if (player) {                                                   // video preview: hide/show, remembered per browser
+  const btn = document.getElementById('vtoggle');
+  const setHidden = h => { player.classList.toggle('hidden', h); btn.textContent = h ? 'Show video' : 'Hide video'; };
+  try { setHidden(localStorage.getItem('studio-video-hidden') === '1'); } catch (err) { storageError('loaded', err); }
+  btn.addEventListener('click', () => {
+    const h = !player.classList.contains('hidden');
+    setHidden(h); btn.blur();
+    try { localStorage.setItem('studio-video-hidden', h ? '1' : '0'); } catch (err) { storageError('saved', err); }
+  });
+}
+// Work timer: Start/Stop adds up the time spent reviewing, kept in this browser per video (a reload
+// or a rebuilt page keeps it). It counts wall-clock time, so it keeps running while the tab is closed.
+const TKEY = 'studio-timer-' + document.body.dataset.video;
+let tTotal = 0, tSince = null;                                  // ms so far, and when the running stretch began
+try { const o = JSON.parse(localStorage.getItem(TKEY) || 'null'); if (o) ({ total: tTotal, since: tSince } = o); }
+catch (err) { storageError('loaded', err); }
+const tBtn = document.getElementById('wt-btn');
+function tShow() {
+  const s = Math.floor((tTotal + (tSince ? Date.now() - tSince : 0)) / 1000);
+  document.getElementById('wt-time').textContent = Math.floor(s / 3600) + ':' +
+    String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  tBtn.textContent = tSince ? 'Stop timer' : 'Start timer';
+  document.getElementById('worktimer').classList.toggle('on', tSince !== null);
+}
+tBtn.addEventListener('click', () => {
+  if (tSince !== null) { tTotal += Date.now() - tSince; tSince = null; } else tSince = Date.now();
+  try { localStorage.setItem(TKEY, JSON.stringify({ total: tTotal, since: tSince })); } catch (err) { storageError('saved', err); }
+  tShow(); tBtn.blur();                                         // so the space bar pauses playback, not the timer
+});
+setInterval(tShow, 1000);
+tShow();
+load();
+cards.forEach(el => {
+  el.dataset.zoom = 1;
+  show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  el.querySelector('.play').addEventListener('click', () => (cur === el && !A.paused) ? A.pause() : play(el));
+  const wrap = el.querySelector('.specwrap');
+  const tAt = ev => { const r = wrap.getBoundingClientRect();
+    return num(el, 'w0') + Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * (num(el, 'w1') - num(el, 'w0')); };
+  const px = t => { const r = wrap.getBoundingClientRect(); return r.left + (t - num(el, 'w0')) / (num(el, 'w1') - num(el, 'w0')) * r.width; };
+  const edgeAt = ev => {   // within 8 px of an edge of this card's cuts: drag that edge instead of the bar
+    let best = null, bd = 8;
+    own(el).filter(c => !c.removed).forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(ev.clientX - px(c[k])); if (d <= bd) { bd = d; best = { c, k }; } }));
+    return best; };
+  const sc = el.querySelector('.specscroll');
+  const barX = () => { const x = px(num(el, 'pos')) - sc.getBoundingClientRect().left;   // bar off screen: centre it
+    return x >= 0 && x <= sc.clientWidth ? x : sc.clientWidth / 2; };
+  ['zin', 'zout'].forEach((k, i) => el.querySelector('.' + k).addEventListener('click', ev => {
+    focusEl = el; ev.currentTarget.blur();                      // so the space bar plays again, not zooms again
+    zoomStep(el, i ? -1 : 1, num(el, 'pos'), barX()); }));
+  let wheel = 0;
+  sc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer (a trackpad pinch sends the same)
+    if (!ev.ctrlKey) return;
+    ev.preventDefault();
+    wheel += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;   // deltaMode 1: lines, not pixels
+    if (Math.abs(wheel) < 50) return;
+    const dir = wheel < 0 ? 1 : -1;
+    wheel = 0;
+    focusEl = el;
+    zoomStep(el, dir, tAt(ev), ev.clientX - sc.getBoundingClientRect().left); }, { passive: false });
+  sc.addEventListener('scroll', () => axis(el));
+  let drag = null;
+  const move = ev => {
+    if (drag === 'bar') { const t = show(el, tAt(ev)); if (cur === el && !A.paused) A.currentTime = t; }
+    else setEdge(drag.c, drag.k, tAt(ev)); };
+  wrap.addEventListener('pointerdown', ev => { focusEl = el; drag = edgeAt(ev) || 'bar'; wrap.setPointerCapture(ev.pointerId); move(ev); });
+  wrap.addEventListener('pointermove', ev => { if (drag) move(ev); else wrap.style.cursor = edgeAt(ev) ? 'col-resize' : 'ew-resize'; });
+  wrap.addEventListener('pointerup', () => { if (drag && drag !== 'bar') save(); drag = null; });
+  el.querySelector('.set-s').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 's', num(el, 'pos'), true); });
+  el.querySelector('.set-e').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 'e', num(el, 'pos'), true); });
+  el.querySelector('.reset').addEventListener('click', () => { el.plan.s = el.plan.s0; el.plan.e = el.plan.e0; renderAll(); save(); });
+  el.querySelector('.rm').addEventListener('click', ev => { focusEl = el; ev.currentTarget.blur();
+    el.plan.removed = !el.plan.removed; renderAll(); save(); });
+  el.querySelector('.add').addEventListener('click', () => { focusEl = el; addCut(el); });
+  el.querySelector('.added-cuts').addEventListener('click', ev => {   // buttons of the added cuts, rebuilt on every render
+    const b = ev.target.closest('button');
+    if (!b) return;
+    focusEl = el;
+    const c = added.find(x => x.id === +b.dataset.id);
+    if (b.dataset.do === 'x') { added = added.filter(x => x !== c); renderAll(); save(); }
+    else setEdge(c, b.dataset.do, num(el, 'pos'), true); });
+  el.querySelectorAll('.jump').forEach(b => b.addEventListener('click', () => { show(el, parseFloat(b.dataset.t)); play(el); }));
+});
+renderAll();
+cards.forEach(axis);
+window.addEventListener('resize', () => cards.forEach(axis));
+document.getElementById('copy').addEventListener('click', () =>
+  navigator.clipboard.writeText(document.getElementById('export').value)
+    .then(() => document.getElementById('copied').textContent = 'copied')
+    .catch(err => document.getElementById('copied').textContent = 'Copy failed: ' + err.message + ' - select the text and copy it by hand'));
+document.getElementById('reset-all').addEventListener('click', () => {
+  if (!confirm('Put every cut back to the planned times, restore the removed ones and drop the cuts you added?')) return;
+  plan.forEach(c => { c.s = c.s0; c.e = c.e0; c.removed = false; }); added = []; renderAll(); save(); });
+document.addEventListener('keydown', ev => {
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  if (ev.code === 'Space' && cur && tag !== 'BUTTON') { ev.preventDefault(); A.paused ? play(cur) : A.pause(); }
+  if ((ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') && focusEl) {   // move the bar 0.2 s, Shift: 1 s
+    ev.preventDefault();
+    const t = show(focusEl, num(focusEl, 'pos') + (ev.code === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2));
+    follow(focusEl, t);
+    if (cur === focusEl && !A.paused) A.currentTime = t; } });
+</script>
+<script id="tl-data" type="application/json">{"tiles": {"key": {"version": 1, "wav_bytes": 198891598, "wav_mtime": 1792545289, "duration": 6215.36}, "vmax_db": -45.9, "hi": {"px_per_s": 80, "tile_s": 30, "n": 208, "src": "media/timeline/hi_"}, "lo": {"px_per_s": 8.0, "tile_s": 300, "n": 21, "src": "media/timeline/lo_"}}, "pauses": [[[8.57, 36.27]], [[41.88, 44.38], [44.65, 46.66]], [[59.83, 62.47]], [[65.51, 77.62]], [[162.9, 164.14], [164.74, 166.38]], [[167.72, 170.29]], [[194.41, 196.45]], [[198.74, 203.04]], [[214.92, 218.67], [219.48, 219.95], [220.85, 221.82]], [[226.73, 228.91], [229.54, 229.88], [230.29, 231.17]], [[233.94, 238.48]], [[241.57, 256.01]], [[259.56, 263.18]], [[265.24, 269.84]], [[428.13, 432.14]], [[449.55, 451.9]], [[459.17, 466.48]], [[470.97, 475.33]], [[481.98, 483.89], [484.28, 487.03]], [[542.9, 545.3], [546.04, 546.37]], [[549.98, 550.56], [551.14, 551.68], [552.6, 552.9], [553.81, 555.8], [556.85, 558.77]], [[569.02, 582.79]], [[618.04, 631.56]], [[644.05, 646.77]], [[651.56, 653.58]], [[682.87, 700.12]], [[758.38, 761.6]], [[762.98, 770.8]], [[801.89, 807.63]], [[808.73, 809.49], [810.01, 811.05], [811.72, 812.08], [812.85, 814.14], [814.79, 815.25]], [[820.14, 824.73]], [[827.48, 831.15]], [[834.26, 837.83], [838.28, 842.72], [843.37, 843.89], [844.74, 845.73]], [[859.95, 870.42]], [[927.97, 930.58]], [[957.2, 959.53]], [[969.84, 972.1]], [[1004.24, 1004.95], [1005.67, 1007.02]], [[1022.66, 1026.11]], [[1049.47, 1051.53]], [[1074.39, 1077.92], [1079.1, 1079.74]], [[1090.88, 1095.67]], [[1150.29, 1156.47]], [[1170.76, 1174.27]], [[1217.58, 1221.31]], [[1286.95, 1287.53], [1288.09, 1291.36]], [[1293.0, 1296.07]], [[1330.62, 1332.72]], [[1368.85, 1372.2]], [[1438.35, 1440.57]], [[1447.61, 1449.77]], [[1497.71, 1499.52], [1500.18, 1501.09]], [[1519.8, 1521.87]], [[1540.86, 1541.67], [1542.2, 1544.25]], [[1603.37, 1608.81]], [[1625.89, 1636.12]], [[1677.94, 1680.19]], [[1685.7, 1688.75]], [[1718.01, 1723.29]], [[1725.6, 1728.18]], [[1797.2, 1799.61]], [[1806.6, 1809.29]], [[1837.0, 1839.39]], [[1918.7, 1922.84]], [[1938.53, 1940.6]], [[1945.86, 1950.92]], [[1961.95, 1964.23]], [[2012.88, 2013.79], [2014.17, 2016.62]], [[2047.7, 2058.45]], [[2084.38, 2086.94]], [[2136.22, 2140.86]], [[2147.33, 2149.39]], [[2153.2, 2156.58], [2157.23, 2160.09]], [[2194.81, 2197.4]], [[2213.5, 2213.83], [2214.41, 2218.63]], [[2264.95, 2267.11]], [[2276.12, 2278.93]], [[2318.58, 2320.73]], [[2337.57, 2343.28]], [[2348.4, 2351.16]], [[2374.42, 2382.25]], [[2389.1, 2394.06]], [[2396.53, 2401.96], [2402.21, 2408.63]], [[2447.93, 2450.79]], [[2465.29, 2465.98], [2466.8, 2468.79]], [[2476.17, 2478.4]], [[2502.72, 2513.36], [2513.9, 2514.27]], [[2524.4, 2529.08]], [[2555.72, 2559.68]], [[2564.54, 2570.16]], [[2574.44, 2576.69]], [[2589.36, 2593.01]], [[2632.46, 2635.89]], [[2646.74, 2650.0]], [[2682.15, 2685.76], [2686.4, 2687.86]], [[2711.48, 2713.69]], [[2717.16, 2719.72], [2720.08, 2720.92]], [[2756.12, 2758.75]], [[2768.76, 2772.66]], [[2774.27, 2778.39]], [[2781.4, 2786.31]], [[2799.43, 2801.56]], [[2802.89, 2804.0], [2804.81, 2806.13]], [[2816.19, 2817.97], [2818.55, 2819.81]], [[2927.45, 2938.09]], [[2943.73, 2953.42]], [[3030.86, 3033.32]], [[3042.2, 3044.6]], [[3063.16, 3065.86]], [[3069.81, 3076.0]], [[3141.85, 3144.62], [3145.28, 3148.74], [3149.31, 3149.73]], [[3152.85, 3153.67], [3154.43, 3156.41]], [[3163.01, 3164.5], [3165.35, 3165.89]], [[3167.61, 3169.91]], [[3191.14, 3195.15]], [[3196.58, 3200.68], [3201.34, 3203.8]], [[3207.47, 3209.59]], [[3228.82, 3233.9]], [[3256.16, 3259.92]], [[3261.31, 3265.99]], [[3286.78, 3288.03], [3288.49, 3289.98]], [[3293.85, 3297.6]], [[3299.08, 3303.35], [3304.04, 3304.77]], [[3330.99, 3334.0]], [[3335.79, 3340.9]], [[3377.77, 3384.52]], [[3389.96, 3391.5], [3391.97, 3393.31]], [[3399.46, 3404.22]], [[3409.23, 3418.02]], [[3445.75, 3449.47]], [[3462.26, 3464.45]], [[3466.85, 3469.94]], [[3483.01, 3504.72]], [[3558.92, 3560.05], [3560.7, 3561.2], [3562.01, 3563.74]], [[3610.0, 3612.77]], [[3624.52, 3630.93], [3631.51, 3648.51], [3649.55, 3651.37], [3652.25, 3652.86], [3653.46, 3662.45]], [[3666.45, 3667.5], [3668.17, 3676.96]], [[3678.9, 3681.81]], [[3711.9, 3714.65]], [[3746.09, 3748.95]], [[3771.46, 3775.06]], [[3776.27, 3779.1]], [[3783.96, 3785.99]], [[3791.8, 3794.08]], [[3796.72, 3802.67]], [[3813.82, 3818.63]], [[3834.23, 3837.89]], [[3933.72, 3942.73]], [[3945.55, 3946.15], [3946.91, 3949.06]], [[3963.24, 3967.29]], [[3969.64, 3979.38]], [[4020.03, 4022.61], [4023.08, 4024.1]], [[4028.97, 4031.9]], [[4238.61, 4241.54]], [[4249.12, 4253.47]], [[4276.47, 4278.52]], [[4279.69, 4281.72]], [[4283.67, 4286.22]], [[4323.57, 4325.13], [4325.91, 4327.68]], [[4353.87, 4356.15]], [[4375.72, 4378.28]], [[4450.48, 4452.69]], [[4464.44, 4468.9], [4469.46, 4470.56], [4471.15, 4471.46]], [[4506.29, 4513.59]], [[4550.97, 4552.68], [4553.37, 4554.4]], [[4572.95, 4577.77]], [[4625.42, 4627.33], [4627.64, 4628.83], [4629.83, 4630.48]], [[4637.03, 4639.96]], [[4641.83, 4644.26]], [[4648.61, 4651.22]], [[4667.18, 4670.76]], [[4671.26, 4672.06], [4672.78, 4674.78]], [[4680.23, 4684.75]], [[4689.6, 4692.2], [4692.62, 4693.39]], [[4695.69, 4702.64]], [[4704.7, 4707.45]], [[4749.24, 4750.1], [4750.43, 4756.46]], [[4758.26, 4768.23]], [[4774.04, 4786.27]], [[4799.91, 4809.17], [4810.21, 4812.23]], [[4824.91, 4832.79], [4833.54, 4835.89], [4836.74, 4837.78], [4838.83, 4840.26]], [[4844.77, 4849.95]], [[4908.25, 4914.06]], [[4928.46, 4931.03]], [[4941.34, 4943.61]], [[4950.07, 4953.22], [4954.32, 4954.92]], [[4957.82, 4959.83]], [[4974.24, 4976.66]], [[4980.65, 4982.69]], [[5032.46, 5034.85]], [[5147.32, 5149.56]], [[5164.61, 5170.65]], [[5204.52, 5206.92]], [[5228.68, 5230.99]], [[5248.8, 5251.0], [5251.32, 5252.92]], [[5294.81, 5303.23]], [[5310.23, 5314.69]], [[5343.42, 5345.47]], [[5369.11, 5374.33], [5375.13, 5376.19]], [[5382.36, 5384.52]], [[5394.21, 5397.51]], [[5416.23, 5419.28]], [[5444.09, 5445.47], [5445.9, 5447.3]], [[5456.88, 5459.56]], [[5462.76, 5463.91], [5464.49, 5466.01], [5466.95, 5467.32]], [[5487.18, 5489.12], [5489.89, 5490.23]], [[5493.88, 5498.29]], [[5533.62, 5537.63]], [[5538.8, 5540.89]], [[5544.15, 5546.44]], [[5559.31, 5563.35]], [[5599.67, 5606.37]], [[5610.94, 5619.51]], [[5621.72, 5626.98]], [[5656.54, 5660.32], [5661.25, 5668.75], [5669.41, 5674.16]], [[5679.42, 5682.5]], [[5769.32, 5771.49]], [[5813.18, 5815.51]], [[5853.87, 5856.95]], [[5871.53, 5877.08]], [[5892.05, 5899.1]], [[5907.99, 5910.46]], [[5973.77, 5975.49], [5976.22, 5977.39]], [[5983.33, 5986.06]], [[6008.94, 6016.19]], [[6066.43, 6069.97], [6070.26, 6070.63]], [[6129.63, 6131.98], [6132.69, 6133.0]], [[6174.42, 6182.06]], [[6197.19, 6200.66]]], "loud": [100, 100, 100, 100, 100, 100, 100, 100, 100, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 100, 100, 100, 100, 100, 22, 38, 100, 72, 100, 100, 100, 100, 100, 100, 100, 100, 98, 97, 100, 100, 97, 91, 79, 58, 99, 100, 100, 93, 0, 0, 82, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 22, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 82, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 29, 100, 65, 100, 100, 70, 43, 100, 100, 100, 100, 100, 100, 72, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 65, 100, 100, 100, 0, 100, 100, 100, 77, 61, 73, 0, 100, 84, 100, 100, 100, 96, 100, 100, 100, 26, 100, 100, 54, 35, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 73, 0, 8, 0, 100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 32, 0, 0, 100, 100, 83, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 18, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 94, 99, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 2, 100, 100, 100, 100, 100, 100, 100, 88, 0, 0, 0, 100, 100, 100, 100, 23, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 56, 100, 100, 45, 100, 100, 100, 100, 100, 100, 100, 100, 93, 57, 62, 0, 0, 0, 0, 100, 100, 100, 100, 100, 64, 48, 46, 35, 100, 100, 100, 100, 100, 100, 100, 65, 100, 100, 0, 50, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 56, 100, 100, 4, 100, 100, 100, 100, 100, 100, 0, 100, 100, 5, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 91, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 27, 100, 100, 100, 100, 77, 0, 0, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 84, 0, 100, 100, 100, 100, 100, 100, 10, 100, 100, 100, 73, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 81, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 9, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 15, 53, 0, 0, 0, 100, 100, 100, 41, 100, 100, 68, 100, 100, 100, 100, 100, 100, 100, 0, 0, 41, 100, 100, 100, 100, 0, 0, 0, 100, 100, 100, 100, 21, 0, 100, 100, 37, 0, 42, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 35, 36, 3, 0, 0, 1, 0, 51, 0, 0, 100, 100, 100, 100, 2, 89, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 85, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 9, 0, 100, 100, 100, 100, 100, 100, 85, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 27, 100, 100, 100, 37, 72, 100, 89, 100, 100, 100, 100, 100, 100, 100, 100, 100, 48, 100, 27, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 54, 45, 37, 100, 100, 100, 100, 100, 100, 45, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 35, 100, 100, 100, 100, 100, 100, 100, 100, 100, 96, 100, 100, 100, 100, 100, 0, 29, 100, 100, 100, 100, 100, 100, 100, 100, 100, 83, 100, 100, 63, 100, 3, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 80, 100, 75, 100, 100, 100, 100, 100, 100, 5, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 92, 100, 100, 100, 0, 1, 0, 100, 100, 100, 100, 100, 100, 66, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 64, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 60, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 98, 100, 100, 66, 0, 0, 100, 100, 65, 14, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 17, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 97, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 91, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 5, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 98, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 48, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 29, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 91, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 95, 87, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 74, 100, 100, 100, 100, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 8, 100, 100, 100, 100, 100, 100, 100, 100, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0, 97, 100, 100, 100, 100, 100, 100, 100, 100, 73, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 82, 100, 100, 100, 100, 100, 100, 100, 100, 70, 100, 100, 100, 100, 100, 100, 100, 100, 58, 0, 100, 100, 100, 100, 100, 100, 0, 35, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 46, 0, 0, 85, 0, 100, 100, 100, 22, 1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 40, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 98, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 28, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 31, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 3, 100, 71, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 76, 100, 100, 100, 100, 100, 100, 100, 100, 95, 100, 100, 100, 87, 3, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 3, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 70, 92, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 89, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 94, 100, 97, 100, 100, 100, 100, 100, 49, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 100, 100, 100, 67, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 80, 100, 100, 100, 3, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 63, 0, 100, 80, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 37, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 4, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 24, 0, 0, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 80, 100, 100, 51, 100, 100, 100, 40, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 73, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 30, 0, 100, 100, 100, 100, 100, 100, 87, 100, 100, 89, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 43, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 89, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 58, 0, 0, 0, 36, 5, 4, 100, 100, 100, 100, 100, 84, 100, 84, 24, 2, 0, 0, 100, 100, 100, 63, 0, 0, 0, 98, 91, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 27, 0, 100, 100, 100, 100, 100, 100, 100, 100, 27, 100, 100, 100, 100, 100, 100, 100, 100, 70, 100, 100, 100, 100, 100, 100, 100, 100, 82, 66, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 100, 100, 100, 100, 100, 100, 100, 100, 90, 100, 100, 100, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 46, 100, 100, 100, 100, 100, 100, 0, 0, 44, 48, 43, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 53, 100, 100, 50, 53, 4, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 33, 100, 100, 100, 100, 71, 100, 100, 100, 2, 0, 26, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 54, 4, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 3, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 59, 100, 100, 0, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 32, 100, 100, 100, 50, 100, 100, 100, 80, 0, 100, 100, 100, 100, 100, 76, 100, 100, 100, 100, 100, 0, 0, 0, 100, 100, 100, 0, 0, 0, 100, 100, 100, 100, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 41, 100, 64, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 91, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 100, 100, 100, 100, 100, 100, 82, 2, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 65, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 89, 100, 100, 100, 100, 100, 100, 100, 2, 65, 100, 100, 100, 100, 100, 76, 100, 100, 100, 100, 63, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 41, 100, 100, 100, 59, 100, 100, 100, 100, 100, 3, 0, 0, 0, 0, 37, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 2, 0, 100, 100, 0, 0, 100, 100, 100, 100, 100, 100, 100, 0, 100, 94, 100, 100, 100, 100, 100, 86, 100, 100, 100, 100, 28, 100, 100, 100, 100, 27, 100, 100, 100, 100, 100, 100, 91, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 61, 0, 3, 100, 100, 0, 33, 3, 100, 100, 47, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 40, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 96, 27, 48, 100, 100, 100, 0, 0, 76, 47, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 74, 100, 83, 100, 100, 100, 100, 19, 0, 0, 100, 100, 63, 67, 60, 0, 100, 100, 100, 22, 100, 100, 100, 100, 98, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 27, 61, 27, 100, 100, 3, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 36, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 100, 100, 3, 100, 100, 100, 6, 100, 82, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 0, 48, 2, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 40, 100, 100, 100, 100, 40, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 6, 0, 93, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 89, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 33, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 47, 100, 100, 64, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 32, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 45, 0, 0, 0, 97, 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 52, 0, 22, 0, 37, 45, 0, 91, 98, 100, 59, 0, 78, 86, 95, 83, 88, 95, 91, 86, 83, 80, 89, 91, 89, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 38, 0, 100, 100, 100, 100, 100, 100, 1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 69, 0, 76, 100, 100, 100, 100, 97, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 100, 85, 26, 0, 100, 100, 100, 100, 100, 2, 63, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 0, 0, 0, 0, 53, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 26, 0, 7, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 2, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 33, 100, 19, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 76, 100, 100, 100, 100, 100, 46, 4, 100, 82, 100, 100, 100, 100, 100, 68, 20, 100, 100, 100, 100, 33, 100, 100, 99, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 62, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 77, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 98, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 51, 0, 100, 100, 100, 100, 0, 100, 100, 100, 91, 0, 0, 8, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 0, 100, 100, 100, 0, 60, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 3, 100, 100, 100, 100, 100, 93, 100, 100, 100, 71, 100, 100, 100, 100, 39, 100, 100, 100, 100, 100, 100, 100, 100, 100, 34, 100, 100, 1, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 1, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 94, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 72, 84, 81, 69, 28, 100, 100, 24, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 4, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 1, 0, 0, 32, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 63, 100, 100, 21, 100, 100, 100, 100, 100, 100, 100, 0, 82, 100, 100, 100, 100, 100, 10, 100, 100, 100, 57, 0, 100, 100, 100, 9, 0, 100, 100, 0, 100, 100, 0, 88, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 75, 6, 0, 100, 77, 100, 0, 100, 100, 100, 78, 100, 100, 100, 0, 0, 0, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100, 0, 0, 0, 0, 0, 82, 100, 100, 100, 6, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 17, 5, 0, 0, 0, 100, 100, 100, 48, 0, 0, 0, 39, 5, 0, 0, 0, 100, 100, 100, 100, 100, 100, 83, 5, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 42, 11, 0, 0, 46, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 2, 0, 0, 0, 0, 0, 0, 100, 100, 0, 100, 100, 100, 100, 1, 100, 8, 100, 100, 100, 51, 28, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 96, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 90, 100, 100, 100, 100, 87, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 35, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 75, 0, 0, 97, 78, 100, 100, 100, 0, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 74, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 17, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 58, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 62, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 91, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 61, 100, 100, 100, 72, 100, 100, 87, 100, 0, 21, 1, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 53, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 38, 83, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 4, 17, 98, 100, 100, 100, 100, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 41, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 2, 0, 0, 0, 0, 0, 0, 0, 89, 88, 73, 100, 100, 0, 100, 85, 0, 33, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 5, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 33, 0, 0, 34, 100, 91, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 3, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 41, 28, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 80, 100, 42, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 26, 6, 100, 100, 100, 100, 100, 100, 20, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 100, 100, 59, 100, 100, 100, 100, 64, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 34, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 0, 0, 3, 6, 100, 100, 100, 100, 100, 4, 0, 0, 0, 0, 69, 7, 5, 100, 100, 100, 0, 76, 20, 0, 89, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 38, 45, 8, 100, 100, 0, 0, 0, 0, 0, 0, 94, 88, 0, 0, 0, 0, 100, 48, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 89, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 35, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 45, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 96, 100, 100, 100, 100, 100, 100, 100, 100, 97, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 5, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 47, 0, 0, 0, 0, 100, 100, 100, 76, 94, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 91, 0, 0, 0, 0, 0, 0, 100, 100, 100, 0, 100, 100, 100, 100, 100, 12, 51, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 96, 1, 100, 100, 100, 6, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 5, 99, 70, 100, 100, 100, 100, 100, 100, 100, 92, 64, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 45, 100, 100, 100, 100, 100, 52, 13, 0, 0, 0, 0, 0, 100, 100, 100, 100, 100, 100, 100, 95, 99, 93, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 82, 94, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 78, 100, 100, 100, 78, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 59, 0, 0, 38, 3, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0, 0, 100, 100, 100, 100, 100, 100, 100, 99, 100, 100, 100, 100, 100, 100, 100], "kinds": {"cut-1": {"kind": "safe", "reason": "Pre-lecture: camera off, the classroom camera, 'hello', a chat with the room about doing things properly, Zoom screen-broadcast setup, the iPad home screen and Safari (Gmail tab with her address in the title, see the private-spot note), then 'and the new problem I posted, yes, OK' over the homework PDF. Ends before 'OK, today I want to prove the theorem'"}, "cut-2": {"kind": "judgment", "reason": "Copy-pastes Tychonoff's theorem from Lecture 25's notes ('let me copy-paste it from somewhere... here'), then 10 s of silence while placing it"}, "cut-3": {"kind": "judgment", "reason": "False start: tries to draw a refinement of a cover of [0,1] ('no, I can't draw this... I drew the wrong things'), then erases it and calls the picture meaningless. The definition right before it is kept"}, "cut-4": {"kind": "safe", "reason": "'Any ideas?' and 21 s of silence on a static page; ends right before a student's suggestion (replace each rectangle by cylinders)"}, "cut-5": {"kind": "judgment", "reason": "Thinking aloud on a static page: 'OK', 16 s of silence, 'one minute, let me think what we do here', more silence. Ends where a student in the room starts the next idea (a cover 'fallen from the sky')"}, "cut-6": {"kind": "judgment", "reason": "'OK, questions?' and 10 s of silence, then a false start: writes 'Proof of Tychonoff's theorem. By Alexander's...', says 'this is not needed', erases it. Kept from 'before Tychonoff I want to show how Alexander's theorem trivialises compactness'"}, "cut-7": {"kind": "safe", "reason": "Tail after her advice to redo the proof by hand for two factors: 'OK, for now, until Friday' and the room's goodbyes. Stops in the pause before the outro (1:43:27.9)"}}, "suggestions": [], "rows": [[38.0, "Բարև ձեզ"], [40.0, "բարև ձեզ"], [46.0, "հա բայց դա գտնի պրակտ չեն ծառայում է"], [49.0, "ի՞նչ է"], [52.0, "ուզում եմ ասել որ ամեն բանի համար քոի"], [55.0, "համար իր բաբաթները"], [62.0, "եթե բան անես, պիտի որակի բան անել"], [78.0, "ու էն նոր խնդիրը, որ դրել էի, հա, օքեյ"], [83.0, "ըըը օքեյ էսօր ուզում եմ քննվի թեորեմը"], [88.0, "ապացուցեմ եմ, բայց նախքան այդ, քանի որ"], [92.0, "սպենս լավ ուսանողներ ունենք,"], [95.0, "մի հատ բանը first countable spaceերի"], [99.0, "մասին խոսանք շատ արագ, որովհետև մենք"], [102.0, "ցույց տվե մենք կառուցեցինք օրինակ"], [105.0, "կոմպակտ տարածության, որը"], [110.0, "ոնց որ սեկվեցիալ կոմպակտ չի ու ես ուզում"], [113.0, "եմ ցույց տամ, որ դա ոնց որ նրա պատճառով"], [114.0, "եղավ, որ էդ տարածությունը"], [117.0, "ոչ first countable էր, ինչը ցույց էինք"], [119.0, "տվել էլի նախորդ դասին, բայց կարծեմ 21-րդ"], [124.0, "դասախոսության մեջ էի խցկել այդ ու՞ր է"], [127.0, "այդ օրինակը հա հեսա ու օրինակը բանն էր,"], [131.0, "որ եթե վերցնում ես ոչ հաշվելի"], [134.0, "արտադրյալ ոչ հաշվելի ինդեքսով արտադրյալ"], [138.0, "ու ստանում ես ոչ թեթև տարածություն ու"], [142.0, "հենց էս օրինակը դրա"], [146.0, "դրա օրինակն էր"], [149.0, "օքեյ հիմա եկեք first countable"], [153.0, "տարածությունների մենակ սեյթմենթներն եմ"], [155.0, "գրելու մնացածը տնայինը ուստեթմենտները"], [158.0, "արդեն գիտեք եթե տնայինը կարդացել եք բայց"], [161.0, "ամեն դեպքում ուզում եմ գրեմ"], [173.0, "are properties first countable"], [180.0, "ok so however"], [196.0, "imp sequential"], [206.0, "this and the following other properties"], [213.0, "other properties"], [223.0, "are listed below"], [225.0, "listed below"], [232.0, "or homework"], [238.0, "ok property the first countable spaces"], [256.0, "Let x be first countable"], [263.0, "topological space"], [270.0, "Առաջինը այն է, որ ընդհանրապես, եթե"], [275.0, "ցանկացած տոպոլոգիական տարածության համար,"], [277.0, "եթե ունենք մի հատ կետ, որ այդ ու էդ կետի"], [281.0, "շուրջ վերցնում ենք իրա neighborhood bas"], [285.0, "բase, ասենք իրա շրջակայքերի բազիսն ենք"], [289.0, "մենք կարանք այդ բազիզը միշտ փոխենք"], [292.0, "անպենց բազիսով, որը վերջավոր հատումների"], [296.0, "տակ փակ է:"], [299.0, "Այսինքն, եթե ինչ-որ որ ցանկացած բազիս ես"], [301.0, "վերցնում, կարող է այնպես լինի, որ այդ"], [303.0, "բազիսիցդ երկու հատ բաց բազմություն"], [305.0, "վերցնես, ասենք սենց ու այսպես, սա էլ քո"], [308.0, "կետն է ու էս սրա հատումը քո բազիսի մեջ"], [311.0, "վերցրած չլինի որպես էլեմենտ, բայց ես"], [314.0, "ասում եմ, որ հա չենք վերցրել, վերցնենք"], [317.0, "ասենք նաև ոնց որ վերջավոր փակումները այդ"], [320.0, "բազիսի էլեմենտների գցենք մեջը էլի, դե դա"], [323.0, "մեզ չի խանգարի։ Հիմա երբ որ այդ բազիսը"], [325.0, "հաշվելի է, այսինքն կարող ես բնական"], [327.0, "թվերով համարակալես, նույն ձևը կարաս"], [329.0, "համարակալես այդ բազիսի, այսինքն"], [333.0, "այդ փակումները, բաների նկատմամբ"], [336.0, "փակումները, վերջավոր հատումների նկատմամբ"], [338.0, "փակումը իրա հզորությունը, էդ բազմության"], [341.0, "հզորությունը չի փոխելու, եթե հաշվելի էր,"], [343.0, "հաշվելի է մնալու։"], [344.0, "Վերջավոր բառեր ենք, չէ՞, ոնց որ վերցնում"], [348.0, "Ի՞նչ։ Հա, վերջավոր բառ էր, էդ"], [351.0, "բազմությունից վերջավոր բառ էր, այսինքն"], [353.0, "հզորությունը չի փոխվելու։ Ըըը էդ, բայց"], [357.0, "զուտ նրանից ա հետևում, որ եթե ունես"], [359.0, "ինչ-որ ինչ-որ կա բազմություն, կա-ի այն"], [361.0, "աստիճանը, նույն հզորությունը լինի, ինչ"], [363.0, "որ կան ու դե պարզ է հետո էլ countable"], [366.0, "union ես վերցնում, մի խոսքով ասենք"], [368.0, "հասկացաք նույն ասենք կային"], [372.0, "աստիճանը նույնն ա ինչ-որ"], [374.0, "unեն կայնի էն աստիճաններ ու ամեն մեկը"], [377.0, "եթե նույն հզորությունն լինի ս էլ նույն"], [379.0, "հզորությունն էլ ունի և այլն"], [382.0, "օքեյ ասեմ of choiceով statementներ են"], [386.0, "այն փաստը, որ կայի քառակուսի նույն"], [387.0, "հզորությունը նույն ինչ որ կան Դեովչo է"], [391.0, "եթե անլess կան արդեն wellդ էդ վախտ պետք"], [399.0, "այն է, որ կարո միշտ հատումների նկատմամբ"], [401.0, "փակես ու հաշվելի ժամանակ որ հատումների"], [403.0, "նկատմամբ փակում ես կարաս իրենց բանով էլ"], [411.0, "է լինում ու հենց տենց էլ մենք կանենք սո"], [414.0, "ու ես էս օգտագործել եմ արդեն նախորդ"], [417.0, "դասին նույնիսկ Իսկ առանց ապացույցի"], [421.0, "homework homework"], [425.0, "so there is for every point each point"], [432.0, "each point x in x admits"], [442.0, "decreasing neighborhood basis"], [454.0, "accountable value accountable"], [475.0, "N such that"], [478.0, "bn contains bn"], [492.0, "գնամ տեսնեմ ինչ հերթականությամբ եմ"], [493.0, "տնայնի մեջ գրել Ok&gt; B-ն փակումն ա որ"], [498.0, "ասենք մենք գիտենք որ մետրիկական փակումը"], [501.0, "բազմումը սահմանվում ա որպես ոնց որ"], [505.0, "սահմանվում է, չէ՞, բայց կամ համարժեք է,"], [507.0, "որպեսզի ավելացնում ես այն էլեմենտները,"], [510.0, "որոնք, որոնց ցանկացած շրջակայքում մի հատ"], [514.0, "գոնե այդ բազմությունից էլեմենտ կա: Հիմա"], [518.0, "այդ սահմանումից ելնելով մետրկական"], [520.0, "տարածություններում մենք կառուցում էինք"], [522.0, "հաջորդականություն այդ բազմությունից, որ"], [524.0, "ձգտում է այդ փակման մեջ գտնվող կետին:"], [527.0, "Իսկ որ first countable չլինի, կարող է"], [529.0, "չկարողնանք դա անենք, ավելի ճիշտ հաստատ"], [531.0, "չենք կարողանա դա անենք,"], [534.0, "բայց պարզ պարզվում է, որ first countable"], [536.0, "ժամանակ մեկը էլի կարոես այդ նույն բանը"], [538.0, "անես so"], [560.0, "x belongs to y closure if and only if"], [563.0, "there is a sequence"], [565.0, "yn in y converging to x"], [583.0, "to x օքե այսինքն այս պահը նույնն է ինչ"], [588.0, "որ այն ժամանակ էր մետրիկական"], [590.0, "տարածությունների համարս"], [593.0, "Ըն մի հատ էլ նայենք նայեմ ինչ եմ ասում"], [597.0, "այստեղ հա այսին ամենակարևոր propրոպtyն ա"], [600.0, "որ ասենք մեթիկականի ժամանակ էլ ենք"], [604.0, "օգտագործել բայց երևի առանց նկատելու"], [606.0, "այդքան որ եթե"], [615.0, "չունի զուգամետ ենթաորդականություն"], [632.0, "ապա հենց ինքնին այս բազմությունը"], [636.0, "then the set"], [639.0, "եթե այդ էլեմենտների բազմությունը վերցնես"], [642.0, "այս բազմությունը փակ է"], [647.0, "հետևում ուղղակի նախորդ կետից այստեղից է"], [650.0, "ստեղից կարո ցույց տաս"], [653.0, "օքեյ մեկ էլ"], [659.0, "դ-ից էլ դ-ն էլ արդեն զուտ էս փակերից"], [662.0, "ելնելով որովհետև հիշում եք"], [664.0, "կոմպակտությունը ի՞նչ ա կոմպակտությունը"], [666.0, "որ եթե ունես իրար չհակասող փակ"], [670.0, "այսինքն ցանկացած վերջավորի հատումը"], [672.0, "դատարկ չի ուրեմն ամբողջի հատումը դատարկ"], [676.0, "չի Այ սենց փակերն էլ ես օգտագործում, որ"], [680.0, "եթե x-ը կոմպակտ է"], [701.0, "օքեյ, մի հատ էլ հատկություն կար, որ գրել"], [704.0, "էի Հայկի Հայկի առաջարկած պնդումը, բայց"], [708.0, "դա ոնց որ դա սիրուն պնդում ա, բայց ոնց"], [711.0, "որ տեսության համար կարևոր չի էս պահին։"], [715.0, "Դրա համար չեմ գրում այստեղ։ Օքեյ, էս"], [718.0, "սրանք են առաջին first counտableլների"], [720.0, "հատկությունները ու ամենակարևորը էս։ Հիմա"], [724.0, "եկեք, բայց եկեք հիմա հետազոտենք էն"], [727.0, "օրինակը, որ սրան հակասում էր հենց այդ"], [730.0, "օրինակը, որ ասեցի, որ անհաշվելի"], [734.0, "արտադրյալ էր, պետք է ցույց տանք, որ"], [737.0, "ցանկացած արտադրյալը կոմպակտների էլի"], [740.0, "կոմպակտ է"], [744.0, "recall theorem we now pro now"], [752.0, "ասենք copy p անեմ տեղից մի տեղ"], [757.0, "հեսա որովիթ"], [770.0, "Օքեյ ինքը ասում է, որ ցանկացած"], [772.0, "արտադրյալը կոմպակտների թեկուզcounable,"], [775.0, "մեկ է կոմպակտ է: Ասենք մի հատ նախքան"], [779.0, "ապացուցել եկեք մի բան հասկանանք"], [782.0, "եկեք հասկանանք բանի համար ոնց կանեինք"], [787.0, "թեկուզ երկու հատ արտադրյալի համար մի հատ"], [790.0, "2 հատ կոմպակտություն ենք վերցնում XY"], [792.0, "դրանց արտադրյալն ենք վերցնում ու փորձում"], [794.0, "ենք ապացենք, որ այդ արտադրյալը կոմպակտ"], [796.0, "է: Մի հատ որ դժվարությունը զգաք էլի"], [800.0, "to motivate the proof"], [815.0, "for two spaces proving that the product"], [824.0, "x cross y compact spaces"], [833.0, "is compact"], [845.0, "իմ ասենք մի հատun"], [848.0, "մի հատ cover վերցն նենք սրա փորձենք"], [850.0, "finite subcover վերցնենք let"], [854.0, "կամ v իմ ապացույցի մեջ be an open cover"], [870.0, "ո&lt;unնց ենք ո&lt;k&gt;նց ենք այստեղից finance"], [872.0, "subcover ստանալու"], [875.0, "դե իրականում կարող ենք win դա Ցիլիդների"], [880.0, "միավորում ա։"], [881.0, "Ըհը, ու էս դեպքում ցիլինդրները լինելու ա"], [885.0, "ինչ ձևի, ասենք պրոստո ռեկտանգլներ են,"], [887.0, "չէ՞ լինելու, ցիլինդր չեն լինի, որովհետև"], [889.0, "ընդամենը երկու կոորդինատ ունենք։"], [891.0, "Դրանց պրոեկցիաներն են դիտարկում"], [894.0, "ու ամեն մեկի համար գտնում ենք Faել South"], [896.0, "քավը դրանց արտադրյալը դրա համար։"], [901.0, "Ըըը, մի րոպե հասկանամ ինչի ես ասում։"], [904.0, "Դրանց պրոեկցիաներն ենք դիտարկում, ամեն"], [907.0, "մեկի համար այդպես SAP"], [909.0, "բաց կա"], [911.0, "ճիշտ է"], [913.0, "ու այդ օպերացիաները ունեցողները"], [915.0, "միավորում ենք էլի"], [917.0, "բայց կարո&lt;un է դրանց ասենք բա որ դրանց"], [921.0, "արտադրյալը այնպենս լինի որ դրանց"], [923.0, "արտադրյալիքները չլինեն մեր այստեղից"], [926.0, "բազմություն չլինի տենց"], [930.0, "Դրա համար չենք փոսերով ներկայացնել որ"], [933.0, "կարողանանք ասենք որ չի կարա տենց բան"], [937.0, "ըըը պիտի Պի ուրեմն նախօրոք refine անես"], [940.0, "սա որակի"], [946.0, "օքե օքե եկեք եկեք դա ասենք"], [953.0, "firstly we may assume"], [960.0, "without loss of generality that v"], [964.0, "consists of rectangles"], [968.0, "open rectangles"], [975.0, "like u cross"], [977.0, "v where u v in"], [986.0, "ես ճիշտ կլիներ wu սրան ասեի որ ոչ մեկին"], [990.0, "բան չլինի"], [992.0, "next vn y open"], [997.0, "սրան համաձայն եմ հիմա ասում եք եկեք"], [999.0, "պրոեկցիաները դիտարկենք"], [1002.0, "ամեն կոորդինատի վրա"], [1007.0, "then proջ սո ոնց որ էս ամեն կոորդինատի"], [1012.0, "իրա v-երը դիտարկենք կամ u-երը դիտարկենք"], [1015.0, "չէ ոնց որ տենց եք ասում"], [1019.0, "հա դե ըըը ըըը"], [1026.0, "Ոնց գրեմ սա ասենք եկեք սպենս գրենք"], [1035.0, "i I 0 then for I1"], [1044.0, "լավ կլիներ x0 xy գրեի լավ then"], [1053.0, "սրա անունը դնենք ի&lt;unչ n բոլորերն"], [1057.0, "են x-ից,"], [1060.0, "որ there exists a v"], [1064.0, "such that u cross v is in w"], [1071.0, "similarly նույն բանն էլ yով անենք"], [1080.0, "in x"], [1095.0, "դրանց համար այդ պահին"], [1099.0, "օքե սրանք երկուսն էլ պիտի սրանք"], [1106.0, "and ws"], [1111.0, "have to be covers Y"], [1114.0, "եկեք սպս ասեմ it follows, որտե էլի պետք"], [1117.0, "է այս followsը մի հատ մարսվի,"], [1121.0, "մեկ է սա անելու ենք հետո, դրա համար հիմա"], [1123.0, "չեմ ուզում մարսեմ: it follows that W X"], [1128.0, "and W"], [1131.0, "are covers"], [1134.0, "of are open covers"], [1138.0, "covers of X and Y respectively"], [1148.0, "so there are finite subcovers"], [1161.0, "and w"], [1169.0, "ասենք վերջավոր են Հետո"], [1174.0, "ինձ թվում է ինձ միաժամանակից"], [1177.0, "սարքավորի վերցնել այդպենս լավ գողափոր չի"], [1181.0, "իրականում մենք կարող ենք այդպենս wx-ից"], [1184.0, "վերցնենք հերթով դրանց ամեն մեկի համար"], [1188.0, "ոնց որ file սա վերցրինք արդեն wx-ից"], [1192.0, "ու ամեն բաց բազմության համար ոնց որ U"], [1196.0, "անգամ ինչ-որ ըըը U անգամ"], [1202.0, "վեշկիղ տեսքի բաներ ունենք էլի սաղ ու"], [1205.0, "հետո արդեն այդ վեճիղթներից fետ վերցնենք"], [1208.0, "ամենի համար"], [1210.0, "ու fine անգամ fet ենք էլի ստանում"], [1215.0, "մի հատ մի րոպե հասկանանք ասենք էսի x-ն ա"], [1221.0, "ըսի y-ն ա էսի x-ն ա"], [1225.0, "ասենք ըը ասում ես"], [1229.0, "հիմա ի՞նչ Ի՞նչ ես ասում այստեղ"], [1232.0, "WX-ից մի հատ Fessքավոր"], [1235.0, "վերցրեցինք ըհը"], [1237.0, "այդպես որ հարմար լինի"], [1239.0, "ըհը ասենք թե վերցրել ենք ըհը"], [1242.0, "հա WT ըհը հիմա ամեն WX-ի"], [1249.0, "մեջ ամեն U-ի համար"], [1252.0, "դիտարկենք այդպենսի"], [1255.0, "վեշիղ տեսքի բազմները որտեղ Uն"], [1259.0, "ենթաբազությունն է դեվ vրիխն է y-ի ու այդ"], [1264.0, "vլտրիխն էլ ամբողջ բանին է պատկանում այդ"], [1267.0, "մեր product topology"], [1270.0, "հա բա որ տենցերը չլինեն ասենք թե դա"], [1275.0, "լինի մի հատիկ տպս բազմություն ու քավոր"], [1277.0, "չլինի ոնց ես ապացուցել որ քավոր է"], [1281.0, "որովհետև ամեն բան պետք է լինի չէ"], [1286.0, "մի վայրկյան"], [1291.0, "Դե ինչքան էլ լինի վերցնենք"], [1296.0, "Ինչքան էլ լինի վերցնենք օքեյ ու մեկ էլ"], [1298.0, "դա բան չի տալիս ընդունում եմ գիտեմ ինչ"], [1301.0, "ես ասում ու էդ ինձ կարաս work վարկաութ"], [1303.0, "անես որ վերջում ճիշտ դառնացած"], [1307.0, "որ կան չէ այդ լավ"], [1309.0, "մի հատիկը կա մի հատիկը հաստատ կա"], [1311.0, "որովհետև այստեղ ցանկացածի համար"], [1313.0, "գոյություն ունի մի հատ v Դա կարող եմ"], [1316.0, "գառանտիա տամ, այսինքն ստեղ ցանկացած, որ"], [1319.0, "բան վերցնես ըըը յու վերցնես ստեղ հաստատ"], [1323.0, "մի հատ կա։"], [1326.0, "Ուրեմն տենց, եթե դաժե մի հատ ա, տենց ի-ն"], [1328.0, "հենց բանն ա չէ,"], [1332.0, "Չէ, եթե մի հատ ա, կարա սլինի"], [1336.0, "Հիմա դա ստրիխի։"], [1337.0, "Բայց ո՞նց, ո՞նց կարա չլինի, բայց ստացվի,"], [1341.0, "որ բանը"], [1343.0, "U *"], [1345.0, "Ոնց էր W-ն է դա բոլոր այդ հնարավոր"], [1350.0, "զույգերից կազմված էլեմենտներ են, չէ՞։"], [1352.0, "Հա, բայց կարող ա ասենք, կարող է դու սխալ"], [1354.0, "Uր վերցրել, կարող ա այստեղ ուրիշ յու"], [1357.0, "վերցնեիր, այստեղ մի հատ բան լիներ,"], [1361.0, "հետո այստեղ ուրիշ յու վերցնեիր, այստեղ"], [1363.0, "մի հատ ուրիշ ուկյուն լիներ ու էդի փակեր։"], [1366.0, "Ժոմ ես կարող է քո վերցրած ուղանկյունը"], [1368.0, "սխալ էր։"], [1372.0, "Սա կարո՞ղ ենք բան անենք, այս վեշտ"], [1374.0, "x-ին միավորենք wշ-ին"], [1378.0, "համապատասխան ու"], [1381.0, "բանը նույնը նույնը անենք wx-ի համար, որ"], [1386.0, "հետո իրենց արտադրյալը դիտարկելուց սաղ"], [1389.0, "բազմությունները ոնց ավել բան չվերցնեն"], [1391.0, "տեղում ճիշտ այսինքն մի րոպե wշխին"], [1397.0, "մեջիններին համապատասխանող վի-երը"], [1400.0, "միավորենք իրար հետ"], [1402.0, "y-ի մեջի b-ին"], [1404.0, "Համ ինչ-որ ըը ու էր, ճի՞շտ է, վերջավոր"], [1409.0, "էս սրա մեջի վի-երին համապատասխանում են"], [1413.0, "ինչ-որ ուր"], [1414.0, "իսկ մենք վերջավոր ենք վերջում"], [1418.0, "Հա այստեղի օքեյից համապատասխանում են"], [1421.0, "ինչ-որ ստեղից ու էր։"], [1423.0, "Չէ ինք-ը վերջավորած բանը չէ։"], [1428.0, "Հա ինչ-որ ըհը ըհը"], [1430.0, "-ին վերջավորած ու ա չէ 100%։"], [1433.0, "Հիմա որ այդ վերջավորած U-երը միացնեն Wշխ"], [1437.0, "X բազմության"], [1440.0, "Հա օքեյ պրոբլեմ չկա միացնենք ավելացնենք"], [1443.0, "ի&lt;&gt;չ է եղել որ հա"], [1444.0, "անենք շրխի հետ դա բան չի"], [1451.0, "չէ դե դու ուղղակի ավելացել ես դրանք"], [1454.0, "քավորներ կլինեն քավորին որ ավել բաներ"], [1456.0, "ավելացնես մեկ է ինքը քավոր է մնում"], [1460.0, "բայց դա մեկ է ճիշտ չի լինի որ ցանկացած"], [1462.0, "պրոդկտ Ասենք եթե wշx-ը վերցնես, հետո"], [1465.0, "WYշիխը վերցնես, այդ prodոդի մեջի բոլոր"], [1469.0, "էլեմենտները վախտին կային,"], [1472.0, "բայց ամեն դեպքում սպս անենք էլի, մի հատ"], [1475.0, "Uշխենք WX-ից"], [1477.0, "ա Wշխից մի հատ Uշխ,"], [1480.0, "մի հատ Uշիխ վերցնենք ըհը ասենք թե օքեյ"], [1483.0, "անունը դնենք դեմ"], [1487.0, "ահա հեսա վերցրել եմ ասենք u-ն վերցրեցի"], [1491.0, "Մի հատ"], [1493.0, "բազմա սենց բազմություն դիտարկենք բոլոր"], [1502.0, "գոյություն ունի յուտի որ յուն յուտի"], [1506.0, "ենթաբազն է հասկացա օքեյ վերցնում եմ"], [1510.0, "ասենք բոլոր վերը yեկ-ից որ գոյություն"], [1514.0, "ունի տրաբազմություն"], [1521.0, "գոյություն է շտրիղ w որտեղի այստեղի ենթա"], [1525.0, "չէ չհասն"], [1528.0, "յութիխի ենթաբազմություն"], [1529.0, "հա unուշիխի ենթաբազմությունը օքեյ յուն"], [1532.0, "ճշտիխի ենթաբազմություն է ու այս յուշտիխը"], [1535.0, "որտեղից ա"], [1536.0, "յութիխվեն բանը մեր քավորի մեջից"], [1544.0, "հիմա էս վ-երը փաստացի հանդիսանում են մեզ"], [1546.0, "մոտ բանին ըըը Y-ի 100, չէ՞։"], [1551.0, "Ըըը սպասի, հասկանամ։ Այս յութրիխը"], [1553.0, "գոյություն ունի յուտրիխ, որ սրան"], [1555.0, "պատկանում ա"], [1558.0, "հա ըհը հիմա ի՞նչ ես ասում էս ի՞նչ ա։"], [1562.0, "Ըըը էսի քա չի Y-ի։"], [1567.0, "Սա չէ"], [1569.0, "պիտի ապացուցի ես չգիտեմ։"], [1571.0, "Հեսա եթե քավոր լինի կարանք cover"], [1574.0, "վերցնենք վերջավոր ու տենց անենք ամեն"], [1577.0, "հա բայց ճիշտ հասկ հասկանում եմ, բայց"], [1579.0, "պրոբլեմը այն է, որ մի րոպե հեսա դաժե"], [1582.0, "երևի կարելի է օրինակ կառուցել, որ այս"], [1584.0, "պրոստը քավոր չի, ասում եմ կարող է սխալ"], [1586.0, "բազմություն ես վերցրել կարող է ասի համար"], [1590.0, "մենակ մի հատիկը կար մենակ մի հատ կար ու"], [1592.0, "վերջ, այսինքն անպց էր, որ աս ոնց որ"], [1595.0, "ասռանգլը ուրիշները reռեկանլին cover էին"], [1597.0, "անում արդեն"], [1600.0, "ոնց որ ասռեկտը ուրիշներով ծածկվում էր"], [1608.0, "ոնց որ ֆիքսիվ բան է այս U-ը կարող էր"], [1610.0, "ընդհանրապես չլիներ այս ռեկտանգլը կարող"], [1612.0, "էր ընդհանրապես չլիներ W-ի մեջ հիմա դու"], [1615.0, "դա վերցրեցիր կամ այս V-ն"], [1618.0, "կներես այս յուն հա UN ասենք ոնց որ մի"], [1621.0, "հատ ընդամենը սպենս V կա գոյությունը մի"], [1623.0, "հատ V այս սպս"], [1640.0, "սպասի հիմա ուղղակի ոնց որ conclusion"], [1642.0, "գրեմ then it's unclear"], [1646.0, "it's clear that"], [1649.0, "clear that w prime x cross"], [1654.0, "W prime Y is"], [1658.0, "open cover"], [1662.0, "of X cross Y but"], [1667.0, "is a finite cover"], [1670.0, "of XR Y but it may not be"], [1675.0, "not be contained"], [1680.0, "in W"], [1685.0, "the isue"], [1688.0, "նույնիսկ եթե ձև կա w refine անելու որ"], [1694.0, "շատ-շատ շատ շատ refine անելու որ կարո"], [1697.0, "հասնես նրան որ սա ճիշտ լինի որ ցանկացած"], [1703.0, "յու որ դու վերցնես այնտեղ էլ լինի"], [1707.0, "ինձ թվում ա հնարավոր է դա անել զուտ"], [1709.0, "նրանից ելնելով որ ունենք երկու կոորդինատ"], [1711.0, "բայց որ անվերջատ կոորդինատ ունենանք ենք"], [1713.0, "դա հաստատ հնարավոր չի լինի դպենց լավ"], [1716.0, "refine անել էլի"], [1723.0, "մի գաղափարը ես առաջարկեմ"], [1728.0, "ոնց որ ամեն կոորդինատի հետ"], [1731.0, "առանձին-առանձին աշխատելով ինչ-որ բան չի"], [1733.0, "ստացվում որովհետև ընդեղ քո բաց"], [1735.0, "պատմությունը կարա սի անի որ քո"], [1738.0, "կոորդինատները քիչ են դրանք նկարագրելու"], [1740.0, "համար այսինքն Ես ի՞նչ եմ առաջարկում:"], [1745.0, "Եկեք, չգիտեմ"], [1747.0, "Y-ից վերցնենք ցանկացած կիր, բան ցանկացած"], [1750.0, "կետ ու այդ կետի Fiber-ը նայենք:"], [1754.0, "Հա, ըհը,"], [1756.0, "դե այդ Fiber-ն ինքնի կոմպակտ է:"], [1758.0, "Ըհը: Բա այդ կետի Fiber-ը ո՞րն է, այդ"], [1761.0, "կետի Fiber-ը X-ն ա:"], [1764.0, "Դե հա կոմպակտ է, չէ՞:"], [1766.0, "Հա, հա, բայց ուզում եմ ասեմ այդ Fber-ը"], [1768.0, "չի փոխվում կետը տարբեր կետերի համար"], [1770.0, "նույն Fiber-ն է:"], [1771.0, "Հա, տարբեր կետ է, հիմա Հիմա ես մի կետի"], [1773.0, "համար մի բան եմ ուզում սարքելու Y-յան մի"], [1776.0, "կետի համար։"], [1778.0, "Հիմա իր Ferrը ծածկվեց,"], [1781.0, "վերջավոր ընտրեցինք"], [1784.0, "հիմա ուզում եմ ասեմ այդ FBER-ի շուրջ մի"], [1786.0, "հատ ինչ-որ տիպը"], [1789.0, "ժապավեր ձև ծածկվող չէ"], [1792.0, "գրեմ էլի մի րոպե,"], [1795.0, "քանի որ վերջավորենք կարեն"], [1800.0, "for each"], [1802.0, "point y"], [1810.0, "w y"], [1813.0, "ասում ես ինչ ես ասում ասում ես բոլոր այն"], [1816.0, "u-երը x-ից որ գոյություն ունի v"], [1822.0, "բանից vց"], [1826.0, "ու բանին պարունակող v որը որը"], [1829.0, "պարունակում է այս փոքր փոքր yկը"], [1832.0, "such that u cross v is in w"], [1839.0, "չէ&lt;k այսինքն դու մի հատ x կետ ես yկ կետ"], [1842.0, "ես ֆիքսում ասենք y ու ասում ես օրինակ sվ"], [1847.0, "քանի որ ինքը իրա աս ուղղանկյունը"], [1850.0, "գոյություն ուներ coverի մեջն գցում ենք"], [1852.0, "wի մեջ ու սրա համար գոյություն ունի"], [1855.0, "վերջավորս subcover ընդունում եմ չէ ոնց"], [1859.0, "որ ես չէի ասում"], [1861.0, "fլ-ն եմ նայում, դա եմ ծածկում ու այդ"], [1864.0, "բոլոր բացեի պրոեկցիաները գցում եմ y"], [1867.0, "հատում եմ"], [1869.0, "հա հենց դա էլ անում ենք fiberն fiber-ը"], [1871.0, "ո&lt;unն է fiber-ը նույնն է ջոկում ես մենք"], [1873.0, "product space-ի մեջ ենք ինքը xք cross y"], [1876.0, "է fiber ասելով ի&lt;unչ նկատի ունես"], [1880.0, "ցանկացած կետի fiber-ը x-ն է որ տանում"], [1884.0, "դա x-ն է"], [1886.0, "դե հա"], [1888.0, "կամ քո ասած ասած դա օքեյ դա yք crossվell"], [1893.0, "դա yք cross կներես xք cross yկն է սա քո"], [1900.0, "ասած քո մտքի պատկերացրած fiber ս է չէ"], [1903.0, "ծածկվում է չէ վերցածկվում"], [1909.0, "է ու ես քեզ ասեմ ծածկվում է"], [1912.0, "ես ուղղակի ծածկման պրոեկցիան էի վերցրել"], [1916.0, "պրոեկցիան yի վրա ոչ թե xի"], [1923.0, "էդ դրա պրոեկցիան x-ի վրա կարող է լինի"], [1925.0, "զուտ ասենք մի հատ փոքր բազմություն"], [1928.0, "դե այդ փոքր բազմություն ամեն yի համար"], [1930.0, "այդ փոքր բազմությունը որ բաց է վերցնում"], [1932.0, "եմ ու ոնց որ էլի y-ը ծածկում է վերջավոր"], [1937.0, "եմ դրանից ընտրումը"], [1944.0, "ամբողջ տարածությունը կծածկի"], [1950.0, "Ոնց որ ամեն Y-ի համար"], [1954.0, "ինչ-որ մի հատ ժապավեն ա ծածում չէ՞, ամեն"], [1957.0, "Y-ի շուրջ ինչ-որ ժապավեն կա, որ բան է"], [1964.0, "Հա ընդունում եմ մի րոպե մտա"], [1966.0, "վերջավոր բաներ ինչ-որ ժապավել են"], [1968.0, "ձևավորում դրա շուրջը ոնց որ բոլորի համար"], [1970.0, "այդ ժապավելները ընդունում են վերջավոր"], [1973.0, "հատ կա վերջավոր հատով կծա դե վերջավոր"], [1976.0, "հատ ժաբաները վերջավոր հատու մտածում էի"], [1979.0, "ուրե հաուսի"], [1982.0, "բոլորը բոլորը շփում"], [1985.0, "բայց վերջավոր ընտրում են էլ վերջավոր"], [1990.0, "բա ի՞նչ էր պետք ա բայց քո ferվer էլ շատ"], [1998.0, "հա-ի վրա պրոկցիան բան"], [2000.0, "ավելի ֆայթերի համար վերջավոր հատը"], [2002.0, "ժամանակ ասում ստե բաց Հա"], [2005.0, "Հա օքեյ հետո"], [2006.0, "Դու հետո գրում եմ ամեն մեկի համար"], [2008.0, "ընտրում եմ այդ բացը վայ բացած գույթավոր"], [2011.0, "վերջավորը ընտրեմ ինչից"], [2017.0, "this is a cover of x cross little y"], [2023.0, "which is compact"], [2032.0, "ok which is compact since Homeomorphic"], [2039.0, "being well կար այդպս էլ չասեինք which is"], [2043.0, "compact so there is a finite subcover"], [2059.0, "w y"], [2062.0, "օքե մի րոպե բայց ես Չէ, էսի պրոեկտեցի"], [2065.0, "X-ի վրա, որ փակե, հա, օքեյ, էտ X-ի վրա"], [2068.0, "փակեցինք, X-ը, օքեյ, էսի կոմպակտ էր,"], [2070.0, "սրանից վերջավոր կա։ Հիմա էսի դու ուզում"], [2073.0, "ես պրոեկտես,"], [2076.0, "ի՞նչ ենք անում։ ինտերս ենք անում, ուզում"], [2080.0, "ես էս բոլոր բազմությունները,"], [2082.0, "պրոյեկցիաները ինտերս անես, չէ՞։"], [2089.0, "վերջավոր հատը ընտրել։"], [2091.0, "Հա, ընտրել ենք արդեն ու դու ուզում ես"], [2092.0, "հիմա դրանց պրոեկտ"], [2094.0, "հատ ես ու դրանք կլինեն open neighborhood"], [2096.0, "of y, որովհետև վերջավոր հատ ես հատել"], [2100.0, "so let"], [2106.0, "of projections over y of"], [2110.0, "sets w is in w prime y"], [2122.0, "Y is an open cover"], [2126.0, "is an open cover of y"], [2131.0, "of y"], [2133.0, "so there is a finite subcover"], [2140.0, "cover ասենք թե v"], [2144.0, "y1 v2"], [2151.0, "են։ Հիմա ի՞նչ ենք անում։"], [2160.0, "Վերցնում ենք WN-ները"], [2162.0, "ու միավորում ենք այդ բոլոր միավոր։"], [2166.0, "Հա էլի։"], [2168.0, "Ու էդի կծածկի։"], [2170.0, "Ու էդի կծածկի, կլինի"], [2173.0, "էդ մերի մեջ չի լինի, բայց կլինի"], [2177.0, "Օքեյ, սո"], [2181.0, "Then որովհետև հատումն ենք վերցրել"], [2183.0, "կարոենքդ բոլորները վերցնենք էլի օքեյ դեն"], [2189.0, "սրանց ոնց ենք ասում then"], [2193.0, "ես ասեցի"], [2197.0, "հա union of i from one to n of w prime"], [2206.0, "is a cover of cover of x cross y"], [2218.0, "սա հենց w subcover չէ&lt;un"], [2223.0, "հա հենց subcover"], [2226.0, "and a subset and a subset"], [2229.0, "of wեցան"], [2236.0, "beautiful օքե աս երկու Երկու հատի"], [2240.0, "դեպքում սա սա աշխատեց"], [2244.0, "ընդհանուրի համար ո&lt;unնց ենք անելու"], [2248.0, "նու երևի վերջավորի համար ինդուկցիա"], [2252.0, "այս տրամաբանությամբ"], [2253.0, "օքեյ վերջավորի համար ինդուկցիա ֆայմ"], [2256.0, "վերջի համար էլ երևի այնտեղ ոնց որ ասում"], [2259.0, "ենք ակումով չոիզն էտեղ ֆարտադի ինչ-որ"], [2262.0, "շատ էքստրաուգինար մի հատ ապացույց պիտի"], [2264.0, "լինի երևի"], [2267.0, "մի հատ մտածեմ կարող է սա անվերջին համար"], [2269.0, "էլ կարողանանք աշխատացնենք, սպասի"], [2279.0, "որովհետև դու ի՞նչ արեցիր, դու մի հատ"], [2280.0, "կոորդինատ ընտրեցիր, մյուսները թողեցիր"], [2283.0, "հա չէ, պրոբլեմը այն է, որ հենց դա է"], [2285.0, "ինդուկցիա չի աշխատելու անվերջի համար"], [2287.0, "խնդիրը այն է, որ ասեքը որ ֆիքսում ես"], [2291.0, "մենք մյուս մյուս կոորդինատները որ"], [2293.0, "վերցրեցինք մենք ենթադրեցինք, որ այս"], [2295.0, "մյուս կոորդինատներով արտադրելը արդեն"], [2297.0, "կոմպակտ է:"], [2299.0, "Բայց որ անվերջից մի կետ հանես դրանից"], [2301.0, "կուտ չի ուտելու:"], [2304.0, "Ս էլ գրենք"], [2306.0, "this proof this proof also works"], [2311.0, "also works"], [2314.0, "for finite products for finite"], [2320.0, "products x1 x2"], [2324.0, "x0 x1"], [2332.0, "the roll of the roll of լավ եկեք x1-ով"], [2343.0, "since the role of y will be played"], [2351.0, "played by xn and the r"], [2357.0, "R of x will be played"], [2363.0, "played by"], [2367.0, "x1 x2"], [2370.0, "xn- 1 which is compact by induction"], [2382.0, "ok however for infinite products this"], [2395.0, "infinite products is not workումենտը"], [2410.0, "սա կոչվում է the tube l argument դու"], [2414.0, "toեր սարքեցիր ամեն ոնց որ ամեն գիծը"], [2416.0, "ինչ-որ թուբով փակեցիր ոնց որ այսպենց"], [2419.0, "հաստուբ ստացար ու այդ թուբը որ արդեն"], [2422.0, "վերջավոր է փակվում դու կարաս էդ սաղ"], [2424.0, "թուբի բոլոր բաները ինտերսեկտ անես"], [2427.0, "այսինքն զրոյին չի ձգտի էլի էլի մի հատ"], [2429.0, "տրուբա կլինի արանքը մեջը մտցրած"], [2434.0, "բայց շատ տպավոր չէ որ ասենք դու էդի ոտի"], [2437.0, "վրա էդ արգումենտը կրակեցիր ասեմ ըըը"], [2442.0, "Օքեյ ը հիմա պատրաստ եք դժվար բաներ"], [2450.0, "օքեյ եկեք անենք ուրեմն դե նախ first"], [2455.0, "several remarks"], [2463.0, "on observation"], [2469.0, "remark on"], [2471.0, "coverage and refinement"], [2474.0, "and refinements"], [2478.0, "մի հատ թեթև սահմանում տամ արդեն"], [2482.0, "օգտագործել եմ սա ոչ ֆորմալ բայց հիմա"], [2484.0, "օֆիցիալացնենք for"], [2493.0, "a cover"], [2495.0, "a cover v is called"], [2500.0, "is called a refinement"], [2514.0, "of you"], [2517.0, "or you is called"], [2522.0, "a coroning"], [2529.0, "v If"], [2532.0, "if for every set V in V there is a set U"], [2538.0, "in U"], [2541.0, "such that V is a subset of U"], [2547.0, "so for example ասենք կարող է սա 01ալ"], [2550.0, "ունենք ու սա ծածկում ենք կարմիր"], [2559.0, "ասենք սպս"], [2562.0, "Հա չէ չեմ կարող նկարեմ սա"], [2570.0, "հիմա refinementը կլինի ասենք օրինակ եթե"], [2573.0, "վերցնենք ս"], [2579.0, "ս չէ սխալ բաներ նկարեցի"], [2582.0, "ասենք ս ինչ-որ մի բան"], [2585.0, "մեջը սցս"], [2593.0, "Օքեյ, ասենք թե ինչ-որ ոչ մի բան չի"], [2595.0, "երևում, հասկացա, այս նկարը լրիվ անիմաստ"], [2597.0, "էր, մի խոսքով հասկացաք refine ենք անում,"], [2600.0, "ասենք ավելի փոքրացնում ենք, ինքը չի, էս"], [2602.0, "v-ին չի լինելու subcover-ի, որովհետև v-ի"], [2605.0, "բազմությունները ավելի փոքր կարող է"], [2607.0, "լինեն, քան u-ի մեջի բազմությունները,"], [2609.0, "բայց պոինթը էն ա, որ ամենի համար մի հատ"], [2611.0, "վերևը յու կա, որ գլխին գալիս ու ասենք,"], [2623.0, "if you admits and open if a cover if a"], [2629.0, "cover you admits"], [2636.0, "if a cover v refes"], [2639.0, "you and v admits finite subcover"], [2645.0, "finite subcover"], [2650.0, "cover then so does"], [2655.0, "you այսինքն"], [2659.0, "ունենալու հատկությունըների"], [2664.0, "տակ փակ է եթե ինչոր մեկը subcover ունի"], [2666.0, "finite ցանկացած իր coronening պարզ ունեն"], [2670.0, "finite subcover interval observation ու"], [2673.0, "սրա conclusionը է"], [2689.0, "topological space"], [2692.0, "x is compact"], [2695.0, "if and only if"], [2701.0, "cover with basic every basic Open cover,"], [2705.0, "հեսա կասեմ ինչի նկատի ունեմ basic open"], [2708.0, "cover has a finance subcover"], [2716.0, "more precisely"], [2721.0, "for any կամ some for"], [2726.0, "any basis"], [2737.0, "you with elements"], [2741.0, "of X of X with"], [2744.0, "every cover u of X"], [2749.0, "X has a finance subcover"], [2753.0, "սա մենք արդեն օգտագործեցինք այն"], [2754.0, "rectangle օրինակով"], [2758.0, "այսինքն ինչի է սա ճիշտ որովհետև"], [2765.0, "given any I mean the nonal direction is"], [2772.0, "given any open cover"], [2778.0, "you there is a refinement of it"], [2790.0, "կամ նշանակենք"], [2795.0, "subset of B"], [2801.0, "indeed take"], [2806.0, "B B all the rectangles or all sets in B"], [2810.0, "such that there is a U in U B inside U"], [2820.0, "Այո օքեյ ասօր refinement կա ու մնացածը"], [2823.0, "արդեն այս observationով է եթե կարոես"], [2825.0, "ցանկացած cover refine անես basic open"], [2827.0, "coverիy ու refinementի համար գտնես"], [2830.0, "finite subcover ուրեմն originalի համար"], [2832.0, "էլ կարոես գտնես so since since ub has"], [2840.0, "finally subcover"], [2844.0, "so does you by"], [2849.0, "observation above օքե սա բան չէր օքե"], [2854.0, "հիմա սրանից ի&lt;kչ եմ ուզում ասեմ որ հա"], [2857.0, "մենք կոմպակտությունը ապացուցելու համար"], [2860.0, "կարաս միշտ վերցնես նենց քո սիրած"], [2863.0, "ամենասիրելի բազիսը վերցնես ու այդ"], [2865.0, "ամենասիրելի բազիսի համար կարանք այստեղ"], [2868.0, "su գրեմ for anyի su դրանք էկվիվալենտ են"], [2874.0, "կարոես քո սիրելի բազիսը վերցնես ու"], [2876.0, "ենթադրես որ քո ս էլեմենտները Open"], [2879.0, "Cover-ի քո սիրելի բազիսից են: Մի հատ"], [2884.0, "մի հատ ուզում եմ հետ գնանք այն"], [2885.0, "ապացույցից, որ այս մոտիվ անեմ, այս էլի"], [2888.0, "էս երկու երկու բանի օրինակը ասեմ, երկու"], [2892.0, "տարածության արտադրյալի օրինակով, որ"], [2894.0, "նայենք այստեղ որ դուք տեսնեք, որ խնդիրը"], [2897.0, "որն էր, որ հա, այս արտադրյալը ինքը կարող"], [2900.0, "է բանից չլիներ, էդ օրիջինալ coverից"], [2904.0, "չլիներ, էդ էր պրոբլեմը այս նախնական մտքի"], [2908.0, "Բայց պատկերացրեք, որ ենթադրեք մի պահ, որ"], [2912.0, "W-ն ոչ թե ռեկտանգլներից էր բաղկացած, այլ"], [2915.0, "ցիլինդրներից էր բաղկացած:"], [2918.0, "Այսինքն W-ն այս ֆորմայի էր, աս մի հատը"], [2920.0, "ֆիքսում ես, մնացած սաղ վերցնում ես կամ"], [2923.0, "աս մի հատը ֆիքսում ես ու մնացածը ֆիքսում"], [2926.0, "ես, այդ վախտ ի&lt;unչ կանեինք: Այդ"], [2938.0, "ոնց որ այն, ինչ որ փորձում էիր դու"], [2940.0, "անեիր, Հայկ, ձրի կա արդեն, ձրի տված է"], [2953.0, "մի հատ նորից հարցը կձևակերպեի"], [2955.0, "հա ասում եմ պատկերացրու W ոչ"], [2957.0, "թեռangleներից էր բաղկացած, այլ"], [2959.0, "ցիլինդրներից այ սպենս ստիլի"], [2961.0, "բազմություններից, այսինքն open cross y"], [2965.0, "կամ x cross open այդ տիպին"], [2970.0, "դրանք ավելի մեծ են չէ եթե"], [2972.0, "դրանք ավելի մեծ են դրանց համար պիտի"], [2974.0, "ավելի հեշտ լինի finco cover գտնելը"], [2977.0, "մենակ wx-ը անի հերիք չի"], [2980.0, "մենակ wx-ը հերիք չի անի ամբողջ եթե իր"], [2984.0, "գնում ա"], [2985.0, "Հա հենց էդ Հենց that's the point, մենակ"], [2988.0, "wx-ը հերիք է wx-ի մեջի ցանկացած"], [2992.0, "բազմություն, որ վերցնենք դրաքսը y-ով"], [2996.0, "գոյություն ուներ, որովհետև այս uդ ենք"], [2999.0, "ստացել էս v-ին միշտ եղել է ամբողջ y-ը ու"], [3003.0, "մենակ wx-ն ես վերցնում, հետո y-ն էլ ես"], [3006.0, "տնգցնում ու վերջ, դա քո finance"], [3007.0, "subcoveroverն է:"], [3010.0, "Օքեյ so but not in the finite case."], [3015.0, "that in the"], [3019.0, "case x cross y above"], [3027.0, "if we could we could assume that"], [3035.0, "that w cons"], [3039.0, "of cylindrical"], [3044.0, "sets u cross x and"], [3050.0, "x cross v then"], [3054.0, "w x prime cross y is already"], [3061.0, "finite subcover"], [3076.0, "Պարզվում է, որ միշտ կարող ենք աս իսկ այս"], [3078.0, "ցիլինդրները ի&lt;un&gt;նչ տիպի բազմություններ"], [3080.0, "են այ սրանք, սրանք ի՞նչ տիպի"], [3082.0, "բազմություններ են, ասենք ռեկտները բեիկ"], [3084.0, "են, basicին են պատկանում, բasիս են ֆորմ"], [3087.0, "անում այս տիպի բազմությունները ուփս"], [3089.0, "ի&lt;unչ են ի&lt;kչ են կազմումբas"], [3093.0, "prebas անուն ունեինք ի դեպ ասել եմ չէ&lt;un"], [3097.0, "գրականության մեջսբas են դրան ասում ասում"], [3099.0, "իմ ներվերը դրանից խախտվում է, որովհետևս"], [3102.0, "օբջեթը պետք է նախ և առաջect լինի, որը"], [3105.0, "ենթաբազմություն է իսկ prebasը բase չի,"], [3109.0, "ուզում եմ ասեմ subբիսesը բase չի, էդ ինձ"], [3111.0, "ներվայնացնում է, դրա համար ես prebase եմ"], [3113.0, "ասում, բայց որ Google անեքսբյիս եք"], [3118.0, "հիմա pointինը այն է, որ պարզվում է, որ"], [3121.0, "ոչ միայն այս corլerին կարոենք strengthen"], [3123.0, "անենք, պարզվում է, որ ոչ միայն basic"], [3126.0, "open set կարոենք without loss of"], [3129.0, "basic open setով cover վերցնենք, այլ"], [3132.0, "prebasic open set cover վերցնենք:"], [3136.0, "Այս ինչ դժվար realization է, բայց ճիշտ է"], [3139.0, "ու դա կոչվում է Ալեքսանդրի լեմա"], [3149.0, "preasis լեմա pre basis"], [3158.0, "ասենք ասենք գրականության մեջ subbases լա"], [3161.0, "կլինի ոչ թե prebasis"], [3166.0, "a topological space"], [3171.0, "x is compact"], [3174.0, "if and only if"], [3177.0, "any sub basic"], [3181.0, "prebasic open coverasic"], [3186.0, "open cover has finite subcover"], [3195.0, "more precisely"], [3205.0, "some prebases"], [3211.0, "b մի հատ ուրիշ տառով նշանակենք չգիտեմ p"], [3215.0, "prebasի համար"], [3222.0, "any cover you subset p has"], [3227.0, "finite subcover"], [3233.0, "ու հետո արդեն այդ եթե այս լեման ունես"], [3237.0, "պիտի խնվի թեորեմը ապացուցվում է նույն ձև"], [3239.0, "ոնց որ նոր ապացուցեցինք երկու հատկա"], [3242.0, "երկու տարածության համար նկատեք որ"], [3244.0, "երկուսը այստեղ արդեն կապ չուներ դու x-ի"], [3246.0, "վրա ֆոքս եղար, մնացածը տարբերություն"], [3249.0, "չկար, ես կարող էինք վերցնեինք մնացած"], [3251.0, "տարածությունները այստեղ"], [3254.0, "օքեյ եկեք սա ապացուցենք"], [3259.0, "ու սա էլ չես"], [3267.0, "հիմա հերիք է ապացուցել պարզ է էլի բանն"], [3271.0, "ենք ապացուցում directionը"], [3276.0, "պետք է վերցնենք open cover x-ի համար ու"], [3280.0, "ցույց տանք, որ ունի finance subcover,"], [3282.0, "բայց ոնց որ արդեն ասեցինք կարող ենք այդ"], [3284.0, "open coverը համարենք basic open setից"], [3297.0, "fix a prebasis"], [3307.0, "let B"], [3309.0, "be the collection of"], [3312.0, "the base is generated by it bases"], [3315.0, "generated by P"], [3318.0, "BP գրենք"], [3323.0, "by P I E B B B BP He is the is the"], [3330.0, "collection of of"], [3334.0, "finite intersections"], [3341.0, "sets in p ասենք ոնց որ սա ցիլինդր"], [3346.0, "բազմություններն են սա էլ դրանց"], [3349.0, "ռեկտանգլներն են երկու հատ արտադրյալի"], [3351.0, "դեպքում էլի այս ցիլինդրներն են այս"], [3353.0, "ռեկտանգլներն են"], [3357.0, "Հիմա ի&lt;k&gt;չ գիտենք let you be an open"], [3362.0, "It is enough to show. It's enough to"], [3367.0, "to show that any cover"], [3372.0, "you that is a subset of BP has a finite"], [3387.0, "հիմա ասենք suppose մի հատը կա որ չունի"], [3394.0, "there is such you"], [3397.0, "with no finover"], [3407.0, "with no finance subcover"], [3418.0, "Հիմա էլի ես ուզում եմ ապացույցը դուք մի"], [3419.0, "հատ պատկերացնեք էլի երկու հատ արտադրյալի"], [3426.0, "եթե ցիլինդր բազմություններով cover լինի"], [3429.0, "կարո եք finance subcover գտնեք բայց հիմա"], [3431.0, "քեզ ձեզ տվել ենռangleներով cover ինչ-որ"], [3434.0, "սպենս մի հատ բան է"], [3436.0, "ու ուզում եք այս rectտangleների"], [3438.0, "համարֆite subcover գտնեք"], [3442.0, "հենց իմ համար պարզ չի ինչ պիտի արվի"], [3449.0, "հասկացա ասենք այստեղի մեջի ժողովուրդը"], [3453.0, "finite intersectionն է ամեն միենտ ստեղ"], [3456.0, "finite interctionն է աս p-ի մեջի"], [3459.0, "էլեմենտների հիմա մենք ց պետք անենք որ"], [3464.0, "ասեմ հա պետք է անենք որ"], [3470.0, "հա, որ օգտագործենք, որ եթե P-ով լրիվ"], [3473.0, "ծածկված լինի, կկարողանանք ծածկենք,"], [3476.0, "կկարողանանք Finance subcover գտնենք ու"], [3479.0, "դա պիտի ինչ-որ ձևով օգտագործենք,"], [3481.0, "ինչ-որ մտքեր կան"], [3504.0, "որ ամեն ռեթանգլ ներկայացնենք ցիլների հա"], [3509.0, "ցիլներից վերցնենք իրա"], [3514.0, "Ստացված վերջին"], [3517.0, "վերջավոր հատ չի ստացվի մեր վեց քանսի"], [3525.0, "Ըհը չէ նայի ասենք"], [3529.0, "ի՞նչ ես առաջարկում դու առաջարկում ես"], [3531.0, "ամեն rectտangle-ը replace ենք անում այդ"], [3535.0, "rectangle-ը սարքող մի հատ ցիլինդրով չէր"], [3538.0, "reռեկտangle ասենք վերջավորած ցիլինդրի"], [3540.0, "հատում Հա՞"], [3543.0, "ակում որ ինքը հանդիսանում է"], [3547.0, "մի րոպե ասում ես ամեն ռեկտangգլը հանենք"], [3548.0, "տեղը ի՞նչ դնենք"], [3551.0, "այն ցելինդները որում են"], [3553.0, "բոլորը որ ասում է բոլորը դաժեժի է մի"], [3557.0, "հատի կդնես հերիք է չէ արդեն"], [3563.0, "մի հատ կհիշացնենք մենք ինչ ունենք"], [3566.0, "չէ ես մտածել աշխատենք նույնս որի բայց"], [3569.0, "հա Հա"], [3572.0, "մի ասում եմ այս P-ն ոնց որ prebas է,"], [3576.0, "այսինքն ինքը տոպոլոգիան է գեներացնում աս"], [3580.0, "իր prebasի վերջավոր հատումների կոլեկցիան"], [3583.0, "դառնում է բase էսոպոլոգիայի համար դա"], [3586.0, "ապացուցել ենք շուտվանից"], [3588.0, "սո էս BP-ն վերջավոր հատումներն ա P-ի"], [3592.0, "էլեմենտների այսինքն ամեն BP-ի էլեմենտ"], [3595.0, "P-ի էլեմենտների վերջավոր հատումներ ա"], [3597.0, "ինտուիցիայի համար պատկերացրեք"], [3599.0, "Bփնռեկտներ են,"], [3603.0, "են, ցիլինդրներ են, այսինքն մի կոորդինատն"], [3606.0, "է մենակ սահմանափակած, մնացած"], [3608.0, "կոորդինատները բաց են թողած"], [3612.0, "ու մենք գիտենք, որ ցիլինդրներով"], [3615.0, "ծածկույթներից միշտ կարո ենք վերջավոր"], [3617.0, "ենթածկույթ հանենք, հիմա ուզում ենք"], [3619.0, "վերցրել ենք մի հատ ռեկտանգլներով"], [3621.0, "ծածկույթ, ուզում ենք դրանից վերջավոր"], [3623.0, "ենթածկույթ հանենք Oké."], [3662.0, "Մի րոպե մտածեմ ինչ ենք անում այստեղ, ոնց"], [3694.0, "որ Արդենք, եթե մեր վրա երկնքից իջել ա մի"], [3698.0, "հատ ինչ-որ բացատկույթ, էդ բացատկույթի"], [3700.0, "բոլոր էլեմենտները մենք ի՞նչ գիտենք դրա"], [3702.0, "մասին, որ կարանք ներկայացրել p-ից ինչ-որ"], [3706.0, "բաների միավորմամբ, չէ՞, այսինքն"], [3709.0, "Հատմամբ, հատմամբ էդ ա պրոբլեմը, հատմամբ"], [3715.0, "ամեն ամեն"], [3717.0, "միավորմամբ չէ՞։"], [3721.0, "Ո՞ն ոնց հատումների հատմամբ։"], [3723.0, "Չհասկա, մի հատ նորից ասա, երևի չեմ"], [3724.0, "հասկանում։ չեմ"], [3726.0, "Պրիվը ո՞րն ա, ինչ-որ բազմություններ են"], [3728.0, "տված, չէ՞, ըըը"], [3731.0, "դրանց դրանց վերջավոր հատումներն են ու"], [3734.0, "դրանց բոլորի միավորումներն են"], [3735.0, "Հա, հա, հա, հա, ըհը"], [3737.0, "վերջավոր հատումների միավորմամբ"], [3739.0, "Ճիշտ ա, ըհը"], [3740.0, "Մենք էդ ունենք։"], [3742.0, "Մենք էդ ունենք ու հիմա վերցված է այդ"], [3744.0, "վերջավոր հատումներով cover։"], [3749.0, "Հա, հիմա դրանցից"], [3751.0, "չենք կարա անջատե՞նք։"], [3755.0, "ոնց որ ամեն մի U էլեմենտ ասենք թե U"], [3760.0, "այս տեսքով է ինքը ասենք սպենս մի հատ"], [3764.0, "քառակուսի է կներեք"], [3768.0, "լավ այսպենս ասեմ մի հատ ասենք սպենս"], [3770.0, "բազմություն է"], [3779.0, "սենց մի հատ էլ չգիտեմ ասենք կարմիր"], [3781.0, "բազմություն է գնում Այ սենց։"], [3786.0, "Ըըը էս էլ հեսա մի հատ կարմիր բան վիզ"], [3788.0, "դնեմ այստեղ, ըհը, չգիտեմ, ոբշմ, սենց։"], [3794.0, "Ու յուն այսքանն ա, յուն այ սա է։"], [3802.0, "Յուն-ն է սա է, բայց մենք ունենք, ասենք,"], [3806.0, "եթե այս կարմիրով քավոր, մենակ"], [3808.0, "կարմիրներով կամ մենակ այս կապույտներով"], [3811.0, "քավոր լիներ, կարո էինք վերջավոր ենթած"], [3812.0, "ծածկույթ գտնեինք"], [3819.0, "ճիշտն ասած շուտվանից այս ապացույցի մասին"], [3821.0, "չեմ մտածել հիմա մի քիչ իմպրովիզ է, բայց"], [3823.0, "իմ զգալով պետք է վերցնենք"], [3828.0, "ամենա coverը մաքսիմալ course cover որի"], [3832.0, "համար էլի finite subcover չկա"], [3838.0, "սա պիտի որ ցոռնի լեմայով գոյություն"], [3840.0, "ունենա մաքսիմալ"], [3844.0, "ոչֆ էլի մաքսիմալքս"], [3847.0, "այսինքն ի&lt;unչ ես ուզում անես ուզում ես"], [3849.0, "ասես լավ ասի փոխարեն ես կհանեմ ու աս"], [3852.0, "վարդագույն բազմությունը կդնեմ այդ"], [3855.0, "ժամանակ գոյություն ունի finite subcover"], [3858.0, "եթե գոյություն ունենա finite subcover"], [3860.0, "արդեն կիմանամ ինչ անեմ էլի որովհետև"], [3861.0, "կարող է այս ժամանակ մի հատ էլ u-ի"], [3864.0, "փոխարեն հանեմ սա դնեմ եթե էլի գոյություն"], [3867.0, "ունի finite subcover ես այդ երկու finite"], [3869.0, "subcoveroverների իրար հետ կկարողանամ"], [3871.0, "կոմբինացնեմ, որ U-ի հետ միասին Fal"], [3874.0, "subcover ստանամ: Հիմա ուզում եմ ասեմ, որ"], [3877.0, "ես ուզում եմ այս U replace անեմ մի հատ"], [3880.0, "preբasic open setով, բայց կարող է replay"], [3882.0, "անեմ էլ ինքը finance subcover չունենա:"], [3885.0, "Ասում ես լավ չունի, չունի հիմա անցնում"], [3887.0, "ես առաջ, բոլորերը փորձում ես replace"], [3889.0, "անես մինչև որ ստանաս այնպենց բան, որ"], [3892.0, "finance subcover ունի"], [3895.0, "օքեյ ու այդ ստանալուց առաջ կկանգնես այն,"], [3899.0, "որ ասի այս կանգա առից առաջ մի հատ"], [3901.0, "կկանգնես, բայց հենց այն է փոթը, որ այդ"], [3903.0, "կանգառը կարող է չլինի մեր համար, մեզ դրա"], [3906.0, "համար բան է պետք ա oficeի կամ ցոռնի"], [3909.0, "լեմայի մի հատ ինչ-որ մի բան է պետք, որ"], [3911.0, "ասենք, որ այդպենս կանգառ գոյություն ունի"], [3914.0, "հիմա ինչ եմ ուզում ասեմ"], [3918.0, "among this, among such among such"], [3925.0, "we use we take"], [3932.0, "that is maximally"], [3949.0, "օքեյ այսինքն այդքս ի նկատի ունեմ որ բան"], [3961.0, "anying of it"], [3968.0, "has a finite subcover"], [3980.0, "such such such such such such such"], [3985.0, "such maximally course maximally"], [3991.0, "cover exist by th l"], [3998.0, "th lema"], [4001.0, "սա ձեր համար կարոեմ optional խնդիր դնեմ"], [4004.0, "չեմ ուզում էլի շատս set theoretic լինի"], [4006.0, "այս կուրսը բայց optional խնդիր կլինեմ որ"], [4009.0, "մտածեք աս ոնց է ստացվում lemա equivalent"], [4012.0, "to axim of choice"], [4017.0, "working this out is left as an exercise."], [4024.0, "is left"], [4027.0, "as an exercise"], [4032.0, "լem ով գիտի ինչ բան է"], [4036.0, "շղթաները մաքսիմում տպս չեմ ընդունում"], [4039.0, "հա բայց մի հատ propրթy պետք է verերի"], [4041.0, "անես որ կարաս այդպենսի բաներ ասես այդ"], [4044.0, "property այն որ ցանկացած"], [4046.0, "եթե ունես ցանկացած շղթա"], [4048.0, "քո բազմությունների կամ այդ բան ունես"], [4051.0, "չէ&lt;un ասենք partial օրer ունես այդ"], [4053.0, "partial orderի մեջ, եթե ցանկացած աճող"], [4055.0, "շղթա ունես, այդ աճող շղթայի համար պիտի"], [4058.0, "սուպրեմում գոյություն ունենա կամ"], [4060.0, "ասենքսրեմում չէ, բայց upper bound:"], [4064.0, "Մեր դեպքում պետք է corsening եթե ունենք"], [4066.0, "corsoningներ cսք cսքս այդքսինների համար"], [4070.0, "upperբ է պետք, որ էլի քսա էլի, որ էլի"], [4074.0, "finite subcover չունի ու այդ upperբունդը"], [4079.0, "պարզ է դու կվերցնես այն ոնց որ ամենա"], [4082.0, "քորս տարբերակը ոնց Ոնց որ էդ բոլոր այդ"], [4084.0, "բաների ինտերսները այդ բազմություններից"], [4088.0, "տարբերակը կվերցնես, բայց կներեք"], [4090.0, "unionները այդ բազմությունների ներող"], [4093.0, "բազմություններ ենք վերցնումներ չենք կարա"], [4095.0, "վերցնենք ասենք unionները կվերցնես բայց"], [4099.0, "խնդիրը այն է, որ էդ"], [4102.0, "բանը որ ստանասer bundունդը որ ստանաս դու"], [4106.0, "ստուգես որ finite subcover չունի ու հենց"], [4110.0, "finiteնեսից ես օգտվելու որ finite"], [4112.0, "subcover ունենա ունար այդ subcovery էլ"], [4114.0, "elեմենտները նախորդ սերիաներում"], [4117.0, "կհանդիպեին ու finite սերիաներում որ"], [4119.0, "հանդիպեն դու արդեն ոնց որքոդիշ կստանաս"], [4123.0, "այսինքն այս finiteնեսից ելնելով ես դու"], [4128.0, "այսինքն այնպենց եթե ունես ինչ-որ բան"], [4129.0, "սերիաների հաջորդականություն անվերջ հատ"], [4132.0, "բայց վերջավոր հատ"], [4134.0, "գործող անձինք են հանդիպում քո համար"], [4136.0, "կարևոր է այդ վերջավոր հատ գործող անձինքը"], [4138.0, "նախորդ վերջավորած սերիաներում են"], [4140.0, "հանդիպելու քեզ"], [4143.0, "Հասկանում եք ինչ եմ ասում: Մի խոսքով,"], [4145.0, "այս finiteնից ելնելով այս ցնի լան կարոես"], [4148.0, "այստեղ կիրառես, բայց չեմ ուզում բան"], [4151.0, "անեմ, ինտուիտիվ պարզ է, ասենք, որ սպենց"], [4153.0, "բան պիտի որ գոյություն ունենա, ասենք թե"], [4155.0, "եթե սա հաշվելի լիներ, պիտի կարողանայինք"], [4157.0, "այսպենսի բան սարքեինք:"], [4160.0, "Օքեյ, էս maxքսimal coursoning-ը ոնց որ"], [4164.0, "համապատասխանում է այն ինտուիտիվ"], [4166.0, "գործողությանը, որ ա եկեք յուն սրա մեջից"], [4170.0, "վերցնենք մի հատ: Հիմա Այս յուն"], [4173.0, "փոխարինենք իրա այս ցիլինդրներից մեկով:"], [4176.0, "Եթե այդ փոխարինելուց հետո հանկարծ մենք"], [4179.0, "finite subcover ստացանք, օքեյ լավ, հիմա"], [4182.0, "փորձենք այս մյուսով փոխարինենք, եթե այս"], [4185.0, "մյուսով էլ ստացանք, ըըը նպս կանենք, որ"], [4188.0, "օբշco cover ստանանք: Դրա համար արի"], [4191.0, "ենթադրենք, որ մեկ ինչ-որ մեկով"], [4196.0, "չենք ստանալու finite subcover, հենա"], [4198.0, "կփոխարինեմ ու հենա ես այ սրան, սրա"], [4201.0, "փոխարեն են կդիտարկեմ այն coverը, որտեղ"], [4204.0, "Uյն փոխարինված է այս օրինակ այս"], [4206.0, "վարդագույն ցիլինդրով: Այսինքն փորձում ես"], [4209.0, "բոլորը ինչքան կարող ես մեծացնես"], [4212.0, "reռեկտները replay անես ցիլինդրներով,"], [4214.0, "բայց էլի պահպանես այն հատկությունը, որ"], [4218.0, "սուբcover չունես այնքան ես անում, մինչև"], [4221.0, "պայթի տրաքում էլ չես կարող փոխարինես էլ"], [4224.0, "չես կարող յուն փոխարինես ինչ-որ"], [4226.0, "ցիլինդրով, որ"], [4229.0, "որ Futcover մեկ է չուն չունենաս: Այ դա"], [4232.0, "եմ ուզում, այդ պայթի տրաքել վիճակն եմ"], [4234.0, "ուզում: Այ սա դաքսիմալ պայթող-տրաքող"], [4238.0, "coverն է:"], [4241.0, "Այս օբյեկտի զուտ սահմանումը պարզ է:"], [4246.0, "Հարցեր ունեք, ասենք, որ յունեն վերցնում:"], [4253.0, "Օքեյ հիմա աս է լինելու, որ"], [4259.0, "OK: So since you doesn't have Finance"], [4261.0, "subcover since you since this you this"], [4266.0, "maxim course maximally course"], [4271.0, "u էլի սա bp-ից է վերցրած doesn't have a"], [4275.0, "finance subcover"], [4281.0, "finite subcover"], [4286.0, "there must be an element in it there"], [4288.0, "must be a u"], [4290.0, "U such that is not in P."], [4295.0, "Այսինքն յուն ցիլինդր չի, գոյություն ունի"], [4297.0, "մի հատ ոչ ցիլինդրիկ բազմություն,"], [4299.0, "որովհետև եթե սաղ ցիլինդրեր ինքըֆաբավոր"], [4302.0, "կունենար մեր հիպոթեզի համաձայն սո մի"], [4305.0, "հատը կա որ ցիլինր չի այոչնի ս տեսքի էդ"], [4314.0, "is equ to ասենքցիլինդների"], [4327.0, "օ p vերով գրեմ v1"], [4333.0, "v1 cross v2 cross"], [4337.0, "not cross կներեք ս լրիվ տարել է ցիլիններ"], [4343.0, "vn ասենք չգիտեմ v1ն ս2ն Ok,"], [4352.0, "vi is in P."], [4356.0, "Օքեյ, հիմա ի&lt;kչ ենք, օքեյ, հիմա ի&lt;un&gt;նչ"], [4359.0, "ենք անում, հիմա մաքսիմալությունից"], [4361.0, "ելնելով ես գիտեմ, որ եթե յուն հանենք ու"], [4365.0, "տեղը ասենք V1 դնենք, սա քորսնing է ու"], [4370.0, "ավելի քս է քան UN, հետևաբար"], [4372.0, "մաքսիմալությունից ելնելով ինքը պիտի"], [4374.0, "finance subcover ունենա:"], [4378.0, "Let ui"], [4382.0, "denote ինչ, որ u-ից ից հանում ենք u-ից"], [4387.0, "հանում ենք այ u-ն"], [4389.0, "ու տեղը դնում ենք այս vi-ը ու union vi"], [4395.0, "հետո զույգզույք հատենք հա որ գնալու"], [4399.0, "ոչ թե հատելու ենք այլ հետո հետո"], [4402.0, "ստանալու էինք sub finite subcover մի հատ"], [4406.0, "հետո այդ սաղ finite subcoveroverները"], [4407.0, "իրար վրա ենք գցելու բացի այ էս vերից"], [4411.0, "դա ծածկույթ չի լինի մի բայց միա Օրինակ"], [4414.0, "բանը, որ իրենք չեն ծածկի, լինելու է աս"], [4417.0, "նշանակում է, որ այդ յուն էլ հետները"], [4418.0, "ավելացնենք կլանանք finance subcover"], [4422.0, "բայց օրինակ կարոենք սպենս անենք ասենք"], [4424.0, "վերցնենք ամեն viի համար դե ադին"], [4432.0, "սա չէ կարքավորներ"], [4437.0, "ենք արվեստ ստանալու ըհը"], [4440.0, "ձևերով իրար հատենք ու միավորենք ենք"], [4446.0, "ասացսա էլ հատ էլ հատ էլ պետք չի ոչ մի"], [4449.0, "բան այնտեղ"], [4452.0, "կարաս ուղղակի միավորես հա սաղ իրար գլխի"], [4454.0, "լցրու ըըը ուղղակի էս-երը մեջներից հանի"], [4460.0, "vi-երը որովհետև էս vi-երը մեզ ձեռք չեն"], [4462.0, "տալիս ինքը u-ի մեջ չեն"], [4472.0, "բայց ճիշտ ես ես զգում եմ ինտուիտիվ ճիշտ"], [4474.0, "ես պատկերացնում"], [4477.0, "you are this"], [4484.0, "a cover"], [4491.0, "subset of"], [4493.0, "bp and"], [4497.0, "strict proper coroning proper coronening"], [4504.0, "Hence admits a finance subcover"], [4518.0, "prim i"], [4521.0, "որը 100% այս vi-ը պարունակելու է իրա"], [4524.0, "մեջ, որովհետև եթե առանց էս VI-ի"], [4525.0, "կարանայինք finance subcover սարքեինք,"], [4527.0, "հենա կսարքեինք"], [4531.0, "which has to contain which has to"], [4537.0, "vi as an element բայց սա անպայման չի մեր"], [4544.0, "which has to continue vi as an element"], [4547.0, "օք հիմա նայեք ինչ ենք անում աս սրանք սաղ"], [4556.0, "u prime"], [4559.0, "be the cover the following union այս"], [4563.0, "բանը այս u primրը"], [4567.0, "միավորենք, բայց սրանցից հանենք այ այս"], [4571.0, "բազմությունը, որը մեզ ձեռք չի տալիս:"], [4578.0, "This is not a cover of x"], [4582.0, "is is a cover of is a cover"], [4588.0, "օք ամեն ես բազմություն ինչքա՞նն է"], [4593.0, "ամեն մեկը սա այ սա հանած vi ինչքա՞ն է"], [4596.0, "մեջը չկա տենց"], [4598.0, "vi-ը չկա մեջը բացի vi-ից սաղ ծածկում են"], [4601.0, "չէ նույնիսկ կարող է vi-ի մեջերն էլ"], [4604.0, "ինչ-որ մի բան ծածկեն մարդս բայց is a"], [4607.0, "cover of"], [4609.0, "unions բոլոր viի complementները ծածկում"], [4613.0, "են vi complement"], [4616.0, "i from one to n"], [4619.0, "is a cover of this. is the same as մի"], [4622.0, "հատ այս դեմորգան անենք սա սա ո&lt;unվ է"], [4630.0, "հատում ենք vների"], [4635.0, "վերջում ենք լրացումը վերցնում չէ"], [4640.0, "իսկ ասների հատումն ո&lt;k&gt;վ է"], [4644.0, "ասները ովքեր էին"], [4647.0, "չէ հենց"], [4651.0, "OK, so սա լինում է այստեղ սպս գրեմ u"], [4655.0, "complement this is a cover of complement"], [4659.0, "so եթե վերցնենք sը"], [4665.0, "is a cover of x"], [4678.0, "finite subcover of you"], [4684.0, "of you a contradiction"], [4688.0, "contradicting the choice of"], [4693.0, "the choice of you"], [4702.0, "հասկաց ինչ տեղի ունեցավ"], [4707.0, "Ոնց որ այս յունեցինք, տեղը վարդագույնը"], [4711.0, "դրինք, հետո յունեցինք, տեղը այս"], [4714.0, "մանուշակագույնը դրեցինք ու ամեն մեկով"], [4717.0, "տարբեր քավորներ ստացանք, հիմա այդ"], [4720.0, "քավները նենց են, որ օքեյ աս ամեն մեկը մի"], [4724.0, "բան չի ծածկում ասենք այն մանուշակագույնը"], [4726.0, "քավորը մանուշակագույնը չի ծածկում"], [4729.0, "եթե աս V2-ը հանես այս V1-ին համապատասխան"], [4734.0, "խանող coverը, եթե V1-ը հանես աս V1-ը չի"], [4737.0, "ծածկում, բայց այդքների միավորումը"], [4739.0, "առնվազն այ այս մասերը ու այ մասերը"], [4743.0, "ծածկում են, մենակ յուն կարող է չծածկեն ս"], [4746.0, "ստացվում է, որ հետներն էլ մի հատ յու"], [4747.0, "ավելացնես, պրծնում ես"], [4756.0, "օքեյ հարցեր էր:"], [4768.0, "Օքեյ, լավ, եկեք ուրեմնքով"], [4771.0, "ապացուցենք proof of ticken of the"], [4789.0, "Սա պետք չի"], [4796.0, "it's enough by by Alexander theem"], [4812.0, "հատ Տիխնովից առաջ հեսա Տիխնովը կանենք"], [4814.0, "ուղղակի ուզում եմ ցույց տամ այս"], [4815.0, "Ալեքսանդրի թեորեմը ինչքան է տրիվացնում"], [4819.0, "կոմպակտության ցույց տալը"], [4822.0, "application մի հատ սենց easy application"], [4843.0, "one is compact"], [4850.0, "Օքեյ, հիշում եք սա բաժանում էինք բան"], [4853.0, "այնտեղ խելոք ապացույց էր քյունիգիլեմայի"], [4856.0, "հիման վրա օքեյ հիմա եկեք մի հատ տրիալ"], [4859.0, "ապացույց տանք բանի այս ալեքսանդրից"], [4862.0, "ելնելով մի հատ preբasիս ասեք որ բase"], [4867.0, "ասեք մի հատ էս տոպոլոգիայի համար"], [4872.0, "ինտերվալները վերցր բացի"], [4874.0, "բաներով pointով"], [4878.0, "pointով օքեյ այսինքնբիսները"], [4882.0, "բաց ինտերվալներն են այդ բեիս է կազմում"], [4885.0, "բայց prebase եթե ուզում ես ավելի մեծ"], [4888.0, "բազմություններով կարո վերցնես մինուս"], [4890.0, "անվերջ ինտերվալները ու b պանվերջ"], [4893.0, "ինտերվալները չէ կողմը"], [4900.0, "So ok"], [4904.0, "is compact then the intervals of the"], [4916.0, "0 a and"], [4923.0, "one form prebase"], [4931.0, "So take a cover take cover of 0 one"], [4939.0, "with such intervals"], [4943.0, "take a cover of zer with such intervals"], [4948.0, "finite subcover ստալու"], [4955.0, "supprեմum a ու inf b-"], [4959.0, "Օքեյ դեն բայց սուպրեմում կարող է չլինի է"], [4966.0, "կարևորը այն է, որ ինչ-որ a լինեն որ"], [4970.0, "վենայից փոքր լինի տենցերը կան որովհետև"], [4973.0, "քան սի"], [4978.0, "եկեք ս ասենք ասենք"], [4986.0, "A be the supremum of overall"], [4991.0, "A prime"], [4994.0, "such that"], [4997.0, "0 a prime is in"], [5004.0, "օքե ասենք սա կա հիմա"], [5009.0, "ասենք կապ չունի այդ supրիմով վատագույն"], [5013.0, "դեպքում մեկն է բայց այն որ այդ supremumը"], [5017.0, "covered չի աս տիպի բազմություններով"], [5021.0, "so then"], [5023.0, "a is in one"], [5026.0, "so so some"], [5031.0, "in you has to cover it"], [5034.0, "cover it"], [5037.0, "and by definition by definition you has"], [5042.0, "to be of the form can't be of the form"], [5046.0, "can't be of the form"], [5052.0, "zero a prime because then"], [5059.0, "a prime is bigger than a contradicting"], [5063.0, "the definition of a"], [5067.0, "the definition of a ok so thus"], [5074.0, "u is of the form is equ to b"], [5083.0, "and b is less than a"], [5087.0, "well հետո"], [5088.0, "ում սո հիմա ունենք այս a-ը այստեղ"], [5093.0, "ս a-ն է սա զրոն է սմ մեկն է ու ունենք մի"], [5097.0, "հատ բազմություն որ ս a-ին ծածկում է սա"], [5102.0, "b-ն է"], [5104.0, "Բայց այդ ժամանակ այ այս արանքում գոնե մի"], [5107.0, "հատ a prim կլինի, որ որովհետև դե a-ը"], [5110.0, "սուպրեմումն էր, մի հատ a prim կլինի, որ"], [5113.0, "այդ սուպրեմումը այդպենս է սարքվել, ս էլ"], [5116.0, "ինչ-որ a prim կլինի,"], [5119.0, "որ սա սպենս է ու վերջ երկու հատանոց"], [5121.0, "cover գտանք but then but then there is"], [5126.0, "an a prime"], [5129.0, "less than a less than a such Սպասի"], [5134.0, "there is an a prime b ու a-ի արանքը"], [5140.0, "such that 0 a prime is in u so zer"], [5149.0, "a prime and b"], [5153.0, "one is a finite subcover"], [5157.0, "is a finite"], [5170.0, "օքեյ այ հիմա դե լավ եկեք տիխնովը"], [5174.0, "վերջապես ապացուցենք զուտ ուզում էի ցույց"], [5177.0, "տայի որ ինչքան է մարդու կյանքը հեշտանում"], [5180.0, "էլի աս բանից aleսանդրի լայից by"], [5184.0, "alexanders lemaա"], [5187.0, "enough to to take"], [5192.0, "a cover"], [5194.0, "w of x"], [5199.0, "xi i"], [5203.0, "consisting of sets"], [5207.0, "with sets of the form with with sets of"], [5211.0, "the form մի կոորդինատի վրա է"], [5216.0, "սահմանափակում դրած"], [5218.0, "A goes to UI where"], [5223.0, "I is in I ui is open subset"], [5231.0, "of XI"], [5237.0, "Հիմա ես պնդում եմ որ գոյություն ունի"], [5240.0, "այդպիսի այ որ եթե մենակ է այի համար այս"], [5245.0, "բազմությունները վերցնես"], [5247.0, "դա կլինի cover"], [5253.0, "we first note that first note that there"], [5260.0, "is an i"], [5263.0, "such that the sets w i որը ես ասում եմ"], [5269.0, "այն բոլոր u-երն է xi-ից"], [5279.0, "բանը պարունակվում է w-ի մեջ,"], [5283.0, "սա w"], [5286.0, "is a cover of you cover xi cover xi"], [5293.0, "ինչի հակառակ դեպքում ի&lt;kչ կլիներ էր:"], [5306.0, "Եկեք ասենք indeed"], [5314.0, "Հատկեցեք ամեն A-ի համար չէր, ինչ-որ կետ"], [5318.0, "էր բաց թողելու"], [5320.0, "ի՞նչ կանանք այդ կետերը:"], [5323.0, "Դե էլի կլինի ասեմ"], [5326.0, "մարդ ամեն a-ից մի հատ այդպենս կետ"], [5328.0, "կվերցնենք կդնենք իրար գլխի կստանանք"], [5330.0, "չծածկված էլեմենտ otherwise"], [5335.0, "by of choice"], [5338.0, "choice there is an x equ xi"], [5345.0, "such that xi belongs to covery deficitի"], [5352.0, "xi Աած այ այդ coverի դեֆիցիտը,"], [5357.0, "այսինքն այս coverը ամբողջ XI-ը չի"], [5360.0, "լինելու այս Unionը ամբողջ Xi-ը չի"], [5363.0, "լինելու, այդ որը որ չկադից միմի հատ կետ"], [5366.0, "ենք վերցնում ս ենք օգտագործում"], [5376.0, "but then X does not belong to the union"], [5381.0, "of W."], [5384.0, "ասենք W-ն բաղկացած է այս Wi-երից, կոպիտ"], [5388.0, "ասած, եթե սրա մեջից ոչ մեկի մեջ չի"], [5392.0, "խայտառակ ենք լինում, ինքը չի փակվում"], [5397.0, "չէ&lt;un&gt; բիքոզ ասենք ամեն մի Wեմենտը"], [5400.0, "ինչ-որ այս տեսքի"], [5403.0, "տեսքը հետևյալն է ասենք"], [5406.0, "այ այս տեսքի ամեն Wի էլեմենտը, իսկ մենք"], [5410.0, "վերցրել ենք անպենց XI, որ էդ Այնպես x"], [5413.0, "որլուբոյի i10 ինքը այստեղից չի"], [5421.0, "if x is in ս էլ գրեմ մանրամասն"], [5427.0, "which is in w then"], [5431.0, "ui is in i and xi is not in"], [5439.0, "ui so x is not"], [5451.0, "ապացուցեցինք որ իրոք գոյություն ունի"], [5454.0, "սպենց այ որ այ սա cover է"], [5460.0, "by the compactness օ"], [5467.0, "չգիտեմ ս ոնց պա օքեյ եկեք սրա անունը i0"], [5472.0, "set i0 i0 i0"], [5476.0, "cover x i0 indeed otherwise there is"], [5479.0, "anim of choice bl ok now since"], [5486.0, "is compact"], [5490.0, "w i0 has a finance subcover"], [5501.0, "I0 prim"], [5508.0, "the set"], [5511.0, "i թող գնա մի հատ u-ի, որտեղ un is in w"], [5519.0, "i0 կներեք"], [5526.0, "սդ ուղղակի այդ բոլոր կոորդինատները վերցն"], [5531.0, "is a subset of W"], [5537.0, "and it covers"], [5541.0, "it covers"], [5547.0, "ավարտվեց ոնց որ ինչ-որ մի հատ կոորդինատ"], [5551.0, "բան արեցինք կփորձեմ սա մի տեղ հեսա"], [5555.0, "այս նկարը այստեղ պիտի շուտ նկարեի ասենք"], [5563.0, "Այս մերն են, էս չգիտեմ մեր x-երն են,"], [5567.0, "xi-երն են, xա-երն են տարբեր,"], [5572.0, "հիմա ասենք վերցրեցինք մի հատ զրո գտանք,"], [5575.0, "եկեք կարմիր նկարենք I0,"], [5579.0, "որ էս զրոյի վրայի I0-ով անցնող ցիլինները"], [5586.0, "եկեք այս 0-ն ա։"], [5589.0, "այնպենես, որ այս Xi0-ի վրայով անցնող"], [5591.0, "ցիլինդրները ծածկույթ են իրանից"], [5596.0, "Ոնց կծեմ: Օքեյ, այ այս ցիլինդրները, որ"], [5607.0, "այ այս ցիլինդրները, որ նայես, իրանցից"], [5609.0, "ծածկույթ են ներկայացնելու:"], [5619.0, "Մի հատ վառ գույն վերցնենք"], [5627.0, "չգիտեմ սրա միտք երևում է ընդհանրապես այս"], [5630.0, "նկարից թե չէ"], [5632.0, "օքեյ ասենք նպս են ենք վերցնում որ այս"], [5634.0, "հենցի վրա այս բաները այս ոնց որ այս"], [5638.0, "ինտերվալները որ դու այս ցիլինդրներից"], [5640.0, "ստանում ես, ծածկույթ են իրանից"], [5642.0, "ներկայացնում, դրանց մեջից, որֆ վերջավոր"], [5645.0, "հատ ինտերվալ վերցնես, այս ցիլինդրները"], [5648.0, "պիտի ծածկույթ հանդիսանան ամբողջ պրոդկտի"], [5652.0, "Երևի այս կանաչ գույնը լավը չէր, հեսա մի"], [5654.0, "հատ ուրիշ գույն փորձեմ ընտրել, որ"], [5676.0, "գիտեմ այս հատ պատկերացնվում է"], [5682.0, "ոնց որ որ մի"], [5684.0, "հատի վրա բոլոր ցիլինդրներ կարաս ստանաս,"], [5687.0, "որ այդ սաղ տրուբեն փակում են, էդ սաղ էս"], [5690.0, "գիծը փակում են, ուրեմն այդ ցիլինդրներից"], [5692.0, "վերջավոր հատը, որ ստանում ես, որ այդ"], [5694.0, "գիծը փակում ա, էդ ցիլինդրներից վերջավոր"], [5696.0, "հատ այդ գիծը փակող ցիլինդրները որ"], [5700.0, "վերցնես, իրենք կլինեն վերջավոր ծածկույթ"], [5704.0, "ամբողջ տարածության համար:"], [5709.0, "հաջորդ դասին էլ ցանցեր կպատմեմ, նենց"], [5713.0, "կպատմեմ, որ որոնք փոխ փոխարինում են"], [5718.0, "այս գեներալ տոպոլոգիական"], [5719.0, "տարածությունների համար դեպքում"], [5723.0, "ու դրանով կավարտենք"], [5726.0, "հարցեր ունե՞ք էսօրվանից"], [5729.0, "մի հատ քանի ես բան եմ անում մտածեք"], [5732.0, "ընդհանուր էլ մի հատ նորից կարելի է"], [5734.0, "հա մի հատ վրայով անցնենք հա"], [5739.0, "բանը հասկացա որ թույլ է տալիս մեզ մեզ"], [5742.0, "սաբեյսիքներով վերցնենք ու պրջոմ քո քո"], [5744.0, "ուզած բեիկicները, դու ընտրում ես"], [5747.0, "քոփիբase սեթերը ինքը ասում է դրանցով որ"], [5750.0, "նայես լավ է հիմա իմ ուզած prebeasները մի"], [5753.0, "կոորդինատի վրա սահմանափակում դնող"], [5756.0, "բազմություններն էին"], [5758.0, "հիմա այդ դրանցով վերցնում ենք մի հատ"], [5761.0, "ծածկույթ անունը w ենք դնում"], [5763.0, "մի րոպե պետք հասաբե"], [5767.0, "տպս ենք սահմանել productology"], [5771.0, "որբիս չի լինի"], [5774.0, "ինչի&lt;unբեիս չիբիսը լինում է վերջավոր"], [5776.0, "կոորդինատում սահմանափակում է պարզ"], [5782.0, "մի հատ նորից"], [5784.0, "մի կոորդինատի վրա սահմանափակում"], [5787.0, "հիմա մենք այսինքն ասենք չէ ու մեկ անգամ"], [5794.0, "ու1 անգամ մնացած սաղ աշխարհը մնացած"], [5797.0, "սահայերը Ես մտածեցի մենակ U1 վրա"], [5800.0, "սահմանափակով, լավ է դա հա, նախաբանում"], [5804.0, "էս notթation էս էր, որ նշանակում ա ես"], [5808.0, "վերցնում ու մնացած-ների համար x ես"], [5815.0, "սրա սահմանումը էդ էր, որ it"], [5819.0, "հա օքեյ հիմա այս տիպի, այսինքն"], [5822.0, "ցիլիններով երկու հատի համար այ սպենս"], [5824.0, "բազմություններով ենք վերցնում ծածկույթ"], [5827.0, "երկու հատի համար տեսքը այդպենս է: Օքեյ,"], [5829.0, "էդ դրանցով ծածկույթ վերցրեցինք, դրա"], [5832.0, "անունը W ենք դնում: Հիմա ես պնդում եմ,"], [5834.0, "որ գոյություն ունի մի հատ կոորդինատ,"], [5837.0, "որ չեմ ասում բոլորը, էդի ճիշտ չի լինի:"], [5840.0, "Գոյություն ունի մի հատիկ կոորդինատ գոնե,"], [5844.0, "որ եթե էդ ոնց որ էդ ինտերվալները վերցնես"], [5847.0, "էդ մենակ սահմանափակումները վերցնես էդ"], [5852.0, "իրենք էդ կոորդինատը ծածկելու են:"], [5856.0, "Մի հատ նորից"], [5859.0, "Այս W0-ն"], [5861.0, "անպսի բան է, որ բոլոր եթե վերցնես այն"], [5864.0, "բաց բազմությունները, որոնք հանդիսանում"], [5867.0, "են սահմանափակում է այդ կոորդինատի համար"], [5870.0, "այս ծածկույթի մեջ,"], [5877.0, "այդ դրանք լինելու են, ծածկելու են xi-ը"], [5882.0, "մեր մոտ w-ն ո՞վ էր, x-ն ո՞վ էր մի հատ"], [5886.0, "x-ն W-ն այն ծածկույթն էր, որը բաղկացած է"], [5890.0, "այս prebasic open setից,"], [5899.0, "այսինքն մենք ունենք ոնց որ"], [5903.0, "գոնե մի հատ բազմություն պիտի ոնց որ մի"], [5905.0, "կոորդինատով անվերջ լոջվի, հա՞։"], [5910.0, "Ըըը ինչի՞ լոջվի, ծածկվի, ասում եմ, գոնե"], [5914.0, "մի հատ ինդեքս կա, ասենք ասենք ոնց որ x"], [5917.0, "y-ի արտադրյալ է վերցրու երկու հատ ինդեքս"], [5919.0, "է մեկ երկու ասում եմ կամ x-ը x-ը կամ y-ը"], [5924.0, "ոնց որ դրանց արտադրյալից մեկն ու մեկը"], [5927.0, "էդ մեկն ու մեկը ինդեքսների նենց պիտի"], [5929.0, "լինի որ եթե էդ դրա վրայի ցիլինդրները"], [5933.0, "վերցնես ծածկի"], [5937.0, "կոպիտ ասած այսպենց ասում եմ օրինակ"], [5941.0, "էս նկարի մեջ որ ասում եմ գոյություն ունի"], [5943.0, "մի հատ y0 որ բանը, որ եթե այդ Y0-ն հատող"], [5949.0, "այս տիպի ցիլինդրները վերցնես, որ"], [5951.0, "սահմանափակումը մենակ այդ կոորդինատի վրա"], [5954.0, "է, մնացած տեղերը ինքը ազատ է թողած: Այդ"], [5958.0, "կոորդինատի վրանափակումները վերցնես,"], [5961.0, "այսինքն լինելու է մի հատ ինտերվալ"], [5963.0, "այստեղ, մի հատ ինտերվալ այստեղ, մի հատ"], [5965.0, "ինտերվալ էլ այստեղ: Այդ ինտերվալները"], [5967.0, "ծածկելու են աս"], [5971.0, "ինդեքսում դրած տարածությունը:"], [5977.0, "Մի հատ հա ուզում ես երկու հատի համար"], [5980.0, "նկարեմ, դե շատ դժվար է նկարելը,"], [5986.0, "այսինքն սպենս"], [5988.0, "կոորդինատներից ինչ-որ մեկի համար"], [5992.0, "բոլոր սահմանափակումները պիտի ծածկեն"], [5995.0, "Ապրես հա աս սրանք աս նույն Wերը աս նույն"], [6000.0, "ձեր կառուցած հեսա ուր է ուր է"], [6004.0, "Այ սրանք են, ս-ն է ու wy-ն է, հիշում եք"], [6016.0, "բա հենց այդ նույն բազմություններն են,"], [6018.0, "ուղղակի հիմա ցիլինդներ ունենք, ոչ թե"], [6026.0, "օքեյ հիմա ասածս այն է, որ գոնե մի հատ"], [6030.0, "ինդեքս պետք է գոյություն ունենա, որ այ"], [6032.0, "էդ բազմությունները, որ էդ ինդեքսի վրի"], [6034.0, "սահմանափակումները ծածկեն էդ ինդեքսի վրի"], [6037.0, "բազմությունը տարածությունը ինչի՞,"], [6040.0, "որովհետև եթե բոլոր այերի համար հակառակ"], [6043.0, "դեպքում եթե բոլոր այերի համար սրանք թերի"], [6047.0, "ծածկույ չլինեին էդ ի՞նչ է հաշվում"], [6049.0, "ծածկույթ չէ նշանակում է ադ xa-ից որ"], [6052.0, "հանես իրենց միավորումը"], [6056.0, "x-ից որ հանես իրենց միավորումը կստանաս"], [6060.0, "ոչ դատարկ"], [6062.0, "Ու քանի որ ոչ դատարկ է, կարող եսիմ"], [6063.0, "ofչoysով մի հատ մեջից էլեմենտ վերցնես"], [6070.0, "այդ էլեմենտները որ իրար գլխի դնես"], [6072.0, "այսինքնով ֆունկցիա ստանասերից"], [6075.0, "ինդեքսների բազմությունից դեպի"], [6078.0, "մի խոսքով ստանաս ֆունկցիան չէ ֆունկցիան"], [6082.0, "որ ստանաս ինքը ոչ մի"], [6086.0, "ինքը ծածկված չի լինի"], [6087.0, "ինքը ծածկված չի լինելու ոչ մի"], [6088.0, "բազմությունով W-ից ու գրեցի այստեղ ինչի,"], [6092.0, "որովհետև եթե ծածկված լիներ այստեղ այս այ"], [6096.0, "որով որ ծածկված լիներ այդ ինդեքսի վրա"], [6098.0, "խայտառակ էինք լինելու"], [6100.0, "հիմա այդ կոորդինատում մենք ընտրում ենք"], [6102.0, "այդ բաց բազմերը"], [6105.0, "որովհետև այդտեղ կոմպակտի որովհետև ինքն է"], [6110.0, "ու վերջ ու այդ բաց բազմություններից ինքը"], [6112.0, "վերջավոր ենթածածկույթ է ու այդ վերջավոր"], [6116.0, "ենթածածկույթը գիտենք որ ինքը մենակ այդ"], [6118.0, "մի սահմանափակումը ունի էր: Ուզում եմ"], [6121.0, "եթե սրա վր ցիլինդրները սարքենք, այ այս"], [6125.0, "սահմանափակումներով ցիլինդրները սարքենք,"], [6127.0, "մենք գիտենք, որ դա մեր օրիգինալ w-ից էր:"], [6133.0, "Ու վերջ, ստացանք ենթածկույթ:"], [6136.0, "Այս պահը նույն ապացույցն է, ինչ որ"], [6137.0, "այստեղ որ խոսացինք է ես ծիխնվից առաջ"], [6140.0, "ասեցի note that in case x cross y above,"], [6145.0, "if we could assume that W consisted of"], [6154.0, "դա սխալ է էլի մի քիչ գրած then this is"], [6157.0, "already a finite cover so it be done"], [6159.0, "պետք է գրեմ or"], [6167.0, "երկուսից մեկը էլի"], [6170.0, "prim y"], [6172.0, "is a finite cover so be"], [6183.0, "Իմ խորհուրդն է ձեզ մի հատ փորձեք չգիտեմ"], [6185.0, "երկու հատ պրոդակտի համար ինքներդ անեք"], [6189.0, "ձեռով էլիք"], [6191.0, "համար ձեռով փորձեք աս ապացույցը անել որ"], [6194.0, "մի հատ զգաք ինչ եմ անում որովհետև կար"], [6201.0, "լավ առայժմ ուրեմն մինչև ուրբաթ"]], "pause_min": 2.0}</script>
+<script>
+const TLD = JSON.parse(document.getElementById('tl-data').textContent);
+const TLS = document.getElementById('timeline'), DUR = +document.body.dataset.duration;
+const ov = TLS.querySelector('.tl-over'), mc = TLS.querySelector('.tl-main');
+const AX_H = 18, SP_H = 130, GAP_H = 15, TX_H = 22, MAIN_H = AX_H + SP_H + GAP_H + TX_H, OV_H = 56;
+const ZL = [0.5, 1, 2, 4, 8, 16, 32, 80, 160, 320];        // zoom levels, px per second
+const GAP_MIN = 1.5;                                       // shortest uncovered piece of a pause that gets marked
+const COL = { safe: '#D90012', judg: '#F2A800', mine: '#0033A0', gap: '#FFD60A' };
+const FILL = { safe: 'rgba(217,0,18,.33)', judg: 'rgba(242,168,0,.40)', mine: 'rgba(0,51,160,.45)' };
+const rootCss = getComputedStyle(document.documentElement);
+const FG = rootCss.getPropertyValue('--fg').trim(), MUTED = rootCss.getPropertyValue('--muted').trim();
+const ROWS = TLD.rows, PAUSES = TLD.pauses;
+const TL = { t0: 0, z: 5, bar: 0, sel: null, on: false, focus: false };
+let gapList = [], md = null, lineAt = -2, pending = false;
+const pps = () => ZL[TL.z], viewW = () => mc.clientWidth, vspan = () => viewW() / pps();
+const clampT0 = t => Math.max(0, Math.min(Math.max(0, DUR - vspan()), t));
+const xOf = t => (t - TL.t0) * pps();
+const hms = t => { t = Math.max(0, Math.floor(t)); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
+const kindOf = c => c.added || changed(c) ? 'mine' : ((TLD.kinds[c.host.id] || {}).kind === 'judgment' ? 'judg' : 'safe');
+const tlMsg = t => { TLS.querySelector('.tl-msg').textContent = t; };
+function rowAt(t) {                                        // the last transcript line starting at or before t
+  let lo = 0, hi = ROWS.length - 1, ans = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (ROWS[m][0] <= t) { ans = m; lo = m + 1; } else hi = m - 1; }
+  return ans;
+}
+function uncovered(s, e, cs) {                             // the parts of [s, e] that no cut covers (cs sorted)
+  const out = [];
+  let a = s;
+  for (const [x, y] of cs) {
+    if (y <= a) continue;
+    if (x >= e) break;
+    if (x > a) out.push([a, x]);
+    a = Math.max(a, y);
+    if (a >= e) break;
+  }
+  if (e > a) out.push([a, e]);
+  return out;
+}
+function gaps() {   // per pause (its silences, joined across hums): what no cut covers, as [start, end, silent s, hum]
+  const cs = all().map(c => [c.s, c.e]).sort((a, b) => a[0] - b[0]), out = [];
+  for (const g of PAUSES) {
+    let m = null;
+    const flush = () => { if (m && m[2] >= GAP_MIN) out.push(m); m = null; };
+    for (const [s, e] of g) for (const [a, b] of uncovered(s, e, cs)) {
+      if (m && !cs.some(([x, y]) => x < a && y > m[1])) { m[1] = b; m[2] += b - a; m[3] = true; }   // across a hum
+      else { flush(); m = [a, b, b - a, false]; }                                                   // a cut in between
+    }
+    flush();
+  }
+  return out;
+}
+const cache = new Map();                                   // decoded tiles, the 64 used last
+function tile(lv, i) {
+  const k = lv.src + i;
+  let im = cache.get(k);
+  if (im) { cache.delete(k); cache.set(k, im); return im; }
+  im = new Image();
+  im.onload = drawSoon;
+  im.onerror = () => tlMsg('Could not load ' + im.src + ' - rebuild the page with find_edit_points.py');
+  im.src = lv.src + String(i).padStart(4, '0') + '.jpg';
+  cache.set(k, im);
+  while (cache.size > 64) cache.delete(cache.keys().next().value);
+  return im;
+}
+function fit(cv, h) {
+  const d = window.devicePixelRatio || 1, w = cv.clientWidth;
+  if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+  const g = cv.getContext('2d');
+  g.setTransform(d, 0, 0, d, 0, 0);
+  return g;
+}
+function drawSoon() { if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; draw(); }); } }
+function drawMain() {
+  const g = fit(mc, MAIN_H), W = viewW(), p = pps(), t0 = TL.t0, t1 = t0 + W / p;
+  g.clearRect(0, 0, W, MAIN_H);
+  g.font = '11px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  const step = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800].find(s => s * p >= 90) || 3600;
+  for (let t = Math.ceil(t0 / step) * step; t <= t1; t += step) { const x = xOf(t); g.fillRect(x, AX_H - 5, 1, 5); g.fillText(hms(t), x + 3, 2); }
+  const lv = p > TLD.tiles.lo.px_per_s ? TLD.tiles.hi : TLD.tiles.lo;
+  const xa = Math.max(0, xOf(0)), xz = Math.min(W, xOf(DUR));
+  g.fillStyle = '#000'; g.fillRect(xa, AX_H, xz - xa, SP_H);
+  const i0 = Math.max(0, Math.floor(t0 / lv.tile_s)), i1 = Math.min(lv.n - 1, Math.floor(t1 / lv.tile_s));
+  for (let i = i0; i <= i1; i++) {
+    const im = tile(lv, i);
+    if (im.complete && im.naturalWidth) g.drawImage(im, xOf(i * lv.tile_s), AX_H, Math.min(lv.tile_s, DUR - i * lv.tile_s) * p, SP_H);
+  }
+  if (i1 + 1 < lv.n) tile(lv, i1 + 1);                     // the neighbours, so panning finds them loaded
+  if (i0 > 0) tile(lv, i0 - 1);
+  const box = (a, b) => [xOf(a), Math.max(2, xOf(b) - xOf(a))];
+  g.save(); g.lineWidth = 2; g.setLineDash([6, 4]);
+  TLD.suggestions.forEach((s, i) => {                      // unticked suggestions: dashed orange
+    if (s.e < t0 || s.s > t1) return;
+    const [x, w] = box(s.s, s.e);
+    if (TL.sel && TL.sel.sug === i) { g.fillStyle = 'rgba(242,168,0,.22)'; g.fillRect(x, AX_H, w, SP_H); }
+    g.strokeStyle = COL.judg; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  plan.filter(c => c.removed).forEach(c => {                // removed planned cuts: dashed red
+    if (c.e < t0 || c.s > t1) return;
+    const [x, w] = box(c.s, c.e);
+    g.strokeStyle = COL.safe; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  g.restore();
+  all().forEach(c => {
+    if (c.e < t0 || c.s > t1) return;
+    const k = kindOf(c), [x, w] = box(c.s, c.e);
+    g.fillStyle = FILL[k]; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = COL[k]; g.fillRect(x, AX_H, 3, SP_H); g.fillRect(x + w - 3, AX_H, 3, SP_H);
+    if (w > 46) { g.fillStyle = '#fff'; g.font = '600 11px system-ui, sans-serif'; g.fillText('Cut ' + c.n, x + 6, AX_H + 4); }
+    if (c.warn && c.warn.length) { g.fillStyle = '#fff'; g.fillRect(x, AX_H + SP_H - 4, w, 4); }
+  });
+  const sc = TL.sel && TL.sel.c;
+  if (sc && !(sc.e < t0 || sc.s > t1)) {
+    const [x, w] = box(sc.s, sc.e);
+    g.save(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.setLineDash([4, 3]); g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2); g.restore();
+  }
+  if (md && md.kind === 'new') {                           // the cut being drawn
+    const [x, w] = box(Math.min(md.t, md.t1), Math.max(md.t, md.t1));
+    g.fillStyle = FILL.mine; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = '#fff'; g.fillRect(x, AX_H, 2, SP_H); g.fillRect(x + w - 2, AX_H, 2, SP_H);
+  }
+  const gy = AX_H + SP_H + 2;
+  gapList.forEach(([s, e, silent, hum]) => {               // silences no cut covers (the label counts silence only)
+    if (e < t0 || s > t1) return;
+    const [x, w] = box(s, e);
+    g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(x, gy, w, GAP_H - 4); g.globalAlpha = 1;
+    const txt = silent.toFixed(1) + ' s' + (hum ? ' + hum' : '');
+    if (w > (hum ? 66 : 38)) { g.fillStyle = '#1d1d1f'; g.font = '10px system-ui, sans-serif'; g.fillText(txt, x + 3, gy); }
+  });
+  const ty = AX_H + SP_H + GAP_H + 3;
+  g.font = '12px system-ui, sans-serif';
+  for (let i = Math.max(0, rowAt(t0)); i < ROWS.length && i >= 0; i++) {
+    const x = xOf(ROWS[i][0]);
+    if (x > W) break;
+    const xn = i + 1 < ROWS.length ? xOf(ROWS[i + 1][0]) : W;
+    g.fillStyle = MUTED; g.fillRect(x, ty - 2, 1, TX_H - 4);
+    if (p < 8 || xn - x < 24) continue;                   // too little room for words at this zoom
+    g.save(); g.beginPath(); g.rect(x, ty - 2, xn - x - 4, TX_H); g.clip();
+    g.fillStyle = FG; g.fillText(ROWS[i][1], x + 3, ty); g.restore();
+  }
+  const xb = xOf(TL.bar);
+  if (xb >= -2 && xb <= W + 2) { g.fillStyle = '#000'; g.fillRect(xb - 2, AX_H - 3, 5, SP_H + GAP_H + 3); g.fillStyle = '#fff'; g.fillRect(xb - 1, AX_H - 3, 3, SP_H + GAP_H + 3); }
+}
+function drawOver() {
+  const g = fit(ov, OV_H), W = ov.clientWidth, k = W / DUR, L = TLD.loud;
+  g.clearRect(0, 0, W, OV_H);
+  g.fillStyle = MUTED; g.globalAlpha = 0.6;
+  for (let x = 0; x < W; x++) {                            // loudness, the loudest second under each pixel
+    let m = 0;
+    for (let i = Math.floor(x / k); i < Math.max(Math.floor(x / k) + 1, Math.floor((x + 1) / k)) && i < L.length; i++) m = Math.max(m, L[i]);
+    const h = m / 100 * 17; g.fillRect(x, 31 - h, 1, h);
+  }
+  g.globalAlpha = 1;
+  all().forEach(c => { g.fillStyle = COL[kindOf(c)]; g.fillRect(c.s * k, 3, Math.max(1, (c.e - c.s) * k), 9); });
+  gapList.forEach(([s, e, silent]) => { g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(s * k, 33, Math.max(1, (e - s) * k), 8); });
+  g.globalAlpha = 1;
+  g.font = '10px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  for (let t = 600; t < DUR; t += 600) { g.fillRect(t * k, OV_H - 12, 1, 12); g.fillText(hms(t).replace(/:00$/, ''), t * k + 3, OV_H - 12); }
+  g.strokeStyle = FG; g.lineWidth = 2; g.strokeRect(TL.t0 * k + 1, 1, Math.max(4, vspan() * k - 2), OV_H - 15);
+  g.fillStyle = COL.safe; g.fillRect(TL.bar * k - 1, 0, 2, OV_H - 13);
+}
+function draw() {
+  drawMain(); drawOver();
+  TLS.querySelector('.tl-now').textContent = tc(TL.bar);
+  const s = vspan();
+  TLS.querySelector('.tl-zl').textContent = (s < 120 ? Math.round(s) + ' s' : (s / 60).toFixed(s < 600 ? 1 : 0) + ' min') + ' on screen';
+  const i = rowAt(TL.bar);
+  if (i !== lineAt) {                                      // the transcript line under the bar, in full
+    lineAt = i;
+    const r = ROWS[i], n = ROWS[i + 1];
+    TLS.querySelector('.tl-line').innerHTML = r ? `<span class="t">${hms(r[0])}</span>${esc(r[1])}` +
+      (n ? `   <span class="nx"><span class="t">${hms(n[0])}</span>${esc(n[1])}</span>` : '') : '';
+  }
+}
+function renderSel() {
+  const box = TLS.querySelector('.tl-selbox'), s = TL.sel;
+  if (s && s.c && s.c.added && !added.includes(s.c)) TL.sel = null;   // deleted elsewhere on the page
+  if (!TL.sel) { box.innerHTML = '<span class="note">Click a cut to select it; drag across the spectrogram to draw a new one.</span>'; return; }
+  if (s.sug !== undefined) {
+    const g = TLD.suggestions[s.sug];
+    box.innerHTML = `<span class="tag" style="color:${COL.judg}">Suggested, not ticked</span><span class="times">${tc(g.s)} → ${tc(g.e)}   (${(g.e - g.s).toFixed(1)} s)</span>` +
+      `<button data-do="adds">Add as a cut</button><span class="why">${esc(g.reason)}</span>`;
+    return;
+  }
+  const c = s.c, k = kindOf(c), info = c.host && !c.added ? TLD.kinds[c.host.id] : null;
+  const name = c.removed ? 'Removed cut' : (c.added ? 'New Cut ' : 'Cut ') + c.n;
+  const tag = c.removed ? '' : c.added ? 'yours' : changed(c) ? 'changed by you' : k === 'judg' ? 'your call' : 'safe';
+  box.innerHTML = `<b>${name}</b><span class="tag" style="color:${COL[k]}">${tag}</span>` +
+    `<span class="times">${c.removed ? `planned ${tc(c.s0)} → ${tc(c.e0)}` : `${tc(c.s)} → ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)`}</span>` +
+    (changed(c) && !c.removed ? `<span class="was">was ${tc(c.s0)} - ${tc(c.e0)}</span>` : '') +
+    (c.removed ? '' : '<button data-do="s">Start = bar</button><button data-do="e">End = bar</button>') +
+    (!c.added && changed(c) && !c.removed ? '<button data-do="reset">Reset</button>' : '') +
+    (c.added ? '<button data-do="del">Delete</button>' : `<button data-do="rm">${c.removed ? 'Restore cut' : 'Remove cut'}</button>`) +
+    (c.warn && c.warn.length ? `<span class="warn">${c.warn.join(', ')}${OVERLAP}</span>` : '') +
+    (info ? `<span class="why">${esc(info.reason)}</span>` : '');
+}
+window.tlRefresh = () => {                                 // after every change to the cut list (renderAll)
+  gapList = gaps();
+  const n4 = gapList.filter(g => g[2] >= 4).length, nh = gapList.filter(g => g[3]).length;
+  TLS.querySelector('.tl-gaps').textContent = `${gapList.length} silences no cut covers (${n4} of 4 s or more, ${nh} split by a hum)`;
+  renderSel(); drawSoon();
+};
+function tlTouch() { TL.focus = true; focusEl = null; tlMsg(''); }   // keys now go to the timeline, not a card
+function keepBar() { if (TL.bar < TL.t0 || TL.bar > TL.t0 + vspan()) TL.t0 = clampT0(TL.bar - 0.1 * vspan()); }
+function center(t) { TL.t0 = clampT0(t - 0.35 * vspan()); }
+function zoomAt(z, t, x) { TL.z = Math.max(0, Math.min(ZL.length - 1, z)); TL.t0 = clampT0(t - x / pps()); drawSoon(); }
+function tlLabel() { TLS.querySelector('.tl-play').textContent = TL.on && !A.paused ? 'Pause' : 'Play'; }
+function tlLoop() {
+  if (!TL.on || A.paused) return;
+  let t = A.currentTime;
+  if (TLS.querySelector('.tl-skip').checked) { const c = all().find(c => t >= c.s && t < c.e); if (c) { A.currentTime = c.e; t = c.e; } }
+  const seen = TL.bar >= TL.t0 && TL.bar <= TL.t0 + vspan();   // scrolled away from the bar: look around, don't pull back
+  TL.bar = t;
+  if (seen && (t > TL.t0 + 0.92 * vspan() || t < TL.t0)) TL.t0 = clampT0(t - 0.1 * vspan());   // page along
+  draw();
+  requestAnimationFrame(tlLoop);
+}
+function tlPlay() {
+  if (cur) { A.pause(); label(cur, false); cur = null; }   // one player: a card that was playing stops
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = 'Playing the timeline';
+  keepBar();
+  TL.on = true;
+  A.currentTime = TL.bar;
+  A.play().then(() => { tlLabel(); requestAnimationFrame(tlLoop); })
+          .catch(err => { if (err.name !== 'AbortError') tlMsg('Could not play: ' + err.message); });
+}
+window.tlStop = () => { TL.on = false; tlLabel(); };
+A.addEventListener('pause', tlLabel);
+const evT = (ev, cv) => (ev.clientX - cv.getBoundingClientRect().left);
+function hit(ev) {                                          // what is under the pointer on the spectrogram
+  const x = evT(ev, mc), t = TL.t0 + x / pps();
+  let best = null, bd = 7;
+  all().forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(xOf(c[k]) - x); if (d <= bd) { bd = d; best = { edge: k, c }; } }));
+  if (best) return best;
+  const c = all().find(c => t >= c.s && t < c.e) || plan.find(c => c.removed && t >= c.s && t < c.e);
+  if (c) return { c };
+  const i = TLD.suggestions.findIndex(s => t >= s.s && t < s.e);
+  return i >= 0 ? { sug: i } : null;
+}
+mc.addEventListener('pointerdown', ev => {
+  tlTouch(); mc.setPointerCapture(ev.pointerId);
+  const h = hit(ev), t = TL.t0 + evT(ev, mc) / pps();
+  md = h && h.edge ? { kind: 'edge', c: h.c, k: h.edge } : { kind: 'press', x: ev.clientX, t, t1: t, h };
+  if (md.kind === 'edge') TL.sel = { c: h.c };
+});
+mc.addEventListener('pointermove', ev => {
+  if (!md) { const h = hit(ev); mc.style.cursor = h && h.edge ? 'col-resize' : h ? 'pointer' : 'crosshair'; return; }
+  const t = TL.t0 + evT(ev, mc) / pps();
+  if (md.kind === 'edge') { setEdge(md.c, md.k, t, false, [0, DUR], TLS.querySelector('.tl-msg')); return; }
+  if (md.kind === 'press' && Math.abs(ev.clientX - md.x) > 4) md.kind = 'new';
+  if (md.kind === 'new') { md.t1 = Math.max(0, Math.min(DUR, t)); drawSoon(); }
+});
+mc.addEventListener('pointerup', () => {
+  if (!md) return;
+  const m = md;
+  md = null;
+  if (m.kind === 'edge') { save(); tlRefresh(); return; }
+  if (m.kind === 'new') {
+    const a = snap(Math.min(m.t, m.t1)), b = snap(Math.max(m.t, m.t1));
+    if (b - a >= 0.2) { const c = { id: ++uid, host: null, s: a, e: b, added: true }; added.push(c); TL.sel = { c }; renderAll(); save(); }
+    else drawSoon();
+    return;
+  }
+  TL.bar = m.t;                                            // a click: the bar goes there, and what is under it is selected
+  if (TL.on && !A.paused) A.currentTime = m.t;
+  TL.sel = m.h ? (m.h.c ? { c: m.h.c } : { sug: m.h.sug }) : null;
+  tlRefresh();
+});
+let wacc = 0;
+mc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer; Shift+wheel or a sideways swipe scrolls
+  if (ev.ctrlKey) {
+    ev.preventDefault();
+    wacc += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;
+    if (Math.abs(wacc) < 50) return;
+    const dir = wacc < 0 ? 1 : -1;
+    wacc = 0; tlTouch();
+    zoomAt(TL.z + dir, TL.t0 + evT(ev, mc) / pps(), evT(ev, mc));
+    return;
+  }
+  const dx = ev.shiftKey ? ev.deltaY : ev.deltaX;
+  if (!dx) return;
+  ev.preventDefault();
+  TL.t0 = clampT0(TL.t0 + (ev.deltaMode === 1 ? dx * 33 : dx) / pps()); drawSoon();
+}, { passive: false });
+let ovDrag = false;
+const ovMove = ev => { TL.t0 = clampT0(evT(ev, ov) / ov.clientWidth * DUR - vspan() / 2); drawSoon(); };
+ov.addEventListener('pointerdown', ev => { tlTouch(); ovDrag = true; ov.setPointerCapture(ev.pointerId); ovMove(ev); });
+ov.addEventListener('pointermove', ev => { if (ovDrag) ovMove(ev); });
+ov.addEventListener('pointerup', () => { ovDrag = false; });
+const btn = (cls, f) => TLS.querySelector(cls).addEventListener('click', ev => { tlTouch(); ev.currentTarget.blur(); f(); });
+btn('.tl-play', () => (TL.on && !A.paused) ? A.pause() : tlPlay());
+btn('.tl-left', () => { TL.t0 = clampT0(TL.t0 - 0.8 * vspan()); drawSoon(); });
+btn('.tl-right', () => { TL.t0 = clampT0(TL.t0 + 0.8 * vspan()); drawSoon(); });
+let hoverX = null;   // the pointer's x over the spectrogram: keys 1/2 zoom there (the user's ask, 2026-10-22)
+mc.addEventListener('pointermove', ev => { hoverX = evT(ev, mc); });
+mc.addEventListener('pointerleave', () => { hoverX = null; });
+const anchor = () => {
+  if (hoverX !== null) return [TL.t0 + hoverX / pps(), hoverX];
+  const x = xOf(TL.bar); return x >= 0 && x <= viewW() ? [TL.bar, x] : [TL.t0 + vspan() / 2, viewW() / 2];
+};
+const undo = [];   // cuts removed or deleted, newest last: Z brings them back one by one
+function removeSel() {
+  const c = TL.sel && TL.sel.c;
+  if (!c) { tlMsg('Select a cut first (click it), then Delete'); return; }
+  if (c.added) { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; }
+  else if (!c.removed) { c.removed = true; undo.push({ c, kind: 'rm' }); }
+  else { tlMsg('Already removed (Z brings back the last one)'); return; }
+  tlMsg('Removed - Z brings it back'); renderAll(); save();
+}
+function undoRemove() {
+  const u = undo.pop();
+  if (!u) { tlMsg('Nothing to bring back'); return; }
+  if (u.kind === 'del') added.push(u.c); else u.c.removed = false;
+  TL.sel = { c: u.c }; center(u.c.s); tlMsg('Brought back'); renderAll(); save();
+}
+btn('.tl-zin', () => zoomAt(TL.z + 1, ...anchor()));
+btn('.tl-zout', () => zoomAt(TL.z - 1, ...anchor()));
+btn('.tl-add', () => {
+  const s = snap(Math.min(TL.bar, DUR - 1)), c = { id: ++uid, host: null, s, e: snap(s + NEW_LEN), added: true };
+  added.push(c); TL.sel = { c }; keepBar(); renderAll(); save();
+});
+TLS.querySelectorAll('[data-j]').forEach(b => b.addEventListener('click', () => {
+  tlTouch(); b.blur();
+  const fwd = b.dataset.d === '1';
+  if (b.dataset.j === 'gap') {
+    const g = fwd ? gapList.find(g => g[0] > TL.bar + 1.05) : [...gapList].reverse().find(g => g[0] < TL.bar + 0.95);
+    if (!g) { tlMsg(`No uncovered silence ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, g[0] - 1); TL.sel = null; center(g[0]);
+  } else {
+    const cs = all().sort((a, b) => a.s - b.s);
+    const c = fwd ? cs.find(c => c.s > TL.bar + 1.05) : cs.reverse().find(c => c.s < TL.bar + 0.95);
+    if (!c) { tlMsg(`No cut ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, c.s - 1); TL.sel = { c }; center(c.s);
+  }
+  if (TL.on && !A.paused) A.currentTime = TL.bar;
+  tlRefresh();
+}));
+TLS.querySelector('.tl-selbox').addEventListener('click', ev => {
+  const b = ev.target.closest('button');
+  if (!b) return;
+  tlTouch(); b.blur();
+  const s = TL.sel, d = b.dataset.do;
+  if (d === 'adds') {                                      // whole frames inside the suggestion, as Studio cuts are
+    const g = TLD.suggestions[s.sug];
+    const c = { id: ++uid, host: null, s: Math.ceil(g.s * FPS - 1e-6) / FPS, e: Math.floor(g.e * FPS + 1e-6) / FPS, added: true };
+    added.push(c); TL.sel = { c }; renderAll(); save(); return;
+  }
+  const c = s.c;
+  if (d === 's' || d === 'e') setEdge(c, d, TL.bar, true, [0, DUR], TLS.querySelector('.tl-msg'));
+  else if (d === 'reset') { c.s = c.s0; c.e = c.e0; renderAll(); save(); }
+  else if (d === 'rm') { c.removed = !c.removed; if (c.removed) undo.push({ c, kind: 'rm' }); renderAll(); save(); }
+  else if (d === 'del') { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; renderAll(); save(); }
+});
+document.addEventListener('pointerdown', ev => { if (!TLS.contains(ev.target)) TL.focus = false; }, true);
+document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's (the cards are hidden)
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyZ') { ev.preventDefault(); ev.stopPropagation(); undoRemove(); return; }
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  const take = () => { ev.preventDefault(); ev.stopPropagation(); if (tag === 'BUTTON') document.activeElement.blur(); };
+  const c = ev.code;                                        // key positions, so the Armenian layout works too
+  if (c === 'Space') { take(); (TL.on && !A.paused) ? A.pause() : tlPlay(); }
+  else if (c === 'Delete' || c === 'Backspace') { take(); removeSel(); }
+  else if (c === 'KeyZ') { take(); undoRemove(); }
+  else if (c === 'ArrowLeft' || c === 'ArrowRight') {
+    take();
+    TL.bar = Math.max(0, Math.min(DUR, TL.bar + (c === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2)));
+    if (TL.on && !A.paused) A.currentTime = TL.bar;
+    keepBar(); drawSoon();
+  }
+  else if (c === 'Digit2' || c === 'Numpad2') { take(); zoomAt(TL.z + 1, ...anchor()); }   // the user's pick (was + / -)
+  else if (c === 'Digit1' || c === 'Numpad1') { take(); zoomAt(TL.z - 1, ...anchor()); }
+  else if (c === 'KeyS') {
+    take();
+    const b = TLS.querySelector('.tl-skip');
+    b.checked = !b.checked; tlMsg(b.checked ? 'Skipping the cuts (S to play everything)' : 'Playing everything (S to skip the cuts)');
+  }
+}, true);
+mc.style.height = MAIN_H + 'px'; ov.style.height = OV_H + 'px';
+window.addEventListener('resize', drawSoon);
+TLS.addEventListener('toggle', drawSoon);
+tlRefresh();
+</script>
+</body></html>

@@ -228,9 +228,11 @@ def make_video_proxy(out_dir: Path, data: dict, encoder: str, video: Path | None
     dest = video_proxy_path(out_dir, data["video_id"])
     dest.parent.mkdir(exist_ok=True)
     part = dest.with_suffix(".part.mp4")           # only renamed to dest once it is complete and checked
-    if encoder == "qsv":                           # Intel Quick Sync: decode, scale and encode on the iGPU
-        video = ["-hwaccel", "qsv", "-hwaccel_output_format", "qsv", "-c:v", "h264_qsv", "-i", str(src),
-                 "-vf", f"vpp_qsv=w={width}:h={VIDEO_PROXY_H}:framerate={VIDEO_PROXY_FPS}",
+    if encoder == "qsv":   # Intel Quick Sync encodes on the iGPU; decoding and scaling stay on the CPU. A GPU decode
+        # can't rebuild its filters when the stream's format changes mid-file, as in the umath uploads (re-encoded
+        # intro + the Zoom stream): "Error reinitializing filters" at the join (2026-10-22). The software filters
+        # handle the change; 30 s of Papikian Դաս 16 took 5.5 s this way.
+        video = ["-i", str(src), "-vf", f"fps={VIDEO_PROXY_FPS},scale={width}:{VIDEO_PROXY_H},format=nv12",
                  "-c:v", "h264_qsv", "-preset", "veryfast", "-global_quality", "30"]
     else:
         video = ["-i", str(src), "-vf", f"fps={VIDEO_PROXY_FPS},scale={width}:{VIDEO_PROXY_H}",
@@ -1457,7 +1459,28 @@ const btn = (cls, f) => TLS.querySelector(cls).addEventListener('click', ev => {
 btn('.tl-play', () => (TL.on && !A.paused) ? A.pause() : tlPlay());
 btn('.tl-left', () => { TL.t0 = clampT0(TL.t0 - 0.8 * vspan()); drawSoon(); });
 btn('.tl-right', () => { TL.t0 = clampT0(TL.t0 + 0.8 * vspan()); drawSoon(); });
-const anchor = () => { const x = xOf(TL.bar); return x >= 0 && x <= viewW() ? [TL.bar, x] : [TL.t0 + vspan() / 2, viewW() / 2]; };
+let hoverX = null;   // the pointer's x over the spectrogram: keys 1/2 zoom there (the user's ask, 2026-10-22)
+mc.addEventListener('pointermove', ev => { hoverX = evT(ev, mc); });
+mc.addEventListener('pointerleave', () => { hoverX = null; });
+const anchor = () => {
+  if (hoverX !== null) return [TL.t0 + hoverX / pps(), hoverX];
+  const x = xOf(TL.bar); return x >= 0 && x <= viewW() ? [TL.bar, x] : [TL.t0 + vspan() / 2, viewW() / 2];
+};
+const undo = [];   // cuts removed or deleted, newest last: Z brings them back one by one
+function removeSel() {
+  const c = TL.sel && TL.sel.c;
+  if (!c) { tlMsg('Select a cut first (click it), then Delete'); return; }
+  if (c.added) { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; }
+  else if (!c.removed) { c.removed = true; undo.push({ c, kind: 'rm' }); }
+  else { tlMsg('Already removed (Z brings back the last one)'); return; }
+  tlMsg('Removed - Z brings it back'); renderAll(); save();
+}
+function undoRemove() {
+  const u = undo.pop();
+  if (!u) { tlMsg('Nothing to bring back'); return; }
+  if (u.kind === 'del') added.push(u.c); else u.c.removed = false;
+  TL.sel = { c: u.c }; center(u.c.s); tlMsg('Brought back'); renderAll(); save();
+}
 btn('.tl-zin', () => zoomAt(TL.z + 1, ...anchor()));
 btn('.tl-zout', () => zoomAt(TL.z - 1, ...anchor()));
 btn('.tl-add', () => {
@@ -1493,16 +1516,20 @@ TLS.querySelector('.tl-selbox').addEventListener('click', ev => {
   const c = s.c;
   if (d === 's' || d === 'e') setEdge(c, d, TL.bar, true, [0, DUR], TLS.querySelector('.tl-msg'));
   else if (d === 'reset') { c.s = c.s0; c.e = c.e0; renderAll(); save(); }
-  else if (d === 'rm') { c.removed = !c.removed; renderAll(); save(); }
-  else if (d === 'del') { added = added.filter(x => x !== c); TL.sel = null; renderAll(); save(); }
+  else if (d === 'rm') { c.removed = !c.removed; if (c.removed) undo.push({ c, kind: 'rm' }); renderAll(); save(); }
+  else if (d === 'del') { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; renderAll(); save(); }
 });
 document.addEventListener('pointerdown', ev => { if (!TLS.contains(ev.target)) TL.focus = false; }, true);
 document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's (the cards are hidden)
   const tag = document.activeElement.tagName;
-  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag) || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyZ') { ev.preventDefault(); ev.stopPropagation(); undoRemove(); return; }
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
   const take = () => { ev.preventDefault(); ev.stopPropagation(); if (tag === 'BUTTON') document.activeElement.blur(); };
   const c = ev.code;                                        // key positions, so the Armenian layout works too
   if (c === 'Space') { take(); (TL.on && !A.paused) ? A.pause() : tlPlay(); }
+  else if (c === 'Delete' || c === 'Backspace') { take(); removeSel(); }
+  else if (c === 'KeyZ') { take(); undoRemove(); }
   else if (c === 'ArrowLeft' || c === 'ArrowRight') {
     take();
     TL.bar = Math.max(0, Math.min(DUR, TL.bar + (c === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2)));
@@ -1579,7 +1606,7 @@ def timeline_section(tl: dict) -> str:
   <span>silence no cut covers <button data-j="gap" data-d="0">&lsaquo; prev</button><button data-j="gap" data-d="1">next &rsaquo;</button></span>
   <span>cut <button data-j="cut" data-d="0">&lsaquo; prev</button><button data-j="cut" data-d="1">next &rsaquo;</button></span>
   <button class="tl-add">Add a cut at the bar</button> <span class="tl-gaps"></span>
-  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in &middot; &larr;/&rarr; move the bar (Shift: 1 s)</span></div>
+  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in (at the mouse when it is on the spectrogram) &middot; &larr;/&rarr; move the bar (Shift: 1 s) &middot; Delete remove the selected cut &middot; Z or Ctrl+Z bring back the last removed one</span></div>
 <canvas class="tl-over"></canvas>
 <canvas class="tl-main"></canvas>
 <div class="tl-sel tl-selbox"></div>
@@ -1694,8 +1721,8 @@ planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it 
 <div id="worktimer"><span id="wt-time">0:00:00</span><button id="wt-btn">Start timer</button></div>
 <p class="sub">{len(scuts)} cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
 ({data['fps']:g} fps, H:MM:SS:FF). Removes <span id="removed">{fmt_t(removed, 0)}: {fmt_t(data['duration'], 0)} &rarr; {fmt_t(data['duration'] - removed, 0)}</span>.{howto}</p>
-{player}
 <nav><ol>{toc}</ol></nav>
+{player}
 {''.join(inner for _, _, inner in sections)}
 </main>
 <script>{STUDIO_JS}</script>

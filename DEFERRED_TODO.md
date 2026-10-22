@@ -2,6 +2,16 @@
 
 Topics cut from current work so they don't get lost. Newest at the top.
 
+- **2026-10-22 - Sevak Mkrtchyan's YouTube channel, Honors Linear Algebra (user: "pls also store
+  this for future").** https://www.youtube.com/@sevakmkrtchyan-u1h - 10 lectures so far (16 Sep -
+  14 Oct 2026), ongoing, no descriptions or chapters. Details in `_knowledge/umath_todo.md`,
+  under Sevak.
+
+- **2026-10-22 - Papikian's Galois Theory course (ARCS-ai, fall 2025) for the umath channel (user:
+  "we may want to get it later as well").** 23 lectures, 22 recordings, notes and homework on his
+  Teaching page; not on the channel yet. Details and next steps in `_knowledge/umath_todo.md`
+  (its own section), files in `_knowledge/papikian_site/galois_theory_2025/`.
+
 - **2026-10-21 - End screens for the Arnak videos (user: "park this as a task for future").** Wanted:
   in each video's last 10 s, Subscribe + the playlist + the next video. Agreed: 1-11 -> the next
   lesson, 12 -> 13, 12 (2025) -> 13, 13 -> "Best for viewer"; Claude saves each (user's OK). Done:

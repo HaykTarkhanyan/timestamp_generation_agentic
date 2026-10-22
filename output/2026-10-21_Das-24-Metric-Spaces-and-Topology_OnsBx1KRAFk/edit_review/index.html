@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit points OnsBx1KRAFk</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+</style></head>
+<body><main>
+<h1>Edit points: Das 24   Metric Spaces and Topology   Tserunyan   2023 05 10</h1>
+<p class="sub">1:32:44 raw recording, https://youtu.be/OnsBx1KRAFk</p>
+<div class="stats">
+  <span>Studio cuts <b id="n-cuts"></b></span>
+  <span>removed <b id="t-removed"></b></span>
+  <span>new length <b id="t-new"></b></span>
+  <span>min silence <select id="minsil"><option value="150" selected>150 s</option></select></span>
+</div>
+<nav><ol><li><a href="#how">How to apply this in YouTube Studio</a></li><li><a href="#content">Content cuts (11)</a></li><li><a href="#sil-long">Silence cuts, 5 s and longer (0)</a></li><li><a href="#sil-short">Silence cuts, under 5 s (0)</a></li><li><a href="#export">Final cut list for Studio (last first)</a></li></ol></nav>
+<details open id="how"><summary>How to apply this in YouTube Studio</summary>
+<ul class="how">
+  <li>Listen to <b>after the cut</b> first: it is 4 s before the cut joined to 4 s after, so you hear exactly how the edit will sound. <b>What gets removed</b> is the cut part itself, boosted so faint sounds are audible.</li>
+  <li>Untick anything you want to keep. Ticks are remembered in this browser. The minimum-silence menu at the top hides the shorter silence cuts.</li>
+  <li>In Studio: Editor &rarr; Trim &amp; cut &rarr; New Cut for each line of the list in the last section. It uses Studio's own numbering (Cut 1..N by start time) and its <code>H:MM:SS:FF</code> frame times, the same as <code>studio.html</code>, listed last first. Studio keeps the original timeline while you edit, so the times stay valid.</li>
+  <li>Times are rounded inward to whole frames, so a cut never eats into speech.</li>
+  <li>Studio edits can't be undone after saving. Keep your original recording.</li>
+  <li>Chapters come after the edit: every cut shifts the times after it.</li>
+</ul>
+<p class="note">Silence = speech-band level below -75 dB (noise floor -95 dB + 20) for at least 150 s; clicks under 0.2 s count as silence. Each silence cut leaves 0.35 s of pause on both sides. Content cuts come from the transcript, with edges snapped to the speech edge.</p></details><details open id="content"><summary>Content cuts (11)</summary>
+<div class="card" id="card-C01">
+  <div class="head">
+    <label><input type="checkbox" data-id="C01"> C01 &nbsp; 0:00:08.9 &rarr; 0:03:38.7</label>
+    <span>209.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">Start: silence, the iPad screen-broadcast panel, then chat with the room on her full-screen camera: &#x27;should I start, Aram? we&#x27;re only three&#x27;, waiting 5 min for others, Vahan/Vahram name mix-up, a Romania/Armenia anecdote, how to run the practical with so few, &#x27;let&#x27;s start, I have a seminar at 10:30&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C01_spec.png" alt="spectrogram C01">
+  <div class="note">spectrogram 0-5 kHz, 0:00:06 to 0:03:42, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C01_after.wav"></audio></span>
+    <span>what gets removed (boosted +1 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/C01_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">0:00:38</span>Բարի լույս:</div><div class="in"><span class="t">0:00:40</span>Բարև ձեզ:</div><div class="in"><span class="t">0:00:44</span>Բարև ձեզ</div><div class="in"><span class="t">0:00:46</span>Բարև ձեզ:</div><div class="in"><span class="t">0:00:55</span>Սկսեմ, հա՞, Արամ:</div><div>...</div><div class="in"><span class="t">0:03:26</span>մի քիչ հետո ստեղից արդեն։</div><div class="in"><span class="t">0:03:30</span>Օքեյ, դե սկսենք, որովհետև ես էլ սեմինար</div><div class="in"><span class="t">0:03:32</span>ունեմ 10:30, այսինքն ձեր ժամով 6:30</div><div class=""><span class="t">0:03:39</span>հա ուզում եմ սկսեմ բանից, որ խայտառակից,</div></div>
+</div>
+<div class="card" id="card-C02">
+  <div class="head">
+    <label><input type="checkbox" data-id="C02"> C02 &nbsp; 0:03:38.7 &rarr; 0:04:26.0</label>
+    <span>47.3 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Her intro of the topic (&#x27;I forgot to show you a non-metrizable [product]... the half-open example, I&#x27;m drawing this&#x27;) said while her screen is NOT shared (only her camera shows), then a student: &#x27;your screen isn&#x27;t visible&#x27;, &#x27;oh, good that you said&#x27;, and the screen share starting. She motivates the topic again right after, with the notes</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C02_spec.png" alt="spectrogram C02">
+  <div class="note">spectrogram 0-5 kHz, 0:03:36 to 0:04:29, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C02_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C02_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">0:03:39</span>հա ուզում եմ սկսեմ բանից, որ խայտառակից,</div><div class="in"><span class="t">0:03:44</span>որ մոռացել եմ ձեզ ոչ մետրոբլոպոլոգիական</div><div class="in"><span class="t">0:03:49</span>ցույց տամ, որ իմանանք ինչի ենք անում էս</div><div class="in"><span class="t">0:03:56</span>ինչի&amp;lt;un&amp;gt; ենք այստեղ մտել էլի ընդհանրապես</div><div class="in"><span class="t">0:03:59</span>ինչի պարզ է ասենք այն ան կիսաբաց կիսափակ</div><div class="in"><span class="t">0:04:03</span>օրինակը այն ասենք զրոմեկ</div><div class="in"><span class="t">0:04:07</span>այ սիչ եմ նկարում</div><div class="in"><span class="t">0:04:11</span>ձեր էկրանը չի երևում</div><div class="in"><span class="t">0:04:13</span>վայ լավ ես ասում Ըհը</div><div class=""><span class="t">0:04:28</span>բանը գնացել եմ ուզում եմ լեկցիա</div></div>
+</div>
+<div class="card" id="card-C03">
+  <div class="head">
+    <label><input type="checkbox" data-id="C03"> C03 &nbsp; 0:21:20.9 &rarr; 0:24:18.1</label>
+    <span>177.1 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Whole room discussion of why f has no countable basis (math, garbled captions; the page does not change for 3 min): &#x27;yes, tell me what you were saying&#x27;, a student&#x27;s continuum/union idea, &#x27;continuum has nothing to do here, uncountable&#x27;, &#x27;you&#x27;re right, that idea will work&#x27;, &#x27;in a general space the intersection of a basis need not be the point&#x27;. Unticked; its two long silences are pre-ticked separately</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C03_spec.png" alt="spectrogram C03">
+  <div class="note">spectrogram 0-5 kHz, 0:21:18 to 0:24:21, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C03_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C03_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:21:15</span>U2 U3 U4 այս ինչ-որ մի հատ վիճակ ա</div><div class="in"><span class="t">0:21:22</span>Հա հիմա հլը ասա ինչ ես ասում կներես չէի</div><div class="in"><span class="t">0:21:28</span>Մի վայրկյան ասում էի ենթադրենք</div><div class="in"><span class="t">0:21:31</span>գոյություն մի բան ինչ-որ հաշվի բազիս</div><div class="in"><span class="t">0:21:39</span>կարող է F-ի շուրջ բաց բազմությունները</div><div>...</div><div class="in"><span class="t">0:23:49</span>կարծենք որ այսուերի արտադրյալն էլ չէ</div><div class="in"><span class="t">0:23:52</span>այսինքն ինչ որ</div><div class="in"><span class="t">0:24:18</span>Լավ մի հատ</div><div class=""><span class="t">0:24:21</span>ուղղակի վերա ցիտում եմ, սահմանում է</div></div>
+</div>
+<div class="card" id="card-C04">
+  <div class="head">
+    <label><input type="checkbox" data-id="C04"> C04 &nbsp; 0:23:07.4 &rarr; 0:23:23.2</label>
+    <span>15.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">16 s of silence inside the discussion, nothing on the page changes (she thinks, hand on head)</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C04_spec.png" alt="spectrogram C04">
+  <div class="note">spectrogram 0-5 kHz, 0:23:04 to 0:23:26, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C04_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/C04_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:23:05</span>Ճիշտ ես ասում, այդ միտքը կաշխատի</div><div class="in"><span class="t">0:23:23</span>բայց պետք չի զուտ F-ը լինի: ասենք</div><div class=""><span class="t">0:23:26</span>մենք չենք ապացուցում, որ էսի հավանենք</div></div>
+</div>
+<div class="card" id="card-C05">
+  <div class="head">
+    <label><input type="checkbox" data-id="C05"> C05 &nbsp; 0:23:58.4 &rarr; 0:24:18.1</label>
+    <span>19.7 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">20 s of silence, nothing on the page changes (classroom camera). Ends before &#x27;OK, let me just recite the definition of a basis&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C05_spec.png" alt="spectrogram C05">
+  <div class="note">spectrogram 0-5 kHz, 0:23:55 to 0:24:21, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C05_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/C05_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">0:24:18</span>Լավ մի հատ</div><div class=""><span class="t">0:24:21</span>ուղղակի վերա ցիտում եմ, սահմանում է</div></div>
+</div>
+<div class="card" id="card-C06">
+  <div class="head">
+    <label><input type="checkbox" data-id="C06"> C06 &nbsp; 0:25:29.4 &rarr; 0:25:46.4</label>
+    <span>17.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Page fiddling: &#x27;something&#x27;s not right, people... one minute... I&#x27;m writing in another lecture [Lecture 21&#x27;s notes], I thought I had enough room&#x27;, scrolling to old content and inserting space</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C06_spec.png" alt="spectrogram C06">
+  <div class="note">spectrogram 0-5 kHz, 0:25:26 to 0:25:49, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C06_after.wav"></audio></span>
+    <span>what gets removed (boosted +1 dB) <audio controls preload="none" src="media/C06_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:25:24</span>բայց ամեն ամեն մեկի համար պիտի</div><div class=""><span class="t">0:25:27</span>գոյություն ունենա մի հատ բազիսի էլեմենտ</div><div class="in"><span class="t">0:25:29</span>ինչ-որ մի բան չի ժողովուրդ</div><div class="in"><span class="t">0:25:33</span>մի րոպե</div><div class="in"><span class="t">0:25:36</span>ուրիշ լեք լցիայի մեջ ուրիշ լեքի մեջ եմ</div><div class="in"><span class="t">0:25:40</span>գրում ուղղակի ինձ թվում էր հերիք էր տեղս</div><div class=""><span class="t">0:25:47</span>there are uncounbly many</div></div>
+</div>
+<div class="card" id="card-C07">
+  <div class="head">
+    <label><input type="checkbox" data-id="C07"> C07 &nbsp; 0:32:41.3 &rarr; 0:32:56.6</label>
+    <span>15.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;Was this clear today?&#x27; prompt, a student&#x27;s inaudible reply, &#x27;Hayk, I can&#x27;t hear what you&#x27;re saying&#x27; (probably at 0:32:55, her camera tile; the edge is in a 0.2 s gap, check by ear). Ends before &#x27;yes, let&#x27;s go over it once more in general&#x27;, then her recap, which stays</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C07_spec.png" alt="spectrogram C07">
+  <div class="note">spectrogram 0-5 kHz, 0:32:38 to 0:33:00, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C07_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/C07_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:32:39</span>կետ, որը չի պարունակվում:</div><div class="in"><span class="t">0:32:44</span>էս պահ հասկանալի էր այսօր</div><div class="in"><span class="t">0:32:50</span>Ու հա</div><div class="in"><span class="t">0:32:55</span>Հայկ ա չեմ լսում ինչ ես ասում:</div><div class="in"><span class="t">0:32:56</span>Հա Մի հատ ընդհանուր նորից վրով անցնենք</div><div class=""><span class="t">0:32:59</span>Հա ընդհանուր անցնենք ինչ էի ուզում ցույց</div></div>
+</div>
+<div class="card" id="card-C08">
+  <div class="head">
+    <label><input type="checkbox" data-id="C08"> C08 &nbsp; 0:52:03.4 &rarr; 0:53:01.2</label>
+    <span>57.8 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Polling the room on the order (examples of compact vs sequentially compact first, or the metric-space proof first): &#x27;as many Armenians, as many opinions&#x27;, &#x27;as you like&#x27;, &#x27;OK OK&#x27;. Ends before &#x27;let&#x27;s see which we can finish today: let&#x27;s prove it for metric spaces&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C08_spec.png" alt="spectrogram C08">
+  <div class="note">spectrogram 0-5 kHz, 0:52:00 to 0:53:04, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C08_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C08_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:52:01</span>metizable spaces</div><div class="in"><span class="t">0:52:09</span>որն եք ուզում օրինակներ տանք</div><div class="in"><span class="t">0:52:12</span>տոպոլոգիական տարածության որ կոմպակտ են</div><div class="in"><span class="t">0:52:15</span>բայց sequenենշալally կոմպակտ չեն ու մեկ</div><div class="in"><span class="t">0:52:17</span>էլ հակառակ</div><div>...</div><div class="in"><span class="t">0:52:53</span>ինչ-որ վիրդիկտը</div><div class="in"><span class="t">0:52:56</span>Ոնց ձեզ հարմար ա</div><div class="in"><span class="t">0:52:57</span>ոնց ինձ հարմար ա օքեյ օքեյ</div><div class="in"><span class="t">0:53:01</span>ամ տեսնեմ որը կա հասցնենք էսօր լրիվ եկեք</div></div>
+</div>
+<div class="card" id="card-C09">
+  <div class="head">
+    <label><input type="checkbox" data-id="C09"> C09 &nbsp; 1:26:28.7 &rarr; 1:27:56.0</label>
+    <span>87.4 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">False start in the proof of 1 ⇒ 2: writes &#x27;so we might as well take a smaller ball so that U_x contains no members&#x27;, realizes it is absurd (&#x27;x1 itself could be in it, you see?&#x27;), erases it, fumbles &#x27;finitely many x_n... not finitely...&#x27;. Ends before &#x27;OK, I&#x27;ll write it this way: finitely many n, the same x_n can repeat&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C09_spec.png" alt="spectrogram C09">
+  <div class="note">spectrogram 0-5 kHz, 1:26:26 to 1:27:59, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C09_after.wav"></audio></span>
+    <span>what gets removed (boosted +1 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/C09_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">1:26:29</span>So we might as well so we might as well</div><div class="in"><span class="t">1:26:35</span>as well take</div><div class="in"><span class="t">1:26:39</span>a bit smaller</div><div class="in"><span class="t">1:26:43</span>smaller g smaller ball smaller</div><div class="in"><span class="t">1:26:56</span>So that so that contains no members of</div><div>...</div><div class="in"><span class="t">1:27:48</span>finally many exen</div><div class="in"><span class="t">1:27:56</span>օքեյ լավ սպենս գրեմ ու դուք հասկացաք</div><div class=""><span class="t">1:27:58</span>ինչը նկատի ունեմ այսինքն ինդեքսներն էլ</div><div class=""><span class="t">1:28:00</span>չես կարող փոխես կար նույն էքսենը հանդիպի</div></div>
+</div>
+<div class="card" id="card-C10">
+  <div class="head">
+    <label><input type="checkbox" data-id="C10"> C10 &nbsp; 1:31:46.7 &rarr; 1:32:26.7</label>
+    <span>40.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Course plan after the teaser exercise: &#x27;not homework, but by next time... next time I&#x27;ll give examples of compact but not sequentially compact and vice versa, so learn ordinals, people... it&#x27;s done with ordinals&#x27;. Unticked: a course-plan announcement</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C10_spec.png" alt="spectrogram C10">
+  <div class="note">spectrogram 0-5 kHz, 1:31:44 to 1:32:30, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C10_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C10_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:31:42</span>այդ բաց ծածկույթի ենթածկույթ գտնեք:</div><div class="in"><span class="t">1:31:47</span>Սա homework չեմ տալիս, բայց մինչև մյուս</div><div class="in"><span class="t">1:31:50</span>անգամ, որ մի հատ ապացույցը մի քիչ ասենք</div><div class="in"><span class="t">1:31:53</span>մի քիչ ավելի երկար ա քան նախորդ</div><div class="in"><span class="t">1:31:55</span>ապացույցները ու ուզում եմ, որ մոտիվացված</div><div>...</div><div class="in"><span class="t">1:32:20</span>օրինակ, որ ինքը sequenալally կոմպակտ է,</div><div class="in"><span class="t">1:32:23</span>բայց կոմպակտ չի ընդհանրապես</div><div class=""><span class="t">1:32:27</span>օքեյ դե մի առայժմ ուրեմն մինչև մինչ</div><div class=""><span class="t">1:32:30</span>ուրբաթը ցտեսություն</div></div>
+</div>
+<div class="card" id="card-C11">
+  <div class="head">
+    <label><input type="checkbox" data-id="C11"> C11 &nbsp; 1:32:25.6 &rarr; 1:32:36.0</label>
+    <span>10.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">Tail: &#x27;OK, until Friday, goodbye&#x27; and the room&#x27;s goodbyes. Ends just before the outro</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C11_spec.png" alt="spectrogram C11">
+  <div class="note">spectrogram 0-5 kHz, 1:32:23 to 1:32:39, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C11_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/C11_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:32:20</span>օրինակ, որ ինքը sequenալally կոմպակտ է,</div><div class=""><span class="t">1:32:23</span>բայց կոմպակտ չի ընդհանրապես</div><div class="in"><span class="t">1:32:27</span>օքեյ դե մի առայժմ ուրեմն մինչև մինչ</div><div class="in"><span class="t">1:32:30</span>ուրբաթը ցտեսություն</div></div>
+</div></details><details open id="sil-long"><summary>Silence cuts, 5 s and longer (0)</summary></details><details open id="sil-short"><summary>Silence cuts, under 5 s (0)</summary></details><details open id="export"><summary>Final cut list for Studio (last first)</summary>
+<p><button id="copy">Copy list</button> <button id="reset">Reset to my picks</button></p>
+<textarea id="export" readonly></textarea></details>
+</main>
+<script id="data" type="application/json">{"video_id": "OnsBx1KRAFk", "title": "Das 24   Metric Spaces and Topology   Tserunyan   2023 05 10", "duration": 5563.73, "params": {"min_silence": 150.0, "pad": 0.35, "floor_db": -95.1, "audio_source": "C:\\Users\\hayk_\\OneDrive\\Desktop\\misc\\YSU OpenCourseWare\\metric_spaces\\Das 24 - Metric Spaces and Topology - Tserunyan - 2023-05-10.mp4", "threshold_db": -75.1, "blip_s": 0.2}, "cuts": [{"source": "content", "kind": "safe", "default": true, "start": 8.92, "end": 218.73, "requested": ["0:00:08.6", "0:03:38.8"], "reason": "Start: silence, the iPad screen-broadcast panel, then chat with the room on her full-screen camera: 'should I start, Aram? we're only three', waiting 5 min for others, Vahan/Vahram name mix-up, a Romania/Armenia anecdote, how to run the practical with so few, 'let's start, I have a seminar at 10:30'", "flags": [], "id": "C01", "removed_gain_db": 1.4, "spec_window": [5.92, 221.73], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 218.73, "end": 266.05, "requested": ["0:03:38.8", "0:04:26.0"], "reason": "Her intro of the topic ('I forgot to show you a non-metrizable [product]... the half-open example, I'm drawing this') said while her screen is NOT shared (only her camera shows), then a student: 'your screen isn't visible', 'oh, good that you said', and the screen share starting. She motivates the topic again right after, with the notes", "flags": [], "id": "C02", "removed_gain_db": -0.1, "spec_window": [215.73, 269.05], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": false, "start": 1280.93, "end": 1458.06, "requested": ["0:21:21.2", "0:24:18.1"], "reason": "Whole room discussion of why f has no countable basis (math, garbled captions; the page does not change for 3 min): 'yes, tell me what you were saying', a student's continuum/union idea, 'continuum has nothing to do here, uncountable', 'you're right, that idea will work', 'in a general space the intersection of a basis need not be the point'. Unticked; its two long silences are pre-ticked separately", "flags": [], "id": "C03", "removed_gain_db": -0.0, "spec_window": [1277.93, 1461.06], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 1387.39, "end": 1403.2, "requested": ["0:23:07.3", "0:23:23.3"], "reason": "16 s of silence inside the discussion, nothing on the page changes (she thinks, hand on head)", "flags": [], "id": "C04", "removed_gain_db": 0.0, "spec_window": [1384.39, 1406.2], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 1438.38, "end": 1458.06, "requested": ["0:23:58.4", "0:24:18.1"], "reason": "20 s of silence, nothing on the page changes (classroom camera). Ends before 'OK, let me just recite the definition of a basis'", "flags": [], "id": "C05", "removed_gain_db": 29.5, "spec_window": [1435.38, 1461.06], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 1529.38, "end": 1546.4, "requested": ["0:25:29.4", "0:25:46.4"], "reason": "Page fiddling: 'something's not right, people... one minute... I'm writing in another lecture [Lecture 21's notes], I thought I had enough room', scrolling to old content and inserting space", "flags": [], "id": "C06", "removed_gain_db": 1.1, "spec_window": [1526.38, 1549.4], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 1961.32, "end": 1976.59, "requested": ["0:32:41.4", "0:32:56.6"], "reason": "'Was this clear today?' prompt, a student's inaudible reply, 'Hayk, I can't hear what you're saying' (probably at 0:32:55, her camera tile; the edge is in a 0.2 s gap, check by ear). Ends before 'yes, let's go over it once more in general', then her recap, which stays", "flags": [], "id": "C07", "removed_gain_db": -1.8, "spec_window": [1958.32, 1979.59], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 3123.35, "end": 3181.18, "requested": ["0:52:04.5", "0:53:01.1"], "reason": "Polling the room on the order (examples of compact vs sequentially compact first, or the metric-space proof first): 'as many Armenians, as many opinions', 'as you like', 'OK OK'. Ends before 'let's see which we can finish today: let's prove it for metric spaces'", "flags": [], "id": "C08", "removed_gain_db": -0.6, "spec_window": [3120.35, 3184.18], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": true, "start": 5188.66, "end": 5276.03, "requested": ["1:26:28.8", "1:27:55.8"], "reason": "False start in the proof of 1 ⇒ 2: writes 'so we might as well take a smaller ball so that U_x contains no members', realizes it is absurd ('x1 itself could be in it, you see?'), erases it, fumbles 'finitely many x_n... not finitely...'. Ends before 'OK, I'll write it this way: finitely many n, the same x_n can repeat'", "flags": [], "id": "C09", "removed_gain_db": 1.2, "spec_window": [5185.66, 5279.03], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": false, "start": 5506.72, "end": 5546.69, "requested": ["1:31:46.7", "1:32:25.6"], "reason": "Course plan after the teaser exercise: 'not homework, but by next time... next time I'll give examples of compact but not sequentially compact and vice versa, so learn ordinals, people... it's done with ordinals'. Unticked: a course-plan announcement", "flags": [], "id": "C10", "removed_gain_db": 0.1, "spec_window": [5503.72, 5549.69], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 5545.62, "end": 5556.05, "requested": ["1:32:25.6", "1:32:36.0"], "reason": "Tail: 'OK, until Friday, goodbye' and the room's goodbyes. Ends just before the outro", "flags": [], "id": "C11", "removed_gain_db": 0.3, "spec_window": [5542.62, 5559.05], "spec_px": 960}], "fps": 25.0, "studio_cuts": [{"id": "studio01", "n": 1, "start": 8.92, "end": 266.04, "start_tc": "0:00:08:23", "end_tc": "0:04:26:01", "sources": ["C01", "C02"], "spec_window": [0.0, 286.04], "spec_px": 16000}, {"id": "studio02", "n": 2, "start": 1387.4, "end": 1403.2, "start_tc": "0:23:07:10", "end_tc": "0:23:23:05", "sources": ["C04"], "spec_window": [1367.4, 1423.2], "spec_px": 4464}, {"id": "studio03", "n": 3, "start": 1438.4, "end": 1458.04, "start_tc": "0:23:58:10", "end_tc": "0:24:18:01", "sources": ["C05"], "spec_window": [1418.4, 1478.04], "spec_px": 4771}, {"id": "studio04", "n": 4, "start": 1529.4, "end": 1546.4, "start_tc": "0:25:29:10", "end_tc": "0:25:46:10", "sources": ["C06"], "spec_window": [1509.4, 1566.4], "spec_px": 4560}, {"id": "studio05", "n": 5, "start": 1961.32, "end": 1976.56, "start_tc": "0:32:41:08", "end_tc": "0:32:56:14", "sources": ["C07"], "spec_window": [1941.32, 1996.56], "spec_px": 4419}, {"id": "studio06", "n": 6, "start": 3123.36, "end": 3181.16, "start_tc": "0:52:03:09", "end_tc": "0:53:01:04", "sources": ["C08"], "spec_window": [3103.36, 3201.16], "spec_px": 7824}, {"id": "studio07", "n": 7, "start": 5188.68, "end": 5276.0, "start_tc": "1:26:28:17", "end_tc": "1:27:56:00", "sources": ["C09"], "spec_window": [5168.68, 5296.0], "spec_px": 10186}, {"id": "studio08", "n": 8, "start": 5545.64, "end": 5556.04, "start_tc": "1:32:25:16", "end_tc": "1:32:36:01", "sources": ["C11"], "spec_window": [5525.64, 5563.73], "spec_px": 3047}], "signature": "a03287d83094"}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const KEY = 'edit-points-' + DATA.video_id + '-' + DATA.signature;   // a changed cut list starts from the defaults
+const byId = Object.fromEntries(DATA.cuts.map(c => [c.id, c]));
+let ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id));
+try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) ticked = new Set(saved); } catch (e) {}
+const minSel = document.getElementById('minsil');
+function fmt(sec, d=1) { sec = Math.round(sec * 10**d) / 10**d; const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60;
+  return h + ':' + String(m).padStart(2,'0') + ':' + s.toFixed(d).padStart(d ? 3+d : 2, '0'); }
+function active(c) { return ticked.has(c.id) && (c.source !== 'silence' || c.run_len >= +minSel.value); }
+function union(iv) { const out=[]; iv.sort((a,b)=>a[0]-b[0]);
+  for (const [s,e] of iv) { if (out.length && s <= out[out.length-1][1]+0.05) out[out.length-1][1]=Math.max(out[out.length-1][1],e); else out.push([s,e]); }
+  return out; }
+function tc(f) { const F = DATA.fps, s = Math.floor(f / F);
+  return Math.floor(s/3600) + ':' + String(Math.floor(s%3600/60)).padStart(2,'0') + ':' +
+         String(s%60).padStart(2,'0') + ':' + String(f%F).padStart(2,'0'); }
+function studio(iv) {   // Studio's Cut 1..N (by start), whole frames rounded inward, listed last first
+  const F = DATA.fps;
+  const rows = iv.map(([s,e], i) => [i+1, Math.ceil(s*F - 1e-6), Math.floor(e*F + 1e-6)]);
+  return rows.reverse().map(([n,fs,fe]) => 'Cut ' + String(n).padStart(2) + '   ' + tc(fs) + '  ->  ' + tc(fe) +
+                                         '   (' + ((fe-fs)/F).toFixed(2) + ' s)'); }
+function refresh() {
+  const on = DATA.cuts.filter(active);
+  const content = on.filter(c => c.source === 'content');
+  for (const c of DATA.cuts) {
+    const el = document.getElementById('card-' + c.id); if (!el) continue;
+    const hidden = c.source === 'silence' && c.run_len < +minSel.value;
+    el.style.display = hidden ? 'none' : '';
+    el.classList.toggle('off', !ticked.has(c.id));
+    const host = c.source === 'silence' && content.find(k => k.start <= c.start && k.end >= c.end);
+    el.classList.toggle('absorbed', !!host);
+    const n = el.querySelector('.absorbed-note'); if (n) n.textContent = host ? 'inside ' + host.id + ', which is ticked' : '';
+    el.querySelector('input').checked = ticked.has(c.id);
+  }
+  const iv = union(on.map(c => [c.start, c.end]));
+  const removed = iv.reduce((a,[s,e]) => a + e - s, 0);
+  document.getElementById('n-cuts').textContent = iv.length;
+  document.getElementById('t-removed').textContent = fmt(removed, 0);
+  document.getElementById('t-new').textContent = fmt(DATA.duration - removed, 0);
+  document.getElementById('export').value = studio(iv).join('\n');
+  try { localStorage.setItem(KEY, JSON.stringify([...ticked])); } catch (e) {}
+}
+document.querySelectorAll('.card input').forEach(cb => cb.addEventListener('change', e => {
+  const id = e.target.dataset.id; if (e.target.checked) ticked.add(id); else ticked.delete(id); refresh(); }));
+minSel.addEventListener('change', refresh);
+document.getElementById('reset').addEventListener('click', () => {
+  ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id)); refresh(); });
+document.getElementById('copy').addEventListener('click', async () => {
+  const ta = document.getElementById('export');
+  try { await navigator.clipboard.writeText(ta.value); } catch (e) { ta.select(); document.execCommand('copy'); }
+  document.getElementById('copy').textContent = 'Copied'; setTimeout(() => document.getElementById('copy').textContent = 'Copy list', 1500); });
+refresh();
+</script>
+</body></html>

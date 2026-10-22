@@ -7,6 +7,8 @@ By design this tool exposes ONLY these write operations (never destructive):
   - add-comment     (commentThreads.insert) - the lecture-correction comment of
                     the youtube-timestamps skill's last stage, posted only after
                     the user confirms its content. The API cannot pin comments.
+  - update-comment  (comments.update) - replace the text of one of the channel's own
+                    comments in place (YouTube marks it edited); refuses anyone else's.
   - sort-playlist   (playlistItems.update, position only) - order a playlist by
                     publish date, oldest first, or with --by lesson by the "Դաս N"
                     number that starts each title. Dry run unless --apply; ~1 s and
@@ -31,6 +33,7 @@ Usage:
   python scripts/yt_publish.py set-description  <VIDEO_ID> final/ML18.txt
   python scripts/yt_publish.py set-thumbnail   <VIDEO_ID> thumbnails/ML18.png
   python scripts/yt_publish.py add-comment     <VIDEO_ID> output/<dir>/correction_comment.txt
+  python scripts/yt_publish.py update-comment  <COMMENT_ID> output/<dir>/correction_comment.txt
   python scripts/yt_publish.py sort-playlist   <PLAYLIST_ID> [--by published|lesson] [--apply]
 
 set-description uploads the description WITHOUT its leading title header. The
@@ -242,14 +245,7 @@ def set_thumbnail(video_id: str, image_path: str) -> None:
     log.info(f"Set thumbnail for {video_id} from {path} ({size} bytes)")
 
 
-def add_comment(video_id: str, comment_file: str) -> None:
-    """Post a top-level comment on a video, as the channel, from a UTF-8 file.
-
-    Reads a file rather than a CLI argument for the same reason as set_title
-    (Armenian arguments get mangled on the way to Windows Python). Refuses to post
-    a comment whose exact text this channel already has on the video: there is no
-    delete in this tool, so a re-run must never leave a duplicate behind. Pinning
-    is not available in the YouTube Data API - pin it by hand in YouTube Studio."""
+def _read_comment_file(comment_file: str) -> str:
     path = Path(comment_file)
     if not path.exists():
         raise FileNotFoundError(f"Comment file not found: {path}")
@@ -258,6 +254,18 @@ def add_comment(video_id: str, comment_file: str) -> None:
         raise ValueError(f"Comment file is empty: {path}")
     if len(text) > MAX_COMMENT_CHARS:
         raise ValueError(f"Comment is {len(text)} chars, exceeds YouTube limit of {MAX_COMMENT_CHARS}")
+    return text
+
+
+def add_comment(video_id: str, comment_file: str) -> None:
+    """Post a top-level comment on a video, as the channel, from a UTF-8 file.
+
+    Reads a file rather than a CLI argument for the same reason as set_title
+    (Armenian arguments get mangled on the way to Windows Python). Refuses to post
+    a comment whose exact text this channel already has on the video: there is no
+    delete in this tool, so a re-run must never leave a duplicate behind. Pinning
+    is not available in the YouTube Data API - pin it by hand in YouTube Studio."""
+    text = _read_comment_file(comment_file)
 
     yt = get_service()
     items = yt.videos().list(part="snippet", id=video_id).execute().get("items", [])
@@ -265,6 +273,9 @@ def add_comment(video_id: str, comment_file: str) -> None:
         raise ValueError(f"No video found with id {video_id!r} (or not owned by this account)")
     channel_id = items[0]["snippet"]["channelId"]
     title = items[0]["snippet"].get("title", "")
+    # the duplicate check looks for comments by the posting channel, which is not the video's
+    # owner when commenting on someone else's video (Sevak's lectures, 2026-10-22)
+    me = yt.channels().list(part="id", mine=True).execute()["items"][0]["id"]
 
     page = None
     while True:
@@ -272,7 +283,7 @@ def add_comment(video_id: str, comment_file: str) -> None:
                                         textFormat="plainText", pageToken=page).execute()
         for thread in resp.get("items", []):
             top = thread["snippet"]["topLevelComment"]["snippet"]
-            same_author = top.get("authorChannelId", {}).get("value") == channel_id
+            same_author = top.get("authorChannelId", {}).get("value") == me
             same_text = top.get("textOriginal", "").replace("\r\n", "\n").strip() == text
             if same_author and same_text:
                 raise ValueError(f"This exact comment is already on {video_id} "
@@ -286,6 +297,37 @@ def add_comment(video_id: str, comment_file: str) -> None:
     resp = yt.commentThreads().insert(part="snippet", body=body).execute()
     log.info(f"Posted comment {resp['id']} on {video_id} ({title!r}), {len(text)} chars. "
              f"The API cannot pin it - pin it in YouTube Studio if wanted.")
+
+
+def update_comment(comment_id: str, comment_file: str) -> None:
+    """Replace the text of one of this channel's own comments with a UTF-8 file's text.
+
+    The API only edits comments the posting channel wrote, so anything else is refused
+    up front. Identical text is a no-op (an update would only add YouTube's "(edited)"
+    mark). The comment is read back afterwards and must match the file. The comment id
+    is printed by add-comment; on YouTube it is the lc= part of the comment's link."""
+    text = _read_comment_file(comment_file)
+    yt = get_service()
+    me = yt.channels().list(part="id", mine=True).execute()["items"][0]["id"]
+    items = yt.comments().list(part="snippet", id=comment_id, textFormat="plainText").execute().get("items", [])
+    if not items:
+        raise ValueError(f"No comment found with id {comment_id!r}")
+    snippet = items[0]["snippet"]
+    author = snippet.get("authorChannelId", {}).get("value")
+    if author != me:
+        raise ValueError(f"Comment {comment_id} was written by channel {author}, not this one ({me}): "
+                         f"the API can only edit this channel's own comments")
+    old = snippet.get("textOriginal", "").replace("\r\n", "\n").strip()
+    if old == text:
+        log.info(f"Comment {comment_id} already has exactly this text - nothing to update")
+        return
+
+    # Check the stored text in the update's own response: comments.list right after an update still
+    # returns the old text for a few seconds (2026-10-22, lecture 7 round trip), so a re-read fails falsely
+    resp = yt.comments().update(part="snippet", body={"id": comment_id, "snippet": {"textOriginal": text}}).execute()
+    if resp["snippet"].get("textOriginal", "").replace("\r\n", "\n").strip() != text:
+        raise RuntimeError(f"Comment {comment_id} was updated, but YouTube stored text different from {comment_file}")
+    log.info(f"Updated comment {comment_id}: {len(old)} -> {len(text)} chars (YouTube shows it as edited)")
 
 
 def _playlist_items(yt, playlist_id: str) -> list:
@@ -403,6 +445,10 @@ def main() -> None:
     p_comment.add_argument("video_id")
     p_comment.add_argument("comment_file", help="UTF-8 file with the comment text")
 
+    p_upd = sub.add_parser("update-comment", help="Replace the text of one of the channel's own comments")
+    p_upd.add_argument("comment_id", help="as printed by add-comment (the lc= part of a comment link)")
+    p_upd.add_argument("comment_file", help="UTF-8 file with the new comment text")
+
     p_sort = sub.add_parser("sort-playlist", help="Order a playlist by publish date or lesson number")
     p_sort.add_argument("playlist_id")
     p_sort.add_argument("--by", choices=["published", "lesson"], default="published",
@@ -437,6 +483,8 @@ def main() -> None:
         set_thumbnail(args.video_id, args.image_path)
     elif args.command == "add-comment":
         add_comment(args.video_id, args.comment_file)
+    elif args.command == "update-comment":
+        update_comment(args.comment_id, args.comment_file)
     elif args.command == "sort-playlist":
         sort_playlist(args.playlist_id, args.apply, args.by)
 
