@@ -65,7 +65,7 @@ an hour and HH:MM:SS after, step words with `․`, no ASCII < >). Thumbnails:
 
 ## Open decisions for the user (do not decide them in this run)
 - Homework line: drafts link Homework 5 in 16, 17, 18-19; none in 20-23.
-- Correction notes: Դաս 23 slide "m^n ≤ N(I) ＜ m^(n+1)" (should be (m+1)^n?), Դաս 16 Carlitz claims.
+- Correction notes: decided 2026-10-23, none (umath gets no notes, DECISIONS.md #25). Slips found: Դաս 23 slide "m^n ≤ N(I) ＜ m^(n+1)" (should be (m+1)^n?), Դաս 16 Carlitz claims.
 - Going public, playlist sort (13 moves), pushing titles/descriptions/thumbnails.
 
 ## Log

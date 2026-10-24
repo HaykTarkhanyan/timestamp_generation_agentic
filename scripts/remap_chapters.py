@@ -29,7 +29,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 
 CUT = re.compile(r"Cut\s+\d+\s+(\S+)\s+->\s+(\S+)")
-CHAPTER = re.compile(r"^(\s*)((?:\d+:)?\d+:\d{2})(\s.*)$")
+CHAPTER = re.compile(r"^(\s*)((?:\d+:)?\d+:\d{2}(?:\.\d+)?)(\s.*)$")  # raw drafts carry tenths: 0:05:51.1
 YOUTUBE_MIN_GAP, MIN_GAP = 10, 30
 
 
@@ -64,8 +64,8 @@ def to_edited(t: float, cuts: list[tuple[float, float]]) -> tuple[float, tuple[f
     return t - removed, inside
 
 
-def parse(ts: str) -> int:
-    return sum(int(v) * 60 ** i for i, v in enumerate(reversed(ts.split(":"))))
+def parse(ts: str) -> float:
+    return sum(float(v) * 60 ** i for i, v in enumerate(reversed(ts.split(":"))))
 
 
 def fmt(s: int) -> str:

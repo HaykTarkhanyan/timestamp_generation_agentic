@@ -22,7 +22,7 @@ scope for it (YouTube has no "edit-but-not-delete" scope - see YT_PUBLISH_SETUP.
 
 One-time setup: see scripts/YT_PUBLISH_SETUP.md
 
-Two channels share one OAuth client, each with its own token. --channel picks it
+Several channels share one OAuth client, each with its own token. --channel picks it
 (before the command); the default is Metric Academy:
   python scripts/yt_publish.py --channel umath recent    # Համալսարանական մաթեմատիկա
 
@@ -64,10 +64,12 @@ CLIENT_SECRET_FILE = SECRETS_DIR / "client_secret.json"
 TOKEN_FILES = {
     "metric": SECRETS_DIR / "token.json",        # Metric Academy (the original token)
     "umath": SECRETS_DIR / "token_umath.json",   # Համալսարանական մաթեմատիկա
+    "brainstorm": SECRETS_DIR / "token_brainstorm.json",  # Ուղեղամպրոպ
 }
 CHANNEL_IDS = {
     "metric": "UC5BavugdnUkti3Es7-deZDg",
     "umath": "UCMFONp28jEDHXDBWJyRVYcA",
+    "brainstorm": "UCflbCf38rkyrOaRH8ZiloTg",
 }
 TOKEN_FILE = TOKEN_FILES["metric"]  # set from --channel in main()
 

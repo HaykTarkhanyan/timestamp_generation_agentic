@@ -33,6 +33,10 @@ happened and what to do differently.
 - No cut touches the ASOF intro (0:00-0:08.55) or the outro (last 7.51 s).
 - Tserunyan-specific: blur checks are open (Դաս 15 name tag, Դաս 22 students' names, start cuts of
   20 / 26 / 27 hide an email address and her bedroom if unticked).
+- **Keep privacy flags in proportion** (the user, 2026-10-23): raw unlisted uploads may stay in the playlist
+  while they wait for their cuts ("16-27 no its fine"), and an address the lecturer already publishes on her
+  own site is not a big deal ("don't make such big of a deal out of it"). Mention such things once, in one
+  line; keep the real checks (a stranger's face or name on screen) for the review.
 
 ## 2. Chapters after the cuts are saved
 
@@ -43,6 +47,11 @@ happened and what to do differently.
   first word of the topic. Keep that order: remap, snap, verify.
 - Run `glossary_check.py` (stage 3 of the skill) and the verifier on every list. The denylist catches
   terms already corrected once (չօրինակ -> հակաօրինակ, ինչու՞ -> ինչո՞ւ, ...).
+- **Nest and format like Metric Academy** (Ashot's course, 2026-10-24, DECISIONS #34): sub-chapters 4 spaces
+  in, one level, 2+ children per parent; a video over an hour writes every time as `0:00:00`. Ask whether
+  the other umath courses should follow before their next push.
+- Make a description line start with a word, never a time ("ℹ️ ... 45-րդ րոպեից ..."), so it cannot be
+  taken for a chapter.
 
 ## 3. Review: two independent readers, then reconcile against the transcript
 
@@ -57,8 +66,9 @@ happened and what to do differently.
   still caught Դաս 20 "Cl(K)" against the agreed "H(K)": always do one last read.
 - **Cost:** ask before any fan-out. Tserunyan's drafts already took 4 agents and 2.01M tokens; 13
   lectures through two reviewers is roughly twice Papikian's review.
-- Lecture mistakes (Papikian 16 Carlitz, 21, 23 (m+1)^n; Tserunyan 18 "Egorov" for Lusin): decide the
-  correction notes before the push (DECISIONS #4: above the chapters, minutes not timestamps).
+- Lecture mistakes (Papikian 16 Carlitz, 21, 23 (m+1)^n; Tserunyan 17, 18 "Egorov" for Lusin, 19, 24,
+  27): **no correction notes on umath** (DECISIONS #25, the user 2026-10-23: corrections are only for
+  their own Metric Academy videos). A slip only shapes the chapter label; keep the finding unpublished.
 
 ## 4. Materials
 
@@ -69,6 +79,11 @@ happened and what to do differently.
 - The folder is made through Playwright where the math-team account is signed in (`drive/u/2`); the Drive
   connector here is the personal account and cannot write there. Uploads must come from
   `.playwright-mcp/`. Check the sharing from a signed-out context (`drive_materials.md`).
+- Slides instead of notes (Ashot, DECISIONS #33): his decks only grow within a part, so the folder holds the
+  final deck of each part and every 📚 block says "սլայդներ N-M" + the deck + the folder. Page ranges per
+  lesson: `_knowledge/info_theory/slides_map.md`.
+- To change a file already linked from descriptions, replace it in place: right-click, File information,
+  Manage versions, Upload new version. The file id and every link stay the same (Ashot's README, 2026-10-24).
 
 ## 5. Thumbnails, review page, push
 
@@ -77,6 +92,8 @@ happened and what to do differently.
 - One standalone HTML page with titles, chapters, descriptions and thumbnails for the user's review
   before anything is pushed (`review_16-23.html`).
 - Push with `yt_publish.py --channel umath` (the token is per channel), read back every video.
+- Build each push from the **live** description, not the local copy: the user edits descriptions in Studio
+  (`_learnings/2026-10-24-2043_build-description-pushes-from-the-live-text.md`).
 - **API quota: 10,000 units a day; every videos.update and thumbnails.set costs 50.** A course push of
   13 videos (title, description, thumbnail) is ~2,000 units and fine on its own, but on 2026-10-22 the
   Papikian pushes, the Drive relinks, a visibility change and an 80-video audit together ran it out

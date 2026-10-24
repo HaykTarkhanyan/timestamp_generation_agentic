@@ -51,3 +51,10 @@ see `finish_16-23.md`).
 of that to description as well"):** Դաս 10 got `Միջանկյալ քննություն (լուծումներ)՝` + the midterm
 solutions file, Դաս 11-12 got `Նախագիծ՝` + the project file (both after the homework lines). Read back:
 match. No final-exam file exists for this course.
+
+**Homework renamed (2026-10-23, user: "name the homeworks semantically as well ... same for papikyan"):**
+`Տնային աշխատանք N.pdf` -> `Տնային N - <topics>.pdf` (1 rings, congruences, nilpotents; 2 ideals in
+ℤ[i] and ℤ[√-5], Euclidean domains; 3 irreducible polynomials, finite and splitting fields; 4 prime
+and maximal ideals, Artinian rings, matrix similarity; 5 number fields and integral bases, exercises
+from Alaca-Williams chapters 6-7). Renaming keeps the Drive IDs, so the descriptions' links still
+work; `drive_folder_ids.json` has the new names.

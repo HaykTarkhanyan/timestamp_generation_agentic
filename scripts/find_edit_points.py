@@ -202,11 +202,15 @@ def existing_video_proxy(out_dir: Path, data: dict) -> Path | None:
     return dest
 
 
-def make_video_proxy(out_dir: Path, data: dict, encoder: str, video: Path | None = None) -> Path:
+def make_video_proxy(out_dir: Path, data: dict, encoder: str, video: Path | None = None,
+                     keyframes_only: bool = False) -> Path:
     """A small H.264 copy of the recording that studio.html plays instead of the WAV:
     VIDEO_PROXY_H p, VIDEO_PROXY_FPS fps, a keyframe every 2 s, mono AAC. Encoded once and
     reused while it matches the WAV's source recording. `video`: the recording's video file when
-    the WAV came from an audio-only file (Zoom's separate .m4a); it must be as long as the WAV."""
+    the WAV came from an audio-only file (Zoom's separate .m4a); it must be as long as the WAV.
+    `keyframes_only`: decode only the source's keyframes (the fps filter repeats each one). On the
+    iPhone HEVC 10-bit lectures (Ashot Դաս 8) that is ~1 picture per second and 6.7 s instead of
+    22.6 s of decoding per minute of video (measured 2026-10-24); the sound is unaffected."""
     existing = existing_video_proxy(out_dir, data)
     if existing:
         log.info(f"Video preview: reusing {existing}")
@@ -223,19 +227,20 @@ def make_video_proxy(out_dir: Path, data: dict, encoder: str, video: Path | None
                            "-of", "csv=p=0", str(src)], check=True, capture_output=True, text=True).stdout.strip()
     if not size:
         raise ValueError(f"{src} has no video stream")
-    w0, h0 = map(int, size.split(","))
+    w0, h0 = map(int, size.split(",")[:2])   # iPhone .MOV: "1920,1080," (an empty side-data field)
     width = round(w0 * VIDEO_PROXY_H / h0 / 2) * 2
     dest = video_proxy_path(out_dir, data["video_id"])
     dest.parent.mkdir(exist_ok=True)
     part = dest.with_suffix(".part.mp4")           # only renamed to dest once it is complete and checked
+    skip = ["-skip_frame", "nokey"] if keyframes_only else []
     if encoder == "qsv":   # Intel Quick Sync encodes on the iGPU; decoding and scaling stay on the CPU. A GPU decode
         # can't rebuild its filters when the stream's format changes mid-file, as in the umath uploads (re-encoded
         # intro + the Zoom stream): "Error reinitializing filters" at the join (2026-10-22). The software filters
         # handle the change; 30 s of Papikian Դաս 16 took 5.5 s this way.
-        video = ["-i", str(src), "-vf", f"fps={VIDEO_PROXY_FPS},scale={width}:{VIDEO_PROXY_H},format=nv12",
+        video = [*skip, "-i", str(src), "-vf", f"fps={VIDEO_PROXY_FPS},scale={width}:{VIDEO_PROXY_H},format=nv12",
                  "-c:v", "h264_qsv", "-preset", "veryfast", "-global_quality", "30"]
     else:
-        video = ["-i", str(src), "-vf", f"fps={VIDEO_PROXY_FPS},scale={width}:{VIDEO_PROXY_H}",
+        video = [*skip, "-i", str(src), "-vf", f"fps={VIDEO_PROXY_FPS},scale={width}:{VIDEO_PROXY_H}",
                  "-c:v", "libx264", "-preset", "veryfast", "-crf", "30", "-pix_fmt", "yuv420p"]
     cmd = (["ffmpeg", "-hide_banner", "-nostats", "-loglevel", "error", "-y", "-progress", "pipe:1"] + video
            + ["-g", str(VIDEO_PROXY_GOP), "-map", "0:v:0", "-map", "0:a:0", "-map_chapters", "-1", "-dn",
@@ -704,7 +709,7 @@ function refresh() {
   document.getElementById('n-cuts').textContent = iv.length;
   document.getElementById('t-removed').textContent = fmt(removed, 0);
   document.getElementById('t-new').textContent = fmt(DATA.duration - removed, 0);
-  document.getElementById('export').value = studio(iv).join('\\n');
+  document.getElementById('export').value = [document.getElementById('export').dataset.header, ...studio(iv)].join('\\n');
   try { localStorage.setItem(KEY, JSON.stringify([...ticked])); } catch (e) {}
 }
 document.querySelectorAll('.card input').forEach(cb => cb.addEventListener('change', e => {
@@ -752,6 +757,12 @@ def card_html(c, rows):
 </div>"""
 
 
+def list_header(data: dict, page: Path, name: str) -> str:
+    """First line of the cut list a page exports, so a pasted or downloaded list says which lecture it is
+    (the user, 2026-10-24: three Ashot lectures under review at once)."""
+    return f"# {name} | {data['title']} | {page.parent.parent.name}"
+
+
 def build_page(data, rows, page: Path):
     content = [c for c in data["cuts"] if c["source"] == "content"]
     sil_long = [c for c in data["cuts"] if c["source"] == "silence" and c["run_len"] >= 5]
@@ -769,13 +780,13 @@ def build_page(data, rows, page: Path):
   <li>Studio edits can't be undone after saving. Keep your original recording.</li>
   <li>Chapters come after the edit: every cut shifts the times after it.</li>
 </ul>
-<p class="note">Silence = speech-band level below {p['threshold_db']:.0f} dB (noise floor {p['floor_db']:.0f} dB + 20) for at least {p['min_silence']:g} s; clicks under 0.2 s count as silence. Each silence cut leaves {p['pad']:g} s of pause on both sides. Content cuts come from the transcript, with edges snapped to the speech edge.</p>"""),
+<p class="note">Silence = speech-band level below {p['threshold_db']:.0f} dB (noise floor {p['floor_db']:.0f} dB + {p['threshold_db'] - p['floor_db']:.0f}) for at least {p['min_silence']:g} s; clicks under 0.2 s count as silence. Each silence cut leaves {p['pad']:g} s of pause on both sides. Content cuts come from the transcript, with edges snapped to the speech edge.</p>"""),
         ("content", f"Content cuts ({len(content)})", "".join(card_html(c, rows) for c in content)),
         ("sil-long", f"Silence cuts, 5 s and longer ({len(sil_long)})", "".join(card_html(c, rows) for c in sil_long)),
         ("sil-short", f"Silence cuts, under 5 s ({len(sil_short)})", "".join(card_html(c, rows) for c in sil_short)),
-        ("export", "Final cut list for Studio (last first)", """
+        ("export", "Final cut list for Studio (last first)", f"""
 <p><button id="copy">Copy list</button> <button id="reset">Reset to my picks</button></p>
-<textarea id="export" readonly></textarea>"""),
+<textarea id="export" readonly data-header="{html.escape(list_header(data, page, 'index.html cut list'))}"></textarea>"""),
     ]
     toc = "".join(f'<li><a href="#{sid}">{html.escape(title)}</a></li>' for sid, title, _ in sections)
     body = "".join(f'<details open id="{sid}"><summary>{html.escape(title)}</summary>{inner}</details>'
@@ -982,7 +993,7 @@ function renderAll() {
   document.getElementById('nchanged').textContent = nChanged || nNew || nRemoved
     ? ` \\u00b7 on this page: ${nChanged} changed, ${nNew} new, ${nRemoved} removed` : '';
   document.getElementById('removed').textContent = `${hms(removed)}: ${hms(dur)} \\u2192 ${hms(dur - removed)}`;
-  document.getElementById('export').value =
+  document.getElementById('export').value = document.getElementById('export').dataset.header + '\\n' +
     `# ${sorted.length} cuts (${nChanged} changed, ${nNew} new, ${nRemoved} removed on studio.html), numbered as in Studio, listed last first for entry\\n` +
     sorted.slice().reverse().map(c =>
       `Cut ${String(c.n).padStart(2)}   ${tc(c.s)}  ->  ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)` +
@@ -1129,6 +1140,14 @@ document.getElementById('copy').addEventListener('click', () =>
   navigator.clipboard.writeText(document.getElementById('export').value)
     .then(() => document.getElementById('copied').textContent = 'copied')
     .catch(err => document.getElementById('copied').textContent = 'Copy failed: ' + err.message + ' - select the text and copy it by hand'));
+document.getElementById('download').addEventListener('click', ev => {   // a file in Downloads: safer than the clipboard
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([document.getElementById('export').value], { type: 'text/plain;charset=utf-8' }));
+  a.download = ev.currentTarget.dataset.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  document.getElementById('copied').textContent = 'downloaded as ' + a.download;
+});
 document.getElementById('reset-all').addEventListener('click', () => {
   if (!confirm('Put every cut back to the planned times, restore the removed ones and drop the cuts you added?')) return;
   plan.forEach(c => { c.s = c.s0; c.e = c.e0; c.removed = false; }); added = []; renderAll(); save(); });
@@ -1543,7 +1562,16 @@ document.addEventListener('keydown', ev => {   // capture: the page's keys are t
     const b = TLS.querySelector('.tl-skip');
     b.checked = !b.checked; tlMsg(b.checked ? 'Skipping the cuts (S to play everything)' : 'Playing everything (S to skip the cuts)');
   }
+  else if (c === 'KeyF') { take(); nextSpeed(); }
 }, true);
+const SPEEDS = [1, 2, 4];                                   // playbackRate on the same media: no extra renders
+function nextSpeed() {
+  const r = SPEEDS[(SPEEDS.indexOf(A.playbackRate) + 1) % SPEEDS.length];
+  A.playbackRate = r;
+  TLS.querySelector('.tl-speed').textContent = r + '×';
+  tlMsg(`Speed ${r}× (F to change)`);
+}
+TLS.querySelector('.tl-speed').addEventListener('click', ev => { ev.currentTarget.blur(); nextSpeed(); });
 mc.style.height = MAIN_H + 'px'; ov.style.height = OV_H + 'px';
 window.addEventListener('resize', drawSoon);
 TLS.addEventListener('toggle', drawSoon);
@@ -1602,11 +1630,12 @@ def timeline_section(tl: dict) -> str:
 <div class="ctl"><button class="tl-play play">Play</button><span class="now tl-now"></span>
   <label><input type="checkbox" class="tl-skip"> skip the cuts (hear the result)</label>
   <span class="zoom">zoom <button class="tl-zout">-</button> <span class="tl-zl"></span> <button class="tl-zin">+</button></span>
+  <span>speed <button class="tl-speed" title="1x, 2x, 4x (F)">1&times;</button></span>
   <span><button class="tl-left" title="back">&larr;</button><button class="tl-right" title="forward">&rarr;</button></span>
   <span>silence no cut covers <button data-j="gap" data-d="0">&lsaquo; prev</button><button data-j="gap" data-d="1">next &rsaquo;</button></span>
   <span>cut <button data-j="cut" data-d="0">&lsaquo; prev</button><button data-j="cut" data-d="1">next &rsaquo;</button></span>
   <button class="tl-add">Add a cut at the bar</button> <span class="tl-gaps"></span>
-  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in (at the mouse when it is on the spectrogram) &middot; &larr;/&rarr; move the bar (Shift: 1 s) &middot; Delete remove the selected cut &middot; Z or Ctrl+Z bring back the last removed one</span></div>
+  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in (at the mouse when it is on the spectrogram) &middot; &larr;/&rarr; move the bar (Shift: 1 s) &middot; Delete remove the selected cut &middot; Z or Ctrl+Z bring back the last removed one &middot; F speed 1&times;/2&times;/4&times;</span></div>
 <canvas class="tl-over"></canvas>
 <canvas class="tl-main"></canvas>
 <div class="tl-sel tl-selbox"></div>
@@ -1686,8 +1715,8 @@ def build_studio_page(data, scuts, rows, page: Path, wav: Path, video: Path | No
 <p class="note">The same format as <code>studio_cuts.txt</code>, renumbered in Studio's order. Changed cuts say what they
 were, added ones say NEW, removed ones are listed at the end as REMOVED. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
 this list to Claude.</p>
-<p><button id="copy">Copy list</button> <span id="copied"></span> <button id="reset-all">Put all cuts back</button></p>
-<textarea id="export" readonly></textarea>
+<p><button id="download" data-name="studio_cuts_edited_{data['video_id']}.txt">Download list</button> <button id="copy">Copy list</button> <span id="copied"></span> <button id="reset-all">Put all cuts back</button></p>
+<textarea id="export" readonly data-header="{esc(list_header(data, page, f"studio_cuts_edited_{data['video_id']}.txt"))}"></textarea>
 </details>"""))
     toc = "".join(f'<li><a href="#{sid}">{esc(title)}</a></li>' for sid, title, _ in sections if title)
     tl_scripts = ""
@@ -1732,8 +1761,8 @@ planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it 
 
 
 def levels(out_dir: Path, source: Path | None = None):
-    """Audio, 10 ms speech-band levels, the silence threshold (noise floor + 20 dB)
-    and the sound mask - shared by the analysis and --speech-map."""
+    """Audio, 10 ms speech-band levels, the silence threshold (noise floor + 20 dB, or metadata.json's
+    silence_margin_db) and the sound mask - shared by the analysis and --speech-map."""
     meta = json.loads((out_dir / "metadata.json").read_text(encoding="utf-8"))
     wav = ensure_wav(out_dir, meta, source)
     log.info(f"Reading {wav.name} and measuring levels")
@@ -1746,7 +1775,11 @@ def levels(out_dir: Path, source: Path | None = None):
     # was found; without it the floor was -94 dB and the counts matched ML48's (2026-10-14).
     digital = db <= -119.9
     floor = float(np.percentile(db[~digital], 5))
-    thr = floor + 20
+    # Per recording, in metadata.json: a distant camera microphone has little range above its floor.
+    # Ashot Դաս 8 (iPhone at the back): floor -57.8 dB, median -44.4, 99th percentile -31.5; at +20 only 3%
+    # of a stretch of nonstop talking counted as sound, at +8 73% (2026-10-24).
+    margin = float(meta.get("silence_margin_db", 20))
+    thr = floor + margin
     sound = sound_mask(db, thr)
     log.info(f"{len(x) / SR / 60:.1f} min audio, noise floor {floor:.1f} dB (excluding {100 * digital.mean():.0f}% "
              f"digital silence), silence threshold {thr:.1f} dB, {100 * (~sound).mean():.0f}% of frames silent")
@@ -1801,6 +1834,8 @@ def analyse(out_dir: Path, min_silence: float, pad: float, source: Path | None =
                    "audio_source": audio_source(out_dir / "audio" / f"{meta['id']}_16k.wav"),
                    "threshold_db": round(thr, 1), "blip_s": BLIP_FRAMES / 100},
         "cuts": all_cuts,
+        # A private video's metadata.json (fetch_captions_api.py) carries the frame rate: yt-dlp can't see it.
+        **({"fps": meta["fps"]} if "fps" in meta else {}),
     }
 
 
@@ -1826,9 +1861,14 @@ def main():
     ap.add_argument("--video", type=Path,
                     help="for --video-preview: the recording's video file, when the audio came from an audio-only "
                          "file (Zoom's .m4a next to the .mp4); its length must match the audio's within 1 s")
+    ap.add_argument("--video-keyframes-only", action="store_true",
+                    help="for --video-preview: decode only the keyframes (~1 picture per second on an iPhone file), "
+                         "for recordings whose decoding is the bottleneck, like 1080p HEVC 10-bit")
     args = ap.parse_args()
     if args.video and not args.video_preview:
         ap.error("--video only applies with --video-preview")
+    if args.video_keyframes_only and not args.video_preview:
+        ap.error("--video-keyframes-only only applies with --video-preview")
     if args.speech_map:
         setup_logging()
         speech_map(args.output_dir, *args.speech_map, source=args.audio)
@@ -1873,7 +1913,8 @@ def main():
     jpath.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
     rows = load_transcript(out_dir / "transcript.txt")
     build_page(data, rows, review / "index.html")
-    video = (make_video_proxy(out_dir, data, args.video_encoder, args.video) if args.video_preview
+    video = (make_video_proxy(out_dir, data, args.video_encoder, args.video, args.video_keyframes_only)
+             if args.video_preview
              else existing_video_proxy(out_dir, data))
     log.info(f"studio.html plays the video preview {video}" if video
              else "studio.html plays the WAV (--video-preview makes a video preview)")

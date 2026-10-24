@@ -16,7 +16,7 @@ All 614 public/unlisted descriptions read line by line; details and findings #1-
       `_knowledge/description_audit_2026-10-22_batch2_pending.json`
 - [ ] Rerun `scripts/non_essential/glossary_scan_channels.py` after that push (expect 0 DENY)
 - [ ] User decisions: the "user" and "verify" rows of the findings table
-- [ ] Local copies older than live (ML 2-10, 18-20, ML-math 51-52, Complex 20-25; Papikian not yet compared):
+- [x] Dropped (the user, 2026-10-23: "why would we need that?"; every push script reads the live text first). Local copies older than live (ML 2-10, 18-20, ML-math 51-52, Complex 20-25; Papikian not yet compared):
       sync from live? Rerun the comparison after the quota reset (audit file, "Local vs live")
 
 ## Arnak Dalalyan - Բազմաչափ վիճակագրություն
@@ -35,14 +35,17 @@ Details in `_knowledge/arnak_multivariate/status.md`.
 
 ## Ashot Harutyunyan - Ինֆորմացիայի տեսություն
 
-Parked: too much work for now. Recording timeline in `_knowledge/info_theory/recording_timeline.md`;
-lessons 4 and 5 got chapters, titles and dates on 2026-10-20.
+Active again 2026-10-23: **todo list in `_knowledge/info_theory/todo.md`** (Դաս 6-8, consistency with 0-5, 1.25x).
+Recording timeline in `_knowledge/info_theory/recording_timeline.md`; lessons 4 and 5 got chapters, titles and dates on 2026-10-20.
+2026-10-24: Դաս 6-8 rendered, uploaded and finished; all 9 descriptions carry the slides block (Drive folder, page
+ranges) and nested chapters; playlist sorted 0-8. **Waiting on Ashot's OK**, then Դաս 4-8 public.
+All 9 at a glance: `_knowledge/info_theory/videos_overview.html`.
 
 ## Sevak - Կոմպլեքս անալիզ
 
 Done (25 lessons, playlist in lesson order).
 
-- [ ] The Gmail reply drafted to him on 2026-10-20 was left unsent: send or delete it
+- [x] The Gmail reply to him: sent by the user (2026-10-23)
 
 ### His own channel: Honors Linear Algebra (fall 2026, ongoing) - for later
 
@@ -121,12 +124,12 @@ Lectures 11 (midterm, probably) and 18 have no recording. Checked twice against 
 - [x] All 21 videos public (2026-10-22 20:43, user: "make all videos public"; 16-23 via videos.update(part=status), own status fields sent back; read back 21 of 21 public)
 - [x] 2026-10-22 20:49-20:52: midterm link on Դաս 10, project link on Դաս 11-12; "Չօրինակ" -> "Հակաօրինակ" on both channels (learning 2026-10-22-2052)
 - [x] 2026-10-22 21:00 glossary cross-check of all Papikian labels and the Sevak comments: 7 fixes live (learning 2026-10-22-2052)
-- [ ] Decide the open terms (learning 2026-10-22-2052): division ring, elementary divisors / invariant factors, Cayley-Hamilton, Eisenstein, Դաս 5 title Z[i]
+- [x] Open terms decided and applied 2026-10-23 13:26-13:32 (the user's Q21): division ring = բաժանումով օղակ, Համիլտոն-Քեյլի and պրիմար բաժանարարներ / ինվարիանտ ֆակտորներ (his own words in Դաս 14) kept; Դաս 22 Eisenstein -> Դաս 7's Այզընշտայն; Ֆուրյե, կոռելացիա, բազմանդամային օղակ, չհատվող ցիկլեր, ℤ[i] fixed live on 25 videos; ML [08] suffix, ML [41] -> 'Մեկ նեյրոնից ցանց'; the BRIGHTNESS Դաս 5 duplicate unlisted; all read back; glossary + denylist updated; rescan 0 DENY (40 NEAR, 383 ENG). Backup: `_knowledge/descriptions_before_term_fixes_2026-10-23.json`
 - [x] 2026-10-22 21:35: glossary check in the workflow (glossary_check.py, denylist, SKILL.md); scan of both channels: 0 DENY; 10 description typos + 7 title typos fixed (learning 2026-10-22-2052)
-- [ ] Open terms from the scan (learning 2026-10-22-2052, follow-up 2): Ֆուրիե/Ֆուրյե, կորելացիա/կոռելացիա, BRIGHTNESS title, ...
+- [x] Open terms from the scan: done, see above
 - [ ] Optional: plain read of the ~7,450 chapter labels outside Papikian
-- [ ] Sort the playlist into lesson order
-- [ ] Possible correction notes (the user decides): Դաս 23 slide "m^n ≤ N(I) ＜ m^(n+1)" should be
+- [x] Sort the playlist into lesson order (2026-10-23, see below)
+- [x] No correction notes (the user, 2026-10-23: none on umath, DECISIONS.md #25). Slips found: Դաս 23 slide "m^n ≤ N(I) ＜ m^(n+1)" should be
       (m+1)^n (~0:41:39); Դաս 16 "Carlitz wrote ~1000 papers" and "1936" unchecked; Դաս 21: N(I)
       missing a square (31:21), "Noetherian ⇒ finite Krull dimension" (23:10), split primes
       determine K only if Galois (01:13:02). Full list on the review page
@@ -136,8 +139,8 @@ Lectures 11 (midterm, probably) and 18 have no recording. Checked twice against 
 - [x] Series standard written: `_knowledge/papikian_ant/standard.md` (no pause cuts: he writes
       during pauses; the earlier editor kept them too)
 - [ ] Per video: content cuts, chapters, title, description, thumbnail
-- [ ] Fix Դաս 4's date line: 23 -> 24 September 2024 (the Kaltura recording is dated 2024-09-24)
-- [ ] Sort the playlist into lesson order (dry run: 13 moves; it is newest-first now)
+- [x] Դաս 4's date line 23 -> 24 September 2024: pushed 2026-10-23 12:43, read back (old text in `_knowledge/papikian_ant/description_das4_before_date_fix_2026-10-23.json`)
+- [x] Playlist sorted into lesson order 2026-10-23 12:41 (set to "Manually sorted" in Studio first; 20 of 21 moved, read back 1-23)
 - [ ] Optional: link each lecture's own notes PDF in its description instead of the course page
 
 ## Mihran Papikian - Galois Theory (ARCS-ai, fall 2025): candidate, not started
@@ -189,12 +192,17 @@ share links from the filming team's Telegram (still downloadable, no passcode).
       Դաս 18-21 were pushed in `3eb3a7d` before this: their new plans are uncommitted
 - [x] 2026-10-22: back to content cuts only, like the older uploads (DECISIONS #22). The 4 s plans
       are kept as `*_v2_4s`, the active ones are `*_v1_content_only`
+- [x] 2026-10-22/23, without the user (`_knowledge/tserunyan_metric/finish_15-27.md`): her course page
+      saved (`_knowledge/tserunyan_site/`, 40 PDFs); all 13 chapter lists and titles reviewed inline
+      against transcripts and her notes (`review_15-27.md`: 27 of 366 chapters changed, 1 added); glossary
+      0 DENY; blur frames checked; thumbnails `thumbnails/umath/metric_15..27.png`; review page
+      `_knowledge/tserunyan_metric/review_15-27.html`
 - [ ] Review the 13 cut plans (`edit_review/studio.html`), apply in Studio; then
       `scripts/remap_chapters.py --from-cuts studio_cuts.txt` if the list changed, then push
 - [ ] Blur check in kept video: Դաս 15 edited 1:30:17-1:30:37 (screen share drops: a remote
       participant's name tag, Zoom page); Դաս 22 students' names in her notes from edited ~0:55:42.
       If a start cut is unticked: Դաս 20 (TA's email), 26 (her Gmail address), 27 (her bedroom) need blur
-- [ ] Possible correction: Դաս 18 ~0:15:09 says "Egorov" for what is Lusin's theorem
+- [x] No correction notes on umath (DECISIONS.md #25, 2026-10-23). Slips kept unpublished in `lecturer_slips_not_published.txt` (17, 18 "Egorov" for Lusin, 19, 24, 27)
 - [ ] Per video: transcript, cuts in Studio, chapters, title, description, thumbnail
 - [ ] Sort the playlist into lesson order (dry run: 11 moves)
 - [ ] If the team finds lecture 1's recording, add it
@@ -219,6 +227,8 @@ into Դաս 16.2-գ to 19.2 (10 pieces), Part 7's 20.1-20.3 and 21.2.
 - [ ] Not on YouTube at all, decide later: practical-session recordings, consultations
 - Sections 25 and 26 are not in the folder (probably never recorded)
 
-## Vahan - Խմբեր
+## Vahagn Mikaelian - Խմբեր
+
+The same lecturer as the linear algebra course above ("Vahan" was a typo, the user 2026-10-23).
 
 - [ ] Not checked yet

@@ -26,10 +26,14 @@ never recorded, "Դաս 1-2" is lecture 2). New lectures: Դաս 15-27, no gaps.
 🗓️ Ամսաթիվ՝ 7 ապրիլ, 2023
 
 
-📚 Դասախոսությունների նոթերը՝
-https://www.math.mcgill.ca/atserunyan/Courses/2023_S.Yerevan.Metric&Top
+📚 Դասախոսության նոթերը՝
+https://drive.google.com/file/d/<this lecture's notes in the folder>
 Տնային աշխատանք՝
-https://www.math.mcgill.ca/atserunyan/Courses/2023_S.Yerevan.Metric&Top/Homework/hw8_Yerevan_Metric_Top_2023S.pdf
+https://drive.google.com/file/d/<the homework copy in the folder>
+Դասընթացի բոլոր նյութերը՝
+https://drive.google.com/drive/folders/1HcmQLDevenreXek6CpK22JORez5F7Jdm
+Դասախոսի կայքը՝
+https://www.math.mcgill.ca/atserunyan/Courses/2023_S.Yerevan.Metric&Top
 Դասագրքեր և այլ նյութեր՝
 https://mathteam.notion.site/geometry-topology
 
@@ -49,7 +53,9 @@ https://www.youtube.com/playlist?list=PLz3NrXxHz_CA3NjE0D_amd_QcTMx5HJvZ
 ```
 
 - **(≠ ANT)** Two blank lines after the lecturer line too (Papikian has one).
-- **(≠ ANT)** `📚 Դասախոսությունների նոթերը՝` (plural "notes") + the course page, no anchor.
+- **15-27 (2026-10-23):** the 📚 block links the math-team Drive copies, Papikian-style (`drive_materials.md`,
+  IDs in `drive_folder_ids.json`). The published 1-14 still have the old block: `📚 Դասախոսությունների նոթերը՝`
+  (plural) + her course page, and the homework on her site.
 - **(≠ ANT)** Textbooks link is `https://mathteam.notion.site/geometry-topology`.
 - **Homework rule (checked on all 11 earlier lessons):** link the first homework dated *strictly
   after* the lecture (lecture 3 on 7 Feb links HW2 of 14 Feb, not HW1 of 7 Feb; lecture 12 on
@@ -69,7 +75,7 @@ https://www.youtube.com/playlist?list=PLz3NrXxHz_CA3NjE0D_amd_QcTMx5HJvZ
 | 24 | 10 մայիս, 2023 | hw12 (hw11 same day) |
 | 25 | 12 մայիս, 2023 | hw12 |
 | 26 | 16 մայիս, 2023 | hw12 |
-| 27 | 19 մայիս, 2023 | none after it: drop the two homework lines (user's call) |
+| 27 | 19 մայիս, 2023 | hw12, the last one (nothing is dated after it; the user 2026-10-23: "link last") |
 
 ## Chapters
 
@@ -81,6 +87,24 @@ https://www.youtube.com/playlist?list=PLz3NrXxHz_CA3NjE0D_amd_QcTMx5HJvZ
   `Քննարկում․ ...`, `Դիտողություն․ ...`, `Զգուշացում․ ...`, `Օրինակ․ ...`; also plain
   `Ապացույց`, `Ապացույցի սխեման`, `Օրինակներ`, `Մտորումներ`, `Հարցեր ապացույցից`. Quotes `« »`.
 - Start every label with a letter; no ASCII `<` `>`.
+- **Vocabulary fixed in the 15-27 review (2026-10-23)** (glossary terms where it has them):
+  basis = `բազիս` (`բազիսային`), prebasis = `նախաբազիս` (she says prebasis; add `(prebasis, subbasis)`
+  where she names it, since books say subbasis), cylinder = `գլան` (`գլանային`), pigeonhole =
+  `Դիրիխլեի սկզբունք`, Cauchy = `Կոշիի`, comeager / meager = `կոչնչին` / `չնչին`, clopen = `բացփակ (clopen)`,
+  coloring = `ներկում (coloring)` (US spelling), separation axioms `T_0` ... `T_4` with the underscore,
+  set difference with an ASCII backslash (`ℝ\ℚ`, `F \ M`, not `∖`), disjoint union `⊔`.
+- **Added after the Codex second review (2026-10-23):** separation axioms = `Անջատման (անջատելիության) աքսիոմներ`:
+  her term first (Դաս 19, 0:57:39; she insists separation is not separability), the glossary's form in
+  parentheses (the user, 2026-10-23: "add other option in paranthesses"). The title keeps only her term:
+  with both it is 101 characters, and YouTube allows 100. No correction notes on this channel
+  (DECISIONS.md #25): a lecturer's slip only shapes the label. Sequential compactness = `հաջորդականային կոմպակտություն` (noun) / `հաջորդականորեն կոմպակտ`
+  (adjective). Fiber = `շերտ (fiber)`, e.g. `X × {y}`. Partial (subsequential) limit = `մասնակի սահման`.
+  Her "Heine-Borel" (Դաս 24) means complete and totally bounded, not the textbook "closed and bounded
+  sets are compact": labels state the condition (`լրիվ և լիովին սահմանափակ`) instead of the name.
+  Directed set = `ուղղորդված բազմություն`, net / subnet = `ցանց` / `ենթացանց`, cluster point =
+  `կուտակման կետ (cluster point)`.
+- A label that is a question ends in an Armenian question mark on the stressed vowel: `Հարց․ ինչո՞ւ`,
+  `որտե՞ղ`, `բավակա՞ն է`. A plain heading may stay declarative (`Ինչու է կարևոր`).
 
 ## The recordings
 

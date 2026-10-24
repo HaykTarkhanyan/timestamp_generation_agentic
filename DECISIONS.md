@@ -2,6 +2,179 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 34. Ashot's chapters are nested like Metric Academy's; videos over an hour use H:MM:SS throughout
+
+- **Decision:** Indent sub-chapters by 4 spaces (one level, a parent has 2+ children) in all 9 Ինֆորմացիայի
+  տեսություն videos, and write every time as H:MM:SS (`0:00:00`) in videos over an hour; under an hour the
+  series' `MM:SS` stays. Labels and times unchanged.
+- **Date / status:** 2026-10-24, active (the user: "make timestamps hierarchical like in Metric Academy ... if
+  there is more than one hour start it with 00: like in MA").
+- **Why:** same reading aid as the ML course (the skill's nesting rule, tested on YouTube 2026-08-31); the old
+  lists mixed `05:04` and `01:03:31` in one video. Pushed for Դաս 1-8 and read back: indents kept, chapters
+  still parsed (Դաս 2: 33, Դաս 8: 27). Դաս 0 stays flat: no parent there would have two children.
+- **Alternatives rejected:** `M:SS` (`0:00`) for the short videos as in the ML course (the series already used
+  `00:00`, and the user asked only about the hour format); nesting deeper than one level (YouTube keeps the
+  list flat, and the skill forbids it).
+- **What would change this:** the user wanting the same for Tserunyan, Papikian or Arnak (not applied there yet).
+
+## 33. Ashot's slides: one Drive folder with the 4 final decks; every description gives its page range
+
+- **Decision:** Put only the last deck of each part in a public math-team Drive folder (intro, Lectures 2-5,
+  Lectures 6-11, Channel Capacity) and give each lesson's 📚 block "սլայդներ N-M", the deck link and the
+  folder link.
+- **Date / status:** 2026-10-24, active (the user picked the 4 decks and the deck + folder layout; slide
+  numbers were their request: "include slide numbers for that lesson as well, not just the file").
+- **Why:** His decks only grow within a part, so a page keeps its number in the later decks (by page text:
+  L-10 -> L-11 70/71 pages identical at the same number, L-4 -> L-5 46/53, the rest small edits). One file
+  per part plus a page range covers every lesson, and the final decks carry his latest corrections.
+  Page table: `_knowledge/info_theory/slides_map.md`.
+- **Alternatives rejected:** all 10 decks as posted, each lesson linking its own day's deck (10 overlapping
+  files); the file link without pages (the user wanted the pages).
+- **What would change this:** the lecturer asking for the per-week files, or a later deck renumbering pages.
+
+## 31. The 1080p lecture renders use a portable ffmpeg 9.0.2 beside the system 5.1
+
+- **Decision:** `render_lecture.py --ffmpeg C:/Users/hayk_/tools/ffmpeg-9/ffmpeg-9.0.2-full_build/bin/ffmpeg.exe`
+  (gyan.dev full build, SHA-256 checked) for the final renders; the system ffmpeg 5.1 (chocolatey) stays for
+  everything else. The script picks `-/filter_complex` (7.0+) or `-filter_complex_script` (5.1) by version.
+- **Date / status:** 2026-10-24, active (the user: "lets install new ffmpeg").
+- **Why:** The same zscale tone map ran 11-23% faster on 9.0.2, alternating runs on 20 s of Դաս 7
+  (5.1: 25.0, 24.8 s; 9.0.2: 22.3, 19.2 s), with the same look (frame luma 145 both) and the same A/V timing
+  (identical stream lengths on a test window).
+- **Alternatives rejected:**
+  - *GPU tone mapping with libplacebo (Vulkan on the Iris Xe)* - with hwupload/hwdownload the colours came
+    back wrong in every pixel format (green planes, swapped channels); letting libplacebo do its own
+    transfers fixed the colours but took 27.3 s, slower than zscale.
+  - *Quick Sync decode + `vpp_qsv tonemap=1`* - failed on these files (Invalid argument).
+  - *Replacing the system ffmpeg* - 9.0 removed `-filter_complex_script`, which other scripts here may use;
+    a portable copy can't break them, and the system one can be switched later on purpose.
+- **What would change this:** a newer Intel driver fixing the Vulkan readback (libplacebo could then be
+  re-measured), or the system ffmpeg being upgraded anyway.
+
+## 30. Classroom lectures: dip to black at every picture jump; Դաս 6 ends on his slides
+
+- **Decision:** `render_lecture.py` fades to black and back (0.25 s each way, `--dip`) at every cut in the camera
+  footage and at the switch from the camera to slides; a slide change stays instant. Դաս 6's last 17 min
+  (sound only) show slide 38, then slide 39 from 1:05:47.8 to the end, full screen, after a straight cut
+  from the camera; the description says why.
+- **Date / status:** 2026-10-24, active (the user: "can we add a small transition between them like the screen
+  going dark and reappearing so that it's not an instant blink, same for in video cuts. This is only about
+  cases where prof is doing offline lecture so they don't teleport"; Q43 "straight cut, we clarify in
+  description"; Q45 "keep 39 on screen").
+- **Why:** With one fixed camera a hard cut makes the lecturer jump across the room; a short dip reads as
+  "time passed". The fade only darkens existing frames, so lengths and sync are unchanged (measured: luma
+  139 -> 16 -> 139 across Դաս 8's 7:20 cut, 151 -> 27 -> 228 into the slide).
+- **Alternatives rejected:** *Hard cuts* - the teleporting. *A cross-fade* - shows two lecturers at once and
+  needs overlapping frames, which would change the timing. *An on-screen note at the slides* - the
+  description says it instead. *The agenda slide during his closing remarks* - the user kept slide 39.
+- **What would change this:** the dip feeling slow or distracting on a lecture with many cuts.
+
+## 32. Դաս 8's camera sound: no gain, light denoise
+
+- **Decision:** Render Դաս 8 with `--denoise` and no `--gain-db`; replaces the +13 dB of #29 (and the +16
+  tried after it).
+- **Date / status:** 2026-10-24, active (the user: "lets do no gain, light denoise", after noticing their
+  player had been set low while comparing the gain samples).
+- **Why:** By ear at a normal volume. Measured on 7:05-7:45: -28.9 LUFS with no gain (published Դաս 4/5:
+  ~-25; +13: -20.7; +16: -18.7). The boost also raised the room noise in pauses by the same amount.
+- **Alternatives rejected:** +13 / +16 / +18 dB (judged on a quiet player); ~+4 dB to match Դաս 4/5 (offered).
+- **What would change this:** viewers or the lecturer finding Դաս 8 too quiet next to the other lectures.
+
+## 29. Ashot Դաս 6-8: content cuts only, extra ideas as unticked suggestions, no silence rule
+
+- **Decision:** The cut plans for Ինֆորմացիայի տեսություն 6-8 hold only content cuts (dead air while he
+  looks for a slide, the minutes before the lecture), plus unticked suggestions for borderline pauses; no
+  automatic silence cuts (`--min-silence 9999`). Դաս 8's camera sound gets +13 dB (`--gain-db 13`).
+- **Date / status:** 2026-10-24, active; the Դաս 8 gain revisited 2026-10-24, see #32 (the user: "this is classroom recording so if we do too many cuts
+  than the prof will keep on teleporting, so we need to do semantically plus suggest some extra ideas,
+  but no automatic 3s+ rule"; on the +10 dB sample: "with gain its better, even add a bit more").
+- **Why:** One fixed camera on a walking lecturer: every cut is a visible jump, unlike a Zoom screen share
+  where a cut is invisible. He also talks almost without pauses (Դաս 4/5: longest silences 5.4 s and 7 s).
+  Դաս 8's plan came out at 2 ticked cuts (22 s) and 1 suggestion.
+- **Alternatives rejected:** *Silences from 5 s (Tserunyan, #26) or 3 s (ML)* - the teleporting.
+  *+10 dB* - the user asked for a bit more; the recorders of Դաս 6 / 7 need none.
+- **What would change this:** a lecture with long dead stretches (a broken projector, a break), or the user
+  finding the result too slow.
+
+## 28. Ashot Դաս 6-8 are rendered with ffmpeg (`scripts/render_lecture.py`), matched to Դաս 2-5
+
+- **Decision:** One ffmpeg pass per lecture: cuts on the recorder's timeline, the camera aligned to the
+  recorder by `align_audio.py` (offset + clock drift), 1.25x with the pitch kept (atempo), iPhone HLG
+  tone-mapped to BT.709 SDR with zscale + `tonemap=hable` at `npl=200`, 1080p 25 fps, intro and outro at
+  1x, H.264 via Intel Quick Sync (`h264_qsv`, global_quality 22). Sound: the recorder for Դաս 6 and 7,
+  the camera for Դաս 8 (it has no recorder file).
+- **Date / status:** 2026-10-24, active, made by Claude on measured evidence; the look and speed still
+  wait for the user's OK on a sample.
+- **Why:** Դաս 2-5 were cut in Premiere (`info\*.prproj`, read 2026-10-24): camera picture, recorder
+  sound (camera muted), 1.25x on Դաս 3 and 4 only (`PlaybackSpeed` 1.25; none in Դաս 5's project), intro
+  `intro-attemt-2.mp4` (6.5 s) and outro `outro-attempt-2.mp4` (5.8 s) at 1x, 25 fps sequences (Դաս 0, 2,
+  4, 5 are 25 fps on YouTube, Դաս 3 30), Lumetri exposure -1.1 to -1.9 (Դաս 4: +1.0). The new raw files
+  are HEVC 10-bit HLG / BT.2020; read as SDR they look washed out (mean luma 177-191, published Դաս 2, 4, 5:
+  138-153). `hable` at npl 200 gives 143-158, the same look, slides readable.
+  Alignment: Դաս 7 offset 230.047 s, drift -11.4 ppm, residuals 3 ms; Դաս 6 200.869 s, -5.9 ppm, +-33 ms
+  (room acoustics). After a render, the recorder and the camera's own sound agree within +3 to +8 ms
+  (Դաս 7) and +-23 ms (Դաս 6) at 1x, through cuts.
+- **Alternatives rejected:**
+  - *Premiere, as for Դաս 0-5* - manual, and a cut list from studio.html can't go in without retyping.
+  - *No tone map* - the washed-out look above.
+  - *mobius / reinhard / clip tone maps, npl 100* - brighter than Դաս 2-5 (luma 194-219) with a warm cast.
+  - *A Hald CLUT baked from the same chain* - mean pixel error 20 levels (the mapping went wrong) and only
+    ~30% faster, since decoding is the bulk.
+  - *Hardware decoding (d3d11va)* - no faster than the CPU here (20 s of video: 9.8 s vs 8.7 s).
+  - *libx264* - kept as `--encoder x264`; Quick Sync leaves the CPU to the decode and tone map.
+- **What would change this:** the user finding the sample too bright, dark or soft; a full render far
+  slower than ~1.3x the recording; a newer ffmpeg with GPU tone mapping (`vpp_qsv` tonemap, libplacebo).
+
+## 27. A cut list the user gives with "pw" is entered and saved by Claude when the checks pass
+
+- **Decision:** When the user hands over their own cut list and asks for Playwright entry, Claude enters
+  it and presses Save in Studio without asking again, if `cut_list.py diff` is identical frame for frame,
+  the Save dialog's new length matches the prediction, and the original recording is on disk.
+- **Date / status:** 2026-10-23, active (the user, during Tserunyan Դաս 15: "if i give you cut list myself
+  and say will pw then you can also save it as well if your checks pass, unless local file is unavailable").
+- **Why:** The list is already the user's reviewed decision, and the checks catch entry errors; asking
+  again before Save only adds a round trip. Save can't be undone in Studio, so the local original is the
+  safety net.
+- **Alternatives rejected:** *Stop before Save every time* (the skill's default until now, which left the
+  user to press Save); *save on any entry* (a list Claude planned but the user didn't review stays unsaved).
+- **What would change this:** a saved edit that turns out wrong despite a clean diff, or no local original.
+
+## 26. Tserunyan 16-27 cut silences from 5 s (no hum join); Դաս 15 takes the user's own edit
+
+- **Decision:** For Մետրիկական տարածություններ և տոպոլոգիա 16-27 the active plan is the content cuts +
+  silences of 5 s or more (`--min-silence 5`), without `hum_join.py`, saved as `*_v3_5s`. Դաս 15 uses the
+  user's edit from studio.html (`studio_cuts_edited.txt`: 92 cuts, 14.8 min, one content cut dropped).
+- **Date / status:** 2026-10-23, active. Supersedes #22 for Tserunyan (Papikian stays on #23).
+- **Why:** After editing Դաս 15 on studio.html: "she is soo better then papikyan ... lets do the semantic
+  cuts as always and regarding silences only cut obvious silences over 5 second". She rarely hums, so the
+  hum join that Papikian needed (#23) has nothing to join. Her Դաս 15 edit kept 26 cuts under 4 s, but
+  the plan for the rest takes only the obvious ones.
+- **Alternatives rejected:**
+  - *Content cuts only (#22)* - the user cut 87 more silences by hand on Դաս 15.
+  - *4 s + hum join (`*_v2_4s`)* and *6 s + hum join (Papikian, #23)* - the user asked for 5 s, no hums.
+- **What would change this:** the user again adding many short cuts by hand on 16-27, as on Դաս 15.
+
+## 25. Correction notes only on the Metric Academy channel; umath lectures get none
+
+- **Decision:** The stage-6 `⚠️ Ուղղումներ՝` block (#4) goes only on the user's own videos
+  (Metric Academy channel). Lectures on Համալսարանական մաթեմատիկա (umath), given by other lecturers,
+  get no correction notes, however clear the slip.
+- **Date / status:** 2026-10-23, active (the user: "lets not add corrections to those at all, those
+  are for just my videos (metric academy)"). Narrows #4.
+- **Why:** On umath the lecturer is someone else (Tserunyan, Papikian, Dalalyan...), and a note under
+  their lecture corrects them in public on a channel that is not theirs. The live descriptions already
+  follow this: the 2026-10-22 audit dump has the block on 6 of 228 Metric Academy videos and on 0 of
+  386 umath videos.
+- **Alternatives rejected:**
+  - *Notes for real slips only* (Tserunyan 17 Borel vs Baire, 18 "Egorov" for Lusin; Papikian 16,
+    21, 23): drafted and checked, then dropped by the user.
+  - *All proposed notes, including naming* (Tserunyan 19 T_1, 24 "Heine-Borel", 27 "has joins").
+- **What would change this:** a lecturer asking for a correction to be added, or the user deciding
+  that a particular slip would mislead viewers enough to note it.
+- The slips found are kept, unpublished, in `edited_predicted/lecturer_slips_not_published.txt` per
+  lecture and in `_knowledge/tserunyan_metric/codex_review_15-27.json`; chapter labels still state the
+  correct condition (e.g. Դաս 24 "«Հայնե-Բորել» այս դասում՝ լրիվ և լիովին սահմանափակ").
+
 ## 24. Papikian's lecture 19 is "Դաս 18-19", following the existing "Դաս 11-12"
 
 - **Decision:** The missing lecture number goes into the next lecture's label: lecture 19's title

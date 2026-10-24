@@ -232,7 +232,17 @@ output/*/audio/
 output/*/edit_review/media/
 # 360p video preview for studio.html (--video-preview)
 output/*/video/
+# listening samples for the Ashot renders (denoise / gain A-B), 2026-10-24
+output/*/audio_ab/
 
 # Mihran Papikian's site PDFs (~400 MB; the user: no PDFs in the repo). README, manifest.json and
 # pages/ stay tracked; restore with python scripts/non_essential/fetch_papikian_site.py --download
 _knowledge/papikian_site/**/*.pdf
+# Anush Tserunyan's course-page PDFs (288 MB, same rule); restore with
+# python scripts/non_essential/fetch_tserunyan_site.py --download
+_knowledge/tserunyan_site/**/*.pdf
+# the page copy shows the TA's personal email address; --plan rewrites it in 2 s
+_knowledge/tserunyan_site/pages/
+# Tserunyan review page: embeds a video frame with a remote Zoom participant's name and face (the
+# Das 15 blur spot); the repo is public. Rebuild from review_15-27.json (tracked).
+_knowledge/tserunyan_metric/review_15-27.html

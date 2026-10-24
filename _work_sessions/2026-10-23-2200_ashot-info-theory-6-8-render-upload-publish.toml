@@ -1,0 +1,60 @@
+title = "Ashot Information Theory Դաս 6-8: renders at 1.25x, uploads, chapters, titles, thumbnails, slides folder; Դաս 0-5 brought in line"
+date = "2026-10-23"
+time = "22:00"
+areas = ["scripts", "scripts/non_essential", "scripts/archive", "_knowledge/info_theory", "_knowledge/umath_course_playbook.md", "_knowledge/umath_todo.md", "output/2026-10-24_*", "thumbnails/umath", "DECISIONS.md", "PLANNER.md", "_learnings"]
+
+done = [
+  "Raw files (Drive, 2026-10-23): Դաս 6 camera + 17 h recorder, Դաս 7 camera + mp3, Դաս 8 camera; transcripts via black audio-only uploads (private) and the captions API",
+  "Consistency with the published Դաս 0-5 from the Premiere projects (DECISIONS #28): 25 fps, YSU intro/outro at 1x, recorder audio, 1.25x; iPhone HDR (HLG) tone-mapped hable npl 200",
+  "New scripts/render_lecture.py: one ffmpeg pass (cuts on the camera frame grid, 1 ms audio grid, 1.25x, tone map, recorder audio by align JSON with drift, slides over audio after the camera ends, dip to black at every picture jump, light denoise, intro/outro, BT.709, .part.mp4 + duration check, --check 144p keyframes-only mode); new scripts/align_audio.py; new scripts/non_essential/render_sync_check.py",
+  "find_edit_points.py: keyframes-only preview proxy, per-recording silence_margin_db, ffprobe size parsing fix, file name header in the export boxes; content-only cut plans for Դաս 6, 7, 8 reviewed by the user (DECISIONS #29)",
+  "Portable ffmpeg 9.0.2 beside the system 5.1 (DECISIONS #31), 11-23% faster; Դաս 8 sound: no gain, light denoise (#32); dip to black and Դաս 6 slides 38/39 over the lost camera end (#30)",
+  "Final 1080p renders: Դաս 8 752 MB, Դաս 7 888 MB, Դաս 6 564 MB (58.7 min, A/V 3478.92 s both); the Դաս 8 run was reaped by Claude Code once (learning 2026-10-24-2040), opt-out env var added to ~/.claude/settings.json",
+  "Uploads (the user): Դաս 6 LRQ6r_DaAVU, 7 S8vcM74HZVE, 8 LOHGyVgaIuI, unlisted. Chapters from each video's own captions (23, 25, 27), Codex review (14 + 6 label fixes applied), titles Q44/Q63, descriptions in the Դաս 4/5 template, thumbnails from the user's Canva export",
+  "Դաս 4/5 checked (Codex + transcript): 10 imprecise labels fixed and pushed",
+  "Slides: 4 final decks + README in a public math-team Drive folder (DECISIONS #33); every description's 📚 block has the page range, the deck and the folder; README replaced in place via Manage versions",
+  "All 9 chapter lists nested like Metric Academy, H:MM:SS over an hour (DECISIONS #34); the user's own Studio edit of Դաս 6 kept (learning 2026-10-24-2043)",
+  "Playlist sorted 0-8; final audit of all 9 passes (only Դաս 3's old 27 s gap); standalone overview page _knowledge/info_theory/videos_overview.html; Armenian message to Ashot drafted (links, titles, slides, 1.25x except Դաս 5, Դաս 6's lost picture)",
+  "Recording timeline corrected: Դաս 6 -> 7 -> 8 is continuous (17 Apr does build a Huffman tree), so plain numbering, no 'Դաս 6-7' labels",
+]
+
+pending = [
+  "The user sends the message to Ashot; Դաս 4-8 stay unlisted until his OK (agreement of 25 Jan)",
+  "Q36: what happened on 15 May (ask him); Q46: end screens; Q38: Դաս 5 at 1.25x",
+  "Delete the 3 private audio-only caption uploads P7nf8jFgm0o, qv8yr8Ml7Yo, rtueGKrucms (Studio, the user)",
+  "Empty leftover folder output/2026-10-24_das6-final-1080p_LRQ6r_DaAVU/ (a failed first caption fetch; fetch_captions_api.py creates the folder before it knows a track exists). Delete on the user's word",
+  "Raw MOVs in Desktop/misc/YSU OpenCourseWare/info/ can go once Ashot approves (the Drive keeps the originals)",
+  "Tserunyan 16-27: still waiting on the user's reviewed cut lists (see the 2026-10-22-1746 log); ask whether its chapters should be nested too (DECISIONS #34 covers Ashot only)",
+]
+
+next = [
+  "When the user relays Ashot's OK: make Դաս 4-8 public through the API with their own status fields (umath playbook section 5), read back, then the Telegram-free closing steps in _knowledge/info_theory/todo.md",
+  "If he asks for changes: build every push from the live description (learning 2026-10-24-2043), rerun scripts/archive/info_theory_2026-10/audit_info.py and build_info_overview.py",
+]
+
+files = [
+  "scripts/render_lecture.py (new)",
+  "scripts/align_audio.py (new)",
+  "scripts/fetch_captions_api.py (new, captions of private uploads via the API)",
+  "scripts/non_essential/render_sync_check.py (new) + README row",
+  "scripts/find_edit_points.py (keyframes-only proxy, silence_margin_db, export header)",
+  "scripts/archive/README.md (new) + scripts/archive/info_theory_2026-10/ (14 scratch scripts kept as the record)",
+  "_knowledge/info_theory/todo.md, slides_map.md, recording_timeline.md",
+  "_knowledge/info_theory/drive_folder_ids.json, descriptions_before_2026-10-24.json, descriptions_after_slides_2026-10-24.json, descriptions_after_nesting_2026-10-24.json",
+  "_knowledge/info_theory/videos_overview.html (standalone, 506 kB)",
+  "_knowledge/info_theory/render/align_das6.json, align_das7.json, tail_slides_das6.txt; transcripts/",
+  "_knowledge/umath_course_playbook.md, _knowledge/umath_todo.md, PLANNER.md, DECISIONS.md (#28-#34)",
+  "_learnings/2026-10-24-2040 .. 2043 (reaper, Codex review, Հ/Յ glyphs, push from live)",
+  "output/2026-10-24_Das-{6,7,8}-Informaciayi-tesutyun_* (cut plans, review pages), output/2026-10-24_das{7,8}-final-1080p_*, output/2026-10-24_Das-6-Tvyalneri-seghmum-Koderi_LRQ6r_DaAVU (descriptions, chapters)",
+  "thumbnails/umath/info_theory_05..08.png",
+  "Outside the repo: ~/.claude/settings.json (reaper opt-out), C:/Users/hayk_/tools/ffmpeg-9/ (ffmpeg 9.0.2), the renders in each output folder's video/ (git-ignored)",
+]
+
+commits = ["one commit at the end (this session's umath, Tserunyan, audit and info theory work); Metric Academy leftovers from other sessions (ML48/49/52-54 files, Claude Code workshop edits, make_thumbnails_final.py, fonts, .vscode) left out again"]
+
+notes = """
+YouTube quota used on 2026-10-24 by this stretch: roughly 2,500 units (about 40 videos.update / thumbnails.set
+plus caption fetches and read-backs), well under 10,000.
+Description lines must not start with a time; the Դաս 6 note says '45-րդ րոպեից' in words for that reason.
+The user edits descriptions in Studio too: always build pushes from the live text.
+"""

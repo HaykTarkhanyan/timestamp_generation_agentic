@@ -18,13 +18,29 @@ Drive folder `info_NN` holds Friday NN of the course, so YouTube `Դաս N` is `
 | 20 Mar | **substitute lecturer** (sound processing and AI applications) | **not filmed, by agreement**: the lecturer was unavailable, the substitute preferred not to be filmed, and the topic is not core | info_07_mar_20 (made in advance on 14 Feb; probably empty) | none, correctly |
 | 27 Mar | ? | filmed on a classmate's phone; **last ~10 min of video missing** (recording stopped); audio complete (the recorder ran ~18 h). Plan: show the slides over the audio for the gap | info_08_mar_27 | **not uploaded** |
 | 3 Apr | - | **no class** | - | - |
-| 10 Apr | ? | **no mention in any chat, no Drive folder** | - | - |
+| 10 Apr | **written quiz** (found 2026-10-24 in the transcripts) | not a lecture: on 27 Mar (4:37) he set the quiz for "the Friday after" the exam week (3 Apr); on 17 Apr (1:00) he offers to end early to look at the graded papers, and (5:26) resumes at Kraft's inequality, where 27 Mar stopped | - | - |
 | 17 Apr | ? | filmed (the team nearly forgot; the lecturer was late) | info_09_apr_17 | **not uploaded** |
 | 24 Apr | - | no mention, no folder; Remembrance Day, a public holiday | - | - |
 | 1 May | - | no mention, no folder; Labour Day, a public holiday | - | - |
 | 8 May | ? | filmed; equipment left with the lecturer afterwards | info_may_08 | **not uploaded** |
-| 15 May | ? | **no mention, no folder** | - | - |
+| 15 May | ? | **no mention, no folder**. 8 May (41:54) says the channel problem comes "next time"; the next deck is 22 May's "Lectures 13-". Still open: ask him | - | - |
 | 22 May | channel capacity (planned) | **not filmed**: "almost the whole class was absent" (lecturer, 26 May). He would like 1-2 lectures filled in later | - | - |
+
+**Between 17 Apr and 8 May (2026-10-24):** 17 Apr ends "we'll discuss it next time" (Fano's and Shannon's codes;
+the optimal one is Huffman's); 8 May opens "remember where we stopped two weeks ago" and recaps building a
+Huffman code, which *you* discussed (քննարկել եք) "last time". 17 Apr does not build Huffman codes, and the decks
+go L-10 (17 Apr) -> L-11 (8 May) with nothing between, so it was most likely the TA's problem session, not a
+lecture. Not confirmed.
+**Corrected later on 2026-10-24** (from the final videos' own captions): 17 Apr *does* build a Huffman code, the
+4-symbol tree with 0.25 / 0.35 merges and 0.6 / 0.4 at the top (Դաս 7 48:36-50:41), and 8 May's recap at 0:00-3:30
+walks through that same tree. So Դաս 6 -> 7 -> 8 is one continuous run of lectures (6 opens on Դաս 5's AEP, 7 on
+the Kraft inequality where 6 stopped, 8 on 7's Huffman tree); the Fridays in between were the substitute, the quiz,
+no class and holidays. Hence plain Դաս 6, 7, 8, not the "Դաս 11-12" style of DECISIONS #24, which is for a real
+lecture with no recording.
+
+**27 Mar's end:** the lecture ends at 1:20:25 in the recorder (closing: sources with memory, Markov chains,
+Lempel-Ziv, "zip uses a variant of it", open problems); the camera stopped at 1:03:40, so 16 min 45 s of lecture
+has audio only (prefix condition -> Kraft's condition on code lengths -> minimising the expected length).
 
 ## Agreements with the lecturer that still apply
 

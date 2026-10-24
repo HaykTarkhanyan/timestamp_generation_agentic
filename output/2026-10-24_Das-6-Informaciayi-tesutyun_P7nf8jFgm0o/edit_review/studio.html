@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio cuts P7nf8jFgm0o</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+
+.specscroll { overflow-x: auto; overflow-y: hidden; padding: 3px 0; margin-top: 3px; }
+.specwrap { position: relative; width: 100%; cursor: ew-resize; touch-action: none; user-select: none; }
+.specwrap img { display: block; width: 100%; height: 130px; border-radius: 6px; pointer-events: none; }
+.zoom button { min-width: 28px; }
+.zoom .zl { display: inline-block; min-width: 34px; text-align: center; font-variant-numeric: tabular-nums; }
+.bar { position: absolute; top: -3px; bottom: -3px; width: 3px; margin-left: -1px; background: #fff;
+       box-shadow: 0 0 0 1px #000; border-radius: 2px; pointer-events: none; z-index: 2; }
+.shade { position: absolute; top: 0; bottom: 0; background: rgba(217, 0, 18, .38); pointer-events: none;
+         border-left: 3px solid var(--red); border-right: 3px solid var(--red); box-sizing: border-box; }
+.shade.added { background: rgba(242, 168, 0, .40); border-color: var(--orange); }
+.shade.other { background: rgba(150, 150, 150, .40); border: none; }
+.edit, .added-row { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin: 4px 0; font-size: 14px; }
+.edit .times, .added-row .times { font-variant-numeric: tabular-nums; }
+.edit button, .added-row button { font-size: 13px; }
+.added-row .tag { color: var(--orange); font-weight: 650; }
+.was, .warn, .msg { font-size: 13px; color: var(--muted); }
+.warn, .msg { color: var(--red); }
+details.cut.changed > summary { color: var(--red); }
+details.cut.removed > summary { color: var(--muted); text-decoration: line-through; }
+.shade.gone { background: none; border: 2px dashed var(--red); }
+.edit button:disabled { opacity: .4; cursor: not-allowed; }
+#export { width: 100%; min-height: 220px; font: 13px/1.4 ui-monospace, Consolas, monospace; }
+#player { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 8px 0 10px; display: flex;
+          gap: 12px; align-items: flex-end; border-bottom: 1px solid var(--line); }
+#player video { width: 480px; max-width: 62vw; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; display: block; }
+#player.hidden video { display: none; }
+#player .pinfo { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
+body.has-video details.cut { scroll-margin-top: 300px; }
+.axis { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted);
+        font-variant-numeric: tabular-nums; }
+.axis .a0, .axis .a1 { white-space: nowrap; }
+.ctl { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 8px 0 4px; }
+.ctl .now { font-variant-numeric: tabular-nums; font-weight: 650; min-width: 90px; }
+.play { min-width: 74px; }
+.flag button { font-size: 12px; padding: 0 6px; margin-left: 6px; }
+.err { color: var(--red); }
+nav ol { columns: 2; font-variant-numeric: tabular-nums; }
+summary { font-variant-numeric: tabular-nums; }
+.stamp { font-size: 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--red);
+         border-radius: 6px; padding: 6px 10px; display: inline-block; }
+#worktimer { position: fixed; right: 12px; bottom: 12px; z-index: 20; display: flex; gap: 8px; align-items: center;
+             background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px;
+             font-size: 14px; font-variant-numeric: tabular-nums; box-shadow: 0 1px 4px rgba(0, 0, 0, .25); }
+#worktimer.on { border-color: var(--red); }
+
+.tlsec { width: calc(100vw - 48px); margin-left: calc(50% - 50vw + 16px); }
+.tlsec canvas { display: block; width: 100%; touch-action: none; user-select: none; border-radius: 4px; }
+.tl-over { margin: 6px 0 4px; cursor: pointer; background: var(--absorbed); }
+.tl-main { cursor: crosshair; }
+.tl-sel { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; min-height: 34px; font-size: 14px; margin: 6px 0 2px; }
+.tl-sel .times { font-variant-numeric: tabular-nums; }
+.tl-sel .why { color: var(--muted); flex-basis: 100%; }
+.tl-sel .tag { font-weight: 650; }
+.tl-line { font-size: 14px; min-height: 22px; }
+.tl-line .t { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tl-line .nx { color: var(--muted); }
+.tl-gaps, .tl-keys { font-size: 13px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.legend i { display: inline-block; width: 18px; height: 10px; margin-right: 5px; vertical-align: -1px; border-radius: 2px; }
+body.has-video #timeline { scroll-margin-top: 300px; }
+</style></head>
+<body class="has-video" data-fps="30" data-ctx="3" data-duration="4920.0" data-list="ee4e640b" data-video="P7nf8jFgm0o"><main>
+<h1>Studio cuts: Դաս 6 (27 Mar) | Ինֆորմացիայի տեսություն - recorder 27 Information Theory.mp3, 0:00-1:22:00 (master timeline)</h1>
+<p class="stamp"><b>2 cuts</b> &middot; list ee4e640b &middot; built 2026-10-24 12:36<span id="nchanged"></span>
+ - reload this tab if the list changed since you opened it</p>
+<p class="warn" id="storage"></p>
+<div id="worktimer"><span id="wt-time">0:00:00</span><button id="wt-btn">Start timer</button></div>
+<p class="sub">2 cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
+(30 fps, H:MM:SS:FF). Removes <span id="removed">0:09:03: 1:22:00 &rarr; 1:12:57</span>.</p>
+<nav><ol><li><a href="#timeline">Timeline: the whole lecture</a></li><li><a href="#export-list">Cut list with your changes (last first)</a></li></ol></nav>
+<div id="player"><video id="media" preload="metadata" playsinline src="../video/P7nf8jFgm0o_360p.mp4"></video><div class="pinfo"><span id="nowcut">Space plays the timeline</span><button id="vtoggle">Hide video</button></div></div>
+
+<details open class="tlsec" id="timeline"><summary>Timeline: the whole lecture</summary>
+<div class="ctl"><button class="tl-play play">Play</button><span class="now tl-now"></span>
+  <label><input type="checkbox" class="tl-skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="tl-zout">-</button> <span class="tl-zl"></span> <button class="tl-zin">+</button></span>
+  <span>speed <button class="tl-speed" title="1x, 2x, 4x (F)">1&times;</button></span>
+  <span><button class="tl-left" title="back">&larr;</button><button class="tl-right" title="forward">&rarr;</button></span>
+  <span>silence no cut covers <button data-j="gap" data-d="0">&lsaquo; prev</button><button data-j="gap" data-d="1">next &rsaquo;</button></span>
+  <span>cut <button data-j="cut" data-d="0">&lsaquo; prev</button><button data-j="cut" data-d="1">next &rsaquo;</button></span>
+  <button class="tl-add">Add a cut at the bar</button> <span class="tl-gaps"></span>
+  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in (at the mouse when it is on the spectrogram) &middot; &larr;/&rarr; move the bar (Shift: 1 s) &middot; Delete remove the selected cut &middot; Z or Ctrl+Z bring back the last removed one &middot; F speed 1&times;/2&times;/4&times;</span></div>
+<canvas class="tl-over"></canvas>
+<canvas class="tl-main"></canvas>
+<div class="tl-sel tl-selbox"></div>
+<p class="msg tl-msg"></p>
+<div class="tl-line"></div>
+<div class="legend"><span><i style="background:#D90012"></i>cut, safe</span><span><i style="background:#F2A800"></i>cut, your call</span><span><i style="border:2px dashed #F2A800"></i>suggested, not ticked</span><span><i style="background:#0033A0"></i>yours: new or changed</span><span><i style="border:2px dashed #D90012"></i>removed</span><span><i style="background:#FFD60A"></i>silence of 2 s+ that no cut covers (+ hum: split by a hum, counted as one)</span><span><i style="background:#fff;border:1px solid #888"></i>white strip: overlaps another cut</span></div>
+<p class="note">The strip on top is the whole lecture: drag it to move the view. On the spectrogram: click to put the bar
+there (and select what is under it), drag across to draw a new cut, drag a cut's edge to move it. Ctrl+wheel zooms, Shift+wheel
+or a sideways swipe scrolls, the arrow buttons page. While it plays, the view follows the bar until you scroll away from it;
+scroll back to the bar (or click) and it follows again. Every change goes into the list at the bottom.</p>
+</details><div id="cards" hidden>
+<details open class="cut" id="cut-1" data-w0="0.0" data-w1="480.2" data-s0="0.0" data-e0="460.2" data-pxw="16000">
+<summary>Cut 1   0:00:00:00 → 0:07:40:06   (460.2 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> Before the lecture: setting up the recorder and the phone (&#x27;so these two are synchronised&#x27;, &#x27;it doesn&#x27;t stick&#x27;, &#x27;OK, you&#x27;ll edit it later&#x27;). No picture: the camera starts at 3:21</div><div class="reason"><span class="badge judgment">your call</span> Logistics: how last week&#x27;s session with the substitute (Davit, sound processing, the ML lab) went and thesis collaboration; then the written quiz after the exam week, what it covers, the Telegram channel, the time limit. The lecture starts on &#x27;օքեյ, դե քանի որ որոշ ժամանակ չենք հանդիպել...&#x27; (the recap)</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio01_spec.png" alt="spectrogram cut 1"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:00:00.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:08:00.2</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class="in"><span class="t">0:00:26</span>տարբերություն</div><div class="in"><span class="t">0:00:44</span>ես միացրած եմ հանրով վերցրեք</div><div class="in"><span class="t">0:01:09</span>ասել եմ տալիս, բայց այս մասերից սա</div><div class="in"><span class="t">0:01:34</span>համակարգել հաջորդ</div><div class="in"><span class="t">0:01:40</span>ինչ-որ համակարգ Կարգ մտածել էդ հարցով։</div><div>...</div><div class="in"><span class="t">0:07:25</span>չափով պահենք, ոնց կարող</div><div class="in"><span class="t">0:07:30</span>է ավելի կարճ տևի, եթե այս ընթացքում տանը</div><div class="in"><span class="t">0:07:34</span>մի քիչ թերթած լինեք սլայդեր</div><div class=""><span class="t">0:07:41</span>օքեյ, դե քանի որ</div></div>
+</details>
+<details open class="cut" id="cut-2" data-w0="4817.4" data-w1="4920.0" data-s0="4837.4" data-e0="4920.0" data-pxw="8208">
+<summary>Cut 2   1:20:37:12 → 1:22:00:00   (82.6 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> After his closing remarks (&#x27;open problems for decades... not proven as far as I know&#x27;): the room. CHECK BY EAR where he really stops, 1:20:25-1:20:37. Everything after 1:03:40 has sound only (the camera stopped): it gets his slides L-8 33-39</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio02_spec.png" alt="spectrogram cut 2"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:20:17.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:22:00.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class="in"><span class="t">1:21:20</span>աշխատակից</div><div class="in"><span class="t">1:21:26</span>ինձ</div><div class="in"><span class="t">1:21:31</span>գործող ոստանել</div><div class="in"><span class="t">1:21:35</span>ինչ-որ մի հատ</div><div class="in"><span class="t">1:21:38</span>ունեցել ինչի</div><div>...</div><div class="in"><span class="t">1:21:48</span>բացի</div><div class="in"><span class="t">1:21:50</span>մեկ</div><div class="in"><span class="t">1:21:54</span>ո քանի է դա պահում</div><div class="in"><span class="t">1:21:57</span>քո որ գրում</div></div>
+</details></div>
+<details open id="export-list"><summary>Cut list with your changes (last first)</summary>
+<p class="note">The same format as <code>studio_cuts.txt</code>, renumbered in Studio's order. Changed cuts say what they
+were, added ones say NEW, removed ones are listed at the end as REMOVED. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
+this list to Claude.</p>
+<p><button id="download" data-name="studio_cuts_edited_P7nf8jFgm0o.txt">Download list</button> <button id="copy">Copy list</button> <span id="copied"></span> <button id="reset-all">Put all cuts back</button></p>
+<textarea id="export" readonly data-header="# studio_cuts_edited_P7nf8jFgm0o.txt | Դաս 6 (27 Mar) | Ինֆորմացիայի տեսություն - recorder 27 Information Theory.mp3, 0:00-1:22:00 (master timeline) | 2026-10-24_Das-6-Informaciayi-tesutyun_P7nf8jFgm0o"></textarea>
+</details>
+</main>
+<script>
+const A = document.getElementById('media');                  // the 360p video preview, or the WAV
+const FPS = +document.body.dataset.fps, CTX = +document.body.dataset.ctx;
+const NEW_LEN = 1.0;                                          // a cut added at the bar starts 1 s long
+const KEY = 'studio-edits-' + document.body.dataset.list;   // a new cut list starts with no edits
+const OVERLAP = ' - Studio would join them, adjust one of the two';
+const cards = [...document.querySelectorAll('details.cut')];
+let cur = null, raf = null, focusEl = null, uid = 0;
+function tc(t) { const f = Math.floor(t * FPS + 1e-6), s = Math.floor(f / FPS);
+  return Math.floor(s / 3600) + ':' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' +
+         String(s % 60).padStart(2, '0') + ':' + String(f % FPS).padStart(2, '0'); }
+const num = (el, k) => parseFloat(el.dataset[k]);
+const snap = t => Math.round(t * FPS) / FPS;   // Studio works in whole frames
+// Every cut on the page: each card's planned cut, plus the cuts added on this page (host = the card).
+const plan = cards.map(el => ({ host: el, s: num(el, 's0'), e: num(el, 'e0'), s0: num(el, 's0'), e0: num(el, 'e0'), added: false, removed: false }));
+cards.forEach((el, i) => { el.plan = plan[i]; });
+let added = [];
+const all = () => plan.filter(c => !c.removed).concat(added);   // a removed cut is out of the list and the numbering
+const own = el => [el.plan, ...added.filter(c => c.host === el)];
+const changed = c => !c.added && (Math.abs(c.s - c.s0) > 1e-6 || Math.abs(c.e - c.e0) > 1e-6);
+function storageError(what, err) {
+  document.getElementById('storage').textContent = `Edits can't be ${what} in this browser (${err.message}) - copy the list below before closing the tab.`;
+}
+function save() {
+  const edits = {};
+  plan.forEach(c => { if (changed(c)) edits[c.host.id] = [c.s, c.e]; });
+  try { localStorage.setItem(KEY, JSON.stringify({ edits, added: added.map(c => ({ host: c.host ? c.host.id : null, s: c.s, e: c.e })),
+                                                   removed: plan.filter(c => c.removed).map(c => c.host.id) })); }
+  catch (err) { storageError('saved', err); }
+}
+function load() {
+  let o;
+  try { o = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (err) { storageError('loaded', err); return; }
+  const edits = 'edits' in o ? o.edits : o;    // the first version stored only {cardId: [s, e]}
+  plan.forEach(c => { if (edits[c.host.id]) [c.s, c.e] = edits[c.host.id]; });
+  (o.added || []).forEach(a => { const h = a.host === null ? null : document.getElementById(a.host);   // null: added on the timeline
+    if (h || a.host === null) added.push({ id: ++uid, host: h, s: a.s, e: a.e, added: true }); });
+  (o.removed || []).forEach(id => { const c = plan.find(p => p.host.id === id); if (c) c.removed = true; });
+}
+function show(el, t) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1');
+  t = Math.min(w1, Math.max(w0, t));
+  el.querySelector('.bar').style.left = (100 * (t - w0) / (w1 - w0)) + '%';
+  el.querySelector('.now').textContent = tc(t);
+  el.dataset.pos = t;
+  return t;
+}
+const ZOOMS = [1, 2, 4, 8, 16, 32, 64];
+const parts = el => ({ sc: el.querySelector('.specscroll'), wrap: el.querySelector('.specwrap'), w0: num(el, 'w0'), w1: num(el, 'w1') });
+function axis(el) {        // the times at the visible edges of the spectrogram
+  const { sc, wrap, w0, w1 } = parts(el), W = wrap.offsetWidth;
+  el.querySelector('.a0').textContent = tc(W ? w0 + sc.scrollLeft / W * (w1 - w0) : w0);
+  el.querySelector('.a1').textContent = tc(W ? Math.min(w1, w0 + (sc.scrollLeft + sc.clientWidth) / W * (w1 - w0)) : w1);
+}
+function zoomTo(el, z, t, x) {   // zoom level z, keeping time t at x px from the visible left edge
+  const { sc, wrap, w0, w1 } = parts(el);
+  el.dataset.zoom = z;
+  wrap.style.width = (100 * z) + '%';
+  sc.scrollLeft = (t - w0) / (w1 - w0) * wrap.offsetWidth - x;
+  el.querySelector('.zl').textContent = z + '\u00d7';
+  axis(el);
+}
+function zoomStep(el, dir, t, x) {   // one level in (+1) or out (-1), up to 4 screen px per image px
+  const zs = ZOOMS.filter(z => z === 1 || z * parts(el).sc.clientWidth <= 4 * num(el, 'pxw'));
+  let i = zs.indexOf(num(el, 'zoom'));
+  if (i < 0) i = zs.length - 1;                                 // the window got narrower since
+  zoomTo(el, zs[Math.max(0, Math.min(zs.length - 1, i + dir))], t, x);
+}
+function follow(el, t) {   // zoomed in: page the view along so the bar stays visible
+  const { sc, wrap, w0, w1 } = parts(el);
+  if (num(el, 'zoom') === 1) return;
+  const x = (t - w0) / (w1 - w0) * wrap.offsetWidth;
+  if (x < sc.scrollLeft || x > sc.scrollLeft + sc.clientWidth - 2) sc.scrollLeft = x - sc.clientWidth * 0.1;
+}
+const span = c => `${tc(c.s)} \u2192 ${tc(c.e)}   (${(c.e - c.s).toFixed(1)} s)`;
+function renderCard(el) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1'), p = el.plan, mine = own(el);
+  const box = el.querySelector('.shades');
+  box.textContent = '';
+  all().forEach(c => {
+    if (c.e <= w0 || c.s >= w1) return;
+    const d = document.createElement('div'), a = Math.max(c.s, w0), b = Math.min(c.e, w1);
+    d.className = 'shade' + (c.host !== el ? ' other' : c.added ? ' added' : '');
+    d.style.left = (100 * (a - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (b - a) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  });
+  if (p.removed) {                                              // where the removed cut was: a dashed outline
+    const d = document.createElement('div');
+    d.className = 'shade gone';
+    d.style.left = (100 * (p.s - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (p.e - p.s) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  }
+  el.querySelector('.times').textContent = p.removed ? `removed on this page (planned ${tc(p.s0)} - ${tc(p.e0)})`
+    : `start ${tc(p.s)}  end ${tc(p.e)}  (${(p.e - p.s).toFixed(2)} s)`;
+  el.querySelector('.was').textContent = changed(p) && !p.removed ? `was ${tc(p.s0)} - ${tc(p.e0)}` : '';
+  el.querySelector('.warn').textContent = p.warn.length ? p.warn.join(', ') + OVERLAP : '';
+  el.querySelector('.rm').textContent = p.removed ? 'Restore cut' : 'Remove cut';
+  ['.set-s', '.set-e', '.reset'].forEach(k => { el.querySelector(k).disabled = p.removed; });
+  el.querySelector('.added-cuts').innerHTML = mine.slice(1).map(c =>
+    `<div class="added-row"><span class="tag">New Cut ${c.n}</span><span class="times">start ${tc(c.s)}  end ${tc(c.e)}  (${(c.e - c.s).toFixed(2)} s)</span>` +
+    `<button data-id="${c.id}" data-do="s">Start = bar</button><button data-id="${c.id}" data-do="e">End = bar</button>` +
+    `<button data-id="${c.id}" data-do="x">Remove</button><span class="warn">${c.warn.length ? c.warn.join(', ') + OVERLAP : ''}</span></div>`).join('');
+  const extra = mine.length > 1 ? `   + new ${mine.slice(1).map(c => 'Cut ' + c.n).join(', ')}` : '';
+  const title = (p.removed ? `Removed   ${tc(p.s0)} \u2192 ${tc(p.e0)}` : `Cut ${p.n}   ${span(p)}` + (changed(p) ? '   changed' : '')) + extra;
+  el.classList.toggle('changed', (changed(p) && !p.removed) || mine.length > 1);
+  el.classList.toggle('removed', p.removed);
+  el.querySelector('summary').textContent = title;
+  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none when the cards are hidden behind the timeline
+  if (toc) toc.textContent = title;
+}
+function renderAll() {
+  const sorted = all().sort((a, b) => a.s - b.s || a.e - b.e);   // Studio numbers its list by start time
+  plan.forEach(c => { c.n = null; c.warn = []; });              // removed cuts get no number and no warnings
+  sorted.forEach((c, i) => { c.n = i + 1; c.warn = []; });
+  for (let i = 1; i < sorted.length; i++) if (sorted[i].s < sorted[i - 1].e) {
+    sorted[i].warn.push(`overlaps Cut ${sorted[i - 1].n}`); sorted[i - 1].warn.push(`overlaps Cut ${sorted[i].n}`); }
+  cards.forEach(renderCard);
+  const gone = plan.filter(c => c.removed);
+  const nChanged = plan.filter(c => changed(c) && !c.removed).length, nNew = added.length, nRemoved = gone.length;
+  let removed = 0, end = -1;                                    // union, so overlaps count once
+  sorted.forEach(c => { removed += Math.max(0, c.e - Math.max(c.s, end)); end = Math.max(end, c.e); });
+  const dur = +document.body.dataset.duration;
+  const hms = t => { t = Math.round(t); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+  document.getElementById('nchanged').textContent = nChanged || nNew || nRemoved
+    ? ` \u00b7 on this page: ${nChanged} changed, ${nNew} new, ${nRemoved} removed` : '';
+  document.getElementById('removed').textContent = `${hms(removed)}: ${hms(dur)} \u2192 ${hms(dur - removed)}`;
+  document.getElementById('export').value = document.getElementById('export').dataset.header + '\n' +
+    `# ${sorted.length} cuts (${nChanged} changed, ${nNew} new, ${nRemoved} removed on studio.html), numbered as in Studio, listed last first for entry\n` +
+    sorted.slice().reverse().map(c =>
+      `Cut ${String(c.n).padStart(2)}   ${tc(c.s)}  ->  ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)` +
+      (c.added ? '   NEW' : changed(c) ? `   CHANGED, was ${tc(c.s0)} -> ${tc(c.e0)}` : '')).join('\n') +
+    gone.map(c => `\n# REMOVED, was ${tc(c.s0)} -> ${tc(c.e0)}`).join('');      // planned cuts dropped on the page
+  if (window.tlRefresh) tlRefresh();                            // the timeline view, when the page has one
+}
+function setEdge(c, k, t, fromButton = false, lim = null, msgEl = null) {   // lim, msgEl: the timeline's (whole video)
+  const el = c.host, [lo, hi] = lim || [num(el, 'w0'), num(el, 'w1')], msg = msgEl || el.querySelector('.msg');
+  t = snap(Math.min(hi, Math.max(lo, t)));
+  const s = k === 's' ? t : c.s, e = k === 'e' ? t : c.e;
+  if (e - s < 1 / FPS - 1e-6) {
+    if (fromButton) msg.textContent = `Cut ${c.n}: the start has to stay before the end - move the bar first.`;
+    return;
+  }
+  msg.textContent = '';
+  c[k] = t;
+  renderAll();
+  if (fromButton) save();
+}
+function addCut(el) {
+  const w1 = num(el, 'w1');
+  let s = snap(num(el, 'pos')), e = snap(Math.min(w1, s + NEW_LEN));
+  if (e - s < NEW_LEN / 2) s = snap(e - NEW_LEN);                 // bar at the window's end: grow to the left
+  added.push({ id: ++uid, host: el, s, e, added: true });
+  renderAll(); save();
+}
+function tick() {
+  if (!cur) return;
+  let t = A.currentTime;
+  if (cur.querySelector('.skip').checked) {                      // jump over every cut, added ones too
+    const c = all().find(c => t >= c.s && t < c.e);
+    if (c) { A.currentTime = c.e; t = c.e; }
+  }
+  if (t >= num(cur, 'w1')) A.pause();                            // the end of the spectrogram
+  show(cur, t);
+  follow(cur, t);
+  if (!A.paused) raf = requestAnimationFrame(tick);
+}
+function label(el, playing) { el.querySelector('.play').textContent = playing ? 'Pause' : 'Play'; }
+function play(el) {
+  if (window.tlStop) tlStop();                                  // the timeline was playing
+  if (cur && cur !== el) { A.pause(); label(cur, false); }
+  cur = focusEl = el;
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = el.plan.removed ? 'Playing a removed cut' : `Playing Cut ${el.plan.n}`;
+  let t = num(el, 'pos');
+  if (t >= num(el, 'w1') - 0.05) t = show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  follow(el, t);
+  A.currentTime = t;
+  A.play().then(() => { label(el, true); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); })
+          .catch(err => { if (err.name !== 'AbortError') el.querySelector('.err').textContent = 'Could not play: ' + err.message; });  // AbortError = paused before playback began
+}
+A.addEventListener('pause', () => { if (cur) label(cur, false); cancelAnimationFrame(raf); });
+A.addEventListener('error', () => document.querySelectorAll('.err').forEach(e => e.textContent = 'Media failed to load: ' + A.src));
+const player = document.getElementById('player');
+if (player) {                                                   // video preview: hide/show, remembered per browser
+  const btn = document.getElementById('vtoggle');
+  const setHidden = h => { player.classList.toggle('hidden', h); btn.textContent = h ? 'Show video' : 'Hide video'; };
+  try { setHidden(localStorage.getItem('studio-video-hidden') === '1'); } catch (err) { storageError('loaded', err); }
+  btn.addEventListener('click', () => {
+    const h = !player.classList.contains('hidden');
+    setHidden(h); btn.blur();
+    try { localStorage.setItem('studio-video-hidden', h ? '1' : '0'); } catch (err) { storageError('saved', err); }
+  });
+}
+// Work timer: Start/Stop adds up the time spent reviewing, kept in this browser per video (a reload
+// or a rebuilt page keeps it). It counts wall-clock time, so it keeps running while the tab is closed.
+const TKEY = 'studio-timer-' + document.body.dataset.video;
+let tTotal = 0, tSince = null;                                  // ms so far, and when the running stretch began
+try { const o = JSON.parse(localStorage.getItem(TKEY) || 'null'); if (o) ({ total: tTotal, since: tSince } = o); }
+catch (err) { storageError('loaded', err); }
+const tBtn = document.getElementById('wt-btn');
+function tShow() {
+  const s = Math.floor((tTotal + (tSince ? Date.now() - tSince : 0)) / 1000);
+  document.getElementById('wt-time').textContent = Math.floor(s / 3600) + ':' +
+    String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  tBtn.textContent = tSince ? 'Stop timer' : 'Start timer';
+  document.getElementById('worktimer').classList.toggle('on', tSince !== null);
+}
+tBtn.addEventListener('click', () => {
+  if (tSince !== null) { tTotal += Date.now() - tSince; tSince = null; } else tSince = Date.now();
+  try { localStorage.setItem(TKEY, JSON.stringify({ total: tTotal, since: tSince })); } catch (err) { storageError('saved', err); }
+  tShow(); tBtn.blur();                                         // so the space bar pauses playback, not the timer
+});
+setInterval(tShow, 1000);
+tShow();
+load();
+cards.forEach(el => {
+  el.dataset.zoom = 1;
+  show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  el.querySelector('.play').addEventListener('click', () => (cur === el && !A.paused) ? A.pause() : play(el));
+  const wrap = el.querySelector('.specwrap');
+  const tAt = ev => { const r = wrap.getBoundingClientRect();
+    return num(el, 'w0') + Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * (num(el, 'w1') - num(el, 'w0')); };
+  const px = t => { const r = wrap.getBoundingClientRect(); return r.left + (t - num(el, 'w0')) / (num(el, 'w1') - num(el, 'w0')) * r.width; };
+  const edgeAt = ev => {   // within 8 px of an edge of this card's cuts: drag that edge instead of the bar
+    let best = null, bd = 8;
+    own(el).filter(c => !c.removed).forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(ev.clientX - px(c[k])); if (d <= bd) { bd = d; best = { c, k }; } }));
+    return best; };
+  const sc = el.querySelector('.specscroll');
+  const barX = () => { const x = px(num(el, 'pos')) - sc.getBoundingClientRect().left;   // bar off screen: centre it
+    return x >= 0 && x <= sc.clientWidth ? x : sc.clientWidth / 2; };
+  ['zin', 'zout'].forEach((k, i) => el.querySelector('.' + k).addEventListener('click', ev => {
+    focusEl = el; ev.currentTarget.blur();                      // so the space bar plays again, not zooms again
+    zoomStep(el, i ? -1 : 1, num(el, 'pos'), barX()); }));
+  let wheel = 0;
+  sc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer (a trackpad pinch sends the same)
+    if (!ev.ctrlKey) return;
+    ev.preventDefault();
+    wheel += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;   // deltaMode 1: lines, not pixels
+    if (Math.abs(wheel) < 50) return;
+    const dir = wheel < 0 ? 1 : -1;
+    wheel = 0;
+    focusEl = el;
+    zoomStep(el, dir, tAt(ev), ev.clientX - sc.getBoundingClientRect().left); }, { passive: false });
+  sc.addEventListener('scroll', () => axis(el));
+  let drag = null;
+  const move = ev => {
+    if (drag === 'bar') { const t = show(el, tAt(ev)); if (cur === el && !A.paused) A.currentTime = t; }
+    else setEdge(drag.c, drag.k, tAt(ev)); };
+  wrap.addEventListener('pointerdown', ev => { focusEl = el; drag = edgeAt(ev) || 'bar'; wrap.setPointerCapture(ev.pointerId); move(ev); });
+  wrap.addEventListener('pointermove', ev => { if (drag) move(ev); else wrap.style.cursor = edgeAt(ev) ? 'col-resize' : 'ew-resize'; });
+  wrap.addEventListener('pointerup', () => { if (drag && drag !== 'bar') save(); drag = null; });
+  el.querySelector('.set-s').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 's', num(el, 'pos'), true); });
+  el.querySelector('.set-e').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 'e', num(el, 'pos'), true); });
+  el.querySelector('.reset').addEventListener('click', () => { el.plan.s = el.plan.s0; el.plan.e = el.plan.e0; renderAll(); save(); });
+  el.querySelector('.rm').addEventListener('click', ev => { focusEl = el; ev.currentTarget.blur();
+    el.plan.removed = !el.plan.removed; renderAll(); save(); });
+  el.querySelector('.add').addEventListener('click', () => { focusEl = el; addCut(el); });
+  el.querySelector('.added-cuts').addEventListener('click', ev => {   // buttons of the added cuts, rebuilt on every render
+    const b = ev.target.closest('button');
+    if (!b) return;
+    focusEl = el;
+    const c = added.find(x => x.id === +b.dataset.id);
+    if (b.dataset.do === 'x') { added = added.filter(x => x !== c); renderAll(); save(); }
+    else setEdge(c, b.dataset.do, num(el, 'pos'), true); });
+  el.querySelectorAll('.jump').forEach(b => b.addEventListener('click', () => { show(el, parseFloat(b.dataset.t)); play(el); }));
+});
+renderAll();
+cards.forEach(axis);
+window.addEventListener('resize', () => cards.forEach(axis));
+document.getElementById('copy').addEventListener('click', () =>
+  navigator.clipboard.writeText(document.getElementById('export').value)
+    .then(() => document.getElementById('copied').textContent = 'copied')
+    .catch(err => document.getElementById('copied').textContent = 'Copy failed: ' + err.message + ' - select the text and copy it by hand'));
+document.getElementById('download').addEventListener('click', ev => {   // a file in Downloads: safer than the clipboard
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([document.getElementById('export').value], { type: 'text/plain;charset=utf-8' }));
+  a.download = ev.currentTarget.dataset.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  document.getElementById('copied').textContent = 'downloaded as ' + a.download;
+});
+document.getElementById('reset-all').addEventListener('click', () => {
+  if (!confirm('Put every cut back to the planned times, restore the removed ones and drop the cuts you added?')) return;
+  plan.forEach(c => { c.s = c.s0; c.e = c.e0; c.removed = false; }); added = []; renderAll(); save(); });
+document.addEventListener('keydown', ev => {
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  if (ev.code === 'Space' && cur && tag !== 'BUTTON') { ev.preventDefault(); A.paused ? play(cur) : A.pause(); }
+  if ((ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') && focusEl) {   // move the bar 0.2 s, Shift: 1 s
+    ev.preventDefault();
+    const t = show(focusEl, num(focusEl, 'pos') + (ev.code === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2));
+    follow(focusEl, t);
+    if (cur === focusEl && !A.paused) A.currentTime = t; } });
+</script>
+<script id="tl-data" type="application/json">{"tiles": {"key": {"version": 1, "wav_bytes": 157440078, "wav_mtime": 1792836011, "duration": 4920.0}, "vmax_db": -41.7, "hi": {"px_per_s": 80, "tile_s": 30, "n": 164, "src": "media/timeline/hi_"}, "lo": {"px_per_s": 8.0, "tile_s": 300, "n": 17, "src": "media/timeline/lo_"}}, "pauses": [[[3.08, 4.32], [5.13, 5.89]], [[14.09, 15.05], [16.05, 16.87], [17.55, 17.96], [18.5, 21.87], [22.54, 23.34], [24.02, 24.81]], [[39.9, 42.32], [43.25, 43.77]], [[52.39, 52.76], [53.56, 54.74], [55.56, 56.68], [57.14, 57.44]], [[62.89, 63.4], [63.96, 64.51], [65.35, 66.75]], [[74.14, 75.05], [75.64, 76.22], [76.53, 94.9]], [[95.32, 98.22], [98.74, 100.16]], [[103.22, 106.98]], [[130.75, 132.32], [132.57, 138.71], [139.11, 141.69]], [[146.33, 147.43], [148.41, 149.34]], [[151.8, 152.7], [153.77, 155.61], [156.29, 156.71]], [[164.54, 165.05], [165.64, 167.48]], [[170.13, 172.01], [172.36, 175.1]], [[180.2, 185.16], [185.5, 186.83], [187.56, 192.04], [192.73, 193.1]], [[193.41, 199.85]], [[268.17, 270.75]], [[293.67, 294.96], [295.42, 298.87]], [[319.46, 322.25]], [[384.51, 385.43], [386.0, 387.69]], [[424.0, 427.27]], [[437.91, 443.2]], [[447.22, 448.17], [448.77, 450.04], [450.5, 451.08]], [[457.02, 460.55]], [[463.02, 466.41]], [[467.39, 469.26], [469.54, 471.4], [472.14, 473.92]], [[479.1, 481.39]], [[490.08, 492.85]], [[493.65, 496.58], [496.88, 497.25]], [[502.65, 506.28], [506.52, 511.16]], [[544.65, 545.76], [546.25, 548.42]], [[553.49, 559.45]], [[561.73, 566.37]], [[567.19, 574.43]], [[577.42, 580.31]], [[594.26, 595.52], [596.36, 597.24]], [[611.3, 621.08]], [[622.83, 626.11], [626.36, 627.08]], [[627.44, 629.92]], [[642.21, 643.47], [644.3, 645.13]], [[738.24, 740.91]], [[769.07, 776.84], [777.23, 777.81]], [[786.74, 788.81]], [[801.43, 803.62], [804.77, 806.11]], [[853.93, 856.69]], [[859.06, 861.71], [861.95, 862.82]], [[922.39, 924.69]], [[930.86, 933.68]], [[945.78, 949.65]], [[1009.26, 1010.41], [1010.62, 1011.6]], [[1023.95, 1025.36], [1026.01, 1026.67]], [[1039.3, 1040.06], [1040.52, 1041.94]], [[1070.77, 1073.07], [1073.88, 1076.99]], [[1077.55, 1080.91]], [[1111.83, 1114.36], [1114.95, 1115.46]], [[1120.47, 1121.34], [1121.55, 1122.93], [1123.4, 1123.78]], [[1128.15, 1129.79], [1130.82, 1131.36]], [[1163.07, 1165.45]], [[1178.2, 1181.35]], [[1283.26, 1284.73], [1285.41, 1286.73]], [[1307.42, 1309.77]], [[1327.12, 1329.35]], [[1429.14, 1431.25], [1431.92, 1432.92]], [[1477.61, 1479.64]], [[1480.02, 1482.19]], [[1483.58, 1485.76]], [[1523.99, 1526.68]], [[1537.71, 1540.27]], [[1577.14, 1579.51]], [[1641.0, 1643.68]], [[1675.96, 1677.31], [1677.98, 1681.25]], [[1681.96, 1688.09], [1688.76, 1690.32]], [[1737.4, 1741.28]], [[1741.5, 1745.27]], [[1793.76, 1795.91]], [[1858.26, 1861.39]], [[1916.7, 1918.71]], [[1920.85, 1923.31]], [[1960.48, 1963.24]], [[1964.83, 1969.12]], [[1990.03, 1992.5]], [[2015.15, 2018.11]], [[2026.87, 2030.15]], [[2034.46, 2035.69], [2035.94, 2038.71], [2039.24, 2039.62]], [[2044.89, 2048.18]], [[2065.97, 2066.99], [2067.27, 2069.52]], [[2113.28, 2115.4]], [[2171.09, 2173.23]], [[2201.8, 2204.55]], [[2242.72, 2245.06]], [[2256.83, 2258.86]], [[2259.38, 2261.69]], [[2270.07, 2272.85]], [[2273.11, 2278.18]], [[2308.22, 2310.54]], [[2319.41, 2330.14]], [[2374.61, 2378.7], [2379.36, 2379.85]], [[2404.82, 2407.41]], [[2480.37, 2484.15]], [[2532.83, 2533.24], [2533.78, 2535.54]], [[2549.23, 2551.34]], [[2563.88, 2566.25], [2567.16, 2568.69]], [[2570.98, 2574.21]], [[2647.34, 2649.41]], [[2698.79, 2701.23]], [[2733.97, 2736.09]], [[2747.95, 2752.09]], [[2754.74, 2757.9], [2758.24, 2760.97]], [[2763.31, 2767.4]], [[2792.62, 2795.35]], [[2842.65, 2853.2]], [[2856.77, 2857.6], [2858.06, 2861.06]], [[2894.32, 2896.24], [2896.59, 2897.18]], [[2897.82, 2904.09]], [[2912.58, 2914.76]], [[2928.73, 2930.73]], [[2944.56, 2947.06]], [[2948.83, 2949.99], [2950.65, 2952.28]], [[2986.53, 2988.66], [2989.18, 2989.58]], [[3008.49, 3010.77], [3011.66, 3013.55]], [[3065.28, 3067.67]], [[3142.15, 3145.33]], [[3161.29, 3164.78]], [[3165.75, 3170.24]], [[3195.05, 3197.7]], [[3204.84, 3208.3], [3208.57, 3209.39]], [[3213.07, 3214.35], [3214.57, 3215.92]], [[3225.61, 3227.57], [3227.89, 3228.37]], [[3242.76, 3244.97]], [[3268.99, 3271.22]], [[3296.0, 3300.52], [3300.98, 3301.7]], [[3302.99, 3303.84], [3304.05, 3305.5]], [[3347.38, 3350.32]], [[3369.85, 3372.25]], [[3372.47, 3374.41], [3374.86, 3376.89]], [[3425.66, 3427.83], [3428.03, 3432.95]], [[3435.29, 3437.42]], [[3460.99, 3463.07]], [[3473.8, 3476.27]], [[3526.02, 3526.48], [3526.74, 3529.81]], [[3545.6, 3548.03]], [[3551.35, 3554.2]], [[3556.54, 3559.49]], [[3562.05, 3564.28]], [[3570.42, 3573.13]], [[3585.43, 3592.58]], [[3594.2, 3597.33]], [[3601.77, 3603.87]], [[3608.64, 3611.49], [3612.03, 3612.62]], [[3629.53, 3632.61]], [[3639.05, 3640.93], [3641.31, 3641.95]], [[3692.65, 3700.13], [3700.59, 3701.03]], [[3715.11, 3718.27]], [[3748.1, 3750.26]], [[3797.52, 3800.58]], [[3802.07, 3807.19]], [[3819.3, 3821.16], [3821.78, 3822.08]], [[3844.32, 3848.45]], [[3883.54, 3885.95], [3886.24, 3886.68]], [[3897.72, 3899.63], [3900.45, 3901.76]], [[3913.03, 3915.12]], [[3927.58, 3929.11], [3930.24, 3934.62]], [[3957.18, 3959.98]], [[3982.0, 3986.38]], [[3986.96, 3989.68], [3989.88, 3991.19]], [[3992.05, 3998.87]], [[4004.19, 4006.31]], [[4029.68, 4031.94]], [[4044.47, 4047.7]], [[4056.79, 4058.79]], [[4076.22, 4080.26]], [[4087.29, 4092.84]], [[4093.44, 4096.72]], [[4123.96, 4127.12]], [[4129.14, 4136.8]], [[4137.29, 4139.77], [4140.36, 4141.8]], [[4142.21, 4148.14]], [[4162.07, 4163.47], [4164.15, 4165.22]], [[4166.59, 4171.62]], [[4173.89, 4177.38]], [[4180.28, 4185.66]], [[4191.49, 4195.09], [4195.29, 4196.04]], [[4196.53, 4201.81], [4202.03, 4202.4], [4203.21, 4204.62]], [[4208.88, 4211.54], [4211.92, 4215.23]], [[4215.81, 4221.22]], [[4221.54, 4225.76]], [[4225.96, 4228.02]], [[4229.38, 4232.69]], [[4232.89, 4237.53]], [[4237.96, 4243.98]], [[4249.01, 4255.08]], [[4261.91, 4265.75]], [[4266.12, 4266.7], [4266.98, 4270.81], [4271.18, 4273.99]], [[4280.32, 4282.98]], [[4291.2, 4291.61], [4291.81, 4293.48]], [[4294.68, 4296.72]], [[4315.81, 4318.4]], [[4326.5, 4329.2]], [[4358.21, 4360.37]], [[4376.45, 4378.76]], [[4380.64, 4385.17]], [[4385.45, 4387.5]], [[4414.23, 4420.34]], [[4420.59, 4422.64]], [[4422.88, 4428.16]], [[4478.1, 4480.13]], [[4480.79, 4487.85]], [[4510.54, 4513.59]], [[4522.83, 4523.82], [4524.11, 4525.5]], [[4557.38, 4561.1]], [[4562.91, 4565.71]], [[4607.36, 4610.13]], [[4618.32, 4620.91]], [[4631.35, 4635.56]], [[4663.81, 4667.18]], [[4780.53, 4782.56]], [[4785.27, 4792.14]], [[4836.21, 4836.77], [4837.04, 4839.19], [4839.78, 4840.59], [4841.33, 4842.0]], [[4887.06, 4887.64], [4887.87, 4888.18], [4888.45, 4896.01]], [[4896.34, 4900.24], [4900.44, 4900.74], [4901.08, 4901.72]], [[4905.31, 4907.44]], [[4907.66, 4910.24]], [[4910.85, 4916.22], [4916.6, 4919.59]]], "loud": [37, 66, 43, 79, 78, 78, 44, 42, 46, 70, 36, 41, 41, 42, 35, 42, 32, 34, 39, 33, 34, 29, 34, 36, 32, 42, 42, 41, 59, 37, 38, 58, 55, 40, 35, 38, 36, 54, 45, 51, 33, 29, 41, 34, 55, 55, 58, 38, 43, 39, 74, 71, 56, 40, 47, 62, 64, 66, 59, 47, 51, 39, 39, 34, 32, 44, 51, 65, 75, 38, 41, 37, 39, 61, 31, 38, 71, 50, 28, 41, 23, 35, 32, 55, 62, 55, 55, 67, 24, 36, 38, 32, 23, 15, 36, 38, 24, 29, 37, 40, 48, 45, 58, 38, 45, 50, 39, 56, 47, 48, 42, 59, 72, 58, 79, 46, 53, 63, 66, 58, 57, 48, 55, 63, 48, 53, 54, 54, 59, 27, 53, 46, 45, 39, 36, 32, 53, 56, 62, 59, 54, 58, 57, 48, 57, 50, 48, 46, 45, 63, 63, 53, 36, 42, 29, 44, 44, 46, 72, 47, 47, 32, 39, 45, 49, 36, 37, 46, 53, 50, 30, 29, 43, 32, 32, 40, 54, 39, 71, 63, 31, 36, 10, 18, 27, 33, 35, 30, 31, 32, 22, 36, 44, 46, 31, 24, 32, 26, 21, 41, 65, 67, 67, 61, 63, 56, 60, 66, 63, 65, 68, 63, 69, 36, 73, 65, 64, 56, 53, 57, 66, 66, 62, 54, 64, 71, 70, 57, 58, 60, 65, 63, 64, 67, 64, 63, 66, 73, 68, 71, 55, 61, 59, 60, 59, 53, 63, 61, 59, 61, 61, 62, 50, 67, 70, 70, 59, 65, 68, 59, 61, 61, 59, 57, 62, 58, 61, 60, 49, 55, 54, 59, 63, 61, 64, 69, 67, 62, 63, 56, 57, 58, 56, 71, 40, 56, 51, 63, 61, 35, 60, 58, 55, 56, 56, 47, 30, 23, 56, 61, 56, 61, 50, 53, 57, 55, 57, 54, 37, 61, 42, 30, 57, 59, 49, 63, 58, 56, 50, 54, 40, 32, 66, 64, 66, 61, 60, 68, 62, 67, 66, 64, 63, 54, 70, 64, 50, 63, 73, 58, 57, 63, 60, 57, 56, 56, 67, 65, 61, 68, 64, 70, 63, 54, 63, 65, 61, 63, 64, 50, 55, 65, 59, 57, 58, 61, 69, 66, 66, 66, 58, 65, 68, 67, 64, 78, 69, 66, 70, 56, 68, 65, 67, 70, 66, 62, 25, 64, 60, 54, 57, 53, 61, 54, 69, 59, 61, 60, 53, 63, 68, 60, 55, 25, 63, 63, 60, 60, 59, 58, 58, 40, 57, 51, 52, 67, 62, 58, 29, 62, 55, 63, 65, 57, 43, 41, 49, 54, 55, 55, 60, 55, 50, 68, 31, 36, 66, 39, 29, 31, 32, 32, 22, 53, 55, 59, 59, 43, 51, 25, 55, 60, 54, 59, 59, 71, 70, 32, 43, 32, 37, 70, 59, 25, 8, 9, 66, 62, 26, 34, 32, 50, 43, 57, 64, 23, 61, 64, 58, 43, 22, 67, 66, 59, 62, 72, 64, 61, 74, 68, 49, 49, 34, 33, 33, 27, 58, 66, 58, 52, 67, 66, 60, 23, 1, 11, 65, 16, 18, 18, 18, 66, 67, 53, 72, 68, 64, 72, 68, 77, 28, 61, 70, 51, 67, 65, 72, 61, 64, 57, 69, 58, 54, 69, 73, 24, 39, 62, 66, 68, 62, 65, 71, 42, 64, 54, 51, 18, 67, 60, 68, 67, 65, 53, 8, 25, 18, 19, 37, 59, 56, 57, 29, 20, 16, 43, 59, 43, 24, 53, 51, 31, 23, 56, 60, 64, 63, 60, 37, 28, 55, 65, 58, 59, 68, 16, 42, 68, 67, 69, 54, 13, 78, 74, 60, 33, 35, 76, 71, 65, 68, 54, 58, 59, 75, 68, 66, 65, 55, 62, 62, 56, 22, 49, 12, 21, 1, 29, 28, 21, 32, 31, 36, 33, 32, 40, 61, 58, 51, 66, 77, 68, 61, 50, 65, 64, 54, 65, 64, 77, 66, 75, 55, 60, 30, 76, 71, 63, 58, 62, 60, 57, 45, 79, 71, 67, 67, 66, 70, 71, 60, 71, 24, 76, 68, 72, 71, 68, 73, 69, 39, 66, 59, 63, 56, 58, 58, 71, 68, 73, 65, 72, 71, 76, 79, 70, 66, 71, 61, 66, 62, 70, 68, 60, 67, 59, 36, 76, 66, 66, 60, 49, 71, 71, 68, 68, 66, 71, 71, 76, 74, 46, 56, 58, 69, 47, 76, 70, 71, 68, 59, 62, 61, 71, 60, 54, 62, 54, 61, 62, 61, 66, 70, 64, 58, 70, 64, 57, 60, 29, 55, 80, 58, 58, 63, 44, 68, 67, 62, 68, 61, 66, 64, 68, 66, 68, 74, 67, 63, 64, 73, 75, 49, 68, 69, 61, 60, 50, 61, 30, 16, 21, 26, 8, 37, 23, 33, 71, 66, 74, 59, 58, 60, 58, 57, 66, 50, 25, 54, 47, 65, 61, 58, 55, 63, 65, 58, 68, 65, 65, 63, 51, 30, 33, 31, 21, 76, 77, 70, 64, 66, 66, 64, 57, 66, 63, 72, 66, 65, 67, 67, 70, 65, 74, 72, 72, 73, 77, 72, 69, 70, 71, 74, 78, 72, 74, 74, 59, 74, 65, 74, 71, 54, 79, 72, 72, 72, 76, 73, 65, 76, 61, 64, 75, 23, 63, 67, 33, 42, 33, 30, 53, 68, 67, 66, 60, 78, 69, 70, 68, 72, 64, 42, 76, 52, 69, 64, 61, 55, 64, 61, 73, 74, 69, 68, 34, 68, 71, 68, 67, 68, 68, 61, 57, 63, 61, 70, 70, 74, 65, 56, 69, 66, 77, 72, 69, 75, 71, 69, 73, 65, 62, 66, 46, 70, 76, 73, 74, 59, 73, 65, 64, 60, 29, 56, 66, 57, 57, 63, 67, 63, 34, 23, 52, 56, 53, 49, 58, 57, 62, 60, 67, 65, 61, 74, 67, 57, 56, 49, 66, 74, 71, 67, 70, 67, 59, 57, 75, 66, 59, 66, 76, 74, 70, 70, 71, 69, 66, 70, 75, 72, 71, 75, 71, 64, 76, 58, 73, 75, 76, 72, 31, 70, 68, 64, 58, 61, 70, 64, 69, 69, 75, 72, 65, 65, 74, 64, 73, 67, 74, 77, 53, 77, 73, 76, 58, 78, 72, 71, 67, 46, 59, 77, 63, 55, 53, 17, 59, 59, 54, 73, 76, 67, 56, 25, 54, 63, 73, 71, 69, 68, 72, 72, 52, 78, 71, 70, 63, 69, 53, 55, 29, 63, 68, 69, 69, 71, 69, 75, 76, 72, 64, 58, 70, 56, 54, 62, 67, 68, 75, 72, 66, 65, 45, 68, 70, 70, 70, 44, 67, 59, 57, 25, 59, 18, 24, 51, 67, 26, 20, 63, 73, 64, 59, 59, 73, 68, 63, 69, 66, 63, 72, 63, 68, 68, 64, 61, 55, 71, 73, 72, 65, 75, 65, 63, 75, 69, 61, 67, 79, 73, 65, 58, 23, 36, 59, 75, 78, 78, 71, 59, 57, 51, 51, 58, 58, 62, 62, 32, 53, 54, 73, 77, 75, 75, 83, 60, 56, 65, 66, 69, 74, 76, 69, 70, 75, 71, 70, 72, 68, 58, 71, 69, 65, 69, 68, 64, 76, 74, 69, 71, 59, 69, 47, 24, 80, 36, 38, 73, 71, 74, 70, 75, 72, 59, 69, 61, 63, 49, 52, 14, 70, 59, 30, 25, 79, 78, 76, 73, 75, 66, 71, 65, 61, 69, 65, 71, 58, 68, 67, 72, 62, 61, 72, 65, 64, 60, 71, 69, 64, 62, 72, 75, 72, 68, 71, 69, 68, 63, 63, 73, 66, 76, 74, 72, 74, 74, 71, 76, 72, 70, 76, 72, 73, 76, 71, 63, 74, 76, 64, 71, 72, 71, 69, 71, 72, 73, 61, 64, 74, 71, 74, 43, 68, 65, 64, 54, 81, 75, 25, 61, 68, 69, 78, 62, 71, 77, 72, 70, 72, 69, 71, 67, 59, 71, 70, 61, 68, 69, 72, 65, 68, 71, 59, 69, 63, 78, 75, 67, 75, 62, 67, 62, 61, 33, 67, 64, 80, 65, 75, 65, 74, 72, 65, 63, 71, 69, 52, 15, 55, 67, 76, 61, 29, 61, 48, 13, 76, 65, 23, 71, 69, 70, 62, 68, 80, 67, 41, 19, 74, 71, 74, 66, 67, 73, 75, 67, 55, 66, 68, 23, 75, 63, 64, 69, 57, 75, 72, 63, 55, 75, 64, 71, 64, 69, 66, 68, 64, 59, 36, 69, 19, 74, 69, 58, 60, 62, 55, 54, 63, 68, 72, 60, 75, 66, 69, 58, 56, 64, 61, 62, 62, 67, 59, 58, 58, 65, 63, 58, 60, 58, 55, 52, 59, 53, 21, 69, 62, 75, 72, 60, 19, 69, 62, 66, 64, 63, 53, 79, 74, 76, 77, 62, 78, 72, 62, 74, 75, 72, 70, 71, 72, 24, 73, 80, 81, 74, 66, 63, 46, 34, 63, 73, 72, 69, 71, 71, 64, 65, 69, 71, 21, 73, 74, 65, 70, 71, 68, 31, 68, 71, 46, 70, 74, 71, 62, 78, 70, 71, 72, 73, 79, 80, 75, 69, 67, 68, 75, 72, 64, 77, 70, 75, 82, 69, 76, 65, 74, 31, 61, 25, 13, 73, 67, 38, 72, 67, 60, 68, 69, 68, 70, 67, 62, 58, 62, 74, 68, 63, 66, 62, 67, 70, 62, 64, 64, 57, 60, 66, 60, 61, 62, 59, 59, 60, 69, 68, 31, 68, 71, 68, 67, 69, 65, 60, 23, 72, 77, 72, 71, 64, 76, 74, 56, 75, 69, 70, 58, 48, 54, 71, 76, 64, 73, 68, 26, 73, 39, 61, 59, 58, 62, 56, 61, 65, 64, 62, 68, 64, 68, 71, 62, 68, 75, 76, 58, 71, 70, 71, 66, 63, 65, 70, 59, 66, 68, 73, 49, 36, 67, 78, 77, 72, 77, 76, 72, 72, 76, 70, 71, 70, 68, 81, 76, 64, 74, 68, 64, 66, 63, 70, 72, 67, 74, 68, 69, 62, 69, 60, 76, 75, 70, 68, 77, 76, 33, 73, 64, 67, 68, 67, 71, 70, 76, 63, 64, 70, 55, 60, 74, 66, 65, 71, 67, 60, 69, 63, 40, 67, 63, 63, 29, 49, 64, 72, 61, 26, 31, 48, 77, 71, 79, 77, 78, 75, 72, 41, 80, 77, 78, 66, 64, 67, 73, 68, 63, 65, 62, 61, 74, 59, 64, 65, 53, 59, 73, 29, 68, 28, 32, 27, 69, 30, 34, 32, 31, 29, 28, 35, 27, 78, 76, 72, 74, 78, 75, 69, 74, 73, 75, 69, 77, 77, 79, 74, 73, 70, 79, 68, 78, 72, 72, 67, 68, 61, 74, 76, 78, 74, 79, 74, 73, 74, 60, 69, 66, 68, 69, 71, 68, 66, 70, 42, 73, 34, 29, 56, 37, 31, 26, 23, 29, 25, 24, 27, 71, 75, 74, 66, 71, 69, 71, 66, 66, 58, 70, 66, 67, 68, 67, 72, 73, 76, 74, 58, 68, 67, 65, 68, 59, 55, 68, 65, 52, 59, 64, 65, 58, 72, 71, 59, 61, 55, 65, 76, 74, 64, 61, 65, 61, 60, 70, 66, 66, 18, 59, 66, 67, 66, 72, 72, 71, 67, 36, 75, 70, 65, 66, 65, 61, 62, 61, 68, 62, 55, 57, 66, 73, 74, 76, 73, 69, 26, 58, 69, 65, 66, 51, 57, 72, 73, 7, 61, 64, 53, 61, 59, 57, 70, 62, 76, 72, 68, 55, 52, 71, 61, 71, 65, 59, 62, 70, 67, 67, 73, 65, 63, 60, 52, 21, 20, 71, 69, 72, 70, 61, 62, 26, 79, 76, 69, 74, 65, 78, 64, 56, 75, 68, 72, 74, 63, 57, 65, 73, 75, 73, 61, 67, 61, 48, 70, 63, 66, 70, 61, 61, 61, 65, 61, 67, 66, 71, 65, 68, 74, 64, 67, 65, 68, 72, 71, 62, 66, 65, 30, 67, 57, 24, 77, 74, 61, 31, 31, 75, 27, 74, 79, 77, 73, 71, 69, 63, 63, 60, 17, 70, 28, 68, 69, 71, 60, 68, 63, 77, 72, 74, 67, 71, 67, 67, 72, 72, 55, 16, 74, 61, 60, 69, 59, 54, 50, 14, 16, 60, 60, 58, 46, 22, 18, 76, 68, 62, 62, 66, 66, 63, 61, 59, 58, 64, 59, 48, 62, 57, 61, 63, 51, 69, 57, 63, 27, 10, 68, 78, 67, 64, 55, 62, 60, 77, 78, 59, 18, 74, 71, 72, 70, 60, 63, 53, 49, 53, 71, 64, 72, 48, 8, 34, 73, 68, 71, 75, 68, 77, 66, 64, 67, 47, 13, 23, 78, 73, 74, 61, 63, 54, 47, 27, 37, 70, 71, 65, 64, 68, 65, 27, 55, 23, 78, 65, 61, 58, 27, 69, 69, 65, 58, 49, 48, 15, 71, 66, 55, 75, 55, 64, 51, 46, 3, 77, 73, 68, 71, 65, 58, 60, 71, 69, 58, 55, 59, 72, 66, 46, 72, 60, 51, 75, 70, 21, 72, 64, 69, 64, 70, 72, 71, 62, 68, 61, 75, 66, 55, 70, 69, 75, 72, 66, 78, 64, 78, 64, 64, 53, 47, 72, 72, 69, 71, 56, 74, 65, 59, 56, 74, 72, 70, 60, 58, 78, 77, 76, 72, 66, 75, 74, 78, 66, 70, 69, 68, 74, 72, 61, 74, 74, 69, 70, 61, 56, 70, 61, 72, 71, 71, 73, 73, 66, 57, 68, 63, 63, 61, 65, 79, 75, 70, 68, 70, 75, 66, 30, 43, 69, 69, 64, 62, 71, 72, 69, 60, 64, 65, 78, 75, 77, 65, 79, 75, 52, 79, 73, 75, 67, 71, 78, 66, 64, 76, 71, 76, 69, 54, 19, 77, 74, 72, 71, 71, 54, 63, 64, 69, 76, 63, 59, 69, 74, 69, 60, 72, 66, 55, 70, 70, 62, 41, 67, 65, 67, 74, 66, 74, 64, 58, 67, 65, 65, 67, 70, 70, 72, 61, 17, 29, 76, 64, 72, 67, 58, 66, 72, 61, 70, 64, 51, 57, 24, 55, 57, 13, 73, 73, 62, 66, 72, 66, 70, 71, 67, 55, 26, 29, 30, 26, 25, 23, 44, 70, 66, 69, 67, 65, 56, 55, 61, 59, 59, 65, 68, 66, 59, 57, 64, 75, 65, 61, 62, 61, 66, 67, 68, 59, 60, 26, 41, 65, 62, 49, 61, 63, 63, 66, 62, 66, 57, 55, 65, 72, 54, 43, 24, 30, 20, 24, 22, 26, 20, 22, 29, 61, 61, 73, 69, 58, 66, 64, 57, 64, 63, 64, 68, 69, 68, 65, 61, 74, 74, 67, 77, 71, 68, 72, 65, 69, 74, 63, 72, 54, 56, 64, 57, 65, 60, 55, 56, 69, 63, 56, 19, 60, 54, 57, 53, 61, 49, 11, 25, 51, 64, 76, 70, 66, 65, 65, 53, 66, 62, 70, 66, 70, 59, 67, 69, 66, 65, 60, 63, 64, 70, 57, 31, 68, 54, 54, 44, 25, 68, 40, 23, 70, 76, 75, 67, 62, 64, 61, 63, 55, 57, 49, 57, 72, 71, 66, 20, 70, 75, 70, 76, 68, 64, 68, 74, 68, 64, 70, 72, 65, 75, 38, 72, 65, 68, 55, 59, 67, 64, 63, 62, 78, 75, 73, 68, 66, 74, 71, 72, 73, 71, 73, 62, 70, 76, 60, 72, 68, 63, 63, 70, 69, 77, 63, 66, 62, 66, 65, 66, 50, 68, 61, 32, 19, 16, 76, 57, 75, 71, 53, 51, 56, 54, 57, 45, 70, 70, 76, 64, 58, 72, 57, 65, 67, 54, 63, 70, 76, 71, 65, 66, 66, 55, 63, 24, 77, 45, 13, 69, 60, 61, 57, 63, 65, 62, 61, 59, 66, 69, 67, 62, 71, 70, 60, 54, 42, 72, 66, 63, 56, 60, 59, 56, 62, 63, 63, 66, 74, 71, 70, 57, 51, 75, 80, 79, 64, 77, 76, 75, 78, 70, 33, 67, 50, 60, 15, 9, 58, 30, 67, 72, 63, 48, 46, 17, 57, 10, 70, 69, 63, 58, 58, 60, 75, 78, 65, 59, 65, 64, 67, 68, 67, 70, 73, 67, 61, 61, 64, 75, 69, 62, 17, 70, 63, 63, 53, 54, 72, 69, 70, 61, 65, 56, 66, 67, 57, 58, 60, 54, 70, 67, 63, 57, 61, 65, 62, 64, 60, 61, 59, 58, 64, 45, 69, 69, 72, 69, 59, 57, 17, 69, 71, 65, 69, 52, 57, 33, 62, 35, 20, 71, 73, 71, 75, 77, 66, 57, 67, 74, 65, 69, 71, 73, 61, 64, 68, 64, 56, 70, 41, 36, 75, 74, 69, 71, 70, 62, 67, 64, 40, 60, 70, 70, 75, 68, 69, 66, 42, 66, 71, 60, 72, 73, 68, 66, 54, 53, 54, 55, 32, 32, 30, 68, 62, 75, 77, 73, 67, 62, 71, 54, 73, 72, 72, 65, 54, 64, 67, 60, 75, 67, 77, 77, 63, 59, 73, 76, 73, 67, 66, 68, 63, 61, 60, 69, 67, 25, 76, 75, 72, 30, 73, 28, 80, 75, 68, 66, 70, 65, 54, 22, 41, 50, 77, 63, 59, 51, 25, 69, 61, 1, 47, 50, 37, 30, 25, 20, 35, 69, 73, 69, 63, 57, 43, 67, 45, 61, 68, 75, 66, 71, 68, 68, 71, 65, 77, 78, 70, 70, 71, 75, 75, 65, 53, 23, 35, 56, 59, 64, 68, 71, 44, 54, 71, 66, 64, 64, 70, 64, 72, 52, 60, 69, 73, 67, 59, 68, 67, 72, 62, 68, 68, 17, 77, 78, 80, 68, 71, 32, 66, 68, 70, 69, 73, 66, 69, 62, 60, 60, 76, 78, 73, 60, 71, 44, 20, 23, 28, 54, 29, 24, 33, 27, 22, 66, 67, 65, 66, 51, 54, 42, 23, 66, 63, 50, 54, 62, 60, 60, 69, 69, 61, 70, 69, 67, 63, 57, 65, 66, 63, 57, 61, 52, 20, 71, 71, 68, 60, 64, 66, 55, 65, 69, 28, 63, 51, 17, 63, 64, 63, 31, 30, 13, 18, 21, 65, 48, 64, 53, 17, 68, 63, 61, 59, 11, 63, 64, 65, 58, 63, 59, 72, 64, 58, 46, 49, 57, 57, 66, 66, 14, 60, 65, 56, 58, 68, 66, 61, 54, 50, 54, 58, 49, 63, 67, 52, 9, 24, 61, 60, 41, 56, 25, 69, 29, 71, 79, 66, 59, 59, 66, 63, 66, 64, 63, 53, 77, 71, 73, 61, 70, 67, 67, 58, 51, 69, 64, 58, 66, 68, 68, 65, 65, 69, 62, 72, 66, 61, 28, 48, 65, 55, 73, 62, 62, 56, 61, 60, 67, 71, 73, 73, 62, 64, 47, 62, 71, 64, 75, 77, 22, 78, 77, 34, 77, 69, 69, 67, 70, 69, 64, 68, 67, 70, 69, 27, 75, 73, 76, 66, 78, 75, 73, 73, 76, 75, 27, 67, 78, 74, 74, 73, 73, 71, 77, 78, 74, 78, 73, 77, 80, 77, 76, 78, 78, 76, 67, 72, 74, 56, 76, 75, 73, 78, 75, 65, 61, 24, 78, 79, 76, 78, 75, 69, 60, 75, 46, 81, 78, 76, 77, 74, 74, 66, 73, 76, 70, 71, 73, 67, 60, 78, 80, 25, 71, 66, 67, 62, 68, 72, 73, 71, 69, 73, 68, 69, 79, 64, 62, 65, 63, 73, 63, 59, 45, 77, 66, 29, 78, 33, 72, 76, 74, 67, 73, 60, 69, 70, 64, 64, 69, 68, 69, 72, 73, 71, 71, 65, 65, 71, 66, 67, 66, 47, 33, 14, 71, 77, 47, 74, 69, 69, 16, 76, 77, 67, 69, 78, 78, 70, 72, 58, 51, 21, 52, 70, 69, 27, 22, 35, 36, 75, 70, 69, 71, 72, 67, 62, 66, 67, 65, 58, 60, 37, 65, 71, 76, 68, 68, 25, 68, 69, 63, 63, 60, 64, 53, 48, 77, 75, 72, 60, 68, 31, 66, 60, 17, 38, 16, 56, 65, 62, 63, 56, 34, 47, 57, 52, 58, 57, 60, 61, 52, 58, 42, 40, 31, 28, 57, 73, 62, 63, 79, 74, 72, 66, 72, 71, 69, 58, 65, 61, 77, 75, 27, 64, 78, 66, 70, 17, 73, 80, 69, 62, 74, 74, 67, 64, 70, 59, 74, 62, 74, 67, 63, 75, 65, 67, 73, 74, 23, 44, 76, 77, 74, 66, 50, 72, 70, 69, 66, 80, 77, 74, 74, 78, 74, 79, 79, 78, 77, 70, 57, 73, 61, 58, 66, 38, 27, 24, 57, 63, 59, 63, 64, 56, 73, 69, 68, 74, 65, 61, 62, 71, 71, 72, 66, 41, 71, 69, 58, 52, 52, 59, 65, 48, 74, 76, 71, 30, 63, 63, 28, 73, 67, 74, 62, 70, 73, 68, 60, 65, 63, 67, 63, 60, 41, 33, 29, 25, 13, 74, 70, 70, 64, 62, 63, 64, 62, 69, 63, 64, 58, 71, 63, 66, 73, 62, 57, 65, 56, 14, 27, 54, 23, 61, 24, 69, 72, 61, 73, 57, 71, 60, 70, 67, 61, 27, 70, 72, 60, 27, 71, 60, 69, 69, 67, 64, 63, 32, 71, 70, 65, 62, 65, 74, 79, 75, 72, 65, 59, 58, 76, 72, 63, 67, 69, 69, 67, 68, 70, 66, 64, 59, 52, 67, 56, 20, 34, 23, 28, 48, 12, 64, 73, 69, 59, 32, 70, 67, 53, 74, 63, 57, 56, 53, 58, 71, 58, 37, 61, 67, 33, 61, 44, 72, 67, 68, 69, 53, 59, 62, 54, 16, 67, 62, 56, 32, 74, 71, 66, 67, 58, 47, 58, 7, 1, 57, 54, 57, 44, 74, 78, 73, 69, 70, 73, 66, 80, 70, 59, 71, 72, 56, 65, 67, 71, 78, 75, 68, 68, 57, 60, 28, 61, 72, 63, 68, 66, 69, 70, 66, 63, 53, 68, 69, 64, 64, 62, 63, 66, 60, 59, 56, 80, 79, 71, 59, 24, 18, 68, 67, 64, 60, 51, 62, 61, 71, 66, 55, 63, 63, 67, 76, 74, 60, 63, 16, 38, 70, 58, 64, 58, 13, 30, 73, 74, 65, 9, 21, 67, 68, 64, 33, 31, 57, 71, 69, 65, 59, 50, 61, 25, 17, 79, 69, 66, 29, 70, 77, 67, 27, 71, 76, 70, 73, 60, 16, 17, 21, 21, 18, 21, 66, 60, 39, 9, 13, 67, 75, 70, 71, 51, 12, 68, 64, 56, 51, 53, 55, 49, 53, 53, 72, 66, 63, 62, 63, 52, 58, 65, 60, 47, 60, 60, 56, 12, 71, 71, 60, 55, 25, 22, 74, 75, 60, 72, 64, 59, 59, 46, 48, 63, 73, 63, 75, 74, 66, 65, 52, 70, 64, 71, 71, 70, 72, 77, 78, 68, 70, 63, 61, 75, 66, 71, 26, 82, 75, 73, 74, 66, 66, 77, 75, 78, 76, 65, 72, 65, 75, 76, 72, 75, 71, 61, 79, 79, 63, 70, 60, 58, 74, 53, 55, 36, 58, 49, 25, 25, 24, 50, 69, 78, 72, 67, 72, 75, 72, 68, 75, 61, 24, 69, 70, 73, 77, 44, 2, 36, 76, 72, 71, 58, 70, 67, 62, 76, 72, 74, 77, 52, 73, 75, 33, 80, 81, 71, 78, 75, 77, 66, 65, 72, 44, 78, 74, 77, 77, 80, 39, 57, 74, 70, 73, 68, 78, 77, 77, 79, 71, 78, 75, 74, 72, 57, 59, 81, 79, 79, 73, 68, 73, 80, 78, 74, 64, 76, 74, 71, 73, 74, 70, 70, 72, 58, 61, 74, 77, 61, 71, 75, 76, 71, 64, 66, 61, 60, 63, 61, 24, 22, 36, 72, 27, 30, 67, 38, 20, 74, 80, 77, 75, 63, 58, 49, 68, 78, 77, 65, 59, 62, 19, 49, 66, 23, 79, 67, 74, 44, 69, 81, 73, 74, 65, 72, 65, 75, 77, 71, 72, 74, 62, 22, 75, 74, 58, 60, 12, 20, 77, 75, 74, 63, 47, 80, 72, 79, 76, 68, 45, 80, 81, 79, 77, 62, 72, 64, 73, 81, 76, 71, 60, 79, 78, 71, 74, 72, 71, 61, 57, 75, 78, 76, 70, 76, 14, 58, 78, 77, 73, 70, 74, 58, 68, 77, 69, 68, 66, 72, 29, 40, 29, 70, 68, 71, 62, 74, 75, 62, 72, 69, 74, 52, 73, 23, 42, 78, 71, 75, 79, 71, 58, 62, 74, 61, 63, 66, 47, 59, 23, 62, 32, 23, 28, 29, 73, 70, 75, 66, 72, 72, 67, 65, 57, 72, 66, 73, 67, 36, 74, 74, 71, 65, 56, 61, 57, 62, 50, 45, 15, 53, 74, 68, 66, 68, 65, 68, 79, 77, 67, 68, 73, 76, 66, 23, 63, 77, 71, 77, 69, 58, 57, 56, 25, 30, 18, 14, 55, 56, 9, 33, 27, 65, 43, 8, 8, 28, 23, 25, 68, 67, 78, 71, 63, 57, 50, 45, 65, 67, 62, 69, 67, 63, 60, 62, 72, 62, 57, 68, 72, 56, 34, 79, 64, 53, 55, 41, 74, 70, 67, 59, 8, 68, 76, 69, 68, 77, 56, 78, 77, 77, 74, 80, 79, 71, 63, 17, 16, 68, 59, 77, 75, 70, 72, 74, 65, 72, 69, 52, 70, 74, 67, 65, 61, 75, 65, 55, 66, 67, 68, 61, 65, 62, 51, 59, 63, 56, 52, 11, 0, 53, 69, 68, 68, 68, 68, 58, 69, 63, 30, 43, 28, 35, 78, 76, 24, 7, 73, 67, 56, 64, 70, 59, 64, 65, 58, 49, 63, 31, 51, 76, 65, 55, 65, 58, 32, 68, 67, 41, 60, 54, 57, 55, 58, 53, 32, 17, 15, 56, 53, 46, 28, 41, 2, 20, 18, 21, 73, 66, 27, 58, 56, 31, 30, 29, 22, 25, 27, 22, 64, 57, 55, 59, 48, 57, 55, 51, 67, 63, 32, 70, 60, 63, 30, 54, 58, 64, 54, 9, 21, 13, 25, 63, 64, 60, 50, 17, 13, 73, 61, 59, 43, 32, 20, 34, 23, 67, 69, 30, 67, 47, 69, 55, 41, 43, 33, 63, 65, 27, 28, 22, 32, 33, 43, 35, 61, 62, 40, 55, 61, 33, 53, 57, 31, 35, 55, 50, 34, 23, 30, 10, 40, 45, 30, 27, 15, 49, 26, 17, 80, 72, 37, 24, 30, 33, 21, 19, 19, 59, 31, 20, 16, 41, 28, 34, 34, 35, 34, 32, 35, 28, 32, 30, 35, 25, 28, 60, 71, 59, 66, 56, 67, 61, 31, 25, 23, 35, 32, 22, 27, 24, 33, 45, 32, 31, 40, 73, 71, 69, 75, 74, 61, 9, 39, 62, 52, 53, 21, 69, 60, 33, 66, 47, 53, 61, 51, 51, 71, 34, 69, 71, 51, 68, 65, 67, 67, 57, 72, 66, 72, 73, 74, 66, 57, 56, 69, 62, 57, 37, 64, 69, 61, 70, 68, 72, 64, 64, 54, 23, 22, 77, 71, 74, 71, 67, 70, 72, 68, 61, 73, 79, 78, 75, 71, 77, 76, 74, 71, 70, 73, 73, 79, 80, 64, 27, 80, 76, 71, 70, 53, 62, 80, 79, 57, 71, 73, 67, 61, 58, 48, 77, 69, 65, 66, 66, 67, 69, 56, 55, 63, 77, 70, 30, 26, 38, 32, 30, 24, 67, 52, 78, 69, 76, 74, 58, 75, 64, 76, 65, 69, 65, 66, 73, 65, 72, 78, 77, 67, 68, 65, 67, 68, 77, 78, 78, 59, 26, 26, 32, 28, 29, 47, 27, 31, 27, 28, 39, 21, 17, 74, 68, 77, 73, 67, 63, 65, 71, 74, 75, 76, 70, 65, 61, 61, 78, 80, 77, 78, 74, 73, 41, 79, 78, 75, 77, 75, 78, 75, 79, 72, 75, 73, 74, 69, 69, 49, 60, 49, 59, 41, 46, 43, 41, 38, 39, 39, 39, 37, 44, 29, 25, 46, 29, 35, 29, 24, 26, 29, 63, 69, 67, 67, 60, 61, 57, 62, 67, 59, 64, 58, 56, 32, 61, 64, 59, 66, 69, 66, 67, 58, 57, 55, 38, 32, 70, 73, 63, 52, 47, 52, 65, 59, 37, 32, 33, 32, 73, 75, 79, 59, 49, 70, 67, 37, 68, 63, 50, 56, 62, 73, 66, 62, 65, 69, 51, 73, 78, 73, 54, 18, 65, 53, 64, 62, 63, 64, 56, 70, 61, 56, 55, 20, 77, 67, 29, 23, 72, 71, 69, 67, 63, 72, 66, 81, 74, 63, 60, 61, 66, 64, 68, 69, 72, 66, 74, 59, 56, 59, 54, 25, 59, 47, 58, 73, 76, 74, 65, 71, 74, 70, 55, 58, 74, 61, 57, 59, 54, 33, 36, 31, 38, 62, 61, 62, 58, 24, 70, 66, 64, 51, 3, 67, 65, 25, 73, 72, 67, 60, 60, 73, 65, 64, 47, 0, 0, 8, 72, 76, 68, 70, 72, 68, 66, 66, 66, 62, 62, 60, 54, 72, 69, 79, 79, 74, 67, 68, 63, 76, 77, 75, 64, 72, 64, 33, 71, 25, 51, 48, 68, 56, 31, 60, 74, 45, 76, 70, 63, 57, 55, 78, 61, 51, 66, 65, 77, 73, 64, 63, 59, 52, 62, 65, 61, 77, 78, 75, 76, 68, 74, 69, 80, 71, 61, 69, 79, 67, 78, 72, 70, 61, 72, 73, 80, 71, 73, 65, 76, 72, 68, 62, 66, 71, 64, 72, 74, 67, 59, 62, 73, 79, 74, 65, 56, 72, 70, 79, 61, 70, 79, 78, 76, 75, 74, 70, 77, 77, 24, 75, 74, 67, 68, 65, 76, 71, 64, 74, 78, 68, 65, 60, 57, 66, 59, 64, 65, 64, 61, 60, 58, 59, 67, 65, 79, 59, 68, 65, 55, 59, 65, 65, 58, 60, 14, 65, 60, 59, 50, 47, 20, 45, 10, 32, 44, 73, 77, 71, 77, 75, 70, 75, 74, 71, 67, 66, 42, 57, 59, 66, 58, 38, 41, 61, 41, 37, 71, 73, 71, 66, 55, 56, 45, 40, 45, 69, 68, 42, 66, 50, 80, 65, 60, 55, 46, 78, 69, 61, 65, 62, 68, 35, 62, 65, 53, 68, 79, 81, 77, 72, 52, 51, 68, 57, 57, 84, 62, 44, 72, 73, 68, 63, 72, 52, 45, 56, 40, 46, 45, 54, 58, 60, 59, 51, 62, 48, 53, 67, 45, 34, 39, 38, 42, 42, 45, 35, 42, 54, 37, 41, 41, 35, 28, 27, 28, 35, 26, 25, 34, 37, 23, 24, 36, 36, 37, 33, 39, 36, 36, 27, 32, 23, 26, 37, 30, 26, 32, 30, 29, 42, 36, 26, 38], "kinds": {"cut-1": {"kind": "judgment", "reason": "Before the lecture: setting up the recorder and the phone ('so these two are synchronised', 'it doesn't stick', 'OK, you'll edit it later'). No picture: the camera starts at 3:21; Logistics: how last week's session with the substitute (Davit, sound processing, the ML lab) went and thesis collaboration; then the written quiz after the exam week, what it covers, the Telegram channel, the time limit. The lecture starts on 'օքեյ, դե քանի որ որոշ ժամանակ չենք հանդիպել...' (the recap)"}, "cut-2": {"kind": "judgment", "reason": "After his closing remarks ('open problems for decades... not proven as far as I know'): the room. CHECK BY EAR where he really stops, 1:20:25-1:20:37. Everything after 1:03:40 has sound only (the camera stopped): it gets his slides L-8 33-39"}}, "suggestions": [{"s": 503.0, "e": 510.81, "reason": "Suggestion: 8 s of waiting while the room tries to recall the AEP's name ('how was it called?'); he then says 'seems forgotten, let me remind you'"}, {"s": 767.89, "e": 776.49, "reason": "Suggestion: 8 s of waiting after 'how much space must we use?'; nobody answers, he goes on 'այ ցուցչի...'"}], "rows": [[26.0, "տարբերություն"], [44.0, "ես միացրած եմ հանրով վերցրեք"], [69.0, "ասել եմ տալիս, բայց այս մասերից սա"], [94.0, "համակարգել հաջորդ"], [100.0, "ինչ-որ համակարգ Կարգ մտածել էդ հարցով։"], [106.0, "Սպեծ ֆորմայով պետք ա գամ։"], [109.0, "Որպես անենք, որ այս երկուսը"], [110.0, "սինխրոնիզացված լինի, վաբշե ընտիր կլինի։"], [112.0, "Ի՞նչը։"], [113.0, "Որ էս երկուսը կանենք, այնպես անենք, որ"], [114.0, "սինխրոնիզացված լինի վաբշե ընտիր կլինի։"], [117.0, "Այդպես պրոբլեմներ կա՞։ Չգիտեմ ինչի"], [119.0, "նշանակում։"], [123.0, "Հա, հա, հա, հա։"], [125.0, "Կարո՞ն։"], [127.0, "Լավ չի կպնում։"], [130.0, "Մի վայրկյան Այստեղ"], [141.0, "շատ վատ կլինի չորչաժիդեալական"], [146.0, "շատ լավ"], [149.0, "հա օքեյ հետո մոնտաժ կանեք մերսի"], [178.0, "Հեսա խոսենք հա մի հատ"], [193.0, "ասեմ"], [200.0, "հեսա պայմանավորվենք նախ ուզում էի"], [202.0, "իմանայի անցած անգամ ոնց անցավ հանդիպումը"], [206.0, "Դավիթի հետաքրքիր էր հա&lt;un նման սեսիաները"], [210.0, "կրկնենք էլի,"], [212.0, "որովհետև միշտ այդ անջրպետը կա էլի"], [215.0, "տեսական հիմունքների ու ասենք"], [217.0, "կիրառություններում ինչ է կատարվում,"], [220.0, "ուղղակիորեն կարող է կապված չլիներ, հա՞,"], [224.0, "բայց էլի ձայնի մշակման հետ կապված"], [228.0, "ահագին գործիքակազմ կա, բնականաբար"], [230.0, "օգտագործում է, ձայնն էլ մեր համար"], [232.0, "աղբյուր է, չէ՞ ինֆորմացիայի այդ"], [234.0, "տեսակետից լիքը քննարկելու բան կա, բայց"], [237.0, "նաև ինձ թվում էր կարևոր, որ"], [241.0, "ծանոթանաք այդ թեմատիկային և եթե ասենք"], [244.0, "ավարտական աշխատանքների ընտրության հարց"], [246.0, "կա, նախապես արդեն ինչ-որ բան ձևավորվի"], [250.0, "ձեր մոտ, հա"], [253.0, "գաղափար գուցե համագործակցեք"], [257.0, "հա՞ Դավիթի հետ, որը ներկայացնում է և"], [259.0, "մեքենայական ուսուցման լաբորատորիան"], [261.0, "ևայում"], [262.0, "ձայնի մշակման հարցերում ուրեմն այդ"], [267.0, "ազություններ է վարում,"], [269.0, "շատ լավ օգտակար է անցել, իսկ"], [274.0, "բանի հետ կապված, ինչ-որ գրավոր աշխատանքի"], [277.0, "հետ կապված մյուս շաբաթ կարծեմ դուք"], [281.0, "քննությունների շաբաթն էիք, չէ՞ կլինի, որ"], [285.0, "երբ որ քննությունների շաբաթից"], [287.0, "վերադառնանք, այսինքն էն մյուս ուրբաթ օրը"], [290.0, "քույզը կազմակերպենք տեսնենք ոնց ա գնում"], [295.0, "ուղարկեք"], [298.0, "նմուշ կարող եմ ուղարկել կարող եմ"], [300.0, "չուղարկել սպենց ընդհանուր ասեմ ինչի"], [303.0, "մասին է այն ինչ որ տեսնում եք սլայդերում"], [305.0, "հիմնական գաղափարներից սկսած հա&lt;un"], [309.0, "հետաքննդիր է չէ լինելու տեսական ինչ-որ"], [311.0, "հարց"], [312.0, "երկուսն էլ կարող է լինի"], [315.0, "որևէ արտառոց բան չի լինելու որը"], [317.0, "սլայդերից դուրս հա ասենք բան"], [319.0, "այդպենց խնդիր գործնական չէինք լուծել"], [321.0, "անուն"], [322.0, "հա հասկանալի է բայց բաները այն մակարդակի"], [327.0, "ուրեմն կամ այն սխեմայի մեջ է լինելու,"], [329.0, "ինչը որ լրիվ հերիք է, եթե մենք"], [334.0, "ինչ որ քննարկել ենք հասկացվել է, այսինքն"], [338.0, "շատ բարդ խնդիրներ կարելի է լուծել այս"], [340.0, "բնագավառում, եթե կովերի գիրքը թերթել եք,"], [342.0, "թերթում եք, ինքնորին աշխատանքը հիշում"], [345.0, "եք, որ միշտ կա բոլոր չափթերների"], [349.0, "այնտեղ խնդիրներ կան, որ առանձին դրանց"], [351.0, "լուծումը պահանջում է առանձին"], [354.0, "մի հատ հոդված գրել, որպեսզի այդ լուծումը"], [356.0, "ստանալ և պատմականորեն էլ այդ խնդիրները"], [358.0, "այդպենս էլ առաջացել են ինչ-որ"], [360.0, "բանը հոդված է լույս տեսել, որը տալիս է"], [362.0, "ինչ-որ բանի պատասխան, հարցի պատասխան,"], [365.0, "որի ծավալը կարող է 10-15 էջ լինի, հետո"], [368.0, "դա դարել է problem, հա՞ գովերի գրքում,"], [371.0, "որը այդպենս հեշտ քույզի ընթացքում"], [377.0, "լուծելու բան չի, նյութ չի, բայց ինչ-որ"], [382.0, "նոթերով կարող եմ կիսվել, որ պարզ լինի:"], [387.0, "Ինֆորմացիայի չափերն ենք ուսումնասիրել,"], [389.0, "հա՞, դրանց հիմնական հատկանիշները,"], [391.0, "շղթայական օրենքները, դետերմինիստ, ոչ"], [394.0, "դետերմինիստ հասկացությունները, ի՞նչ է դա"], [397.0, "նշանակում ինֆորմացիայի չափերի:"], [400.0, "Այս պահին հասել ենք, հա՞,"], [404.0, "ուրեմն"], [405.0, "տվյալների սեղմ սկզբունքներին, հիմա պիտի"], [408.0, "շարունակենք, բայց երևի այդ առաջին բանը"], [411.0, "քույ քույզը կվերաբերվի այն ինֆորմացիայի"], [414.0, "չափերի մասին, չենք մտնի սրա մեջ, այդ"], [416.0, "հաջորդ անգամ կանենք էլի հա&lt;un այսպենս"], [419.0, "ընդհանուր"], [421.0, "դիտողությունսի channelում բոլորդ կաք"], [425.0, "օքե կարող եմ այնտեղ ինչ-որ բաներով"], [428.0, "կիսվել հա լրացուցիչ գաղափարներով կամ"], [432.0, "բանով հուշումներով հա"], [436.0, "ժամանակ է տեղը այսինքն ամբողջը դասախոս"], [443.0, "Դե կարո ենք ամեն դեպքում լիմիտը դասի"], [445.0, "չափով պահենք, ոնց կարող"], [450.0, "է ավելի կարճ տևի, եթե այս ընթացքում տանը"], [454.0, "մի քիչ թերթած լինեք սլայդեր"], [461.0, "օքեյ, դե քանի որ"], [466.0, "հա որոշ ժամանակ"], [473.0, "չենք հանդիպել,"], [476.0, "ինձ հետաքրքիր կլիներ, օրինակ, հիշում եք"], [481.0, "ինչ առանցքային գաղափարների կամ"], [483.0, "սկզբունքների"], [485.0, "շուրջ սկսեցինք վերջին անգամ խոսել ու"], [488.0, "ինչ-որ եզրահանգումների"], [490.0, "հասանք:"], [492.0, "Ինչու ինչ-որ մեծ թվերի օրենքի հետ կապված"], [494.0, "ինչ-որ աստեցիայի մասին էիք խոսում:"], [496.0, "Ըհը, մեծ թվերի օրենքը ինֆորմացիայի"], [498.0, "տեսության դեպքում, հա՞, ո&lt;k&gt;նց էր"], [502.0, "կոչվում"], [511.0, "ոնց որ թե լավ մոռացվել է արդեն լավ արագ"], [514.0, "հիշեցնեմ, որովհետև շարունակում ենք"], [516.0, "թեման:"], [518.0, "Ուրեմն"], [521.0, "անցյալ անգամ"], [524.0, "խոսել ենք մեծ թվերի օրենքից ինֆորմացիայի"], [528.0, "տեսության պարագայում, որի"], [533.0, "ուրեմն անվանումը"], [537.0, "ասիմպտոտիկորեն"], [539.0, "հավասար տրողումների"], [542.0, "սկզբունք"], [544.0, "չէ"], [548.0, "սկզբունքն էր"], [550.0, "ուրեմն դա ի&lt;kչ էր նշանակում գոնե հիշում"], [552.0, "եք մաթեմատիկորեն"], [559.0, "Շատ լավ, այստեղ ինչ-որ սահման ունեինք,"], [561.0, "չէ՞,"], [566.0, "հիշու՞մ եք սա"], [574.0, "Ուրեմն x1, x2, xn հաջորդականությունը,"], [577.0, "որը"], [579.0, "հաջորդականությունը անկախ և միանվա"], [582.0, "բաշխված ված պատահական մեծությունների"], [587.0, "գեներացնում է ինչպիսի"], [589.0, "հաջորդականություններ"], [593.0, "տիպական և ոչ տիպական:"], [597.0, "Տիպական հաջորդականությունները աս պրոցեսի"], [600.0, "հիմնական"], [602.0, "ուրեմն"], [604.0, "ելքերն են, որոնց հավանականությունները"], [607.0, "կհիշեք ինչ էին կազմում կամ ուր էին գնում"], [610.0, "ասիմպտոտիկորեն:"], [617.0, "ամենահավական"], [621.0, "զորինի հետ կապված երկարությունից"], [626.0, "հիշեցիք"], [629.0, "այսինքն բոլոր տիպական"], [630.0, "հաջորդականությունները"], [634.0, "ունեն մոտավորապես հա էփսիլոն ճշտությամբ"], [637.0, "այ այսքան հավանականություն դրա համար էլ"], [639.0, "ասում ենք ամբողջ տարածությունը ոնց որ"], [641.0, "հավասար բաժանված է"], [645.0, "նույն տիպի վեկտորների միջև, որոնց"], [647.0, "հավանականությունները այս էնթրոպիկ"], [650.0, "բնութագրիչն ունեն, հա՞, մնացածը ոչ"], [653.0, "տիպական են, ասինտոտիկ ռեժիմում"], [656.0, "անհետանում են ու դրանք մեծերի դեպքում"], [659.0, "մեզ չեն էլ հանդիպելու: Հետևաբար,"], [663.0, "երբ որ եկանք քննարկելու, թե բա այդ"], [666.0, "դեպքում ոնց կարող ենք կազմակերպել էլ"], [671.0, "այ այս աղբյուրից ծնված հա&lt;un&gt; երկար"], [673.0, "հաջորդականությունների"], [676.0, "ուրեմն"], [677.0, "գեներացրած տվյալների սեղմումը ասեցինք"], [681.0, "կկենտրոնանանք տիպականների վրա մնացած"], [684.0, "բոլորը կար կառամարենք ինչի որովհետև"], [688.0, "նրանք նրանց հավանականությունը զրո զրո էր"], [691.0, "լինելու ինչքան սիմվոլ էլ կամ բիթ ծախսենք"], [695.0, "այդ"], [697.0, "հաջորդականությունները կոդա որ կամ"], [699.0, "պահպանելու"], [702.0, "վրա դրանց կշիռը զրոյանալու է, հետևաբար"], [705.0, "միայն սրանք են որոշակի կշիռ կազմելու"], [708.0, "տվյալների սեղման իմաստով և"], [714.0, "ստացանք"], [716.0, "գնահատական, որ եթե մինչև մեր"], [721.0, "ուսումնասիրությունը,"], [722.0, "թե ինչ է տիպական հաջորդականությունը, ինչ"], [725.0, "է ոչ տիպականը, ի&lt;k&gt;չ է ասիմպտոտիկ"], [728.0, "հավասար տրոհումների սկզբունքը մենք կարող"], [732.0, "էինք օգտագործել հա&lt;un երկուսի nգամ"], [737.0, "ասեք ինչքան"], [741.0, "log m-ը հիշում եք միշտ մեր այբուբենի"], [744.0, "չափն է"], [746.0, "այսքան հաջորդականություն որպեսզի xn"], [748.0, "տարածության բոլոր"], [751.0, "հաղորդագրությունները վերածենք 01եր"], [755.0, "01երի վեկտորների հա&lt;un որպեսզի պահ"], [757.0, "պահպանենք, հա՞, մեր կոմպյուտերի մեջ:"], [763.0, "Այս սկզբունքի շնորհիվ ինչքան պիտի"], [765.0, "օգտագործենք"], [768.0, "տարածք:"], [777.0, "Այ ցուցչի, էս գործակցի"], [782.0, "ուրեմն շուրջ էր մեր զրույցը: Հարց"], [785.0, "ունե՞ք:"], [786.0, "Հա, ինչի՞ ենք:"], [788.0, "X-ի n աստ"], [790.0, "ես x-ի n աստիճան"], [794.0, "չեմ նկատի ունեցել այստեղ սուտ որպեսզի x1"], [797.0, "xn չգրեմն երկարությամբ վեկտոր նկատի"], [800.0, "ունեմ հա"], [806.0, "ուրեմն մինչև որ ինֆորմացիայի տվության"], [809.0, "այս սկզբունքին կծանոթանայինք մենք"], [811.0, "գիտեինք ուղղակի որ"], [814.0, "այ այսքան"], [816.0, "կոդային բառեր պիտի օգտագործենք, որպեսզի"], [819.0, "օրիգինալ հաղորդագրությունները մենք"], [820.0, "պահպանենք 01-երի տարածության մեջ: Հիմա"], [824.0, "արդեն ասում ենք չէ, ասիմպտոտիկ ռեժիմում"], [826.0, "այս log m-ը կարող ենք փոխարինել"], [829.0, "էնտրոպիայով,"], [831.0, "քանի որ էնտրոպիայի վերին սահմանը լոգեմն"], [834.0, "է: Այսինքն եթե շատ վատ աղբյուր լինի, հա"], [838.0, "կատարյալ անորոշ, հա հավասարաչափ աղբյուր"], [841.0, "լինի, այդտեղ ուրեմն մենք շահում չունենք,"], [845.0, "սրանք իրար հավասար են:"], [847.0, "Բայց եթե այդպես չլինի, մենք շահում"], [849.0, "ունենք: Այսինքն տեսությունը ասիմպտոտիկ"], [851.0, "ռեժիմում սա էր ասում մեզ: Իսկ"], [856.0, "ինչպե&lt;un&gt;ս"], [858.0, "հավանականությունը"], [862.0, "սա զուտ մեկ վեկտորի հավանականության"], [865.0, "մասին է: Բոլոր վեկտորները երկար մեծերի"], [869.0, "դեպքում այս հավանականությունը ունեն:"], [875.0, "Իսկ այստեղ ուղղակի ուղղակի"], [878.0, "նշված են այն"], [881.0, "վեկտորների ծավալը, որ մենք պիտի"], [883.0, "օգտագործենք դրանք"], [886.0, "կոդավորելու կամ սեղմելու իմաստով 01"], [889.0, "տարածության մեջ է այստեղ մենք ոչ մի"], [892.0, "շահում չունենք ուղղակի n լոգարիթմլոգ"], [897.0, "չափով երկարությունը մեզ պետք վեկտոր"], [901.0, "երկարությամբ վեկտորներ են մեզ պետք"], [903.0, "որպեսզի բոլոր հաղորդագրությունները"], [905.0, "համարական Շնորհակալ ենք, իսկ այստեղ"], [907.0, "արդեն խելացի ենք գործում, կարճ ու երկար"], [909.0, "հաղորդագրություններ ենք օգտագործում,"], [914.0, "ուրեմն տարբեր տիպի հաջորդականությունների"], [917.0, "համար ու միջինում շահում ենք ստանում: Դե"], [919.0, "մի բան էլ հիշեցրեք, որ նաև"], [924.0, "էլի իրականում նույն փաստի մասին է, բայց"], [928.0, "այ այս մատ սպասում հիշում եք"], [933.0, "ln էլ երկարություն"], [936.0, "XM վեկտորը կոդավորելու համար օգտագործված"], [939.0, "բիթերի քանակը միջինացրած դրամաց սպասումը"], [943.0, "ուրեմն ուր էր տանում մեզ"], [949.0, "այսինքն որ միավոր տառի վրա ծախսված"], [952.0, "բիթերն էինք ուզում չափել մենք սա էլ"], [955.0, "ցույց տվեցինք որ ուրեմն էնտրոպիա"], [957.0, "գումարած էփսիլոն է հա ուրեմն էլի եկանք"], [961.0, "ընկանք էնտրոպիայի"], [963.0, "վրա, բայց սա գոյության թեորեմ էր,"], [967.0, "այսինքն մենք կոնկրետ կոդային սխեմա"], [970.0, "կառուցեցինք, չէ՞, հենված ասիմպտոտիկ"], [973.0, "հավասար, ուրեմն տրոհումների"], [977.0, "սկզբունքի վրա, որ մեզ տանում էր այ այս"], [980.0, "կարգի"], [982.0, "ուրեմն սեղման, բայց մենք չգիտենք սա"], [984.0, "օպտիմալն է, թե չէ: Հիմա մնացած"], [986.0, "տեսությունը, որ կքննարկենք, նրա մասին է,"], [988.0, "որ օպտիմալն է: Այ էնտրոպիայի շուրջ խաղը"], [992.0, "օպտիմալն է: Դրա Դրանից ավելի ներքև չենք"], [996.0, "կարող, ներքև նշանակում է ավելի շատ"], [998.0, "սեղմել, չէ՞: Այսինքն այստեղ միշտ փոքր"], [1000.0, "թիվ ենք ուզում ստանանք: Ինչքան հնարավոր"], [1002.0, "է քիչ բիթ ծախսենք միավոր տառի վրա, հա՞:"], [1006.0, "Հետևաբար փոքրով ենք հետաքրքրված,"], [1007.0, "պարզվում է էլ ներքև տեղ չկա, հա:"], [1012.0, "Լավ, սա"], [1014.0, "մեր անցյալի քննարկման"], [1017.0, "հա&lt;un&gt; որպես հիշեցում:"], [1020.0, "Հիմա մի քիչ ասիմպտոտիկ ռեժիմը"], [1023.0, "Ուրեմն"], [1027.0, "ռեժիմի հետ կապված քննարկումները դադար"], [1030.0, "ռեժիմի քննարկման դադար կունենանք"], [1034.0, "պրակտիկայում ոչ ասիմպտոտիկ ռեժիմի մասին"], [1037.0, "է չէ խոսքը ունենք աղբյուր ունենք"], [1042.0, "դրանից դուրս եկած ելքերը պիտի կոնկրետ"], [1046.0, "կոդային սխեմա կառուցենք որպեսզի շահում"], [1050.0, "ունենանք սեղման"], [1052.0, "իմաստով ոնց պիտի շարժվենք, հա՞, ինչ"], [1057.0, "ալգորիթմներ կան, որ դա անում են, հա,"], [1059.0, "քանի որ այն, ինչ որ քննարկվեց դա ասենք"], [1064.0, "ոչ այնքան պրակտիկ կամ ասիմպտոտիկ"], [1069.0, "ուրեմն ռեժիմի մասին էր:"], [1077.0, "Ուրեմն"], [1080.0, "այստեղ արդեն Արդեն նշված է, թե ուր ենք"], [1083.0, "գնում, հա&lt;un շատ կոնկրետ արդեն"], [1086.0, "սահմանումներ տանք, ի&lt;k&gt;նչ է կոդը,"], [1088.0, "ինչպիսի կոդեր կան,"], [1090.0, "այդ կոդերին վերաբերող, հա՞, ինչպիսի"], [1093.0, "հիմնարար առնչություն կա, որ մեզ պիտի"], [1095.0, "օգնի կառուցելու"], [1098.0, "լավ կոդեր կամ օպտիմալ կոդեր, հա&lt;k&gt; հետո"], [1102.0, "արդեն"], [1105.0, "մի քանի կոդերի կծանոթանանք, հա՞,"], [1109.0, "որոնք կամ օպտիմալ են, կամ ենթա օպտիմալ"], [1111.0, "են, հա՞,"], [1115.0, "Շատ լավ, սա ձեր դասագրքի հինգերորդ"], [1119.0, "գլուխն է, խնդրեմ"], [1123.0, "ուսումնասիրությունները շարունակեք այդ"], [1126.0, "գլխի շրջանակներում"], [1131.0, "ու նպատակը ի&lt;k&gt;նչ է: Մենք արդեն իսկ"], [1135.0, "նախորդ, ուրեմն,"], [1138.0, "քննարկումներից հասկացանք,"], [1141.0, "ամենակարճ"], [1144.0, "միջին հա նկարագրական երկարությունն ենք"], [1147.0, "ուզում ստանանք տված աղբյուրի համար, հա՞,"], [1151.0, "այ խոսքը սրա մասին է, ինչքան հնարավոր է"], [1154.0, "փոքր հա՞ նկարագրություն, այսինքն ինչքան"], [1157.0, "հնարավոր է քիչ ծախս անել մեկ միավոր"], [1161.0, "ուրեմն սիմվոլի վրա աղբյուրի"], [1165.0, "ու"], [1168.0, "առաջ անցնելով ասեմ, որ բացահայտում ումը"], [1170.0, "նա է, որ էնտրոպիան"], [1172.0, "ուղղակի ձևակերպում է այդ օպտիմալ"], [1175.0, "նկարագրական երկարությունը, դա է սահմանը,"], [1179.0, "հա՞:"], [1181.0, "Հիմա կտեսնենք ինչպես,"], [1185.0, "բայց մինչև այդ, քանի որ արդեն իսկ"], [1188.0, "հավասար բաժանումների սկզբունքի"], [1191.0, "իմաստով մենք"], [1194.0, "շոշափեցինք, թե կոդը ինչ է, հիշում եք,"], [1198.0, "բաժանեցինք"], [1200.0, "հաջորդականությունները երկու տիպի տիպիկ"], [1202.0, "ոչ տիպիկ ասեցինք տիպիկները կկոտավորենք"], [1206.0, "մի ասենքբ preֆիքս ավելացնելով մյուսները"], [1211.0, "հա&lt;un հակառակ բիթը օգտագործելով այդ"], [1215.0, "կլաստերիզացիան կանենք հետո ամեն մի"], [1220.0, "հաջորդականության համար տված կլաստերից"], [1223.0, "կօգտագործենք"], [1225.0, "կամ կարճ կամ ավելի երկար կոդային բառ ու"], [1228.0, "ասեցինք ոնց պիտի այդ կոդային բառը"], [1230.0, "գեներացվի, հա՞, լեքսիկ ու գրաֆիկ կարգով,"], [1233.0, "այդքան բան շատ ընդհանուր գծով,"], [1237.0, "ընդհանուր գծերով սխեման նախանշեցինք մեզ,"], [1241.0, "որովհետև պետք էր, որ վերջում ասեինք, որ"], [1243.0, "մոտավորապես այսքան բիտ կծախսենք"], [1249.0, "նման ստրատեգիայով առաջնորդվելու դեպքում"], [1253.0, "ու կստանանք այդ ֆունդամենտալ արդյունքը,"], [1255.0, "որը արդեն քննարկեցինք հիմա, բայց կոդը"], [1258.0, "ավելի պրակտիկ մարդիկ"], [1261.0, "ի&lt;un&gt;չ ենք հասկանում աղբյուրի կոդ"], [1263.0, "ասելով, հա&lt;k"], [1265.0, "տված դեպքում C-ն աղբյուրի կոդ է, որը"], [1269.0, "ուրեմն աղբյուրի հաղորդագրությունները"], [1274.0, "կամ աղբյուրի այբուբենի"], [1277.0, "ուրեմն սիմվոլները արտապատկրում է մի"], [1281.0, "ուրիշ տարածության մեջ տվյալ դեպքումդ"], [1287.0, "այբուբենից ց առաջացած D աստղանիշ"], [1291.0, "հաջորդականությունների տարածության մեջ"], [1295.0, "հա&lt;un"], [1297.0, "որի պարագայում առաջանում է փաստորեն"], [1299.0, "կոդային բառ CX-ը հա X տառի համար CX"], [1303.0, "կոդային բառն է առաջանում որը ունի LX"], [1306.0, "երկարությունը"], [1309.0, "այսինքն եթե հիշեք թե"], [1314.0, "այ այս"], [1317.0, "թեմայի շրջանակներում"], [1320.0, "դա ի&lt;unչ էր, հա՞ տիպական և ոչ տիպական"], [1323.0, "հաջորդականությունների համար գծված 01երի"], [1326.0, "հաջորդականությունները:"], [1329.0, "Հիմա եթե մեր այբուբենը կարմիրն ու"], [1331.0, "կապույտն են"], [1333.0, "ուղղակի կոդ է: Եթե կարմիրին 0-0,"], [1338.0, "ուրեմն վեկտորը վերագրեմ,"], [1341.0, "կապույտին մեկ-մեկ, այսինքն այս"], [1343.0, "սահմանմանը բավարարվում է, հա՞: Այդ"], [1346.0, "պարագայում իմ այբու Այբուբենը կարմիրն ու"], [1348.0, "կապույտն են, հա՞, և իմ"], [1352.0, "դ-ն, այսինքն այն այբուբենը, որի մեջ"], [1354.0, "ավտապատկերում եմ 0,"], [1358.0, "ուրեմն այբուբենն է:"], [1362.0, "Ընդհանուր դեպքում կարող ենք ասել, որ 01"], [1365.0, "և այլն d-1"], [1367.0, "ուրեմն"], [1369.0, "էլեմենտներն ենք օգտագործում"], [1373.0, "կոդային"], [1375.0, "այբուբենից: Ինչի համար ենք այդպես"], [1376.0, "ստանում, որ դեն դնենք երկուս, հա՞,"], [1381.0, "այստեղ ստանանք 01, շատ դեպքերում 01-ից"], [1385.0, "ենք խոսելու երկու, ուրեմն բիթ, երկու"], [1390.0, "սիմվոլ ենք օգտագործելու կոդային"], [1391.0, "հաղորդագրություններ"], [1393.0, "ստանալու համար:"], [1396.0, "Շատ լավ,"], [1398.0, "ուղղակի արտապատկերումը, հետո ի՞նչ:"], [1402.0, "Քիչ է չէ՞, մենակ ուղղակի արտապատկերումը"], [1405.0, "կազմակերպել դրա հետ պիտի աշխատել, բայց"], [1408.0, "եթե արտապատկերել ենք, այսինքն C կոդային"], [1413.0, "կոդը ունենք, դա նաև կարող ենք ասել"], [1414.0, "կոդային գիրք, հա՞, այսինքն գիտենք բոլոր"], [1417.0, "տառերը ինչպիսի հաջորդականություններ էին"], [1420.0, "գնումդ աստղանիշից"], [1424.0, "և ուղարկողը և ստացողը ունի հա&lt;un այդ"], [1428.0, "արտապատկերումը:"], [1432.0, "Կարո&lt;un ենք հաշվել LC-ն"], [1436.0, "որը մեզ ասում է, թե միջինում ինչքան"], [1442.0, "ինչքան բիտ օգտագործենք"], [1445.0, "այբուբենի բոլոր տառերը, հա՞,"], [1449.0, "ուրեմն կոդավորելիս և հաղորդելիս,"], [1452.0, "այսինքն p հավանականությամբ x-ը հանդիպում"], [1455.0, "է, lxբիտ օգտագործում եմ իր կոդային բառը"], [1458.0, "ստանալու համար միջինացնում եմ ըստ բոլոր"], [1460.0, "x-երի այսինքն կոդին կարելի է"], [1463.0, "երկարությունը վերագրել Հա&lt;un&gt; որը կոդի"], [1467.0, "սպասելի երկարությունն է: Հիմա ամբողջ"], [1470.0, "խնդիրը հենց սա մինիմիզացնելն է, հա՞: Վատ"], [1472.0, "կոդը մեծc ունի հա&lt;un լավ կոդը"], [1477.0, "փոքր:"], [1479.0, "Շատ լավ"], [1482.0, "եթե հիշենք օրինակ"], [1485.0, "ինձ թվում է սա արդեն հանդիպել է մեր"], [1487.0, "սլայդերում հա&lt;un&gt; որտեղ չորս էլեմենտ"], [1491.0, "ունենք աղբյուրի տարբեր"], [1492.0, "հավանականություններով: Այս երկու"], [1494.0, "հավանական պանականությունները հավասար են"], [1496.0, "ու հանկարծ դուք ձեր ընկերոջ հետ որոշել"], [1499.0, "եք, որ"], [1501.0, "հաղորդում կամ սեղմում պիտի կազմակերպեք"], [1504.0, "հետևյալ պայմանավորվածությամբ, հա&lt;un"], [1506.0, "ասենք առաջինին վերագրում եք զրո,"], [1508.0, "երկրորդին վերագրում եք մեկ երրորդին մեկ"], [1511.0, "0, չորրորդին մեկ ինչ-որ խելացի"], [1514.0, "պայմանավորվածություն եք եկել"], [1518.0, "ելնելով նրանից, որ եթե ձեր ընկերը ձեր"], [1521.0, "ուղարկած հաղորդագրությունը ստանա,"], [1522.0, "միարժեք կհասկանա ինչ եք ուղղ ուղարկել,"], [1524.0, "հա՞:"], [1526.0, "Հիմա կնայենք արդյո՞ք լավ"], [1529.0, "պայմանավորվածություն ասա, թե չէ, բայց"], [1531.0, "դիտարկումը ի՞նչ է, որ"], [1534.0, "այս աղբյուրի էնտրոպիան որ հաշվենք 1.75"], [1536.0, "75 բիթ է տալիս, հա՞, ու պարզ հաշվարկ,"], [1540.0, "բայց որ հաշվենք նաև սպասելի"], [1543.0, "երկարությունը կոդի"], [1546.0, "էլի ստացվում է նույն թիվը շատ տարօրինակ"], [1550.0, "կերպով, մենք երևի մի անգամ էլ ենք"], [1552.0, "առնչվել սրան, ձիարշավանի օրինակը"], [1555.0, "քննարկելիս էլի չենք հասկացել ինչի պիտի"], [1557.0, "այդպենս լինի: Հիմա այս հարցը գնալով"], [1560.0, "պարզաբանում է ստանալու հա&lt;un&gt; բայց սա"], [1563.0, "ինչի՞ էր 1ո75 Այսինքն ի&lt;unչ եմ արել 1"], [1567.0, "անգամ 1եկ եմ բազմապատկել գումարել եմ 1/4"], [1570.0, "անգամ 2ուդերկու"], [1572.0, "հատ 1կուդ անգամ երեք բիտ չէ&lt;un&gt; սա 1ո75"], [1577.0, "է"], [1580.0, "իսկ պայմանավորվածությունը ձեր ընկերոջ"], [1582.0, "հետ լավն էր քանի որ աս կոդային բառերից"], [1585.0, "երևում է որ դուք հաստատ ինչ"], [1587.0, "հաջորդականություն էլ ստանաք որ այս"], [1589.0, "աղբյուրից է առաջացել այս"], [1591.0, "պայմանավորվածությամբ"], [1592.0, "դուք հեշտ կապակոդավորեք հա&lt;un"], [1595.0, "Այ, որ նայեք, եթե այս հաջորդականությունն"], [1598.0, "է ստացել ձեր ընկերը, սա շատ հեշտ, հա՞,"], [1602.0, "առանց"], [1604.0, "երկիմաստության, առաջին բիթը միանգամից"], [1607.0, "ապակոդավորեք որպես մեկ, հաջորդ մեկը, որ"], [1610.0, "տեսնեք, ոչ մի բան չունեք անելու, պիտի"], [1613.0, "սպասեք, զգում եք չէ՞, որ պիտի սպասեք"], [1616.0, "սպասեցիք,"], [1617.0, "երկրորդ մեկը եկավ, մեկ-մեկ զգում եք, բան"], [1620.0, "չունեք չէ անելու, հաջորդը եկավ Լավ,"], [1624.0, "արդեն համարում եք, որ երեքն է չէ&lt;un&gt;"], [1626.0, "ուղարկվել, հա՞ այդպես շարունակ մեկմ"], [1630.0, "1մմեկ ի&lt;un&gt;նչ տեղի կունենա երրորդ մեկից"], [1633.0, "հետո ի&lt;un&gt;նչ պիտի անեք սա չորս պիտի գրեք"], [1636.0, "չէ"], [1638.0, "հետո"], [1640.0, "0զ"], [1643.0, "հա հենց առաջին զրոն արդեն հը՞"], [1646.0, "մեկ չէ"], [1649.0, "այսինքն եթե այդպես շարունակում եք դուք"], [1651.0, "ոչ մի բարդ"], [1653.0, "ալգորիթմ,"], [1654.0, "հա"], [1657.0, "ձեր մոտ չպիտի նախագծեք այս"], [1660.0, "պայմանավորվածության դեպքում, որպեսզի"], [1663.0, "սրանից ծնված հաջորդականությունները, այս"], [1665.0, "աղբյուրի ու այս կոդից ծնված"], [1667.0, "հաջորդականությունները"], [1669.0, "վերացեք բուն,"], [1671.0, "ուրեմն հաղորդագրություններին,"], [1674.0, "այսինքն ապակոդավորեք"], [1679.0, "ինչ-որ մեկնա ցույց տալիս Ինչպես"], [1683.0, "այն փաստը, որ սկզբում նշված է, որ պետք"], [1686.0, "իրենց համալսարանը այս փաստորեն"], [1690.0, "դե մենք քանի որ դեռ չենք ապացուցել որ"], [1694.0, "էնտրոպիայից ներքև հնարավոր չէր ստանալ,"], [1696.0, "մենք այս պահին չգիտենք, ինչ-որ հետաքրքիր"], [1699.0, "փաստ ենք արձանագրում, որ կոդի սպասելին և"], [1703.0, "էնտրոպիան նույն թիվն են տալիս, մի քիչ"], [1705.0, "տարօրինակ է, որովհետև մենք դեռ ապացույց"], [1708.0, "չունենք այս ասիմպտոտիկ ռեժիմովա"], [1710.0, "ապացույցը, որը այսպենս էնոպիայի ինչ-որ"], [1713.0, "էփսիլոն շրջանակում մեզ ասում է, որ"], [1715.0, "գոյություն ունի կոդ, դեռևս"], [1718.0, "բավարար չափով արմատական ապացույց չի նրա,"], [1722.0, "որ մենք հա՞ վերջավոր ռեժիմում էլիայի հետ"], [1726.0, "ենք առնչվելու կամ էլ էփսիլոն գոյություն"], [1729.0, "չունի, դրանք ուղղակի կհամընկնեն"], [1733.0, "և այլն,"], [1735.0, "որ եթե իր անորոշության աստիճան, էդ"], [1739.0, "անորոշության հատվածը Մենք ամեն դեպքում"], [1741.0, "չենք կարող ինչ-որ մի ձևերում փոխանցենք,"], [1744.0, "այսինքն այդքանը պետք է"], [1745.0, "Ճիշտ եք ասում, բայց մենք պիտի"], [1746.0, "ապացուցենք, որ հետո բացատրենք այդպիսի"], [1748.0, "հետաքրքիր ձևով, որ ասենք անորոշությունը"], [1750.0, "դա ինչ չափով, որ անորոշություն ա, էդտեղ"], [1753.0, "էլ մենք սահմանափակված ենք հա՞ բանը որպես"], [1757.0, "սահման հնարավոր սեղմտեղ որոշակի ասենք"], [1761.0, "ինչքանով որոշակի էդտեղ ջարդել կարող ենք"], [1763.0, "ասենք հա"], [1765.0, "աղբյուրի ուրեմն բանը հա"], [1772.0, "հա դա նաև շատ օգտագործվող տերմին է"], [1776.0, "ինֆորմացիայի տեսության ավելցուկային"], [1779.0, "ինֆորմացիան որի վրա կարելի է աշխատել"], [1784.0, "բայց դրան պիտի ուրեմն հասնենք խիստ"], [1788.0, "կերպով քայլ առ քայլ"], [1790.0, "հիմա տեսնենք էլի ինչ կարող ենք դիտարկել"], [1795.0, "հա&lt;un որ կարող է մի քիչ մեր խաղաքարտերը"], [1798.0, "խառնի"], [1799.0, "այս աղբյուրը, որ հավասարաչափ բաշխում"], [1802.0, "ունի"], [1804.0, "և այս կոդային բառերը, որ վերագրել ենք,"], [1807.0, "որոնց հետ էլի կհամաձայնվեք, խնդիր չեք"], [1809.0, "ունենա, եթե այս պայմանավորվածությամբ"], [1811.0, "աշխատեք, հա՞, ձեր ընկերոջ հետ մեսիջները"], [1814.0, "փոխանցել"], [1815.0, "փոխանցելու դեպքում էնթրոպիան 1.58 բիթ է,"], [1820.0, "բայց որ հաշվեք"], [1823.0, "ուրեմն սպասելի երկարությունը կստանաք 1.6"], [1826.0, "66 հա&lt;un&gt;ր"], [1829.0, "ստացվում է"], [1832.0, "այդպենս չի որ օրինաչափություն է, որ մենք"], [1834.0, "պիտի հենց էնթրոպիայի արժեքին"], [1838.0, "արժեքը ստանայինք այսինքն տեսնում ենք, որ"], [1841.0, "այստեղ սպասելին մեծ եղավ էնթրոպիայից"], [1844.0, "հիմա հետո կապացուցենք որ իրականում հենց"], [1850.0, "այդպես էլ պիտի լինի կամ ընկնում ենք"], [1852.0, "էնոպիայի վրա կամ մեկ բիթիշ շրջանում"], [1857.0, "ավելի մեծ թիվ ենք ստանում:"], [1861.0, "Շատ լավ, հիմա գանք զվարճալի մասին երևի"], [1865.0, "մեր զրույցի:"], [1868.0, "Մինչև որ օպտիմալություն, կոդեր, հա՞,"], [1874.0, "ուրեմն այս"], [1876.0, "գաղափարները կառաջանային,"], [1878.0, "մարդիկ ուղղակի մի քանի անգամ խոսել ենք"], [1880.0, "չէ&lt;un դրանց մասին, դրա մասին ուղղակի"], [1884.0, "տեխնիկական իրականացում ցնում նում էին,"], [1886.0, "հա&lt;un տեխնիկապես իրականացնում էին կապը,"], [1890.0, "երևի մեր մանկության ֆիլմերից հիշում եք"], [1894.0, "Մորզեյա այգբուբենը թե ոնց էին հա&lt;un"], [1897.0, "օպերատորները նստած օգտագործում, որպեսզի"], [1900.0, "A-իցբ B կետ հաղորդագրությունը տվյալ"], [1903.0, "դեպքում տեքստը տեղ հասնի, այսինքն այն"], [1906.0, "սիգնալները, ազդանշանները, որ ուղարկվում"], [1908.0, "են A կետից B կետում թարգմանվեն"], [1912.0, "ուրեմն"], [1915.0, "ուղարկված տեքստին:"], [1918.0, "Այստեղ ի՞նչ կարող ենք ասել, հա&lt;un"], [1923.0, "որ"], [1925.0, "օգտագործվել է չորս տառանի այբուբենդն"], [1930.0, "հավասար է 4ի d-ի չափը հա"], [1935.0, "ուրեմն"], [1937.0, "ադ ազդանշանները կետը"], [1941.0, "ուրեմն գիծը"], [1943.0, "տառերի միջև բացատը և բառերի միջև բացատն"], [1946.0, "են: Այսինքն չորս սիմվոլ է օգտագործվել,"], [1949.0, "որպեսզի տառերը անգլերենի"], [1954.0, "կոդավորվեն"], [1956.0, "այս չորս տառանոց այբուբենի"], [1959.0, "հաջորդականությունների մեջ"], [1963.0, "և ուղարկվեն հասցեատիրոջը"], [1969.0, "Բայց լրացուցիչ էլի"], [1970.0, "պայմանավորվածություններ կան որի շնորհիվ"], [1973.0, "մենք ասում ենք, որ այնքան էլ էֆեկտիվ բան"], [1976.0, "չեք մտածել, հա՞, կամ հեղինակին ենք"], [1978.0, "քննադատում, ասում ենք կոդ էֆեկտիվ չի,"], [1981.0, "հա՞, հետո կտեսնենք թե հատկապես"], [1987.0, "հատկապես"], [1988.0, "ինչու և ինչ չափով:"], [1992.0, "Հիմա բոլոր տառերի համապատասխան, ուրեմն"], [1995.0, "ազդանշանների"], [1997.0, "հաջորդականությունները տեսնում եք,"], [1999.0, "այսինքն կոդային բառերը տեսնում եք, հա՞,"], [2003.0, "A-ի համար ուղարկվում է կետ, այսինքն դա"], [2006.0, "միավոր ազդանշանն է, հա՞, միավորն"], [2011.0, "ուրեմն տևողության հոսանքը, որը ուղարկվել"], [2015.0, "է"], [2018.0, "Հետո բացատ և"], [2021.0, "երեք անգամ ավել տևողությամբ, քան կետը,"], [2025.0, "դա գծիկն է"], [2030.0, "Ա տառը"], [2031.0, "ուղարկելու համար ուղարկվում է այս"], [2034.0, "կոդային հաղորդագրությունը, հա՞,"], [2039.0, "մնացածը նույն կերպ թվերի համար տեսնում"], [2041.0, "եք, տեսնում եք ինչ է կատարվում զրո"], [2044.0, "ուղարկելու համար:"], [2048.0, "Այստեղ լրացուցիչ ինֆորմացիա է տրված, որ"], [2053.0, "գիծը արդեն ասեցի երեք միավոր հա ուրեմն"], [2060.0, "տևողություն ունի, այսինքն կետից երեք"], [2063.0, "անգամ երկար է"], [2069.0, "նույն տառի մեջ այս բացատի տևողությունը"], [2073.0, "մեկ միավոր է, այսինքն"], [2075.0, "այդ դադարը, որ տալիս եք, նույնքան է"], [2077.0, "ինչքան որ այ այս բանը հա կետը ուղարկելու"], [2082.0, "տևողությունը"], [2084.0, "բացի այդ"], [2087.0, "տառեր միջև"], [2090.0, "երեք միավոր տևողությամբ բացատա, այսինքն"], [2093.0, "a-ից հետո, եթե B պիտի ուղարկվի, երեք"], [2097.0, "միավոր տևողությամբ բացատ են թողնում,"], [2099.0, "որպեսզի A տառը B-ից տարբերվի, հա՞, իսկ"], [2104.0, "երբ որ հասնում են բառի վերջ, պիտի սկսեն"], [2107.0, "հաջորդ բառը, արդեն յոթ միավոր"], [2111.0, "տևողությամբ դադար է տրվում, հա՞: Ուրեմն,"], [2115.0, "տեսնում եք, թե դադարի մասին ինչքան"], [2118.0, "խոսեցինք, հա՞, տառի մեջ դադար, հա՞,"], [2124.0, "տառերի միջև դադար, բառերի միջև դադար,"], [2128.0, "հա՞: Նախորդ սլայդներում մենք, որ ասում"], [2131.0, "էինք այ այս պայմանավորվածությամբ, որ"], [2134.0, "կոդավորենք, ապակոդավորենք, ոչ մի դադարի"], [2136.0, "մասին չէինք խոսում, ոչ մի ստորակետի, ոչ"], [2139.0, "մի բացատի, չէ՞, հաջորդականությունը"], [2144.0, "սահուն գնում էր միայն էն բիթերի տեսքով,"], [2146.0, "որ մենք օգտագործել էինք հա՞ այն"], [2150.0, "այբուբենի"], [2152.0, "տառերի տեսքով, որ օգտագործել էինք ոչ մի"], [2156.0, "լրացուցիչ բան"], [2159.0, "ասենք սիմվոլ չենք օգտագործել, որպեսզի"], [2161.0, "միարժեքորեն ապակոդավորենք, ուրեմն հենց"], [2164.0, "այդտեղ էլ օպտիմալության հասնելու արդեն"], [2168.0, "ոնց որ ազդանշանն է, հա՞ ծագում, որ մենք"], [2173.0, "սա ոնց որ թե կարող ենք անվանել ոչ"], [2175.0, "էֆեկտիվ"], [2176.0, "մոտեցում և մտածենք այն մաթեմատիկայի"], [2179.0, "մասին, որ մեզ օպտիմալ օպտիմալություն"], [2182.0, "կապահովի: Այսինքն ներկայացումը, որ մենք"], [2184.0, "անում ենք դե այբուբենի սիմվոլների"], [2187.0, "միջոցով լինի ամենակարճը"], [2190.0, "կամ ամբողջ ծավալը, որ մենք կոդավորենք"], [2192.0, "տված տեքստի համար, ամբողջ ծավալը, որ"], [2194.0, "մենք դե այբուբենի համ ուրեմն դե"], [2198.0, "այայբուբեն արտապատկերման միջոցով"], [2199.0, "կստանանք, դա լինի ամենափոքրը,"], [2204.0, "բայց այստեղ մի քիչ"], [2206.0, "Հեղինակը իհարկե կանխատեսել է, թե որտեղ"], [2211.0, "կարող է շահում ունենա: Օրինակ եթառը"], [2213.0, "տեսնում եք մի հատ կետ է, որովհետև նա"], [2217.0, "բարձր հաճախություն ունի ետառը մի կետով է"], [2221.0, "կոդավորել,"], [2222.0, "իսկ Q-ի դեպքումդաշտդաշով"], [2228.0, "լավ էդ հաճախությունները կարող է չեն"], [2230.0, "մոդելավորվել այստեղ, բայց երևում է, որ"], [2235.0, "այդտեղ մի քիչ շահում կարող էր ապահովել,"], [2239.0, "կախված թե ինչ հավանականությամբ են"], [2241.0, "անգլերենի տառերը հանդիպում:"], [2245.0, "Ամեն դեպքում"], [2246.0, "ցանկալի չի, ուրեմն այսքան ուրեմն"], [2250.0, "լրացուցիչ սիմվոլների կամ բացատների դրած"], [2252.0, "տևողությունների, տարբեր տիպի բացատների"], [2255.0, "մասին,"], [2258.0, "ուրեմն"], [2261.0, "մտածել և օպտիմիզացիան դրա շուրջ անել,"], [2264.0, "դրանք ուղղակի պետք է բացառել ու մենք"], [2267.0, "ցույց ենք տալիս, որ դա կարելի է բացառել"], [2270.0, "հա&lt;un&gt; բայց երևի սրքում օպտիմալ չի չէ"], [2273.0, "որովհետև ինձ թվում ամենաշատ վանքի պետք է"], [2276.0, "լին"], [2278.0, "հարցը նա է, թե զրոն"], [2280.0, "ժամանակին չգիտեմ փոխանցվող տեքստերում"], [2283.0, "ասենք թե ինչ հաճախությամբ կարող էր"], [2286.0, "հանդիպել"], [2287.0, "և արդյոք այդ տեքստերը ունեին ավելի շատ"], [2290.0, "թվային թե ոչ թվային ներկայացում"], [2294.0, "բայց կարելի է քննադատել հենց նաև այդ"], [2297.0, "հարցով, հա&lt;k որովհետև եթե հիմա համարենք"], [2299.0, "ուղղակի որ ընդհանուր անգլերենի հա&lt;un&gt;"], [2306.0, "տարածության մեջ ընդհանրապես"], [2310.0, "ճիշտ մոդելավորված հաճախությունները հաշվի"], [2313.0, "առնելու պարագայում ինչ երկարության"], [2315.0, "կոդային բառ կուղարկեք, գուցե սա շատ վատ"], [2319.0, "ներկայացում ա"], [2320.0, "Իսկ առհասարակ այդ թվերը ինչո՞ք"], [2322.0, "պայմանավորվում"], [2323.0, "որ օրինակ երկու բառի միջև յոթ յունիթ են"], [2326.0, "թողում կամ ավելի քիչ ի&lt;unչ"], [2330.0, "դե քանի որ"], [2332.0, "տառերի միջև արդեն միավոր"], [2336.0, "օգտագործվել է"], [2339.0, "երկու"], [2340.0, "նույն տառի մեջ երկու տառերի միջև արդեն"], [2343.0, "երեք հա բառերի միջև ապահովության համար"], [2348.0, "ավելի երկար որ ասենք երեքից մի քիչ հեռու"], [2352.0, "լինի լինի, հա՞, որպեսզի բառերի հարցում"], [2355.0, "խճողում չլինի, ասենք բառերը բան չլինեն,"], [2359.0, "գուցե ասենք յոթի փոխարեն վեցով աշխատելը"], [2363.0, "էլի անվտանգ լիներ, բայց սա այն սխեման է,"], [2367.0, "ինչ որ"], [2370.0, "մորզեն առաջարկել ա ժամանակին, երևի"], [2372.0, "ինչ-որ էքսպերիմենտալ նաև վալիդացիա է"], [2375.0, "անցել"], [2379.0, "Շատ լավ, բայց շահումը ուզում ենք ասել,"], [2381.0, "որ այդտեղ չի յոթը վեց իջեցնես կամ հինգ"], [2386.0, "հետաքրքիր չի պետք է այբուբենը չմեծացնել"], [2391.0, "հա&lt;un&gt; այսինքն այստեղ այս չորսի փոխարեն"], [2395.0, "եթե այս սա բացառես ու սա բացառես շատ"], [2398.0, "հետաքրքիր տարբերակ կլինի դոցն ու դաշը"], [2400.0, "օգտագործես"], [2401.0, "01ի տարբերակը"], [2402.0, "01 ես գալիս 01 ես գալիս"], [2407.0, "շատ լավ"], [2410.0, "հիմա հասկանում Հասկանում ենք, որ կոդերը"], [2412.0, "ինչ-որ ձևի պիտի բնութագրենք, որ դրանց"], [2414.0, "հետ կարողանանք աշխատել մի քանի սահմանում"], [2417.0, "տանք, որ ճշգրիտ, հա՞, էդ հարցում լինենք։"], [2422.0, "Սինգուլյար են էն կոդերը,"], [2426.0, "որի պարագայում երկու տարբեր տառեր"], [2429.0, "այբուբենի գնում են տարբեր կոդային"], [2432.0, "բառերի, գոնե դա պիտի ապահովենք, որ առանց"], [2434.0, "այն էլ հենց կոդ"], [2437.0, "հա ուրեմն"], [2441.0, "կոդը կառուցելուց, հա&lt;k արտապատկերումը"], [2444.0, "ուրեմն առաջարկելիս արդեն խճողում"], [2448.0, "չներմուծենք, հա՞, բարդը թողենք"], [2452.0, "ապակոդավորման վրա, հա՞, բարդությունը,"], [2456.0, "այսինքն, թե ոնց ստացված"], [2459.0, "հաղորդագրությունը կբերենք աղբյուրի բուն"], [2463.0, "ելքին,"], [2464.0, "գոնե այդ հարցով ավելի շատ մտահոգի լինենք"], [2469.0, "սա բացառենք, որ երկու տարբեր տառեր գնան"], [2472.0, "նույն ուրեմն կոդային բառին, հա՞ արդեն"], [2475.0, "անն գլխից տհաճ պատմություն է դառնալու:"], [2479.0, "Հիմա"], [2484.0, "դա լավ է, որ երկիմաստությունը բացառենք,"], [2487.0, "պարզ է, ոչ սինգուլյարության,"], [2490.0, "ուրեմն հատկանիշը, եթե պնդենք"], [2494.0, "բայց մենք տեսանք չէ, որ մենք"], [2496.0, "հաջորդականություններ ենք ուղարկում կում"], [2498.0, "հա&lt;un տպց տառ-տառ առանձին հա իզոլացված"], [2504.0, "չենք աշխատում պիտի ապահովենք որ"], [2506.0, "հաջորդականությունը կարողանանք չէ"], [2509.0, "վերարտադրենք բերենք օրիգինալ դաշտ"], [2514.0, "հետևաբար"], [2517.0, "առաջին բանը որ գալիս է մարդկանց միտքը դե"], [2522.0, "օգտագործի ստորակետը այն ինչ այն ինչ"], [2525.0, "քննադատեցինք մորզեի դեպքում որ Եթե"], [2528.0, "ստորակետ պիտի օգտագործենք, պարզ է այդ"], [2531.0, "ապակոդավորման"], [2535.0, "վերաբերյալ մաթեմատիկական"], [2538.0, "չգիտեմ ինչ-որ մոտեցումներ զարգացնելը էլի"], [2541.0, "անիմաստ կլինի: Դե եթե կա ստորակետը, որ"], [2545.0, "բոլոր կոդային բառերից հետո կդնենք, ապա"], [2547.0, "կոդավորումը ոչ մի բարդություն չի"], [2549.0, "ներկայացնում"], [2551.0, "Հիմա դրանից բխում է հետևյալ գաղափարը"], [2555.0, "կարող ենք կառուցել կոդեր"], [2558.0, "որոնք ինքնակետադրվող են, ինքը իրեն"], [2561.0, "կետադրում է,"], [2563.0, "հա՞:"], [2568.0, "Այդ կոդերը նաև կոչվում են ակնթարթային"], [2572.0, "հա՞, սինոնիմներ են:"], [2576.0, "Եթե ինքը իրեն կետադրի, ուրեմն այդ"], [2579.0, "լրացուցիչ սիմվոլը չենք օգտագործի և վերջ:"], [2582.0, "Ընդհանրապես աս ուրեմն"], [2586.0, "քննա քննարկումների շրջանակներում, եթե"], [2588.0, "նկատել եք, մենք հետաքրքրված ենք ծավալը,"], [2592.0, "զուտ ծավալը օպտիմիզացնելու,"], [2594.0, "մինիմիզացնելու հարցում, այսինքն"], [2597.0, "սեղմում տվյալների"], [2601.0, "ասելով հասկանում ենք ծավալի"], [2605.0, "օպտիմալացում,"], [2606.0, "թե այն ալգորիթմը ինչ բարդություն"], [2609.0, "կունենա, որ կկոդավորի, կապակոդավորի, դա"], [2612.0, "էլ կարող եք ասել, չէ&lt;un էլի ծախս է, որ"], [2614.0, "արվում է օպտիմալությունը այդ տեսակետից"], [2617.0, "էլ պիտի նայվի, դա արհամարվում է, այսինքն"], [2619.0, "ալգորիթմական այն բարդությունը, թե ես ինչ"], [2623.0, "ջանք պիտի գործադրեմ, հա՞, ինչ"], [2626.0, "հիշողություն պիտի լրացուցիչ խլի իմ"], [2629.0, "ալգորիթմը, որպեսզի ես ապագոդավորումը"], [2632.0, "կազմակերպեմ, դա արհամարհվում է: Կարևորը,"], [2634.0, "որ տարածությունը, որ"], [2639.0, "ես ստանում եմ կոդավորման արդյունքում դա"], [2642.0, "կրճատվի, հա՞, դաշվի առեք"], [2645.0, "հարցը ասել այդ կետադրության նպատակը"], [2647.0, "մարմն է"], [2649.0, "կետադրության նպատակը այս ստորակետը"], [2652.0, "բացառելն է այսինքն եթե ինքը իրեն"], [2654.0, "կետադրում է այդ հատկանիշը ունի որ ես"], [2657.0, "միշտ սպս ուրեմն հաջորդականությունը"], [2661.0, "սքան անելիս սկզբից մինչև վերջ միշտ"], [2664.0, "մտքում կարող եմ ստորակետները դնել"], [2667.0, "ստորակետի մաղթում է նպատակը որ"], [2670.0, "որպեսզի եթե ես հասցեատիրոջը ուղարկել"], [2676.0, "այս հաղորդագրությունը"], [2679.0, "չէ&lt;un ինքը կարողանա ապակոդավորել ինքը"], [2682.0, "խնդիր ունի ամեն կոդային բառը անջատել"], [2685.0, "չէ&lt;un"], [2687.0, "չէ բայց"], [2687.0, "չի իմանում որտեղ դրի ստորակետը"], [2690.0, "որ կարողանա թարգմանել ստացված"], [2692.0, "հաղորդագրությունը այբուբենի լեզվին"], [2695.0, "օրիգինալ տարածության մեջ"], [2698.0, "կոդավորենք որ դրա խնդիրը չլինի միակորեն"], [2700.0, "ապակոդա"], [2701.0, "դե դա ենք անում հիմա ասում ենք պարզ բան"], [2704.0, "Եթե մի տառ ավելացնենք, մի սիմվոլ"], [2707.0, "ավելացնենք հա&lt;un մեր կոդին,"], [2710.0, "կոդային այբուբենին, որը ստորակետն է,"], [2714.0, "տվյալ դեպքում ստորակետը էական չի,"], [2716.0, "լրացուցիչ մի սիմվոլ, որը բաժանարար գիծն"], [2719.0, "է ցույց տալիս, ապա կոդավորումը որևէ"], [2721.0, "բարդություն չի ներկայացնում,"], [2724.0, "կարող ենք անել առանց այդ լրացուցիչ"], [2726.0, "սիմվոլը օգտագործելու, պարզվում է կարող"], [2729.0, "ենք անել և այդպիսի կոդերին, որոնց"], [2731.0, "միջոցով դա անում ենք, ասում ենք"], [2733.0, "ինքնակետադրվող"], [2734.0, "Այսինքն"], [2736.0, "հաղորդագրության մեջ ինքը չկա ստացված,"], [2740.0, "բայց"], [2742.0, "ալգորիթմը, որը ապակոդավորում է սա"], [2746.0, "դեպի օրիգինալ տարածություն, հա՞"], [2752.0, "գիտի ոնց դա անի"], [2755.0, "կոր չէ"], [2761.0, "ստորագետների միջոցով մենք կարող ենք"], [2763.0, "պայմանը շարունակ որ ասում եք մեկուսի"], [2765.0, "նախանցը չլինի"], [2767.0, "ստորակետը եթե օգտագործեք այդպիսի բարդ"], [2769.0, "գաղափարներից"], [2771.0, "եթե դա բարդ է իհարկե"], [2775.0, "կարելի է ազատ լինելու ոչ մի բարդություն"], [2779.0, "չկա եթե դու օգտագործում ես բաժանարար գիծ"], [2782.0, "ապա կոդավորում կազմակերպել բոլոր կոդային"], [2786.0, "հաղորդագրությունների վերջում դրել ես թե"], [2789.0, "հաջորդ կոդային բառը երբ է ես սկսում իչ"], [2791.0, "խնդիր ունես"], [2793.0, "Բայց այդ օպտիմալ չի,"], [2795.0, "հա ոնց դա ենք քննադատում, որ մորզեն"], [2799.0, "օպտիմալ չի,"], [2802.0, "եթե մենք դա անենք, մորզեն տեսաք երկու,"], [2806.0, "երեք, չորս, չգիտեմ հա&lt;un&gt; բացատի գաղափար"], [2808.0, "էր ներմուծել, մենք ասում ենք մեկը, որ"], [2812.0, "ներմուծենք,"], [2815.0, "գուցե հերիք է, բայց հասկանում ենք, որ"], [2818.0, "հնարավոր է դրանից խուսափել"], [2822.0, "Եթե"], [2823.0, "կոդեր գտնենք,"], [2826.0, "որոնք"], [2828.0, "ինքնակետադրվող են, այսինքն այն"], [2830.0, "ալգորիթմը, որը պիտի ապակոդավորի, ինքը"], [2832.0, "գիտի, որտեղ է վերջանում կոդային բառը,"], [2835.0, "որտեղ սկսում նոր կոդային բառը, հա՞"], [2838.0, "ալգորիթմի վրա ես կետադրությունը հա՞"], [2842.0, "թողնում"], [2843.0, "կարծեմ վերջից առաջ կապ"], [2847.0, "Ինչպե՞ս։"], [2847.0, "Այսինքն տեքստը ունեինք խոդավորված արդեն"], [2850.0, "վերջից է սկսում անկապում։"], [2853.0, "Չէ, հիմա ինչի մասին որ խոսում ենք,"], [2854.0, "տեսաք, որ սկզբից ենք գնում։"], [2859.0, "Խնդիր չի առաջանում։"], [2861.0, "Չէ, էս այն կոնտեքստում, որ մենք հիմա"], [2865.0, "քննարկում ենք, նման հարց չի առաջանում,"], [2868.0, "բայց կարա առաջանա, եթե կոդը վատ հատկանիշ"], [2870.0, "ունենա, պարզվի, որ պիտի գնալ առաջ, հետո"], [2872.0, "հետ նայել, որպեսզի հասկանալ ինչ էր,"], [2876.0, "հա՞, նախորդ բիթերի իմաստը, այսինքն ինչ"], [2878.0, "տառի պիտի"], [2880.0, "արտապատկերեք այբուբենից:"], [2883.0, "Հիմա մենք կտեսնենք, որ չենք ուզում առաջ"], [2884.0, "գնալ, հետո հետ գալ, որ հասկանալ այս"], [2887.0, "նախորդ կարդացած բիթերը ինչ էին: Հը՞ ադ"], [2891.0, "այդ հարցը կա: Հիմա կտեսնենք օրինակի վրա:"], [2896.0, "Շատ լավ:"], [2904.0, "Հիմա"], [2906.0, "նաև սահմանենք ենք"], [2909.0, "C կոդի ընդհանրացման գաղափարը,"], [2914.0, "քանի որ ասեցինք, որ"], [2916.0, "հաջորդականությունների"], [2918.0, "հուսալի ապակոդարման մասին է խոսքը, ոչ թե"], [2921.0, "մի առանձին-առանձին"], [2923.0, "ուրեմն"], [2925.0, "սիմվոլների"], [2927.0, "հետևաբար"], [2930.0, "ուրեմն C աստղանիշը այսինքն ընդհանրացումը"], [2933.0, "C-ի դա արտապատկերում համարենք ենք ուրեմն"], [2938.0, "այս մեր օրիգինալ հա x-ի"], [2942.0, "x-ից ծնված ուրեմն"], [2947.0, "հաջորդականությունների"], [2952.0, "դեպի"], [2954.0, "d-ով արտահայտված հաջորդականություններ,"], [2958.0, "այնպես որ x1xn"], [2962.0, "հաջորդականության"], [2964.0, "կոդը"], [2966.0, "Դա առանձին,"], [2969.0, "ուրեմն տառերի, կոդային բառերի"], [2971.0, "կոնկատինացիան է, հա՞: Մենք մինչև հիմա"], [2975.0, "օրինակներում այդպենս էլ աշխատել ենք, որ"], [2976.0, "ասենք ամեն տառի համար, եթե կոդը ունենք,"], [2979.0, "ամբողջ հաջորդականության համար ստանում"], [2981.0, "ենք կոնկանտինացիայով, ուրիշ սխեմա չենք"], [2983.0, "հորինում հա՞, հաջորդականության համար"], [2985.0, "արտապատկերման:"], [2989.0, "Օքեյ: Այսինքն, պարզ տրիվ օրինակ է գրված,"], [2993.0, "որ եթե x1-ը x1-ի համար 0 եք օգտագործել"], [2996.0, "x2-ի համար 1: x1 x2-ի համար պիտի"], [2999.0, "օգտագործեք 0011 ուրիշ բան չեք հորինում"], [3002.0, "հա&lt;un"], [3004.0, "ինչի&lt;un համար ենք այս սահմանումը տալիս"], [3007.0, "որ հետո ասենք որ"], [3013.0, "կոդին կանվանենք միարժեք ապակոդավորվող"], [3017.0, "հա բարդությունը իչ էր եթե մենք ստորակետը"], [3019.0, "չենք դնում ու չգիտենք որտեղ են վերջանում"], [3021.0, "կոդային բառերը չէ՞,"], [3025.0, "պիտի այնպիսի կոդ հորինենք,"], [3029.0, "որ կարողանա ապահովել, հա՞, այդ"], [3031.0, "բաժանգծերի"], [3033.0, "դիրքերի ինդիկացիան,"], [3036.0, "հա՞, դրա համար ասում ենք կոդը կանվանենք"], [3040.0, "միարժեք"], [3041.0, "ապակոդավորվող,"], [3043.0, "եթե նրա"], [3045.0, "ընդհարացումը ոչ սինգուլյար է, այսինքն,"], [3049.0, "որ հաջորդականություններն էլ կոդավորելիս"], [3052.0, "իսկ ապագոդավորենք առանց խճողման, առանց"], [3057.0, "երկիմաստության, հա՞, այսինքն"], [3060.0, "սինգուլյարիթին, ոչ սինգուլյարությունը"], [3062.0, "տեղափոխենք հաջորդականությունների դաշտ,"], [3065.0, "հա՞:"], [3067.0, "Հիմա այդ իմաստով պարզվում է, որ մի հատ"], [3071.0, "հատկանիշ, որ ֆիքսենք,"], [3074.0, "կստանանք"], [3076.0, "ևս միարժեք"], [3078.0, "ապակոդավորվող կոդը"], [3081.0, "և"], [3083.0, "ակընթարթայինի հատկանիշը, որը այդ"], [3087.0, "ինքնակետրվողն էր, հա՞, եվ այդ կոդը,"], [3093.0, "որ նման հատկանիշ ունի, ուրեմն կոչենք"], [3098.0, "պրեֆիքսից ազատ կամ պրեֆիքս կոդ, հա"], [3102.0, "նախանացավ նախանանցից ազատ կամ նախանցից"], [3108.0, "զերծ կամ նախանանցավոր, հա՞, այդ"], [3110.0, "համարժեքները ը կտեսնեք գրականության մեջ,"], [3112.0, "հա՞,"], [3114.0, "կամ ակնթարթային,"], [3117.0, "եթե"], [3119.0, "ուրեմն կոդի մեջ որևէ կոդային բառ մյուսի"], [3123.0, "նախանցը չի, մի քանի անգամ նշել ենք"], [3126.0, "նախորդ օրինակներում, հա, որ տեսել ենք"], [3129.0, "խելացի կոդ է գրված, որը հեշտ"], [3132.0, "ապակոդավորվում է, նկատել ենք, որ նախանց"], [3135.0, "չկա որևէ երկու կոդային բառ, հա նախանցով"], [3141.0, "չեն հատվում,"], [3145.0, "հա ս պարզ էր, այսինքն եթե դուք կառուցում"], [3148.0, "եք կոդային բառեր,"], [3152.0, "որտեղ որևէ մեկը մյուսի նախանցը չի, այդ"], [3156.0, "կոդին անվանեք"], [3158.0, "նախանցավոր կամ ակնթարթային կոդ:"], [3163.0, "Շատ լավ, ի&lt;k&gt;չ է դա տալիս:"], [3170.0, "տալիս է այն, որ այդպիսի"], [3173.0, "կոդ օգտագործելիս դուք երկիմաստություն"], [3176.0, "չունեք ստացված հաղորդագրությունները"], [3180.0, "մի արժեք ունեն ապակոդավորելու"], [3183.0, "այսինքն"], [3185.0, "կոդային բառի վերջը"], [3189.0, "անմիջապես"], [3191.0, "ճանաչելի է, եթե դուք հաջորդականության"], [3193.0, "սկզբից շարժվեք մինչև վերջ. վերջ, հա՞,"], [3197.0, "եթե որևէ կոդային բառ լիներ մյուսի"], [3201.0, "նախանցը,"], [3202.0, "դուք կարո&lt;un եք դա ապահովել թե ոչ"], [3209.0, "եթե կա 0 1 ու կա 0 1 0"], [3215.0, "շարժվելու դեպքում աջ"], [3218.0, "ի՞նչ եք անելու, եթե տեսնեք զրոն մեկը,"], [3222.0, "զրոն հետո մեկը"], [3224.0, "խնդրեմ, բայց դա երկրորդ Երկրորդը լիներ"], [3225.0, "01 կլիներ մի"], [3227.0, "ըհը տեսեք ինչ-որ բարդություն եք մտցնում"], [3229.0, "հիմա օրինակ կբերենք որ եթե շատ ուզենանք"], [3232.0, "քաղաքահարթերը կարող ենք խառնել գնալ հետո"], [3235.0, "առաջ անել էլի գուշակել թե ինչ էր բան ոնց"], [3239.0, "էր պետք ճիշտ ապակոդավորել"], [3241.0, "բայց եթե"], [3244.0, "նախապես այդ խելացի համակարգը չեք"], [3247.0, "կառուցել"], [3249.0, "չէ այստեղ հենց միանգամից"], [3251.0, "երկիմաստությունը արդեն ակնհայտ է որ 0"], [3253.0, "ունեմ երկու կոդային բառ մեկը 01 է, մեկը"], [3257.0, "010 է երկրորդ դիրքում արդեն չգիտեմ"], [3261.0, "վերջացնեմ ապակոդավորումը հա եթե սա x1-ն"], [3264.0, "էր ասեմ այստեղ x1 թե մի հատ էլ սպասեմ"], [3271.0, "որ մի հատ էլ սպասեմ կպարզվի որ սա պիտի"], [3273.0, "ապակոդավորեմ x2 հա չեմ ուզում դա ունենամ"], [3280.0, "հասկանալով որ գուցե բարդ սխեմա կառուցեմ"], [3284.0, "որ"], [3285.0, "առաջ գնամ չգիտեմ ևս մի քանի բիթ, հետո"], [3288.0, "հասկանամ, որ ոչ այս 01 պիտի լիներ և սա"], [3293.0, "բանը ինչի՞ եմ այստեղ գրել x1"], [3299.0, "հա"], [3301.0, "x1 պիտի ապակոդավորեի"], [3305.0, "հիմա օրինակի վրա կտեսնենք ու այդպիսի"], [3308.0, "բարդ բաներ կառուցելը համակարգեր հա ասենք"], [3312.0, "ֆիքսված n-ի համար կարող եք անել անել n-ը"], [3314.0, "դարձավ n + 1,"], [3317.0, "ձեր ալգորիթմը կարող է փլուզվի, այսինքն"], [3321.0, "ընդհանրացման հնարավորություն չունենաք,"], [3325.0, "հա՞, դրա համար ավելի լավ է խուսափել,"], [3330.0, "ուրեմն"], [3332.0, "բարդ ալգորիթմներ"], [3334.0, "կառուցելուց, հենվելով այն պարզ հատկանիշի"], [3337.0, "վրա, որ"], [3340.0, "ասենք կարող է ապահովել"], [3342.0, "նախանցավոր ավոր կոդը հա&lt;un"], [3345.0, "բարդ ապրանքները հնարավորություն տալիս են"], [3347.0, "ավելի քիչ պիտի խոդավորել"], [3350.0, "եվ ադ արդեն տեսության տված պատասխանն է"], [3353.0, "իրականում եթե նույնիսկ բարդացնեք մեկա"], [3356.0, "մենք ցույց ենք տալու որ սահմանը էնոպիան"], [3359.0, "է հա այսինքն դուք անիմաստ եք բարդացնելու"], [3362.0, "ավելի լավ է պարզ ալկորիթմ օգտագործեք"], [3364.0, "որովհետև շահում չեք ունենալու"], [3367.0, "ադ փաստն էլ է կարևոր"], [3372.0, "շատ Լավ,"], [3376.0, "ուրեմն"], [3379.0, "լրացուցիչ անգամ ոնց որ հասկացանք,"], [3383.0, "որ եթե այդ սահմանումը տալիս ենք, հա՞,"], [3387.0, "իրականում մեր քննարկված օրինակը հա՞,"], [3391.0, "ոնց որ"], [3393.0, "հենց նման օրինակ է, որտեղ ոչ մի կոդային"], [3396.0, "բառ մյուսի նախանձը չի,"], [3399.0, "և եթե այսպիսի բինար"], [3402.0, "Ուրեմն հաջորդականություն տեսնենք մեր"], [3404.0, "մտքում"], [3406.0, "արդեն բուն այդ հատկանիշից ելնելով"], [3409.0, "նախանցի հա ստորակետները դնում ենք բայց"], [3414.0, "որ պիտի տանենք կոմպյուտերի մեջ գրենք այդ"], [3416.0, "ստորակետները չկան ալգորիթմն է որոշում"], [3419.0, "ստորակետները թարգմանումերի տարածության"], [3421.0, "մեջ այսինքն աղբյուրի"], [3424.0, "տառերն վերադարձնում"], [3430.0, "շատ Լավ,"], [3432.0, "հիմա եթե ընդհանուր առմամբ նայենք,"], [3437.0, "կոդերը արտապատկերումներ են, հա՞ x"], [3440.0, "տարածությունից դեպի D տարածություն կամ"], [3442.0, "դրանց հաջորդականությունների տարածություն"], [3445.0, "արտապատկերում բազմաթիվ հա՞"], [3449.0, "արտապատկերումներ կարող եք"], [3452.0, "ուրեմն հորինել: Դրանց մեջ ոչ"], [3455.0, "սինգուլյարները"], [3456.0, "ենթատարածություն են, հա՞ մեզ, մեզ"], [3459.0, "հետաքրքիր քիր է, հեշտ է, հա&lt;un"], [3463.0, "ոչ սինգուլյարությունը ապահովելը կարևոր է"], [3466.0, "դրա ենթաբազմությունը միարժեք"], [3469.0, "ապակոդավորվող հա&lt;un կոդերի"], [3473.0, "տարածությունը"], [3476.0, "սա ավելի հարմար է մեզ աշխատելու համար"], [3480.0, "մենք հասկանում ենք որ աս տարածությունը"], [3483.0, "ավելի մեծ պիտի լինի քան այն"], [3485.0, "տարածությունը որ նոր սահմանեցինք այսինքն"], [3487.0, "բոլոր ակնթարթային կոդերի տարածությունը"], [3490.0, "որը ընդամենը պրեֆիքսի վրա պայման է, հա՞"], [3493.0, "կարող եք ունենալ միարժեք ապակոդավորվող"], [3496.0, "կոդեր, բայց իրենք պրեֆիքս պրեֆիքսից ազատ"], [3499.0, "չլինեն, հա&lt;un&gt; այսինքն"], [3504.0, "սա այն ամենափոքր ենթատարածությունն է, որ"], [3509.0, "մեր տված սահմանումը հանգեցնում"], [3513.0, "և ավելի շատ հետաքրքրված ենք լինելու հենց"], [3518.0, "էս սահմանումը օգտագործել ու ստանալ"], [3523.0, "կոդը,"], [3524.0, "որը կպարզվի օպտիմալն է, այսինքն"], [3529.0, "շատ տեղ չկա խաղալու, բարդացնելու"], [3532.0, "տեսությունը կամ հորինելու նոր կոդեր: Եթե"], [3536.0, "միայն այս հատկանիշի, այսինքն"], [3538.0, "ինքնակենտադրվող կոտի հատկանիշի հիման"], [3541.0, "վրա, դուք հասնում եք տեսական հնարավոր"], [3545.0, "սահմանին:"], [3548.0, "Հիմա"], [3549.0, "Կոնկրետ օրինակներ, հա՞,"], [3554.0, "տեսեք, չորս տառ ունենք,"], [3559.0, "սինգուլյարը կլիներ բավականին անիմաստ"], [3564.0, "մի բան, եթե բոլոր տառերին"], [3567.0, "զրո վերագրեինք, հետո ի՞նչ էիք անելու դրա"], [3570.0, "հետ, հա՞։"], [3573.0, "Երկրորդ սյունը"], [3577.0, "ցույց է տալիս"], [3578.0, "ուրեմն ոչ սինգուլյար,"], [3581.0, "բայց ոչ"], [3583.0, "միարժեք ապակոդավորվող կոդ,"], [3588.0, "որովհետև եթե գրած է 0-ն չգիտենք 4 է թե2:"], [3592.0, "Հա, տեսնում եք բացատրությունը"], [3597.0, "սինգուլյար չէ, այսինքն բոլոր տառերը"], [3599.0, "գնացել են տարբեր հաջորդականությունների"], [3603.0, "այստեղ զգում եք պրեֆիքսը խախտված է, սա"], [3605.0, "սրա պրեֆիքսն է զրո 01-ը 010-ի պրեֆիքսն"], [3609.0, "է,"], [3610.0, "հա&lt;un&gt;"], [3612.0, "և կոնկրետ օրինակ 010-ի հետ ի&lt;unչ անեմ"], [3614.0, "թարգմանեմ երկուսի 1-ի թե 3մի այ այսքան"], [3618.0, "բարդ է դառնում երեք բիթ ստանալու"], [3620.0, "պարագայում հա"], [3622.0, "հասցե հասցիատիրոջ գործը"], [3626.0, "հիմա տեսնենք այս մյուս սյուներում ինչ են"], [3632.0, "այստեղ որ"], [3635.0, "ակնթարթային է պարզ է հեշտ ստուգում եք,"], [3638.0, "նախանց չկա, հա՞, այստեղ է հետաքրքիր"], [3644.0, "ու այդ ձեր սիրած բարդ ալգորիթմներից"], [3647.0, "մի օրինակ դրա տակ թաքնված է: Այսինքն"], [3651.0, "սյունը ասում է միարժեք"], [3654.0, "ապակոդավորվող, բայց ոչ ակնթարթային:"], [3657.0, "Այսինքն պրեֆիքս,"], [3659.0, "պրեֆիքս եկեք նայենք չէ&lt;un խախտված է"], [3662.0, "հատկանիշը 1մ 110 1 0, բայց ասում է"], [3665.0, "միարժեք ապակոդա Կոդավորվող, հիմա որ"], [3668.0, "նայում ես, ասում ես ո&lt;unնց եմ"], [3669.0, "ապակոդավորելու, չէ&lt;un ինչ-որ մեկը նստել"], [3673.0, "սա հորինել է և ապացուցել է, հա&lt;un"], [3676.0, "ապացույցն էլ այստեղ գրված է, որ"], [3678.0, "իրականում միարժեք կարող է այս կոդը"], [3681.0, "օգտագործելով ապակոդավորել"], [3682.0, "հաջորդականությունները:"], [3684.0, "Հիմա կյանքում ոչ կհիշեք սա, ոչ էլ ես եմ"], [3688.0, "հիմա հիշելու, որ քայլ առ քայլ պատմեմ:"], [3691.0, "Երկու հատ մեկից հետո մենք զրուցում և"], [3693.0, "երկու հատ զինո տարբերակ ունենք ու այնտեղ"], [3696.0, "մընթացրոյի տարբերակենք, հենց կարող ենք"], [3698.0, "հիշել որոշել,"], [3700.0, "հիմա բայց սկսենք սկզբից էլի առաջին"], [3703.0, "ուրեմն ահադասությունը ի՞նչ է ասում եթե"], [3706.0, "առաջին երկու բիթը զրոզ են կամ մեկ"], [3711.0, "ուրեմն նրանք կարող են ապակոդավորվել"], [3714.0, "անմիջապես"], [3718.0, "եթե առաջին երկու բիթը"], [3722.0, "մեկ-մեկ է եղել,"], [3725.0, "Մենք պետք է նայենք հաջորդ պիթերին,"], [3728.0, "պատմությունը սկսվում է, այսինքն գնում է"], [3731.0, "առաջ,"], [3733.0, "հետո պարզվում է ինչ-որ թվով"], [3736.0, "ինչ-որ քայլեր առաջ է գնում, որպեսզի,"], [3740.0, "ուրեմն հաշվի"], [3743.0, "զրոների թիվը արդյոք կենտ է, թե զույգ"], [3747.0, "մեկից հետո,"], [3749.0, "հա՞, ասենք էլ չես ուզում հետևես, հա՞,"], [3752.0, "այս սխեմային, հա՞, կամ որ սիմվոլներս"], [3756.0, "չորսի փոխարեն սկսեմ սարքել"], [3759.0, "յոթ ութ կամ 12 ի&lt;unչ է լինում այս"], [3762.0, "ալգորիթմի հետ ես չգիտեմ"], [3765.0, "արդյոք հնարավոր է պահել աս ալգորիթմը"], [3769.0, "միարժեք ապագոդավորվող ոչ կհիշեք"], [3773.0, "ոչ բան կարելի է իհարկեփով"], [3777.0, "արագ ռեալիզացնելու"], [3779.0, "սիմվոլի համար աշխատել բայց ինչո է դա"], [3782.0, "հետաքրքիր"], [3783.0, "Հա,"], [3785.0, "բայց ձեր ասած տարբերակը"], [3788.0, "հա այս օրինակի մեջ կա, որ եկեք առաջ"], [3790.0, "գնանք, հետ նայենք, կհասկանանք, հա ինչ"], [3794.0, "պիտի վերարտադրեինք"], [3796.0, "օրիգինալ տարածության մեջ:"], [3801.0, "Շատ լավ"], [3807.0, "հիմա, քանի որ տեսանք, որ ավելի լավ է"], [3810.0, "խուսափենք նման բարդություններից,"], [3814.0, "և պարզ այդ նախանցի հատկանիշի հիման վրա"], [3822.0, "հիմնվելով"], [3824.0, "միարժեք ապագոդավորվող կոդ կառուցենք"], [3828.0, "ոնց որ նպատակը"], [3831.0, "ավելի պարզ է հա&lt;un դառնում հա&lt;un ավելի"], [3834.0, "նեղանում է իսկ կարող ենք գտնել"], [3837.0, "ամենաօպտիմալ"], [3838.0, "ակնթարթային կոդը հա"], [3842.0, "և դա ի&lt;k&gt;չ միջին երկարություն ունի"], [3848.0, "այսինքն ակնթարթային կոդերի տարածության"], [3851.0, "մեջ օպտիմալը գտնենք"], [3853.0, "հետո կնայենք արդյո&lt;un&gt;ք դա օպտիմալ է"], [3856.0, "ամբողջ կոդերի տարածության մեջ"], [3859.0, "բայց ի&lt;un&gt;չն է խնդիրը երբ որ այդ"], [3861.0, "պրեֆիքսի հատկանիշը"], [3864.0, "ստիպում եք որ տեղի ունենա"], [3866.0, "դուք միշտ ուզում եք կարճ կոդային բառեր"], [3869.0, "չէ&lt;un օգտագործեք"], [3870.0, "Հիմա, բայց եթե ոչ մի կոդային բառ մյուսի"], [3873.0, "նախանցը չի լինելու, չի ստացվում, որ"], [3876.0, "քիչ-քիչ երկարում է ձեր կոդային բառը,"], [3878.0, "հա՞, որովհետև 01-ից հետո 010 չեք կարող"], [3882.0, "դնել, չէ&lt;un&gt;"], [3886.0, "հետևաբար հաջորդ կոդային բառը, որ պիտի"], [3889.0, "հորինեք,"], [3890.0, "ավելի երկար լինի, հա՞, որպեսզի ոչ մեկի"], [3893.0, "հետ այդ նախանցի հատկանիշը"], [3896.0, "չխաթարվի:"], [3901.0, "Բա հիմա հետաքրքիր հարց է առաջանում, բա"], [3905.0, "այդ ի&lt;k&gt;նչ կոդային երկարություններ"], [3907.0, "կարելի է օգտագործել ընդհանրապես կա&lt;un"], [3910.0, "արդյոք օրինաչափություն,"], [3912.0, "որ"], [3915.0, "մեզ ասում է, որ այդ երկարությունները"], [3921.0, "ուրեմն լեգիտիմ են, հա՞, այդ"], [3924.0, "երկարություններով կոտ կարելի է գտնել,"], [3927.0, "հա՞ հա՞։"], [3934.0, "Եվ դա ինչ է այդ երկարությունը ի՞նչ"], [3937.0, "պայմանների պիտի բավարարեն։ Կա՞"], [3938.0, "օրինաչափություն ընդհանրապես, թե ամեն"], [3940.0, "անգամ էդ կոդը հնարելուց, ասենք ինչ"], [3943.0, "կանգնեց, կանգնեց, հա՞, կախված"], [3945.0, "այբուբենից, չափից և այլն։"], [3948.0, "Պարզվում է օրինաչափություն կա և 49"], [3951.0, "թվականին, հա՞, 48 թվականի հայտնի"], [3954.0, "հոդվածից հետո չունի"], [3960.0, "կրաֆթը"], [3961.0, "կարծեմ իր հենց մագիստրական թեզում է"], [3964.0, "ապացուցել"], [3966.0, "որ այդ կոդային բառերը որ դուք որոնում եք"], [3969.0, "ակնթարթային"], [3970.0, "կոդի համար պիտի բավարարեն այս պայմանին"], [3974.0, "այսինքն d այբուբենը որ դուք օգտագործում"], [3977.0, "եք հա դ-ն այբուբենի ուրեմն չափն է ոչ թե"], [3981.0, "բուն այբուբենը հա Հա չորս"], [3986.0, "համաձայն չեք սրա հետ:"], [3991.0, "Հա սրա մասին էր:"], [3999.0, "Ուրեմն երկարությունները d-ի ցուցիչում որ"], [4002.0, "դնեք ամեն e-ի համար, հա՞, այսինքն ունեք"], [4006.0, "m հատ տառը այբուբենի, դրանց համար"], [4010.0, "երկարություններ ներ եք որոնում չէ, որ դե"], [4014.0, "այբուբենի մեջ"], [4017.0, "կոդավորեք"], [4019.0, "հա&lt;un և որը բավարարի այդ նախանցի"], [4024.0, "պայմանին"], [4026.0, "պարզվում է այս անհավասարությունը պիտի"], [4028.0, "տեղի ունենա"], [4032.0, "եթե դա ակնթարթային կոդ է և հակառակը"], [4037.0, "ցանկացած երկարություններ որ աս պայմանին"], [4039.0, "բավարարում են այդ երկարություններով"], [4042.0, "կոտանաք կառուցել"], [4045.0, "ակնթարթային"], [4047.0, "հա և ակնթարթային այսինքն անհրաժեշտ"], [4050.0, "բավարար պայման է տալիս ունիվերսալ ուրեմն"], [4053.0, "հատկանիշ է այդ երկարությունները"], [4055.0, "կամայական չեն հա"], [4058.0, "եթե ակնթարթային կոդ է"], [4061.0, "ուրեմն հա եթե d-ն է ի&lt;unչ է ասում ուրեմն"], [4066.0, "գումարեք"], [4067.0, "2ի մուս"], [4070.0, "էլի երկարությունները, հա"], [4073.0, "e-ն այստեղ փոխվում է մեկից munk"], [4080.0, "սա փոքր կամարմեկից գոյություն ունի այ աս"], [4086.0, "երկարություններով կոդնուդի"], [4090.0, "երկարությունը այսինքն քանի հատ քանի հատ"], [4094.0, "կա"], [4096.0, "m-ը մեր"], [4100.0, "տառերի քանակն է, այսինքն մենք ունենք x1,"], [4103.0, "x2,"], [4104.0, "x-ը,"], [4106.0, "հա՞,"], [4109.0, "դ-ն, տվյալ դեպքում երկուսը"], [4112.0, "այնբուբեն-ն"], [4115.0, "է, որ մենք օգտագործում ենք սրանք"], [4118.0, "կոդավորելուց, հա՞, այսինքն սրանք ստանում"], [4120.0, "են զրոմեկերի հաջորդականություն ամեն"], [4123.0, "մեկը, հա՞,"], [4127.0, "սա էլ մեկն Սա էր L2-ն է և այլ"], [4136.0, "հիմա"], [4141.0, "ու հավասարությունը օպտիմալն է"], [4148.0, "չէ օպտիմալի"], [4150.0, "հավասարությունը"], [4153.0, "օպտիմալության մասին չի սա եթե բավար"], [4157.0, "բավարարվում է"], [4159.0, "արդեն"], [4161.0, "օպտիմալությունը"], [4164.0, "մենք կտեսնենք հա"], [4171.0, "օպտիմությունը որը բնութագրում է"], [4173.0, "էնտրոպիայով հա"], [4177.0, "չի կապվում նրա հետ թե այս"], [4178.0, "անհավասարությունը ոնց է բավարարված"], [4183.0, "ունե ինչոր"], [4185.0, "մենք ասել"], [4188.0, "որ lcց-ն"], [4190.0, "ասում ենք մինիմում լինի"], [4196.0, "հիշում եք ինչ է"], [4198.0, "համաչ"], [4204.0, "լավ չլսեցի"], [4206.0, "մեկ լինի"], [4208.0, "եթե մեկ լինի"], [4210.0, "ի՞նչ"], [4213.0, "հավասարություն եթե հավասարության"], [4215.0, "օքեյ Ըհը։"], [4217.0, "Այդ դեպքում"], [4220.0, "ինչ-որ ենթարկություն կարելի անել, թե՞"], [4222.0, "չէ։"], [4225.0, "Չէ։"], [4228.0, "Չէ, օպտիմալությունը"], [4231.0, "նկատի հավասար ինչ-որ կոնկրետ բան չի"], [4234.0, "ասում։"], [4237.0, "Չէ։"], [4243.0, "ի՞նչ պատասխանություն չկա։ իրեն պանիր"], [4247.0, "քանակը այդքան պետք է իրենց մեջքերը"], [4251.0, "փոքր լինի, որ կարողանան սենց խոսան"], [4255.0, "ինչքան մեծ է մեր x այբուբեն-ի չափը"], [4260.0, "ո՞նց շարունակեք միտքը"], [4261.0, "պետք է այդքան ավելի քիչ լինե"], [4265.0, "ավելի փոքրացնենք իրենց"], [4273.0, "ոնց որ լոզիկին մեծացնել"], [4275.0, "Տեսեք, երկու հանգամանք կա մեր այբուբենի"], [4279.0, "տառերը"], [4283.0, "որոշակի հավանականություններով են"], [4285.0, "առաջանում"], [4287.0, "lcս-ն հիշում եք չէ&lt;un"], [4290.0, "կախված էր"], [4293.0, "այդ հավանականությունից"], [4296.0, "այսինքն"], [4298.0, "այս միտքը էլի ենք շոշափել"], [4301.0, "հավանականությունը"], [4303.0, "փոքր մեծ հավանականությամբ, ուրեմն,"], [4306.0, "տառերին"], [4308.0, "ցանկալի է վերագրել կարճ կոդային բառեր,"], [4311.0, "բայց մենք գիտենք, որ ուզում ենք անել, էս"], [4314.0, "մի հանգամանքը կա, հա՞,"], [4318.0, "և ցածր հավանականությամբ"], [4321.0, "տառերին երկար, որ շահումը ապահովենք,"], [4325.0, "հա՞, միջինի իմաստով,"], [4329.0, "բայց հիմա մի հատ էլ լրացուցիչ պայման ենք"], [4331.0, "դրել, ասում ենք սա ուզում ենք"], [4332.0, "մինիմիզացնենք ենք նախանանցավոր կոդերի"], [4336.0, "տարածության մեջ, բայց եթե ասում ենք"], [4338.0, "նախանանցավոր, արդեն դա սահմանափակում է"], [4343.0, "ան երկարությունները, որ մենք պիտի գտնենք"], [4346.0, "ու կոդային բառերը կառուցենք"], [4348.0, "սահմանափակումով"], [4350.0, "պայմանավորված երկարում են"], [4354.0, "հիմա որտեղ է օպտիմալը կանգնում"], [4357.0, "պիտի ապացուցենք"], [4360.0, "այսինքն pxը գործոն"], [4363.0, "գործոն է նաև սահմանումը, որ մենք դրել"], [4365.0, "ենք հա&lt;un նախա նախանցի վերաբերյալ,"], [4369.0, "այդ երկու հիմնական գործոնների շնորհիվ"], [4374.0, "ստանալու ենք ինչ-որ մինիմում, ո&lt;un&gt;րն է"], [4375.0, "այդ մինիմումը, հա՞, դա, բայց դրանք իրար"], [4380.0, "խանգարում են,"], [4380.0, "այսինքն կար համապատասխանի այս դեպքում"], [4383.0, "ստացած դերիցի մենթերը ու այս 25"], [4387.0, "չի կարող որևէ կոդ, որը նախանցավոր է,"], [4391.0, "պիտի սրան բավարարի,"], [4394.0, "սա չես կարող խախտել, այսինքն եթե կոդ ես"], [4397.0, "հնարել, որ նախանցից զուր գա, հաշվես այս"], [4401.0, "գումարը պիտի մեկից փոքր լինի: Եվ"], [4403.0, "հակառակը, եթե ինչ-որ էլ էր, ես ձեզ ասեմ,"], [4407.0, "դուք դնեք այս ֆորմուլայի մեջ ու ստուգեք,"], [4410.0, "որ մեկից փոքր է, հաստատ"], [4412.0, "երկարություններով կոտք եք գտնել:"], [4415.0, "Բայց նկատի ունեմ այս դեպքում, այս առանց"], [4417.0, "նախանանցների"], [4419.0, "պայման ու"], [4421.0, "պայմանները իրար հանգնում են, այսինքն"], [4424.0, "նույնենք սահմանի դեպքում թե"], [4428.0, "դրանք անկախ բաներ են, եկեք հասկանանք այն"], [4430.0, "մինիմիզացիայի խնդիրը հիմա լուծելու ենք"], [4433.0, "հա&lt;un&gt; այսօր չենք հասցնում այսինքն"], [4437.0, "իրականում դուք հետևյալ ձևակերպումը պիտի"], [4440.0, "անեիք արդեն այս քննարկումից ելնելով, որ"], [4444.0, "օպտիմիզացիան"], [4446.0, "պիտի արվի այ այս սահմանափակման"], [4448.0, "պայմաններում:"], [4450.0, "Հիմա Այդ երկուսը, որ իրար հետ դնում ենք"], [4452.0, "լագրժան բազմապատկիչների"], [4455.0, "եղանակով կգտնենք օպտիմալը որն է հա&lt;un դա"], [4459.0, "ենք անելու, բայց մի հատ ուզում ենք"], [4461.0, "ապացուցենք սա հետո անենք հա&lt;un&gt; մյուս"], [4465.0, "անգամ անենք հա&lt;un երևի"], [4466.0, "մի հատ հարց հիմա ոնց որ կա մոտավորման"], [4470.0, "շատ պարզ րո նախաձերը"], [4473.0, "ու ցույց է տվում որ այդ արագությունը"], [4476.0, "ամենաօպտիմալն է"], [4479.0, "այսինքն Իսկ վերջ ուղղությամբ մտածելու"], [4481.0, "բան չկա: Այսքանով սահմանում է այս"], [4487.0, "Այո, այսինքն խնդրի այն դրվածքը"], [4490.0, "պարզագույն,"], [4491.0, "որ մենք քննարկում ենք, որ այբուբենը սա"], [4496.0, "է, առանց հիշողության է, հա՞:"], [4502.0, "Ինչ պայման ենք քննարկում, հա՞, միակ հա"], [4506.0, "նույնման բաշխված, ուրեմն, ուրեմն"], [4513.0, "պատահական մեծությունների"], [4515.0, "հաջորդականությամբ է ծնված իմ բանը"], [4519.0, "չէր"], [4521.0, "խնդիրը լուծված է ամենաօպտիմալ ձևով սա"], [4524.0, "հետ կապված"], [4525.0, "սա հիմքն է բուն լեպել զիբի ալգորիթմը"], [4528.0, "լսե&lt;un եք հիմա որ դուք զիպ եք անում"], [4533.0, "լպել զիբի ալգորիթմի վարիացիա է աշխատում"], [4536.0, "հա այսինքն տեսությունը ը ընդամենը աս սա"], [4542.0, "հիմունքներն է տալիս, որպեսզի դուք ավելի"], [4546.0, "օպտիմալ ալգորիթմ ունենաք"], [4549.0, "լեզվի համար, որտեղ հիշողություն կա: Ես"], [4552.0, "մինչև հիմա հիշողության հարցը բացառել եմ,"], [4554.0, "չէ&lt;un մենք ասում ենք սիմվոլները անկախ են"], [4557.0, "հայտնվում,"], [4558.0, "հա՞:"], [4561.0, "Դուք"], [4565.0, "եթե այն կոդերը, որ հիմա սովորել ենք"], [4568.0, "օգտագործեք դա ամենաօպտիմալը չի լինելու"], [4572.0, "սովորական լեզվի պայմաններում որովհետև"], [4576.0, "սովորական լեզվում կա հիշողություն այդ"], [4580.0, "հիշողությունը անգլերենի դեպքում մինչև"], [4583.0, "հինգ խորությունը հերիքում է ամբողջապես"], [4585.0, "մոդելավորելու պարագայում հայերենի"], [4587.0, "դեպքում չգիտեմ"], [4589.0, "չեխերենի դեպքում չգիտեմ"], [4591.0, "այսինքն եթե պայմանները փոխում ենք խնդրի"], [4595.0, "դրվածքը փոխում ենք դուք պիտի մեթոդ"], [4598.0, "առաջարկեք"], [4600.0, "օպտիմալ էդ ռեժիմում"], [4603.0, "ուրեմն տվյալների սեղմումը կազմակերպելու"], [4605.0, "համար մենք մինիմիզացնում ենք հենց"], [4608.0, "հիշողությունը չի"], [4610.0, "հիշողությունը դուք բանը նկատի ունեմ"], [4613.0, "տեսեք"], [4616.0, "x1n հաջորդականությունը"], [4620.0, "ասում ենք"], [4623.0, "միանման և անկախ բաշխված չէ ուրեմն"], [4628.0, "պատահական մեծությունների"], [4630.0, "հաջորդականություն"], [4635.0, "հիշողություն"], [4637.0, "ասելով նկատի ունենք որ այս պայմանի IID-ի"], [4641.0, "պայմաններում"], [4642.0, "X2-ը գիտելիք չունի X1-ի մասին, Xn-ը"], [4646.0, "իրանից նախորդների, այսինքն պրոցեսը,"], [4650.0, "աղբյուրը, որից հաղորդագրությունները"], [4652.0, "դուրս են գալիս, առանց հիշողության է,"], [4656.0, "սրանք խիստ պայման ենք դնում մեր լեզուն"], [4657.0, "հիմա ես որ խոսում եմ հնչյունների"], [4660.0, "հաջորդականությունները"], [4663.0, "բան ունեն չէ"], [4667.0, "հիշողություն ունեն չէ"], [4668.0, "հա հիշողություն"], [4670.0, "հիշողություն"], [4673.0, "նկատի ունեք ծավալը որի մեջ ասենք մենք"], [4676.0, "սեղմում ենք իրականում չէ այդ ե&lt;unkբր ենք"], [4679.0, "հիշողություն ասել խոսքի մեջ կարող է"], [4682.0, "ասենք այս որ կոդավորում ենք տանում ենք"], [4684.0, "ծավալը փոքրացնում ենք հա&lt;un հիշող"], [4686.0, "հաջողության մեջ պահպանում ենք, չգիտեմ,"], [4689.0, "դրանով ենք հետաքրքրված, բայց պրոցեսը,"], [4693.0, "աղբյուրը, տեսեք ին&lt;չն է խնդիրը, աղբյուր"], [4695.0, "ենք մոդելավորում, հիմա տարբեր կերպ կարող"], [4698.0, "ենք մոդելավորել, ինձ ամենահեշտը, որպեսզի"], [4700.0, "ես տեսությունը բացատրեմ, պիտի ասեմ եկեք"], [4703.0, "ենթադրենք I, այսինքն իմ խոսքը առանձին"], [4706.0, "տառերի հաջորդականություններով է, հա՞,"], [4709.0, "անկախ, անկախ է ծնվում, բայց նույն"], [4712.0, "աղբյուրից է դուրս գալիս, նույն բաշխումն"], [4713.0, "ունի, հա, իսկ որ բաշխումը փոխ փոխեմ ինչ"], [4716.0, "է լինում, դաժան մի ուրիշ տեսություն է"], [4718.0, "առաջանում, հա՞, որ ամեն բան, հա՞, հաջորդ"], [4723.0, "սիմվոլը հայտնվի ուրիշ բաշխումից, կարո է"], [4726.0, "չէ"], [4727.0, "ամենապարզ դեպքում տեսությունը սկսվել է"], [4730.0, "այստեղից"], [4732.0, "որ հիշողություն չկա շատ վատ"], [4734.0, "ենթադրություն դա պարզ է, եթե լեզվի մասին"], [4737.0, "է խոսքը լեզուն ամբողջովին հիշողություն"], [4740.0, "պրոցեսը պատահական"], [4742.0, "պրոցեսը կամովյան շղթա Սա է"], [4746.0, "դրա համար, որ ասում եք հիմա այս կոդին,"], [4749.0, "որ ծանոթացանք վերջանում է պատմությունը,"], [4751.0, "վերջանում է այս բանը դրվածքով,"], [4754.0, "դրվածքը փոխեմ, հիշողությունը մտցնեմ,"], [4757.0, "դուք այնտեղ"], [4760.0, "պիտի ուսումնասիրեք ևս մի քանի տասնյակ"], [4762.0, "հոդվածներ, որպեսզի հասկանաք այնտեղ"], [4765.0, "օպտիմալ կոդերը ոնց են կառուցվում, բայց"], [4769.0, "չգիտեմ կհասնենք, թե չէ դրան լեպելզիվ"], [4773.0, "օպտիմալ"], [4774.0, "ալգորիթմ"], [4777.0, "հիշողություն ունեցող աղբյուրի համար,"], [4779.0, "այսինքն լեզվի համար,"], [4782.0, "որ զիպ եք անում, աշխատում է դրա ինչ-որ"], [4784.0, "վարիացիա հա&lt;un"], [4792.0, "այսքանը ու այդպենս չի վերջանում, մինչև"], [4794.0, "հիմա էլ չի վերջացել այնքան խնդիրներ"], [4798.0, "բաց, որոնք տասնամյակներով մնացել են ու"], [4801.0, "չեն լուծվել"], [4804.0, "Հա չգիտեմ ուրիշ որ բնագավառում կա"], [4810.0, "այսինքն"], [4813.0, "դրվածքներ"], [4815.0, "թե տվյալների սեղմամբ թե պատմող հաղորդման"], [4820.0, "համար"], [4823.0, "ձեր իմանում ապացուցված չի"], [4829.0, "ամենավերջան"], [4831.0, "պահ"], [4880.0, "աշխատակից"], [4886.0, "ինձ"], [4891.0, "գործող ոստանել"], [4895.0, "ինչ-որ մի հատ"], [4898.0, "ունեցել ինչի"], [4902.0, "աստիճաններով"], [4903.0, "բանը հա գումարը"], [4906.0, "մեկից վեց չի կարող"], [4908.0, "բացի"], [4910.0, "մեկ"], [4914.0, "ո քանի է դա պահում"], [4917.0, "քո որ գրում"]], "pause_min": 2.0}</script>
+<script>
+const TLD = JSON.parse(document.getElementById('tl-data').textContent);
+const TLS = document.getElementById('timeline'), DUR = +document.body.dataset.duration;
+const ov = TLS.querySelector('.tl-over'), mc = TLS.querySelector('.tl-main');
+const AX_H = 18, SP_H = 130, GAP_H = 15, TX_H = 22, MAIN_H = AX_H + SP_H + GAP_H + TX_H, OV_H = 56;
+const ZL = [0.5, 1, 2, 4, 8, 16, 32, 80, 160, 320];        // zoom levels, px per second
+const GAP_MIN = 1.5;                                       // shortest uncovered piece of a pause that gets marked
+const COL = { safe: '#D90012', judg: '#F2A800', mine: '#0033A0', gap: '#FFD60A' };
+const FILL = { safe: 'rgba(217,0,18,.33)', judg: 'rgba(242,168,0,.40)', mine: 'rgba(0,51,160,.45)' };
+const rootCss = getComputedStyle(document.documentElement);
+const FG = rootCss.getPropertyValue('--fg').trim(), MUTED = rootCss.getPropertyValue('--muted').trim();
+const ROWS = TLD.rows, PAUSES = TLD.pauses;
+const TL = { t0: 0, z: 5, bar: 0, sel: null, on: false, focus: false };
+let gapList = [], md = null, lineAt = -2, pending = false;
+const pps = () => ZL[TL.z], viewW = () => mc.clientWidth, vspan = () => viewW() / pps();
+const clampT0 = t => Math.max(0, Math.min(Math.max(0, DUR - vspan()), t));
+const xOf = t => (t - TL.t0) * pps();
+const hms = t => { t = Math.max(0, Math.floor(t)); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
+const kindOf = c => c.added || changed(c) ? 'mine' : ((TLD.kinds[c.host.id] || {}).kind === 'judgment' ? 'judg' : 'safe');
+const tlMsg = t => { TLS.querySelector('.tl-msg').textContent = t; };
+function rowAt(t) {                                        // the last transcript line starting at or before t
+  let lo = 0, hi = ROWS.length - 1, ans = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (ROWS[m][0] <= t) { ans = m; lo = m + 1; } else hi = m - 1; }
+  return ans;
+}
+function uncovered(s, e, cs) {                             // the parts of [s, e] that no cut covers (cs sorted)
+  const out = [];
+  let a = s;
+  for (const [x, y] of cs) {
+    if (y <= a) continue;
+    if (x >= e) break;
+    if (x > a) out.push([a, x]);
+    a = Math.max(a, y);
+    if (a >= e) break;
+  }
+  if (e > a) out.push([a, e]);
+  return out;
+}
+function gaps() {   // per pause (its silences, joined across hums): what no cut covers, as [start, end, silent s, hum]
+  const cs = all().map(c => [c.s, c.e]).sort((a, b) => a[0] - b[0]), out = [];
+  for (const g of PAUSES) {
+    let m = null;
+    const flush = () => { if (m && m[2] >= GAP_MIN) out.push(m); m = null; };
+    for (const [s, e] of g) for (const [a, b] of uncovered(s, e, cs)) {
+      if (m && !cs.some(([x, y]) => x < a && y > m[1])) { m[1] = b; m[2] += b - a; m[3] = true; }   // across a hum
+      else { flush(); m = [a, b, b - a, false]; }                                                   // a cut in between
+    }
+    flush();
+  }
+  return out;
+}
+const cache = new Map();                                   // decoded tiles, the 64 used last
+function tile(lv, i) {
+  const k = lv.src + i;
+  let im = cache.get(k);
+  if (im) { cache.delete(k); cache.set(k, im); return im; }
+  im = new Image();
+  im.onload = drawSoon;
+  im.onerror = () => tlMsg('Could not load ' + im.src + ' - rebuild the page with find_edit_points.py');
+  im.src = lv.src + String(i).padStart(4, '0') + '.jpg';
+  cache.set(k, im);
+  while (cache.size > 64) cache.delete(cache.keys().next().value);
+  return im;
+}
+function fit(cv, h) {
+  const d = window.devicePixelRatio || 1, w = cv.clientWidth;
+  if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+  const g = cv.getContext('2d');
+  g.setTransform(d, 0, 0, d, 0, 0);
+  return g;
+}
+function drawSoon() { if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; draw(); }); } }
+function drawMain() {
+  const g = fit(mc, MAIN_H), W = viewW(), p = pps(), t0 = TL.t0, t1 = t0 + W / p;
+  g.clearRect(0, 0, W, MAIN_H);
+  g.font = '11px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  const step = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800].find(s => s * p >= 90) || 3600;
+  for (let t = Math.ceil(t0 / step) * step; t <= t1; t += step) { const x = xOf(t); g.fillRect(x, AX_H - 5, 1, 5); g.fillText(hms(t), x + 3, 2); }
+  const lv = p > TLD.tiles.lo.px_per_s ? TLD.tiles.hi : TLD.tiles.lo;
+  const xa = Math.max(0, xOf(0)), xz = Math.min(W, xOf(DUR));
+  g.fillStyle = '#000'; g.fillRect(xa, AX_H, xz - xa, SP_H);
+  const i0 = Math.max(0, Math.floor(t0 / lv.tile_s)), i1 = Math.min(lv.n - 1, Math.floor(t1 / lv.tile_s));
+  for (let i = i0; i <= i1; i++) {
+    const im = tile(lv, i);
+    if (im.complete && im.naturalWidth) g.drawImage(im, xOf(i * lv.tile_s), AX_H, Math.min(lv.tile_s, DUR - i * lv.tile_s) * p, SP_H);
+  }
+  if (i1 + 1 < lv.n) tile(lv, i1 + 1);                     // the neighbours, so panning finds them loaded
+  if (i0 > 0) tile(lv, i0 - 1);
+  const box = (a, b) => [xOf(a), Math.max(2, xOf(b) - xOf(a))];
+  g.save(); g.lineWidth = 2; g.setLineDash([6, 4]);
+  TLD.suggestions.forEach((s, i) => {                      // unticked suggestions: dashed orange
+    if (s.e < t0 || s.s > t1) return;
+    const [x, w] = box(s.s, s.e);
+    if (TL.sel && TL.sel.sug === i) { g.fillStyle = 'rgba(242,168,0,.22)'; g.fillRect(x, AX_H, w, SP_H); }
+    g.strokeStyle = COL.judg; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  plan.filter(c => c.removed).forEach(c => {                // removed planned cuts: dashed red
+    if (c.e < t0 || c.s > t1) return;
+    const [x, w] = box(c.s, c.e);
+    g.strokeStyle = COL.safe; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  g.restore();
+  all().forEach(c => {
+    if (c.e < t0 || c.s > t1) return;
+    const k = kindOf(c), [x, w] = box(c.s, c.e);
+    g.fillStyle = FILL[k]; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = COL[k]; g.fillRect(x, AX_H, 3, SP_H); g.fillRect(x + w - 3, AX_H, 3, SP_H);
+    if (w > 46) { g.fillStyle = '#fff'; g.font = '600 11px system-ui, sans-serif'; g.fillText('Cut ' + c.n, x + 6, AX_H + 4); }
+    if (c.warn && c.warn.length) { g.fillStyle = '#fff'; g.fillRect(x, AX_H + SP_H - 4, w, 4); }
+  });
+  const sc = TL.sel && TL.sel.c;
+  if (sc && !(sc.e < t0 || sc.s > t1)) {
+    const [x, w] = box(sc.s, sc.e);
+    g.save(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.setLineDash([4, 3]); g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2); g.restore();
+  }
+  if (md && md.kind === 'new') {                           // the cut being drawn
+    const [x, w] = box(Math.min(md.t, md.t1), Math.max(md.t, md.t1));
+    g.fillStyle = FILL.mine; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = '#fff'; g.fillRect(x, AX_H, 2, SP_H); g.fillRect(x + w - 2, AX_H, 2, SP_H);
+  }
+  const gy = AX_H + SP_H + 2;
+  gapList.forEach(([s, e, silent, hum]) => {               // silences no cut covers (the label counts silence only)
+    if (e < t0 || s > t1) return;
+    const [x, w] = box(s, e);
+    g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(x, gy, w, GAP_H - 4); g.globalAlpha = 1;
+    const txt = silent.toFixed(1) + ' s' + (hum ? ' + hum' : '');
+    if (w > (hum ? 66 : 38)) { g.fillStyle = '#1d1d1f'; g.font = '10px system-ui, sans-serif'; g.fillText(txt, x + 3, gy); }
+  });
+  const ty = AX_H + SP_H + GAP_H + 3;
+  g.font = '12px system-ui, sans-serif';
+  for (let i = Math.max(0, rowAt(t0)); i < ROWS.length && i >= 0; i++) {
+    const x = xOf(ROWS[i][0]);
+    if (x > W) break;
+    const xn = i + 1 < ROWS.length ? xOf(ROWS[i + 1][0]) : W;
+    g.fillStyle = MUTED; g.fillRect(x, ty - 2, 1, TX_H - 4);
+    if (p < 8 || xn - x < 24) continue;                   // too little room for words at this zoom
+    g.save(); g.beginPath(); g.rect(x, ty - 2, xn - x - 4, TX_H); g.clip();
+    g.fillStyle = FG; g.fillText(ROWS[i][1], x + 3, ty); g.restore();
+  }
+  const xb = xOf(TL.bar);
+  if (xb >= -2 && xb <= W + 2) { g.fillStyle = '#000'; g.fillRect(xb - 2, AX_H - 3, 5, SP_H + GAP_H + 3); g.fillStyle = '#fff'; g.fillRect(xb - 1, AX_H - 3, 3, SP_H + GAP_H + 3); }
+}
+function drawOver() {
+  const g = fit(ov, OV_H), W = ov.clientWidth, k = W / DUR, L = TLD.loud;
+  g.clearRect(0, 0, W, OV_H);
+  g.fillStyle = MUTED; g.globalAlpha = 0.6;
+  for (let x = 0; x < W; x++) {                            // loudness, the loudest second under each pixel
+    let m = 0;
+    for (let i = Math.floor(x / k); i < Math.max(Math.floor(x / k) + 1, Math.floor((x + 1) / k)) && i < L.length; i++) m = Math.max(m, L[i]);
+    const h = m / 100 * 17; g.fillRect(x, 31 - h, 1, h);
+  }
+  g.globalAlpha = 1;
+  all().forEach(c => { g.fillStyle = COL[kindOf(c)]; g.fillRect(c.s * k, 3, Math.max(1, (c.e - c.s) * k), 9); });
+  gapList.forEach(([s, e, silent]) => { g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(s * k, 33, Math.max(1, (e - s) * k), 8); });
+  g.globalAlpha = 1;
+  g.font = '10px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  for (let t = 600; t < DUR; t += 600) { g.fillRect(t * k, OV_H - 12, 1, 12); g.fillText(hms(t).replace(/:00$/, ''), t * k + 3, OV_H - 12); }
+  g.strokeStyle = FG; g.lineWidth = 2; g.strokeRect(TL.t0 * k + 1, 1, Math.max(4, vspan() * k - 2), OV_H - 15);
+  g.fillStyle = COL.safe; g.fillRect(TL.bar * k - 1, 0, 2, OV_H - 13);
+}
+function draw() {
+  drawMain(); drawOver();
+  TLS.querySelector('.tl-now').textContent = tc(TL.bar);
+  const s = vspan();
+  TLS.querySelector('.tl-zl').textContent = (s < 120 ? Math.round(s) + ' s' : (s / 60).toFixed(s < 600 ? 1 : 0) + ' min') + ' on screen';
+  const i = rowAt(TL.bar);
+  if (i !== lineAt) {                                      // the transcript line under the bar, in full
+    lineAt = i;
+    const r = ROWS[i], n = ROWS[i + 1];
+    TLS.querySelector('.tl-line').innerHTML = r ? `<span class="t">${hms(r[0])}</span>${esc(r[1])}` +
+      (n ? `   <span class="nx"><span class="t">${hms(n[0])}</span>${esc(n[1])}</span>` : '') : '';
+  }
+}
+function renderSel() {
+  const box = TLS.querySelector('.tl-selbox'), s = TL.sel;
+  if (s && s.c && s.c.added && !added.includes(s.c)) TL.sel = null;   // deleted elsewhere on the page
+  if (!TL.sel) { box.innerHTML = '<span class="note">Click a cut to select it; drag across the spectrogram to draw a new one.</span>'; return; }
+  if (s.sug !== undefined) {
+    const g = TLD.suggestions[s.sug];
+    box.innerHTML = `<span class="tag" style="color:${COL.judg}">Suggested, not ticked</span><span class="times">${tc(g.s)} → ${tc(g.e)}   (${(g.e - g.s).toFixed(1)} s)</span>` +
+      `<button data-do="adds">Add as a cut</button><span class="why">${esc(g.reason)}</span>`;
+    return;
+  }
+  const c = s.c, k = kindOf(c), info = c.host && !c.added ? TLD.kinds[c.host.id] : null;
+  const name = c.removed ? 'Removed cut' : (c.added ? 'New Cut ' : 'Cut ') + c.n;
+  const tag = c.removed ? '' : c.added ? 'yours' : changed(c) ? 'changed by you' : k === 'judg' ? 'your call' : 'safe';
+  box.innerHTML = `<b>${name}</b><span class="tag" style="color:${COL[k]}">${tag}</span>` +
+    `<span class="times">${c.removed ? `planned ${tc(c.s0)} → ${tc(c.e0)}` : `${tc(c.s)} → ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)`}</span>` +
+    (changed(c) && !c.removed ? `<span class="was">was ${tc(c.s0)} - ${tc(c.e0)}</span>` : '') +
+    (c.removed ? '' : '<button data-do="s">Start = bar</button><button data-do="e">End = bar</button>') +
+    (!c.added && changed(c) && !c.removed ? '<button data-do="reset">Reset</button>' : '') +
+    (c.added ? '<button data-do="del">Delete</button>' : `<button data-do="rm">${c.removed ? 'Restore cut' : 'Remove cut'}</button>`) +
+    (c.warn && c.warn.length ? `<span class="warn">${c.warn.join(', ')}${OVERLAP}</span>` : '') +
+    (info ? `<span class="why">${esc(info.reason)}</span>` : '');
+}
+window.tlRefresh = () => {                                 // after every change to the cut list (renderAll)
+  gapList = gaps();
+  const n4 = gapList.filter(g => g[2] >= 4).length, nh = gapList.filter(g => g[3]).length;
+  TLS.querySelector('.tl-gaps').textContent = `${gapList.length} silences no cut covers (${n4} of 4 s or more, ${nh} split by a hum)`;
+  renderSel(); drawSoon();
+};
+function tlTouch() { TL.focus = true; focusEl = null; tlMsg(''); }   // keys now go to the timeline, not a card
+function keepBar() { if (TL.bar < TL.t0 || TL.bar > TL.t0 + vspan()) TL.t0 = clampT0(TL.bar - 0.1 * vspan()); }
+function center(t) { TL.t0 = clampT0(t - 0.35 * vspan()); }
+function zoomAt(z, t, x) { TL.z = Math.max(0, Math.min(ZL.length - 1, z)); TL.t0 = clampT0(t - x / pps()); drawSoon(); }
+function tlLabel() { TLS.querySelector('.tl-play').textContent = TL.on && !A.paused ? 'Pause' : 'Play'; }
+function tlLoop() {
+  if (!TL.on || A.paused) return;
+  let t = A.currentTime;
+  if (TLS.querySelector('.tl-skip').checked) { const c = all().find(c => t >= c.s && t < c.e); if (c) { A.currentTime = c.e; t = c.e; } }
+  const seen = TL.bar >= TL.t0 && TL.bar <= TL.t0 + vspan();   // scrolled away from the bar: look around, don't pull back
+  TL.bar = t;
+  if (seen && (t > TL.t0 + 0.92 * vspan() || t < TL.t0)) TL.t0 = clampT0(t - 0.1 * vspan());   // page along
+  draw();
+  requestAnimationFrame(tlLoop);
+}
+function tlPlay() {
+  if (cur) { A.pause(); label(cur, false); cur = null; }   // one player: a card that was playing stops
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = 'Playing the timeline';
+  keepBar();
+  TL.on = true;
+  A.currentTime = TL.bar;
+  A.play().then(() => { tlLabel(); requestAnimationFrame(tlLoop); })
+          .catch(err => { if (err.name !== 'AbortError') tlMsg('Could not play: ' + err.message); });
+}
+window.tlStop = () => { TL.on = false; tlLabel(); };
+A.addEventListener('pause', tlLabel);
+const evT = (ev, cv) => (ev.clientX - cv.getBoundingClientRect().left);
+function hit(ev) {                                          // what is under the pointer on the spectrogram
+  const x = evT(ev, mc), t = TL.t0 + x / pps();
+  let best = null, bd = 7;
+  all().forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(xOf(c[k]) - x); if (d <= bd) { bd = d; best = { edge: k, c }; } }));
+  if (best) return best;
+  const c = all().find(c => t >= c.s && t < c.e) || plan.find(c => c.removed && t >= c.s && t < c.e);
+  if (c) return { c };
+  const i = TLD.suggestions.findIndex(s => t >= s.s && t < s.e);
+  return i >= 0 ? { sug: i } : null;
+}
+mc.addEventListener('pointerdown', ev => {
+  tlTouch(); mc.setPointerCapture(ev.pointerId);
+  const h = hit(ev), t = TL.t0 + evT(ev, mc) / pps();
+  md = h && h.edge ? { kind: 'edge', c: h.c, k: h.edge } : { kind: 'press', x: ev.clientX, t, t1: t, h };
+  if (md.kind === 'edge') TL.sel = { c: h.c };
+});
+mc.addEventListener('pointermove', ev => {
+  if (!md) { const h = hit(ev); mc.style.cursor = h && h.edge ? 'col-resize' : h ? 'pointer' : 'crosshair'; return; }
+  const t = TL.t0 + evT(ev, mc) / pps();
+  if (md.kind === 'edge') { setEdge(md.c, md.k, t, false, [0, DUR], TLS.querySelector('.tl-msg')); return; }
+  if (md.kind === 'press' && Math.abs(ev.clientX - md.x) > 4) md.kind = 'new';
+  if (md.kind === 'new') { md.t1 = Math.max(0, Math.min(DUR, t)); drawSoon(); }
+});
+mc.addEventListener('pointerup', () => {
+  if (!md) return;
+  const m = md;
+  md = null;
+  if (m.kind === 'edge') { save(); tlRefresh(); return; }
+  if (m.kind === 'new') {
+    const a = snap(Math.min(m.t, m.t1)), b = snap(Math.max(m.t, m.t1));
+    if (b - a >= 0.2) { const c = { id: ++uid, host: null, s: a, e: b, added: true }; added.push(c); TL.sel = { c }; renderAll(); save(); }
+    else drawSoon();
+    return;
+  }
+  TL.bar = m.t;                                            // a click: the bar goes there, and what is under it is selected
+  if (TL.on && !A.paused) A.currentTime = m.t;
+  TL.sel = m.h ? (m.h.c ? { c: m.h.c } : { sug: m.h.sug }) : null;
+  tlRefresh();
+});
+let wacc = 0;
+mc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer; Shift+wheel or a sideways swipe scrolls
+  if (ev.ctrlKey) {
+    ev.preventDefault();
+    wacc += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;
+    if (Math.abs(wacc) < 50) return;
+    const dir = wacc < 0 ? 1 : -1;
+    wacc = 0; tlTouch();
+    zoomAt(TL.z + dir, TL.t0 + evT(ev, mc) / pps(), evT(ev, mc));
+    return;
+  }
+  const dx = ev.shiftKey ? ev.deltaY : ev.deltaX;
+  if (!dx) return;
+  ev.preventDefault();
+  TL.t0 = clampT0(TL.t0 + (ev.deltaMode === 1 ? dx * 33 : dx) / pps()); drawSoon();
+}, { passive: false });
+let ovDrag = false;
+const ovMove = ev => { TL.t0 = clampT0(evT(ev, ov) / ov.clientWidth * DUR - vspan() / 2); drawSoon(); };
+ov.addEventListener('pointerdown', ev => { tlTouch(); ovDrag = true; ov.setPointerCapture(ev.pointerId); ovMove(ev); });
+ov.addEventListener('pointermove', ev => { if (ovDrag) ovMove(ev); });
+ov.addEventListener('pointerup', () => { ovDrag = false; });
+const btn = (cls, f) => TLS.querySelector(cls).addEventListener('click', ev => { tlTouch(); ev.currentTarget.blur(); f(); });
+btn('.tl-play', () => (TL.on && !A.paused) ? A.pause() : tlPlay());
+btn('.tl-left', () => { TL.t0 = clampT0(TL.t0 - 0.8 * vspan()); drawSoon(); });
+btn('.tl-right', () => { TL.t0 = clampT0(TL.t0 + 0.8 * vspan()); drawSoon(); });
+let hoverX = null;   // the pointer's x over the spectrogram: keys 1/2 zoom there (the user's ask, 2026-10-22)
+mc.addEventListener('pointermove', ev => { hoverX = evT(ev, mc); });
+mc.addEventListener('pointerleave', () => { hoverX = null; });
+const anchor = () => {
+  if (hoverX !== null) return [TL.t0 + hoverX / pps(), hoverX];
+  const x = xOf(TL.bar); return x >= 0 && x <= viewW() ? [TL.bar, x] : [TL.t0 + vspan() / 2, viewW() / 2];
+};
+const undo = [];   // cuts removed or deleted, newest last: Z brings them back one by one
+function removeSel() {
+  const c = TL.sel && TL.sel.c;
+  if (!c) { tlMsg('Select a cut first (click it), then Delete'); return; }
+  if (c.added) { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; }
+  else if (!c.removed) { c.removed = true; undo.push({ c, kind: 'rm' }); }
+  else { tlMsg('Already removed (Z brings back the last one)'); return; }
+  tlMsg('Removed - Z brings it back'); renderAll(); save();
+}
+function undoRemove() {
+  const u = undo.pop();
+  if (!u) { tlMsg('Nothing to bring back'); return; }
+  if (u.kind === 'del') added.push(u.c); else u.c.removed = false;
+  TL.sel = { c: u.c }; center(u.c.s); tlMsg('Brought back'); renderAll(); save();
+}
+btn('.tl-zin', () => zoomAt(TL.z + 1, ...anchor()));
+btn('.tl-zout', () => zoomAt(TL.z - 1, ...anchor()));
+btn('.tl-add', () => {
+  const s = snap(Math.min(TL.bar, DUR - 1)), c = { id: ++uid, host: null, s, e: snap(s + NEW_LEN), added: true };
+  added.push(c); TL.sel = { c }; keepBar(); renderAll(); save();
+});
+TLS.querySelectorAll('[data-j]').forEach(b => b.addEventListener('click', () => {
+  tlTouch(); b.blur();
+  const fwd = b.dataset.d === '1';
+  if (b.dataset.j === 'gap') {
+    const g = fwd ? gapList.find(g => g[0] > TL.bar + 1.05) : [...gapList].reverse().find(g => g[0] < TL.bar + 0.95);
+    if (!g) { tlMsg(`No uncovered silence ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, g[0] - 1); TL.sel = null; center(g[0]);
+  } else {
+    const cs = all().sort((a, b) => a.s - b.s);
+    const c = fwd ? cs.find(c => c.s > TL.bar + 1.05) : cs.reverse().find(c => c.s < TL.bar + 0.95);
+    if (!c) { tlMsg(`No cut ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, c.s - 1); TL.sel = { c }; center(c.s);
+  }
+  if (TL.on && !A.paused) A.currentTime = TL.bar;
+  tlRefresh();
+}));
+TLS.querySelector('.tl-selbox').addEventListener('click', ev => {
+  const b = ev.target.closest('button');
+  if (!b) return;
+  tlTouch(); b.blur();
+  const s = TL.sel, d = b.dataset.do;
+  if (d === 'adds') {                                      // whole frames inside the suggestion, as Studio cuts are
+    const g = TLD.suggestions[s.sug];
+    const c = { id: ++uid, host: null, s: Math.ceil(g.s * FPS - 1e-6) / FPS, e: Math.floor(g.e * FPS + 1e-6) / FPS, added: true };
+    added.push(c); TL.sel = { c }; renderAll(); save(); return;
+  }
+  const c = s.c;
+  if (d === 's' || d === 'e') setEdge(c, d, TL.bar, true, [0, DUR], TLS.querySelector('.tl-msg'));
+  else if (d === 'reset') { c.s = c.s0; c.e = c.e0; renderAll(); save(); }
+  else if (d === 'rm') { c.removed = !c.removed; if (c.removed) undo.push({ c, kind: 'rm' }); renderAll(); save(); }
+  else if (d === 'del') { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; renderAll(); save(); }
+});
+document.addEventListener('pointerdown', ev => { if (!TLS.contains(ev.target)) TL.focus = false; }, true);
+document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's (the cards are hidden)
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyZ') { ev.preventDefault(); ev.stopPropagation(); undoRemove(); return; }
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  const take = () => { ev.preventDefault(); ev.stopPropagation(); if (tag === 'BUTTON') document.activeElement.blur(); };
+  const c = ev.code;                                        // key positions, so the Armenian layout works too
+  if (c === 'Space') { take(); (TL.on && !A.paused) ? A.pause() : tlPlay(); }
+  else if (c === 'Delete' || c === 'Backspace') { take(); removeSel(); }
+  else if (c === 'KeyZ') { take(); undoRemove(); }
+  else if (c === 'ArrowLeft' || c === 'ArrowRight') {
+    take();
+    TL.bar = Math.max(0, Math.min(DUR, TL.bar + (c === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2)));
+    if (TL.on && !A.paused) A.currentTime = TL.bar;
+    keepBar(); drawSoon();
+  }
+  else if (c === 'Digit2' || c === 'Numpad2') { take(); zoomAt(TL.z + 1, ...anchor()); }   // the user's pick (was + / -)
+  else if (c === 'Digit1' || c === 'Numpad1') { take(); zoomAt(TL.z - 1, ...anchor()); }
+  else if (c === 'KeyS') {
+    take();
+    const b = TLS.querySelector('.tl-skip');
+    b.checked = !b.checked; tlMsg(b.checked ? 'Skipping the cuts (S to play everything)' : 'Playing everything (S to skip the cuts)');
+  }
+  else if (c === 'KeyF') { take(); nextSpeed(); }
+}, true);
+const SPEEDS = [1, 2, 4];                                   // playbackRate on the same media: no extra renders
+function nextSpeed() {
+  const r = SPEEDS[(SPEEDS.indexOf(A.playbackRate) + 1) % SPEEDS.length];
+  A.playbackRate = r;
+  TLS.querySelector('.tl-speed').textContent = r + '×';
+  tlMsg(`Speed ${r}× (F to change)`);
+}
+TLS.querySelector('.tl-speed').addEventListener('click', ev => { ev.currentTarget.blur(); nextSpeed(); });
+mc.style.height = MAIN_H + 'px'; ov.style.height = OV_H + 'px';
+window.addEventListener('resize', drawSoon);
+TLS.addEventListener('toggle', drawSoon);
+tlRefresh();
+</script>
+</body></html>

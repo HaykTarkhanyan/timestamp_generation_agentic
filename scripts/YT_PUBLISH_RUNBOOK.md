@@ -162,7 +162,7 @@ channel "Aik Tarkhanyan" (same Google account, wrong entry on the second screen)
 gave Համալսարանական մաթեմատիկա.
 
 Every later command takes `--channel <name>` before the command name. Without it, the script
-uses Metric Academy. Both channels share the project's 10,000 units/day.
+uses Metric Academy. All channels share the project's 10,000 units/day.
 
 ---
 

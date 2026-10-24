@@ -279,6 +279,10 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
     corner. The total is kept in localStorage per video (`studio-timer-<id>`), so reloads and rebuilt pages
     keep it. It counts wall-clock time, so a running timer keeps going while the tab is closed. Ask the user
     for the time when a review comes back; it tells how long a review takes per cut.
+  - **Speed and download** (added 2026-10-23 at the user's request): a speed button in the timeline bar
+    and the F key cycle 1x / 2x / 4x (the media element's `playbackRate`, so nothing is re-rendered), and
+    "Download list" next to "Copy list" saves the cut list as `studio_cuts_edited_<id>.txt` (the user:
+    "download feels safer" than the clipboard).
   - **Video preview** (added 2026-10-12 at the user's request, opt-in): `--video-preview` makes
     `<output_dir>/video/<id>_360p.mp4` from the local recording, and studio.html then plays it
     in a panel that stays at the top while scrolling (with a Hide video button) instead of the WAV.
@@ -409,10 +413,17 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
     `python scripts/cut_list.py diff --output-dir <output_dir> --markers .playwright-mcp/<name>.json`.
 - **Never press Save, and never navigate the Studio tab away** (it holds unsaved
   edits). Open anything else in a new tab. "Discard changes" drops everything.
+  - **Standing rule (2026-10-23, DECISIONS.md #27): when the user gives the cut list themselves and asks
+    for Playwright entry ("pw"), Claude also saves**, with no separate ask, if every check passes: the
+    `cut_list.py diff` is identical frame for frame, the Save dialog's new length is the predicted one, and
+    the original recording is on disk (Save can't be undone; the local file is the backup). If the local
+    file is missing, stop before Save and tell the user. Same Save steps as below.
   - **Exception: the user asks for Save for this video** (ML53, 2026-10-21: "double check press
     save and acknowledge, i will be away"). Save only if `cut_list.py diff` says identical frame for
     frame. The dialog that follows says "Adjust video to new length: H:MM:SS"; go on only if that is
-    the predicted length, then tick "I acknowledge that these changes are permanent" and press
+    the predicted length (Studio truncates the seconds, and `cut_list.py` starts from YouTube's
+    rounded duration: on ML54 it said 39:20, the dialog 39:19, the frames 39:19.56, so compute it
+    from the end marker minus the cut frames when they differ by a second), then tick "I acknowledge that these changes are permanent" and press
     "Confirm changes". The page then reads "Video editing is in progress...". On any mismatch,
     don't save; leave it for the user.
 - **Don't call `setViewportSize` on the user's Studio tab.** On ML51 it shrank the page the

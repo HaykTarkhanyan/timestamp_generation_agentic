@@ -408,6 +408,11 @@ If the existing title is already good (a real, content-describing title — not 
 
 ## Stage 6: Correctness review (+ corrections in the description, only on confirmation)
 
+**Only for the user's own videos (Metric Academy channel).** Lectures on the Համալսարանական
+մաթեմատիկա (umath) channel are given by other lecturers and get no correction notes at all
+(DECISIONS.md #25, 2026-10-23). There, a slip found while checking chapters only shapes the label
+(state the correct condition), it never becomes a `⚠️ Ուղղումներ՝` block.
+
 The last stage, after everything is published: read the lecture as a reviewer
 and find what the lecturer (the user) **got wrong**, so the corrections
 can go into the description (until 2026-10-03: a comment under the video). Added 2026-10-01 at the user's request, after the ML47
@@ -506,7 +511,7 @@ and is a no-op when the text is already identical.
 - **Auth**: `--cookies-from-browser <browser>` on fetch for private/unlisted videos.
 - **Logging**: `logs/fetch_subtitles.log` inside the working dir, plus stderr.
 - **Encoding**: everything UTF-8. Scripts force `sys.stdout.reconfigure(encoding="utf-8")` because Windows defaults to cp1252 which mangles non-Latin scripts.
-- **Glossary**: `assets/glossary.csv` — ~1060 English→Armenian math/stats term mappings. Consult before deciding whether to use an English or Armenian technical term in labels/abstract.
+- **Glossary**: `assets/glossary.csv` — ~1060 English→Armenian math/stats term mappings. Consult before deciding whether to use an English or Armenian technical term in labels/abstract. **The original rows are the ground truth** (the user, 2026-10-23: "whatever is there is correct"): never edit them. Our own term picks go only in the `# ADDITIONS` section at the end, one row each, with "added <date> (the user's pick)" in the third column.
 
 ## When you're done
 

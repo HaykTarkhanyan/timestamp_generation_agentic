@@ -1,0 +1,196 @@
+{
+ "about": "Codex (codex exec, read-only, everything inline: series rules, titles, reviewed raw chapters, ticked cuts, OCR of her notes, full transcript) reviewed the 13 chapter lists and titles after the inline Claude review (review_15-27.md). Every finding was checked against the transcript; 'take' = applied to edited_predicted/timestamps_raw.txt (possibly reworded), 'reject' = not applied, with the reason. Reports: <folder>/edited_predicted/review_codex.md.",
+ "lectures": {
+  "15": {
+   "codex_report": "11 findings, 129 s, 40k tokens",
+   "findings": [
+    {"time": "0:31:34", "verdict": "take", "replace": ["0:31:34.9 Բորելյան հիերարխիա․ Σ^0_ξ, Π^0_ξ, Δ^0_ξ", "0:31:34.9 Բորելյան բազմությունների օրինակներ․ Σ^0_n, Π^0_n, Δ^0_n"], "why": "this part is examples (open, closed, G_δ, F_σ) and the finite levels Σ^0_1, Π^0_1, Σ^0_2...; the general ξ comes in the 35:40 chapter"},
+    {"time": "0:40:07", "verdict": "take", "replace": ["0:40:07.6 Հիերարխիան խիստ է լեհական տարածություններում", "0:40:07.6 Հիերարխիան խիստ է անհաշվելի լեհական տարածություններում"], "why": "in a countable Polish space every set is F_σ, the hierarchy collapses; she says 'at least in Polish spaces ... in our reasonable spaces'. Label made correct, no correction note proposed (loose wording, not a claim she builds on)"},
+    {"time": "0:42:25", "verdict": "take", "replace": ["0:42:25.6 BM-ի համարժեք պայմաններ․ B = G ⊔ M = F \\ M", "0:42:25.6 BM-ի համարժեք պայմաններ․ B = G ⊔ M = F \\ M′"], "why": "the two meager sets differ; at 44:37 she says 'էլի M ուզում գրեմ բայց սա ուրիշ է'"},
+    {"time": "0:48:58", "verdict": "take", "replace": ["0:48:58.0 Բորելյանները կոնտինուում հատ են, BM-ները՝ 2^կոնտինուում", "0:48:58.0 2-րդ հաշվելիում ≤ կոնտինուում բորելյան, ℝ-ում՝ 2^կոնտինուում BM"], "why": "her remark is 'in a second countable space at most continuum many Borel sets'; the 2^continuum count is for meager subsets of a Cantor set in ℝ"},
+    {"time": "0:54:43", "verdict": "reject", "why": "two parts: 52:43 states the 100% property and why (measure only gives 99%), 54:43 defines 'B is comeager in U'; 2 and 3 minutes"},
+    {"time": "1:06:52", "verdict": "take", "insert": "1:06:52.0 Պնդում․ U ⊩ B, V ⊆ U բաց ⇒ V ⊩ B (տարբերությունը չափից)", "why": "the proposition (1:06:52 'proposition ... if U forces B and V is an open subset') and the observation that this is the main difference from measure run to 1:09:14 inside the 4.6-minute notation chapter; started on her 'proposition' line, not Codex's 1:06:55"},
+    {"time": "1:10:08", "verdict": "take", "replace": ["1:10:08.3 Հետևանք․ ոչ չնչին BM բազմությունը պարունակում է 2^ℕ-ի պատճեն", "1:10:08.3 Հետևանք․ կատարյալ լեհական X-ում ոչ չնչին BM բազմությունը պարունակում է 2^ℕ-ի պատճեն"], "why": "the hypothesis she writes at 1:10:39 'perfect polish'"},
+    {"time": "1:15:23", "verdict": "reject", "why": "'AC ⇒ there are non-BM sets (Bernstein)' is what she states; the Baire-space remark at 1:18 is about the proof"},
+    {"time": "1:25:31", "verdict": "take", "replace": ["1:25:31.3 Ձևակերպում․ X, Y 2-րդ հաշվելի, B ⊆ X × Y BM", "1:25:31.3 Ձևակերպում․ X, Y 2-րդ հաշվելի, B ⊆ X × Y BM․ B չնչին ⇔ ∀*x B_x չնչին"], "why": "the label had only the hypotheses; conclusion added in the ∀* notation she defined at 1:18:51"},
+    {"time": "1:31:51 and 1:33:56", "verdict": "reject", "why": "Codex says 'լիովին կարգավորում' means a total order; the glossary has 'well ordered,լիովին կարգավորված' (the Russian 'вполне упорядоченное'), so the current term is right"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: strictness 'in Polish spaces' needs 'uncountable'; handled in the label, no note proposed"
+  },
+  "16": {
+   "codex_report": "7 chapter findings + title + 3 lecturer points",
+   "findings": [
+    {"time": "title, 0:00:00", "verdict": "reject", "why": "Codex reads 'լիովին կարգավորում' as total order; the glossary has well ordered = լիովին կարգավորված. 'BM' is defined in Դաս 15 and used series-wide"},
+    {"time": "0:10:02", "verdict": "reject", "why": "rephrasing only; 'Հարց․ Կուրատովսկի-Ուլամի թեորեմի հիշեցում' already says a student asks for the reminder"},
+    {"time": "0:22:48", "verdict": "take", "replace": ["0:22:48.9 Պնդում․ I ոչ չնչին ⇒ ＜|_I ոչ չնչին", "0:22:48.9 Պնդում․ ոչ չնչին սկզբնական հատված I ⇒ ＜|_I-ն ոչ չնչին է"], "why": "the bare symbols hid that I is an initial segment (22:56 'if an initial segment I is nonmeager')"},
+    {"time": "0:56:07", "verdict": "take", "replace": ["0:56:07.0 Դիտողություն․ x E_T y ⇔ T^n x = T^m y", "0:56:07.0 Դիտողություն․ x E_T y ⇔ ∃ n, m ∈ ℕ՝ T^n x = T^m y"], "why": "57:38-57:47 'exist n and m natural numbers such that'; the quantifier was missing"},
+    {"time": "1:24:57", "verdict": "take", "replace": ["1:24:57.5 Կապակցվածության բաղադրիչները՝ անվերջում արմատավորված լրիվ բինար ծառեր", "1:24:57.5 b_2-ի բաղադրիչները՝ անվերջում արմատավորված բինար ծառեր (պարբերական կետերից զատ)"], "why": "she draws the k = 2 picture (1:26:14); a component with a periodic point (0 is fixed) has a cycle. Countably many such components, no correction note"},
+    {"time": "1:28:07", "verdict": "take", "replace": ["1:28:07.6 b_k-ն իզոմորֆ է ձախ տեղաշարժին (left shift)", "1:28:07.6 b_k-ն որպես ձախ տեղաշարժ (left shift)՝ k-ական գրառմամբ"], "why": "the identification is through base-k expansions (1:31:35), which are ambiguous at countably many points; the label no longer claims a full isomorphism"},
+    {"time": "1:38:18", "verdict": "take", "replace": ["1:38:18.9 Հետևանք․ BM 2-ներկում գոյություն չունի (colorings)", "1:38:18.9 Կիրառություն․ պտույտի և b_k-ի գրաֆները BM 2-ներկում չունեն (coloring)"], "why": "she announces that generic ergodicity of these maps is proved next time (1:38:18-1:38:31) and then explains the consequence; 'Հետևանք' read as proved here. Singular 'coloring' as in Դաս 17"}
+   ],
+   "title": "kept (Codex's change rested on the well-order misreading)",
+   "lecturer_mistakes": "Codex: (1) not every b_k component is a tree (periodic points); (2) base-k expansions are ambiguous, so b_k is the shift only up to countably many points; (3) b_k's graph has a loop at the fixed point 0, so 'three colours suffice' needs loops excluded. All true but technical and about countable exceptions that the category arguments ignore: no correction note proposed"
+  },
+  "17": {
+   "codex_report": "10 chapter findings + 3 lecturer points",
+   "findings": [
+    {"time": "0:28:53", "verdict": "reject", "why": "rewording only"},
+    {"time": "0:46:09, 1:12:54, 1:41:55", "verdict": "reject", "why": "spell out 'BM': it is defined in Դաս 15 ('(Baire measurable, BM)') and used series-wide"},
+    {"time": "0:55:24", "verdict": "take", "replace": ["0:55:24.0 Համարժեք պայման․ խիտ ուղեծիր (dense orbit)", "0:55:24.0 Համարժեք պայման․ խիտ ուղեծիր (dense orbit)՝ հոմեոմորֆիզմների հաշվելի խմբի համար"], "why": "57:01-57:07 she restricts the equivalence to countable groups of homeomorphisms"},
+    {"time": "1:05:24 -> 1:05:17", "verdict": "take", "replace": ["1:05:24.5 Հեմինգի գրաֆը երկկողմանի է (bipartite)", "1:05:17.0 Հեմինգի գրաֆը երկկողմանի է (bipartite)"], "why": "1:05:16 'բայց բայց բայց ... partite է' is her turn to the result; Codex said 1:05:21, the 'բայց' starts ~1:05:17"},
+    {"time": "1:09:29 -> 1:08:43", "verdict": "take", "replace": ["1:09:29.0 Կապակցվածության բաղադրիչներ և E_0 (eventual equality)", "1:08:43.0 Կապակցվածության բաղադրիչներ և E_0 (eventual equality)"], "why": "1:08:43 a student asks how many components there are; the components discussion runs from there, 46 s before the old stamp"},
+    {"time": "1:16:06", "verdict": "take", "insert": "1:16:06.0 Հարց․ պե՞տք է արդյոք կոնտինուում հատ գույն", "why": "a student's question (countable Polish spaces as colour sets) and her answer (a deep theorem: Borel images have the perfect set property) take 1:16:06-1:17:35 inside the proof chapter. Codex's 1:16:32 is her answer; the question starts earlier"},
+    {"time": "1:26:12", "verdict": "take", "insert": "1:26:12.0 Հարց․ չնչին բազմության հարևանները չնչի՞ն են", "why": "1:26:12 a student proposes that neighbours of a comeager set are comeager; she corrects it to meager and leaves it as homework (to 1:29:13); Codex put it at her statement, 1:27:45"},
+    {"time": "1:29:13", "verdict": "take", "insert": "1:29:13.0 Ապացույցի ավարտը․ f_k բիթափոխումը և հակասություն", "why": "added with the previous one so the 8-minute 'one-bit flip' chapter splits where the proof resumes ('OK, but I won't use this')"},
+    {"time": "1:43:00", "verdict": "take", "replace": ["1:43:00.4 Բորելյան հոմոմորֆիզմ G_0-ից ⇒ հաշվելի BM ներկում չկա", "1:43:00.4 Բորելյան հոմոմորֆիզմ G_0-ից ⇒ հաշվելի բորելյան ներկում չկա"], "why": "precomposing with a Borel map does not preserve Baire measurability (preimages of meager sets need not be BM), so the composition argument gives 'no countable Borel colouring'; that is also what the KST dichotomy she states next is about. Correction note proposed (edited_predicted/corrections_proposed.txt)"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: (1) 1:43:33-1:44:43 the Borel-homomorphism argument proves 'no countable Borel colouring', not BM: TRUE, correction note proposed. (2) 0:38:36 'because there are no cycles' should be 'no odd cycles': a verbal slip, the written statement at 32:50 says odd cycles; no note. (3) 1:16:41-1:17:24 'a BM colouring needs continuum many colours' overreaches: REJECTED, a BM colouring is continuous on a comeager G_δ, its image there is analytic, and if that image were countable one colour class would be nonmeager and her proof applies; so the image is uncountable analytic, hence of size continuum"
+  },
+  "18": {
+   "codex_report": "8 chapter findings + 1 lecturer point",
+   "findings": [
+    {"time": "0:05:08", "verdict": "take", "replace": ["0:05:08.0 Պնդում․ ըստ Բեռի չափելին անընդհատ է կոչնչին (comeager) բազմության վրա", "0:05:08.0 Պնդում․ Y 2-րդ հաշվելի ⇒ BM f: X → Y-ը անընդհատ է կոչնչին (comeager) X′-ի վրա"], "why": "the hypothesis she writes at 5:44 'suppose Y is second countable' and the restriction f|X′ (7:01)"},
+    {"time": "0:35:29", "verdict": "take", "replace": ["0:35:29.0 Զարիսկու տոպոլոգիան F^n-ի վրա", "0:35:29.0 Զարիսկու տոպոլոգիան F^n-ի վրա (F՝ անվերջ դաշտ)"], "why": "35:29 'F an infinite field'"},
+    {"time": "0:47:02", "verdict": "take", "replace": ["0:47:02.0 Էվկլիդեսյան տոպոլոգիան ավելի ուժեղ է (finer)", "0:47:02.0 Էվկլիդեսյան տոպոլոգիան Զարիսկուից ուժեղ է (finer)"], "why": "47:56 'finer than the Zariski topology': stronger than what"},
+    {"time": "0:51:44", "verdict": "take", "insert": "0:51:44.0 Հարց․ ինչպե՞ս են սահմանվում Զարիսկու փակ բազմությունները", "why": "51:44 a student: 'I haven't fully understood the Zariski topology'; she re-explains (closed sets = solution sets, intersections, products for unions) until 54:01, inside the circle example chapter"},
+    {"time": "1:00:14", "verdict": "reject", "why": "rewording; the label already says nonempty opens intersect"},
+    {"time": "1:12:48", "verdict": "take", "replace": ["1:12:48.0 Պնդում․ ծնված տոպոլոգիան «ներքևից վերև»", "1:12:48.0 Պնդում․ ծնված տոպոլոգիան՝ E-ի վերջավոր հատումների միավորումներ (և X)"], "why": "the statement itself (1:14:18 'unions of finite intersections of sets in E', plus X added in Դաս 19)"},
+    {"time": "1:14:34", "verdict": "take", "insert": "1:14:34.0 Ապացույց", "why": "1:14:34 'proof, let us do this proof'; the proof runs to 1:17:10"},
+    {"time": "1:17:53", "verdict": "take", "replace": ["1:17:53.0 Նախաբազիս (prebasis)", "1:17:53.0 Նախաբազիս (prebasis, subbasis)"], "why": "same as Դաս 26 51:16: she says prebasis, books say subbasis"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: 0:15:09 'Egorov' for Lusin, the same finding as review A2; note already proposed"
+  },
+  "19": {
+   "codex_report": "10 chapter findings + title + 1 lecturer point",
+   "findings": [
+    {"time": "0:09:25", "verdict": "take", "replace": ["0:09:25.0 Սահմանումներ․ 1-ին և 2-րդ հաշվելի, սեպարաբել (first/second countable)", "0:09:25.0 Սահմանումներ․ 1-ին և 2-րդ հաշվելիություն, սեպարաբելություն (first/second countable, separable)"], "why": "she defines the properties; nouns and all three English terms"},
+    {"time": "0:37:28 -> 0:37:11", "verdict": "take", "replace": ["0:37:28.0 (Նախա)բազիսների օրինակներ ℝ-ում", "0:37:11.0 (Նախա)բազիսների օրինակներ ℝ-ում"], "why": "0:37:11 'օքե հիմա օրինակներ' is her turn; cut 6 (0:37:15-0:37:26) follows it"},
+    {"time": "0:44:34", "verdict": "take", "insert": "0:44:34.0 Հարց․ ℝ^ℕ-ը 2-րդ հաշվելի՞ է (արտադրյալ տոպոլոգիա)", "why": "a student asks about D = ℕ at 0:44:34; her answer (product topology, cylinders) runs to 0:46:16"},
+    {"time": "0:46:27", "verdict": "take", "replace": ["0:46:27.0 ℝ^2-ի նախաբազիս․ ուղղահայաց կիսահարթություններ", "0:46:27.0 ℝ^2-ի նախաբազիս․ կիսահարթություններ x ＜ a, x ＞ b, y ＜ c, y ＞ d"], "why": "'ուղղահայաց' alone could read as vertical only; she means the open half-planes bounded by lines parallel to the axes (0:47:01 'orthogonal half planes'). Fullwidth ＜ ＞ (YouTube rejects ASCII)"},
+    {"time": "0:49:02", "verdict": "take", "replace": ["0:49:02.0 Բեռի տարածություն A^ℕ․ գլաններ, զրո-չափանիություն", "0:49:02.0 A^ℕ տարածություններ․ գլանային բազիս, զրո-չափանիություն"], "why": "she treats any A^ℕ ('for any set A'), not only the Baire space ℕ^ℕ"},
+    {"time": "0:50:55", "verdict": "reject", "why": "merge into 0:49:02: two parts, the cylinder basis (2 min) and the [i ↦ a] prebasis (3.5 min)"},
+    {"time": "0:57:34 + title", "verdict": "take", "replace": ["0:57:34.0 Անջատելիության աքսիոմներ (separation axioms), T_0", "0:57:34.0 Անջատման (անջատելիության) աքսիոմներ (separation axioms), T_0"], "why": "0:57:39 'կոչվում է անջատման աքսիոմներ', and at 0:57:54 she insists separation is not separability; 'անջատելիություն' blurs the two. Title changed the same way (titles.txt), thumbnail rebuilt. 2026-10-23, the user: add the other option in parentheses, so the label carries the glossary form too; the title stays without it (101 chars with it, YouTube allows 100)"},
+    {"time": "1:17:12", "verdict": "take", "replace": ["1:17:12.0 Լեմմա նորմալ տարածություններում (տնային)", "1:17:12.0 Լեմմա (տնային)․ նորմալում Ū ⊆ V ⇒ ∃ բաց W՝ Ū ⊆ W ⊆ W̄ ⊆ V"], "why": "the statement she writes (1:17:40-1:18:44), U, V open"},
+    {"time": "1:20:12", "verdict": "take", "replace": ["1:20:12.0 Վերջավոր լրացումների տոպոլոգիան T_1 է, բայց ոչ T_2", "1:20:12.0 Վերջավոր լրացումների (և Զարիսկու) տոպոլոգիան T_1 է, բայց ոչ T_2"], "why": "1:21:51-1:22:45 she adds that the Zariski topology over an infinite field behaves the same"},
+    {"time": "1:32:16", "verdict": "take", "replace": ["1:32:16.0 ℤ \\ {±1} = ⋃ pℤ, a + bℤ-երը բացփակ են (clopen)", "1:32:16.0 ℤ \\ {±1} = ⋃ pℤ (p պարզ), a + bℤ-երը (b ≠ 0) բացփակ են (clopen)"], "why": "p prime (1:32:51); b ≠ 0 she fixes at 1:25:01, otherwise a + bℤ is a point"}
+   ],
+   "title": "changed: 'Հաշվելիության և անջատելիության աքսիոմներ' -> 'Հաշվելիության և անջատման աքսիոմներ' (her term, 0:57:39)",
+   "lecturer_mistakes": "Codex: ~1:03:27 she says T_1 means 'your points are open'; it means closed (her written statement and the sentence before say closed). Optional one-line note proposed (corrections_proposed.txt)"
+  },
+  "20": {
+   "codex_report": "8 chapter findings + 2 lecturer points",
+   "findings": [
+    {"time": "0:11:03", "verdict": "take", "replace": ["0:11:03.0 Պնդում․ բավական է ստուգել նախաբազիսի վրա", "0:11:03.0 Պնդում․ f-ն անընդհատ է ⇔ նախաբազիսի տարրերի նախապատկերները բաց են"], "why": "the statement (0:11:32-0:12:19)"},
+    {"time": "0:15:48", "verdict": "take", "replace": ["0:15:48.0 Օրինակ․ f: X → ℝ, (-∞, a) և (b, +∞)", "0:15:48.0 Օրինակ․ f: X → ℝ, բավական են (-∞, a), (b, +∞), a, b ∈ ℚ"], "why": "0:16:50-0:17:13 rational a, b (any dense set)"},
+    {"time": "0:20:17", "verdict": "take", "replace": ["0:20:17.0 Անընդհատ և ինյեկտիվ ≠ ներդրում", "0:20:17.0 Անընդհատ և ինյեկտիվ լինելը բավարար չէ ներդրման համար"], "why": "her sentence (0:20:25 'being continuous and injective is not enough'); '≠' between properties read oddly"},
+    {"time": "0:41:13", "verdict": "take", "replace": ["0:41:13.0 Ինչ ենք ուզում․ կոորդինատային զուգամիտություն, անընդհատ պրոյեկցիաներ", "0:41:13.0 Ի՞նչ ենք ուզում․ կոորդինատային զուգամիտություն, անընդհատ պրոյեկցիաներ"], "why": "her question 'ի՞նչ ենք ուզում'; question mark (series rule)"},
+    {"time": "0:55:09", "verdict": "take", "replace": ["0:55:09.0 Օրինակ․ զուգամիտությունը Կանտորի տարածությունում", "0:55:09.0 Օրինակ․ զուգամիտությունը A^ℕ-ում (A՝ դիսկրետ)"], "why": "0:56:27 'let's write A so the Cantor set is included'"},
+    {"time": "1:04:25", "verdict": "take", "replace": ["1:04:25.0 Հավասարաչափ մետրիկան չափազանց ուժեղ է (too fine)", "1:04:25.0 Հավասարաչափ մետրիկայի տոպոլոգիան չափազանց ուժեղ է (too fine)"], "why": "fine/coarse is said of the topology (1:04:42)"},
+    {"time": "1:19:42", "verdict": "take", "replace": ["1:19:42.4 Պնդում․ արտադրյալ տոպոլոգիան «բռնում» է կետային զուգամիտությունը", "1:19:42.4 Պնդում․ արտադրյալում զուգամիտություն ⇔ կետային զուգամիտություն"], "why": "the statement (1:20:56-1:21:15)"},
+    {"time": "1:26:25", "verdict": "take", "replace": ["1:26:25.0 Ապացույց", "1:26:25.0 Ապացույց․ կետային ⇒ արտադրյալում (հակառակը՝ տնային)"], "why": "she proves the direction that fails for uniform convergence and leaves the converse as homework (1:33:04)"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: (1) 0:23:56 D should contain one sequence of each pair of binary expansions: REJECTED, the example only claims a continuous injection whose inverse is not continuous, true either way. (2) 1:07:57 she says the uniform distance from x^n to the limit grows towards 1; it is 1 for every n: a slip, the conclusion (no uniform convergence) stands; no note"
+  },
+  "21": {
+   "codex_report": "10 chapter findings + 1 lecturer point",
+   "findings": [
+    {"time": "0:02:48", "verdict": "take", "replace": ["0:02:48.0 Ունիվերսալ հատկություն (universal property)․ f-ն անընդհատ է ⇔ proj_i ∘ f-երն են անընդհատ", "0:02:48.0 Ունիվերսալ հատկություն (universal property)․ f-ն անընդհատ է ⇔ բոլոր proj_i ∘ f-երն անընդհատ են"], "why": "0:03:23-0:03:28 'with all projections'"},
+    {"time": "0:15:24", "verdict": "reject", "why": "spelling out '2-րդ': the series writes 2-րդ հաշվելի"},
+    {"time": "0:24:42", "verdict": "take", "replace": ["0:24:42.0 Մետրիզացվողների հաշվելի արտադրյալը մետրիզացվող է", "0:24:42.0 Մետրիզացվողների (և լրիվ մետրիզացվողների) հաշվելի արտադրյալը նույնպիսին է"], "why": "0:26:05-0:26:30 'moreover, if each has a complete metric, so does the product'"},
+    {"time": "0:26:34", "verdict": "take", "replace": ["0:26:34.0 Ապացույց․ d = Σ 2^-i d_i", "0:26:34.0 Ապացույց․ d_i ≤ 1 և d = Σ 2^-i d_i"], "why": "she first bounds the metrics by 1 (0:28:17-0:29:23), then the sum"},
+    {"time": "0:37:55", "verdict": "reject", "why": "'Ինչու տոպոլոգիական, ոչ մետրիկական' is an embedded-question heading ('why topological'), declarative by the series rule (standard.md)"},
+    {"time": "0:42:26 -> 0:42:29", "verdict": "reject", "why": "Codex says the stamp is inside cut 3; the cut ends at 0:42:26.53, the stamp is 0:42:26.6 and lands on her 'քանի որ ... continuous ֆունկցիաների մասին էր'"},
+    {"time": "0:43:38", "verdict": "take", "replace": ["0:43:38.0 U-ի բնութագրիչ ֆունկցիան անընդհատ է ⇔ U-ն բացփակ է", "0:43:38.0 U-ի բնութագրիչ ֆունկցիան անընդհատ է ⇔ U-ն բացփակ է (clopen)"], "why": "she says clopen; same as Դաս 19"},
+    {"time": "0:49:41", "verdict": "take", "replace": ["0:49:41.0 Հաջորդ լավագույնը․ f = 1 փակ C-ի վրա, f = 0 U-ից դուրս", "0:49:41.0 Հաջորդ լավագույնը․ փակ C ⊆ U, f = 1 C-ի վրա, f = 0 U-ից դուրս"], "why": "C is taken inside U (0:49:47-0:50:02)"},
+    {"time": "1:12:22", "verdict": "take", "replace": ["1:12:22.0 f-ի սահմանումը․ f(x) = inf{r : x ∈ U_r}", "1:12:22.0 f-ի սահմանումը․ f(x) = inf{r ∈ D ∪ {1} : x ∈ U_r}, U_1 = X"], "why": "1:12:29-1:12:52 she sets U_1 = X; 1:15:05 'D union one'"},
+    {"time": "1:27:48", "verdict": "take", "replace": ["1:27:48.0 Անընդհատության ապացույցը քայլ առ քայլ", "1:27:48.0 Անընդհատության ապացույցը․ f^-1[0, a) = ⋃_{r ＜ a} U_r"], "why": "the identity the student asks her to go through (1:27:55); fullwidth ＜"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: 0:38:46 'morphisms of metric spaces are isometries' is one convention among several: a philosophical aside, not a mistake; no note"
+  },
+  "22": {
+   "codex_report": "3 chapter findings + 1 lecturer point",
+   "findings": [
+    {"time": "0:13:17 -> 0:13:26", "verdict": "take", "replace": ["0:13:17.0 Ինչո՞ւ է դժվար նույնիսկ մետրիկական դեպքում", "0:13:26.0 Ինչո՞ւ է դժվար նույնիսկ մետրիկական դեպքում"], "why": "0:13:17-0:13:26 is still the theorem ('we may assume α = 1'); 0:13:26 'օքեյ ... հիմա տրված է ինչ-որ ֆունկցիա' starts the difficulty"},
+    {"time": "0:37:21", "verdict": "take", "replace": ["0:37:21.0 Ինտուիցիա․ ամեն քայլին «բոյը» դառնում է 2/3", "0:37:21.0 Ինտուիցիա․ ամեն քայլին «բոյը» բազմապատկվում է 2/3-ով"], "why": "the height becomes (2/3)^n, not 2/3 (0:37:55-0:38:05)"},
+    {"time": "1:13:31", "verdict": "take", "replace": ["1:13:31.0 Սահմանում․ բաց ծածկույթ (open cover)", "1:13:31.0 Սահմանում․ կոմպակտություն բաց ծածկույթներով (open cover)"], "why": "she defines compactness ('a topological space is called compact if every open cover...'); open covers were defined earlier (1:14:23)"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: 1:11:14 she calls the extension 'uniformly continuous'; it is continuous. A slip with no consequence; no note"
+  },
+  "23": {
+   "codex_report": "2 chapter findings",
+   "findings": [
+    {"time": "0:13:20", "verdict": "take", "replace": ["0:13:20.0 Հարց․ Զարիսկու տոպոլոգիան", "0:13:20.0 Հարց․ Զարիսկու տոպոլոգիան կոմպա՞կտ է"], "why": "the question is whether it is compact (0:13:31-0:14:24, Hilbert's basis theorem)"},
+    {"time": "0:28:46", "verdict": "take", "replace": ["0:28:46.0 U-ում թողնում ենք մաքսիմալ բառերը", "0:28:46.0 U-ում թողնում ենք մաքսիմալ գլանները (ամենակարճ բառերը)"], "why": "she removes the longer words that extend a word in U (0:30:10-0:30:20): the kept cylinders are maximal, their words the shortest; 'maximal words' said the opposite"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "none found"
+  },
+  "24": {
+   "codex_report": "10 chapter findings + title + 1 lecturer point",
+   "findings": [
+    {"time": "title", "verdict": "take", "why": "the first 35 minutes are uncountable products (not first countable, not metrizable), which 'Հաջորդականային կոմպակտություն։ Հայնե-Բորել' missed; also avoids the nonstandard 'Heine-Borel' in the title. New: 'Անհաշվելի արտադրյալներ։ Կոմպակտությունը մետրիկական տարածություններում' (Codex); shortened 2026-10-23 to 'Անհաշվելի արտադրյալներ։ Մետրիկական կոմպակտներ' (the thumbnail text): the full title was 119 chars, over YouTube's 100"},
+    {"time": "0:14:19", "verdict": "take", "replace": ["0:14:19.0 Պնդում․ անհաշվելի արտադրյալը 1-ին հաշվելի չէ (first countable)", "0:14:19.0 Պնդում․ ոչ տրիվիալ տարածությունների անհաշվելի արտադրյալը 1-ին հաշվելի չէ (first countable)"], "why": "0:14:56 'of non trivial topological spaces'"},
+    {"time": "0:28:27", "verdict": "reject", "why": "'գլան անհաշվելի հիմքով' is her own geometric phrase (0:36:39 'անհաշվելի հիմքով ցիլինդր'); the label quotes her argument accurately"},
+    {"time": "0:38:53", "verdict": "take", "replace": ["0:38:53.0 Հետևանք․ կոմպակտից հաուսդորֆյան անընդհատ ինյեկցիան ներդրում է (embedding)", "0:38:53.0 Հետևանք․ կոմպակտից հաուսդորֆյան տարածություն անընդհատ ինյեկցիան ներդրում է (embedding)"], "why": "'from compact to a Hausdorff space' read ambiguously"},
+    {"time": "0:54:22", "verdict": "take", "replace": ["0:54:22.0 Հայնե-Բորելի հատկություն (Heine-Borel property)", "0:54:22.0 «Հայնե-Բորել» այս դասում՝ լրիվ և լիովին սահմանափակ"], "why": "her notes: 'A metric space (X, d) is Heine-Borel if it is complete and totally bounded'. Her own name; in most books the Heine-Borel property means closed bounded sets are compact (ℝ has it, not totally bounded). Label states the condition; optional note proposed"},
+    {"time": "0:58:28", "verdict": "take", "replace": ["0:58:28.0 Թեորեմ․ կոմպակտ ⇔ հաջորդականային կոմպակտ ⇔ Հայնե-Բորել", "0:58:28.0 Թեորեմ․ մետրիկականում կոմպակտ ⇔ հաջորդականորեն կոմպակտ ⇔ լրիվ և լիովին սահմանափակ"], "why": "the theorem is for metric spaces (0:58:34); condition (3) stated, see 0:54:22"},
+    {"time": "1:00:25", "verdict": "take", "delete": "1:00:25.0 Մտորումներ․ ինչու են կարևոր երեք պայմաններն էլ", "why": "38 s (1:00:25-1:01:03), under the 45 s merge line; stays inside the theorem chapter"},
+    {"time": "1:02:54", "verdict": "take", "replace": ["1:02:54.0 Ապացույց․ (2) ⇒ (3)", "1:02:54.0 Ապացույց․ (2) ⇒ (3)՝ լրիվություն"], "why": "1:03:44 'take a Cauchy sequence' (completeness part)"},
+    {"time": "1:04:39", "verdict": "take", "insert": "1:04:39.0 (2) ⇒ (3)՝ լիովին սահմանափակություն", "why": "1:04:39 'for total boundedness' to 1:08:56"},
+    {"time": "1:13:48 -> 1:13:37", "verdict": "take", "replace": ["1:13:48.0 ε-ցանցեր և Դիրիխլեի սկզբունք", "1:13:37.0 ε-ցանցեր և Դիրիխլեի սկզբունք"], "why": "'հեսա Հայկի ասածն եմ գրում, ε-ը վերցնում ենք 1/n' (1:13:35-1:13:38) starts the construction; Codex said 1:13:38"},
+    {"time": "1:21:12", "verdict": "take", "insert": "1:21:12.0 Քննարկում․ կապը Քյոնիգի լեմմայի հետ", "why": "1:21:12 'but really we are doing König's lemma' to ~1:23:23, a discussion with the students inside the diagonal-subsequence chapter"}
+   ],
+   "title": "changed (see the first finding); the old title is kept as an option in titles.txt",
+   "lecturer_mistakes": "Codex: 0:54:22 'Heine-Borel' for complete and totally bounded is nonstandard. It is her stated definition (notes, lecture 24), so not a slip; optional note explaining the naming proposed"
+  },
+  "25": {
+   "codex_report": "8 chapter findings + 1 lecturer point",
+   "findings": [
+    {"time": "0:21:04", "verdict": "take", "replace": ["0:21:04.0 Լրիվությունից՝ կետ հատման մեջ, հակասություն", "0:21:04.0 Լրիվությունից՝ կետ փակումների հատման մեջ, հակասություն"], "why": "0:21:04 'closure of U_n is a decreasing sequence of closed sets of vanishing diameter'. Codex dropped 'հակասություն', but the contradiction (0:23:27-0:24:28) is inside this chapter, so it stays"},
+    {"time": "0:24:50", "verdict": "take", "replace": ["0:24:50.2 Հարց․ իսկ եթե x-ը ոչ մի U_n-ում չէ", "0:24:50.2 Հարց․ կարո՞ղ է x-ը ոչ մի U_n-ի չպատկանել"], "why": "0:24:52 'կարող է ... չպատկանել ոչ մի'; question form with ՞ as the series does"},
+    {"time": "0:32:48", "verdict": "take", "replace": ["0:32:48.9 Օրինակներ, որտեղ (1) ⇔ (2)-ը խախտվում է", "0:32:48.9 Ոչ մետրիկական օրինակներ․ կոմպակտ, բայց ոչ հաջորդականորեն կոմպակտ, և հակառակը"], "why": "0:33:04-0:33:17 'ոչ մետրիկական ... կոմպակտ է, բայց sequentially compact չի'; '(1) ⇔ (2)' means nothing without the board. Codex's wording, shortened"},
+    {"time": "0:53:05", "verdict": "reject", "why": "a chapter there would start 15 s after the 0:52:49.7 claim chapter, under the 30 s minimum gap; the ω_1 + 1 / one-point compactification aside (0:53:05-0:54:58) stays inside the claim chapter"},
+    {"time": "1:02:25 -> 1:02:36", "verdict": "take", "replace": ["1:02:25.3 Մաքսիմում չկա․ սուպրեմումը մասնակի սահման է (subsequential limit)", "1:02:36.0 Մաքսիմում չկա․ սուպրեմումը մասնակի սահման է (subsequential limit)"], "why": "1:02:36 'maximum of this doesn't exist'; 1:02:25 'stage n' ends the previous case. Codex's label not taken: մասնակի սահման is the glossary term for a partial (subsequential) limit"},
+    {"time": "1:04:28 -> 1:04:24", "verdict": "take", "replace": ["1:04:28.7 ω_1-ը 1-ին հաշվելի է (first countable)", "1:04:24.0 ω_1-ը 1-ին հաշվելի է (first countable)"], "why": "1:04:24 'սա first countable ...?' poses it, 1:04:28 answers"},
+    {"time": "1:27:00 -> 1:26:56", "verdict": "take", "replace": ["1:27:00.2 Հաջորդականորեն կոմպակտ չէ․ f_n(x) = x-ի n-րդ թվանշանը", "1:26:56.0 Հաջորդականորեն կոմպակտ չէ․ f_n(x) = x-ի n-րդ թվանշանը"], "why": "1:26:56 'but show ... (1:27:04) not sequentially compact'"},
+    {"time": "1:28:52", "verdict": "take", "replace": ["1:28:52.5 Հարց․ 1-ին հաշվելիում կոմպակտից հետևո՞ւմ է հաջորդական կոմպակտությունը", "1:28:52.5 Հարց․ 1-ին հաշվելի տարածությունում կոմպակտությունից հետևո՞ւմ է հաջորդականային կոմպակտությունը"], "why": "'1-ին հաշվելիում' was clipped; the series noun is հաջորդականային կոմպակտություն (Das 24)"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: 0:36:49-0:38:01 the open-interval basis of the order topology misses the endpoint neighborhoods; she repairs it for ω_1 by adding {0} (0:47:37-0:48:46), the only case used. No note"
+  },
+  "26": {
+   "codex_report": "6 chapter findings + 1 lecturer point",
+   "findings": [
+    {"time": "0:19:34", "verdict": "take", "replace": ["0:19:34.0 Քննարկում․ W'_x-ից կառուցել Y-ի ծածկույթ", "0:19:34.0 Քննարկում․ X-ի վերջավոր ենթածածկույթից Y-ի ծածկույթ կառուցելու փորձ"], "why": "0:19:41-0:20:10 a student proposes products U × V over the finite subcover W'_x, then a finite cover from the V's; an attempt (the next chapter says why it fails), and W'_x was board-only notation"},
+    {"time": "0:28:43", "verdict": "take", "replace": ["0:28:43.3 Ուսանողի միտքը․ fiber-ներ և «ժապավեններ»", "0:28:43.3 Ուսանողի միտքը․ X × {y} շերտերը (fibers) և «ժապավենները»"], "why": "0:29:07 'Y-ից վերցնենք ցանկացած կետ ու այդ կետի Fiber-ը նայենք'; 0:31:28 she names it X × {y}; շերտ is the glossary term for fiber"},
+    {"time": "0:39:42", "verdict": "take", "replace": ["0:39:42.3 Անվերջ արտադրյալ․ խողովակի լեմման (tube lemma) չի աշխատում", "0:39:42.3 Անվերջ արտադրյալ․ խողովակի լեմմայի (tube lemma) փաստարկը չի աշխատում"], "why": "0:39:42 'for infinite products this won't work'; 0:40:10 'the tube lemma argument': the argument fails, not the lemma. Her 'չի աշխատում' kept over Codex's 'չի տարածվում'"},
+    {"time": "0:44:33", "verdict": "reject", "why": "the label already says it (any basis works, 0:45:21 'for any or some basis') and matches Das 23's first chapter; the explicit-quantifier version is longer and means the same"},
+    {"time": "1:10:59", "verdict": "take", "replace": ["1:10:59.1 U-ում կա ոչ նախաբազիսային U = V_1 ∩ ... ∩ V_n", "1:10:59.1 Մաքսիմալ ծածկույթում կա ոչ նախաբազիսային U = V_1 ∩ ... ∩ V_n"], "why": "the old label used U for both the cover (𝒰) and its member; 1:11:26 'there must be a U ... not in P'"},
+    {"time": "1:27:33 -> 1:27:17", "verdict": "take", "replace": ["1:27:33.6 Կա i, որ W_i-ն ծածկում է X_i-ն", "1:27:17.0 Կա i, որ W_i-ն ծածկում է X_i-ն"], "why": "1:27:17 'Հիմա ես պնդում եմ, որ գոյություն ունի այդպիսի i'; 1:27:33 is the written restatement"}
+   ],
+   "title": "kept (Codex agrees)",
+   "lecturer_mistakes": "Codex: 0:08:47-0:08:51 'ավելի ճիշտ հաստատ չենք կարողանա' overstates it (first countability is sufficient, not necessary, for closure via sequences). A second earlier she said 'կարող է չկարողանանք', the correct version, in a recap. No note"
+  },
+  "27": {
+   "codex_report": "6 chapter findings + title + 3 lecturer points",
+   "findings": [
+    {"time": "title", "verdict": "take", "why": "subnets run 0:49-1:20, a third of the lecture, and 'Ցանցեր (nets)։ Կոմպակտություն ցանցերով' left them out. Codex proposed 'Ցանցեր և ենթացանցեր։ Կոմպակտության բնութագրումը'; taken as 'Ցանցեր և ենթացանցեր։ Կոմպակտությունը ցանցերով', which says how compactness is characterized"},
+    {"time": "0:08:35 -> 0:07:53", "verdict": "take", "replace": ["0:08:35.2 Դիտողություն․ անտիսիմետրիկություն չենք պահանջում", "0:07:53.0 Քննարկում․ պե՞տք է անտիսիմետրիկությունը (antisymmetry)"], "why": "0:07:53 she starts on two distinct elements each ≤ the other. Then 0:09:14 'we didn't require this to be antisymmetric', 0:09:56 she agrees with a student to require it, her notes list (iii) antisymmetric, and 0:10:30 'չի պահանջում անտիսիմետրիկ' again. The old label and Codex's 'added here' each claim one outcome; the question label claims neither"},
+    {"time": "0:30:33", "verdict": "take", "replace": ["0:30:33.6 Ուղղում․ բազիսը փակ է վերջավոր հատումների նկատմամբ", "0:30:33.6 Դիտողություն․ բազիսը կարելի է վերցնել փակ վերջավոր հատումների նկատմամբ"], "why": "0:31:55 'միշտ կարող ենք վերցնենք'. Not a correction: her notes for example (b) already get directedness from the basis property ('there is W ∈ A with W ⊆ U ∩ V because A is a neighb. basis')"},
+    {"time": "0:32:16", "verdict": "take", "insert": "0:32:16.0 Ցանցը՝ y_U ∈ U ∩ Y (ընտրության աքսիոմով)", "why": "added by Claude in this pass: after the relabel the 6-min chapter from 0:30:33 was mostly the proof; 0:32:16 'let this be the reverse inclusion ... axiom of choice' starts the net, 0:35:50 its convergence"},
+    {"time": "1:04:34 -> 1:04:14", "verdict": "take", "insert": "1:04:14.0 Հարց․ բավակա՞ն է ինդեքսավորել միայն շրջակայքերով", "why": "1:04:14 a student proposes one y_U ∈ U per neighborhood (Codex said 1:04:34; the student starts at 1:04:14); 1:05:10-1:06:22 she explains the indices must also grow in A; the next chapter (1:06:29, neighborhoods × A) is the answer. 'բավակա՞ն' as in Das 23"},
+    {"time": "1:20:22", "verdict": "take", "replace": ["1:20:22.9 Թեորեմ․ կոմպակտ ⇔ ամեն ցանց ունի զուգամետ ենթացանց ⇔ կուտակման կետ", "1:20:22.9 Թեորեմ․ կոմպակտ ⇔ ամեն ցանց ունի զուգամետ ենթացանց ⇔ ամեն ցանց ունի կուտակման կետ"], "why": "the third condition is 'every net has a cluster point' (1:20:48-1:21:42)"},
+    {"time": "1:34:32", "verdict": "take", "replace": ["1:34:32.0 Ամփոփում․ ինչ չհասցրինք պատմել", "1:34:32.0 Ամփոփում․ չպատմված թեմաներ և ինքնուրույն սովորելու խորհուրդ"], "why": "1:34:40 local compactness and compactification; 1:35:00-1:35:49 her advice that an undergraduate degree should get you to learning from a book on your own"},
+    {"time": "1:35:52", "verdict": "take", "replace": ["1:35:52.7 Հարց վերջին ապացույցից", "1:35:52.7 Հարց․ պոչերի նշանակումը վերջին ապացույցում"], "why": "1:36:00 the student says the set should be one of β's; she agrees and renames it (1:36:13-1:36:40); the proof uses the closures of the tails (1:29:59)"}
+   ],
+   "title": "changed (see the first finding); the old title is kept as an option in titles.txt",
+   "lecturer_mistakes": "Codex: (1) 0:07:33 and her notes call condition (iv), any two elements have a common upper bound, 'has joins'; a join is the least upper bound, so the name is wrong (she said she did not remember the name and would fix it if wrong). Optional note proposed. (2) 0:30:36 the intersection-closed basis is not needed (see 0:30:33); harmless, no note. (3) a nonempty index set is not stated: pedantic, no note"
+  }
+ }
+}
