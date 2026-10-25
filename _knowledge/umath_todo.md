@@ -4,7 +4,7 @@ One list across the umath channel's courses. Newest state first in each course; 
 they get done. Private source links (Zoom shares, the Drive access key) are in the git-ignored
 `scripts/.secrets/umath_source_links.md`, not here: this repo is public.
 
-Last updated: 2026-10-20 23:45.
+Last updated: 2026-10-25 21:05 (Tserunyan section).
 
 ## Both channels: description audit (2026-10-22)
 
@@ -182,7 +182,7 @@ share links from the filming team's Telegram (still downloadable, no passcode).
 - [x] Transcripts fetched for all 13 (2026-10-21 01:42; 1195-1613 lines each)
 - [x] Series standard: `_knowledge/tserunyan_metric/standard.md` (2026-10-21). Unlike Papikian, the
       earlier editor cut 12-21% per lecture (start chat, room-mic conversations, logistics; no pauses)
-- [ ] Decide: homework line for Դաս 27 (no homework dated after 19 May)
+- [x] Homework line for Դաս 27: links hw12, the course's last homework (the user's Q10, 2026-10-23)
 - [x] Per video: cut plan, chapters, title, description: drafted 2026-10-21 by 4 agents (2.01M
       tokens), generous pre-ticked cuts by the user's request. 81 min pre-ticked over 13 lectures
       (3.4-9.9% each), 22 min more as unticked suggestions. Drafts in each folder's `edited_predicted/`
@@ -197,13 +197,30 @@ share links from the filming team's Telegram (still downloadable, no passcode).
       against transcripts and her notes (`review_15-27.md`: 27 of 366 chapters changed, 1 added); glossary
       0 DENY; blur frames checked; thumbnails `thumbnails/umath/metric_15..27.png`; review page
       `_knowledge/tserunyan_metric/review_15-27.html`
-- [ ] Review the 13 cut plans (`edit_review/studio.html`), apply in Studio; then
-      `scripts/remap_chapters.py --from-cuts studio_cuts.txt` if the list changed, then push
-- [ ] Blur check in kept video: Դաս 15 edited 1:30:17-1:30:37 (screen share drops: a remote
-      participant's name tag, Zoom page); Դաս 22 students' names in her notes from edited ~0:55:42.
-      If a start cut is unticked: Դաս 20 (TA's email), 26 (her Gmail address), 27 (her bedroom) need blur
+- [x] Դաս 15: the user's cut list saved in Studio (2026-10-23 03:57), then captions, snapped chapters,
+      title, description and thumbnail pushed and read back (12:05-12:08); unlisted
+- [x] Դաս 16 reviewed by the user on studio.html (2026-10-25): 121 cuts (56 new, 5 content cuts unticked),
+      `cut_list.py check` OK, entry list `studio_cuts_to_enter.txt` 120 cuts, 1:42:35 -> 1:29:35; chapters
+      remapped onto it (H:MM:SS, verifier valid)
+- [ ] Դաս 16: enter in Studio by Playwright and save (Q49 2026-10-25: "Not now"; when the user says "pw")
+- [x] Դաս 17-27 re-planned from the user's 16 edit (2026-10-25, DECISIONS #40): pauses from 4 s, her math/talk
+      cuts as suggestions, ends after her next-time line, Դաս 27's farewell kept. 74-139 cuts, 9.6-16.3 min
+      each; all 11 verifier-valid, video previews kept; review page rebuilt
+- [ ] Դաս 17-27: the user reviews each on `edit_review/studio.html` and sends the list with "pw"; Claude enters
+      and saves it (DECISIONS #27), then after processing the steps in `_knowledge/tserunyan_metric/finish_15-27.md`
+      (captions, remap from `timestamps_raw.txt` with `--hms`, snap with `--hms`, verifier,
+      `metric_assemble.py`, glossary, push, `metric_readback.py`). Keep the start cuts of Դաս 20, 26, 27
+      ticked: they hide the TA's email, her Gmail inbox and her bedroom (else blur)
+- [x] Blur decided 2026-10-23: Դաս 15's 18 s Zoom gallery left as is (Q6); Դաս 22 student first names stay,
+      they are in her public PDF (Q11)
 - [x] No correction notes on umath (DECISIONS.md #25, 2026-10-23). Slips kept unpublished in `lecturer_slips_not_published.txt` (17, 18 "Egorov" for Lusin, 19, 24, 27)
-- [ ] Per video: transcript, cuts in Studio, chapters, title, description, thumbnail
+- [x] Chapters nested, 15-27 (2026-10-25, DECISIONS #39): 252 of 376 under 61 parents, in the masters
+      `edited_predicted/timestamps_raw.txt` (flat copies `timestamps_raw_flat.txt`) and Դաս 15's `edited/`
+- [x] Times H:MM:SS throughout (Q40, 2026-10-25): Դաս 15's `edited/` redone, 16-27 drafts too
+- [ ] Re-push Դաս 15's description (now nested, H:MM:SS) together with the 16-27 pushes (Q41)
+- [ ] At the end: nest the published Դաս 1-14 the same way and write their times H:MM:SS (DECISIONS #39)
+- [x] Scripts the push needs are in the repo now: `scripts/non_essential/metric_assemble.py`,
+      `metric_readback.py`, `metric_review_page.py` (finished ones in `scripts/archive/tserunyan_2026-10/`)
 - [ ] Sort the playlist into lesson order (dry run: 11 moves)
 - [ ] If the team finds lecture 1's recording, add it
 

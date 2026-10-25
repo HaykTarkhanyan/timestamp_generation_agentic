@@ -1,0 +1,47 @@
+title = "Tserunyan: nested chapters, H:MM:SS, the user's Դաս 16 review, 17-27 re-planned"
+date = "2026-10-25"
+time = "20:00"
+areas = ["_knowledge/tserunyan_metric", "_knowledge/umath_todo.md", "output/2026-10-21_Das-15..27-Metric-*", "scripts", "scripts/non_essential", "scripts/archive/tserunyan_2026-10", "_learnings", "DECISIONS.md", "~/.claude/CLAUDE.md"]
+
+done = [
+  "Status rundown of the Tserunyan course for the user (what was left)",
+  "Stale todo items ticked (Դաս 27 hw12, blur decisions); the push scripts that lived only in a Temp scratchpad copied into the repo: metric_assemble.py, metric_readback.py (was readback15.py), metric_review_page.py into scripts/non_essential/ with logging; finished one-offs into scripts/archive/tserunyan_2026-10/",
+  "Q37 nested chapters for 15-27 (DECISIONS #39): 252 of 376 under 61 parents, masters edited_predicted/timestamps_raw.txt (flat copies timestamps_raw_flat.txt); every derived file identical apart from the indent; 13/13 verifier-valid",
+  "Bug fixed: snap_chapters_to_captions.py flattened nested lists (rewrote each line from the stripped label); metric_readback.py counted only unindented chapter lines. Checked by re-snapping Դաս 15: identical",
+  "Q40 H:MM:SS throughout: new opt-in --hms in remap_chapters.py and snap_chapters_to_captions.py; Դաս 15 edited/ redone (seconds, labels, indents identical), 16-27 drafts too",
+  "Դաս 16: the user's studio.html list found in Downloads by its exact name (studio_cuts_edited_<id>.txt from the page code), copied to studio_cuts_edited.txt; cut_list.py check OK (121 cuts, 13.0 min); to-enter 120 cuts, 1:42:35 -> 1:29:35; chapters remapped onto it",
+  "Analysis of the user's 15 + 16 edits (learning 2026-10-25-2052): share of each pause length cut, join-across-short-sounds disproven, her math/talk content cuts unticked, practical ones kept",
+  "Questions asked with the interview tool (Q40-Q50); answers recorded in DECISIONS #40",
+  "17-27 re-planned (DECISIONS #40): 4 s pauses, math/talk cuts as suggestions, 17/18 ends after her next-time line (17's chatter before it as a suggestion: no pause separates them), 22's wrap-up and 27's farewell kept; 74-139 cuts, 9.6-16.3 min each, all verifier-valid, previews reused; 960 s",
+  "Review page rebuilt (nested chapters, the user's own list for 15 and 16), checked standalone, opened",
+  "Global CLAUDE.md: find a download by the exact name its page gives it (notes repo 645186d, not pushed)",
+]
+
+pending = [
+  "Դաս 16 not entered in Studio (Q49 'Not now')",
+  "The user reviews 17-27 on studio.html",
+  "Re-push Դաս 15's description (nested, H:MM:SS) with the 16-27 batch (Q41)",
+  "Nest and H:MM:SS the published Դաս 1-14 at the end",
+  "scripts/archive/README.md: two Vahagn rows are glued together ('|| `review_diff.py`', '|| `pause_visual.py`'); left for that session",
+]
+
+next = [
+  "When the user sends a list with 'pw': cut_list.py check / to-enter / entry-js, enter in Studio, diff, save (DECISIONS #27); after processing: fetch captions to edited/, map_transcript_to_edit.py, remap_chapters.py --to-cuts studio_cuts_to_enter.txt --hms, snap_chapters_to_captions.py --hms, verifier, metric_assemble.py, glossary check, push, metric_readback.py",
+  "Watch the 17-27 reviews against DECISIONS #40's revisit trigger (many 3-4 s pauses added, or practical cuts unticked)",
+]
+
+files = [
+  "DECISIONS.md (#39, #40)",
+  "_learnings/2026-10-25-2052_tserunyan-edits-keep-her-math-talk-cut-pauses-from-4s.md",
+  "_knowledge/umath_todo.md (Tserunyan section), _knowledge/tserunyan_metric/finish_15-27.md, review_15-27.json",
+  "scripts/remap_chapters.py, scripts/non_essential/{snap_chapters_to_captions,metric_assemble,metric_readback,metric_review_page}.py, scripts/non_essential/README.md, scripts/archive/README.md, scripts/archive/tserunyan_2026-10/",
+  "output/2026-10-21_Das-15..27-Metric-*: timestamps_raw(.txt, _flat), timestamps, description, content_cuts (+ _before_v4, _v4_4s), studio_cuts (+ _v4_4s), edit_points.json, edit_review/*.html; Դաս 16 studio_cuts_edited.txt, studio_cuts_to_enter.txt; Դաս 15 edited/",
+]
+
+commits = ["one commit of the Tserunyan work only; DECISIONS.md, umath_todo.md and both script READMEs staged as HEAD + this session's changes, so the Vahagn session's uncommitted entries stay in the working tree for its own commit"]
+
+notes = """
+The Vahagn session ran at the same time and edited DECISIONS.md (#35-#38), umath_todo.md, both script READMEs and _learnings.
+Until it commits, the committed DECISIONS.md jumps from #34 to #39.
+find_edit_points refuses a content-cut edge on speech: check --speech-map before splitting an end cut; the captions run ~1 s off.
+"""

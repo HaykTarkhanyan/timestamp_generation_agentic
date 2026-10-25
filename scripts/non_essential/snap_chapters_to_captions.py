@@ -5,7 +5,10 @@ that contains most of the anchor's first 4 words (at least 2, ties to the neares
 floored to the second. Writes <folder>/edited/timestamps.txt (run verify_timestamps.py on it after) and logs every move, every
 unmatched chapter and the real words at each final stamp. ~2 s. Repo root.
 
-    python scripts/non_essential/snap_chapters_to_captions.py output/<folder> [...]
+    python scripts/non_essential/snap_chapters_to_captions.py output/<folder> [...] [--hms]
+
+--hms writes every time as H:MM:SS (0:03:58), for videos over an hour (Ashot, Tserunyan: DECISIONS #34, #39);
+without it MM:SS under an hour and HH:MM:SS after, as before.
 
 Needs <folder>/edited_predicted/{transcript,timestamps}.txt (remap_chapters.py) and the new captions in
 <folder>/edited/ (fetch_subtitles.py --output-dir <folder>/edited). Measured 2026-10-22: 7 lectures in ~2 s."""
@@ -30,7 +33,12 @@ def secs(t):
     return p[0] * 60 + p[1] if len(p) == 2 else p[0] * 3600 + p[1] * 60 + p[2]
 
 
+HMS = "--hms" in sys.argv
+
+
 def fmt(s):
+    if HMS:
+        return f"{s // 3600}:{s % 3600 // 60:02d}:{s % 60:02d}"
     return f"{s // 3600:02d}:{s % 3600 // 60:02d}:{s % 60:02d}" if s >= 3600 else f"{s // 60:02d}:{s % 60:02d}"
 
 
@@ -47,7 +55,7 @@ def load(path):
     return out
 
 
-for d in map(Path, sys.argv[1:]):
+for d in map(Path, [a for a in sys.argv[1:] if a != "--hms"]):
     vid = d.name.split("_", 2)[2]
     pred = load(d / "edited_predicted" / "transcript.txt")
     words = sorted((t, nw(w)) for t, w in caption_words((d / "edited" / f"{vid}.hy.vtt").read_text(encoding="utf-8")) if nw(w))
@@ -55,10 +63,11 @@ for d in map(Path, sys.argv[1:]):
     for line in (d / "edited_predicted" / "timestamps.txt").read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue
+        indent = line[:len(line) - len(line.lstrip())]  # nested sub-chapters keep their 4 spaces
         ts, label = line.strip().split(" ", 1)
         t = secs(ts)
         if t == 0:
-            out.append(f"00:00 {label}")
+            out.append(f"{fmt(0)} {label}")
             continue
         k = next(i for i, (pt, _) in enumerate(pred) if pt >= t)
         anchor_t = pred[k][0]
@@ -88,7 +97,7 @@ for d in map(Path, sys.argv[1:]):
         here = " ".join(w for wt, w in words if new_t <= wt < new_t + 4)[:60]
         report.append(f"   {fmt(t)} -> {fmt(new_t)} {'MOVED' if new_t != t else '     '} "
                       f"{'UNMATCHED ' if not best else ''}{'KEPT(late match) ' if kept_late else ''}{label[:40]} | {here}")
-        out.append(f"{fmt(new_t)} {label}")
+        out.append(f"{indent}{fmt(new_t)} {label}")
     (d / "edited" / "timestamps.txt").write_text("\n".join(out) + "\n", encoding="utf-8")
     log.info(f"\n#### {d.name[11:17]}: {len(out)} chapters, {moved} moved, {unmatched} unmatched")
     log.info("\n".join(r for r in report if "MOVED" in r or "UNMATCHED" in r))

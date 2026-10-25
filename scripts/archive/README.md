@@ -19,3 +19,19 @@ They use `print`, not logging: promote one to `non_essential/` (and give it logg
 | `nest_info_chapters.py` | Nested the chapter lists of all 9 videos (4 spaces, one level, a parent has 2+ children) and wrote videos over an hour as H:MM:SS, from the live descriptions (DECISIONS #34). | Nesting another course's chapters. |
 | `audit_info.py` | Read-only audit of the 9 videos: title format, date line, slide links and pages, chapters, `<` `>`, length, thumbnail, playlist. | Before making Դաս 4-8 public. |
 | `build_info_overview.py`, `info_playlist_dump.py` | Built `_knowledge/info_theory/videos_overview.html` (all 9 videos at a glance, standalone) from the live data; dumped the playlist's titles and descriptions to JSON. | Refresh the overview page after a change. |
+
+## tserunyan_2026-10/ (Anush Tserunyan, Մետրիկական տարածություններ և տոպոլոգիա, Դաս 15-27; copied 2026-10-25 from the session scratchpads)
+
+Copied because their only copies sat in a session temp folder, where a Temp cleanup would have lost them; the
+three still needed for the push went to `non_essential/` (`metric_assemble.py`, `metric_readback.py`,
+`metric_review_page.py`).
+
+| script | what it did | when you would look at it again |
+| --- | --- | --- |
+| `metric_replan5.py` | Re-planned 16-27 with content cuts + silences of 5 s or more, no hum join, kept as `*_v3_5s`, remapped the reviewed chapters onto each plan and ran the verifier; Դաս 15 onto the user's own edit (DECISIONS #26). 30-60 s per lecture. | Re-planning a course at another silence threshold. |
+| `preview_queue.py` | Built the 360p studio.html video previews one after another and checked after each that the page's cut list was still the 5 s plan (two queues ran in parallel; Claude Code killed both once for low RAM). 11-21 min per lecture. | Building many previews in a row; run one queue at a time on this laptop. |
+| `metric_nest.py` | Nested all 13 chapter masters by hand-picked line numbers (DECISIONS #39), checked the rules (one level, 2+ children), regenerated the derived files and proved only the indentation changed; Դաս 15's snapped list too. ~65 s. | Nesting the published Դաս 1-14 at the end (their lists come from the live descriptions, not from masters). |
+| `user_pause_fit.py`, `user_pause_merge_fit.py`, `user_nonsilent_words.py` | Measured the user's Դաս 15 and 16 edits: silences re-detected in memory at 2-5 s and matched to their cuts (share cut per pause length), a join-across-short-sounds variant (worse at every setting), and what fills the added cuts that are not silence (fillers, clicks, Zoom's digital silence). ~20 s per lecture each. | The evidence behind DECISIONS #40 and `_learnings/2026-10-25-2052_tserunyan-edits-keep-her-math-talk-cut-pauses-from-4s.md`; the pattern for reading the next course's first reviewed list. |
+| `metric_replan4.py` | Re-planned 17-27 from the user's answers (DECISIONS #40): unticked her math/talk content cuts, moved the 17/18 end cuts after her next-time line, kept Դաս 27's farewell, ran `find_edit_points.py --min-silence 4` (previews reused), kept `*_v4_4s`, remapped the nested chapters with `--hms`, verifier. 960 s for 11. | Re-planning again after the next review. |
+| `metric_end_words.py`, `word_times.py` | Caption words with times around each end cut, and in any window (`word_times.py <lesson> <from> <to>`), to place cut edges at her sentences; check `--speech-map` too, captions run ~1 s off. | Placing a content-cut edge by her words. |
+| `same_chapters.py` | Proves two chapter lists differ only in time format (same indents, seconds, labels). | After a reformat such as `--hms`. |

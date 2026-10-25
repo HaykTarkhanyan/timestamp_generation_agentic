@@ -25,10 +25,24 @@ Standard: `standard.md`. Read this file first after a context compaction.
 predate the review: do not remap from them. After Studio saves the cuts: fetch the edited captions,
 `snap_chapters_to_captions.py`, verifier, glossary check, rebuild the review page, push.
 
+**2026-10-25: the masters are nested** (DECISIONS.md #39, 4-space sub-chapters; flat copies in
+`timestamps_raw_flat.txt`). Every step above keeps the indent (`snap_chapters_to_captions.py` fixed the same day).
+Assemble with `python scripts/non_essential/metric_assemble.py <N>`, read back with
+`python scripts/non_essential/metric_readback.py <video id>`, rebuild the review page with
+`python scripts/non_essential/metric_review_page.py`.
+
+**2026-10-25, times are H:MM:SS throughout** (the user's Q40, DECISIONS.md #39): pass `--hms` to
+`remap_chapters.py` and to `snap_chapters_to_captions.py`. Դաս 15's `edited/` is redone that way.
+
+**2026-10-25, Դաս 16 reviewed and 17-27 re-planned** (DECISIONS.md #40): the user's 16 list is
+`studio_cuts_edited.txt` (copied from Downloads, `studio_cuts_edited_3K76N175zvM.txt`), entry list
+`studio_cuts_to_enter.txt`, Studio not entered yet (Q49 "Not now"). 17-27: pauses from 4 s, her math/talk cuts as
+suggestions, plans `*_v4_4s`, backups `content_cuts_before_v4.json`; script `scripts/archive/tserunyan_2026-10/metric_replan4.py`.
+
 ## Cut plans (2026-10-23, DECISIONS.md #26)
 
 Դաս 15: the user's studio.html edit, `studio_cuts_edited.txt` (92 cuts, 14.8 min, content cut 0:04:57-0:05:49
-dropped). 16-27: content cuts + silences of 5 s or more, no hum join (`*_v3_5s`, scratchpad `metric_replan5.py`,
+dropped). 16-27: content cuts + silences of 5 s or more, no hum join (`*_v3_5s`, `scripts/archive/tserunyan_2026-10/metric_replan5.py`,
 470 s for 12; old plans backed up in scratchpad `replan5_backup/`). Chapters remapped onto each plan, all
 13 verifier-valid (smallest gap 33-71 s).
 
@@ -48,7 +62,7 @@ edited captions, snap the chapters, verifier, push title, description and thumbn
 **Դաս 15 finished (2026-10-23 12:05-12:08):** processed at 1:26:02 (predicted 5161.6 s); new captions
 fetched to `edited/` (end 1:25:57); `map_transcript_to_edit.py` + `remap_chapters.py --to-cuts
 studio_cuts_to_enter.txt`; `snap_chapters_to_captions.py` moved 12 of 30 chapters by 1-2 s, 1 unmatched
-(01:01:28, kept); verifier valid; `edited/description.txt` by scratchpad `metric_assemble.py`; 0 glossary
+(01:01:28, kept); verifier valid; `edited/description.txt` by `metric_assemble.py` (now in `scripts/non_essential/`); 0 glossary
 findings. Title, description and thumbnail pushed to YouTube, read back: title and description match, 30
 chapter lines. Still unlisted (visibility waits for the user).
 

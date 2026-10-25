@@ -11,7 +11,9 @@ Writes edited_predicted/timestamps.txt and the chapter block (under "⏳ Թեմ�
 edited_predicted/description.txt, both derived from --from, which is never touched. A chapter that
 starts inside a new cut moves to that cut's end, where the speech resumes; each such move is logged.
 Raises on chapters closer than YouTube's 10 s floor; warns under 30 s. Times are written MM:SS under
-an hour and HH:MM:SS from there, as in the drafts. Paths are relative to --output-dir.
+an hour and HH:MM:SS from there, as in the drafts; --hms writes every time as H:MM:SS (0:03:58), the
+format for videos over an hour in the Ashot and Tserunyan series (DECISIONS #34, #39). Paths are
+relative to --output-dir.
 Until 2026-10-21 this was a throwaway script (Arnak lessons 11-13 and the 2025 recording).
 """
 import argparse
@@ -68,11 +70,13 @@ def parse(ts: str) -> float:
     return sum(float(v) * 60 ** i for i, v in enumerate(reversed(ts.split(":"))))
 
 
-def fmt(s: int) -> str:
+def fmt(s: int, hms: bool = False) -> str:
+    if hms:
+        return f"{s // 3600}:{s % 3600 // 60:02d}:{s % 60:02d}"
     return f"{s // 3600:02d}:{s % 3600 // 60:02d}:{s % 60:02d}" if s >= 3600 else f"{s // 60:02d}:{s % 60:02d}"
 
 
-def remap(d: Path, src_name: str, from_cuts: str, to_cuts: str) -> int:
+def remap(d: Path, src_name: str, from_cuts: str, to_cuts: str, hms: bool = False) -> int:
     fps = float(json.loads((d / "edit_points.json").read_text(encoding="utf-8"))["fps"])
     old = [] if from_cuts == "raw" else read_cuts(d / from_cuts, fps)
     new = read_cuts(d / to_cuts, fps)
@@ -87,7 +91,7 @@ def remap(d: Path, src_name: str, from_cuts: str, to_cuts: str) -> int:
         if inside and t:
             log.info(f"moved to the end of cut {inside[0]:.2f}-{inside[1]:.2f} s (raw): {m[3].strip()[:60]}")
         times.append(t)
-        out.append(f"{m[1]}{fmt(t)}{m[3]}")
+        out.append(f"{m[1]}{fmt(t, hms)}{m[3]}")
     gaps = [(b - a, out[k + 1].strip()) for k, (a, b) in enumerate(zip(times, times[1:]))]
     too_close = [(g, c) for g, c in gaps if g < YOUTUBE_MIN_GAP]
     if too_close:
@@ -120,9 +124,10 @@ def main() -> None:
                     help="the drafted chapters (default: %(default)s)")
     ap.add_argument("--from-cuts", required=True, help='the cut list --from is timed on, or "raw"')
     ap.add_argument("--to-cuts", default="studio_cuts_to_enter.txt", help="the new cut list (default: %(default)s)")
+    ap.add_argument("--hms", action="store_true", help="write every time as H:MM:SS (0:03:58), for videos over an hour")
     a = ap.parse_args()
     t0 = time.time()
-    code = remap(a.output_dir, a.src, a.from_cuts, a.to_cuts)
+    code = remap(a.output_dir, a.src, a.from_cuts, a.to_cuts, a.hms)
     log.info(f"done in {time.time() - t0:.1f} s")
     sys.exit(code)
 

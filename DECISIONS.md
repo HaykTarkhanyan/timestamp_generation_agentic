@@ -2,6 +2,51 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 40. Tserunyan 17-27 re-planned from the user's Դաս 16 edit: 4 s pauses, her math talk kept
+
+- **Decision:** For 17-27: silences of 4 s or more pre-ticked (`--min-silence 4`, no hum join); her math or talk
+  content cuts (thinking aloud, false starts, room discussions, tangents, word searches) become unticked suggestions;
+  practical cuts (searching notes, books or slides, pasting, drawing-tool fiddling, iPad/Zoom/screen trouble,
+  household interruptions, homework and scheduling admin, time checks) and the "any questions?" prompts with their
+  silence stay ticked. End cuts start after her "next time we'll ..." line (17, 18; 22's whole wrap-up cut and 17's
+  chatter before the line, which no pause separates from it, became suggestions). Դաս 27's farewell (both goodbye
+  cuts) is kept. Plans kept as `*_v4_4s`; the 5 s plans stay as `*_v3_5s`. Supersedes #26 for 17-27.
+- **Date / status:** 2026-10-25, active. The user's answers: Q44 "4 s ticked only", Q45 "make them suggestions ill
+  tick if i want uself" (follow-up: "Only the math/talk ones"), Q46 "Cut the prompt with its silence", Q48 keep the
+  next-time line, Q50 "Keep both".
+- **Why:** #26's own trigger fired: on Դաս 16 the user again added many short cuts by hand (56 new, 121 in all, the
+  plan had 70) and unticked all 5 of her math/talk content cuts while keeping the 2 practical ones (searching her
+  slides, a drawing fumble); on Դաս 15 they had added 87 and unticked her teaching tangent. Share of each pause length
+  the user cut (silences re-detected in memory, `scripts/archive/tserunyan_2026-10/user_pause_fit.py`): 5 s+ 100% / 94% (Դաս 16 / 15),
+  4-5 s 80% / 81%, 3.5-4 s 39% / 68%, 3-3.5 s 32% / 35%, under 3 s 8-13% / 32%. At 4 s the plan holds 29 of the 56
+  added on 16 with 8 pauses they left in. 13 (16) and 18 (15) added cuts are pauses split by short sounds (fillers,
+  clicks, Zoom's digital silence); joining silences across short sounds matched worse at every setting
+  (`user_pause_merge_fit.py`, same folder), so no join.
+- **Alternatives rejected:** 4 s ticked + 3-4 s as unticked suggestions and 3.5 s ticked (offered, the user picked
+  4 s only); keeping 5 s (53 hand-added cuts on 16); unticking every judgment cut (the user: only the math/talk ones).
+- **What would change this:** the user again adding many 3-4 s pauses or unticking practical cuts on 17-27.
+
+## 39. Tserunyan's chapters are nested (15-27 now, the published 1-14 at the end of the course)
+
+- **Decision:** Indent sub-chapters by 4 spaces in Մետրիկական տարածություններ և տոպոլոգիա, one level, a parent has
+  2+ children, short theorem-then-proof pairs stay flat (the rules of #34 and #36). Դաս 15-27 are nested now in
+  their masters (`edited_predicted/timestamps_raw.txt`, flat copy `timestamps_raw_flat.txt`); Դաս 1-14 (published,
+  flat) get the same once 15-27 are finished. Labels and times unchanged.
+- **Date / status:** 2026-10-25, active (the user's Q37: "nested, we update the older 14 in the end as well").
+- **Why:** the same reading aid as Ashot (#34) and Vahagn (#36); her lectures run as definition, claim, proof
+  steps, questions, which nest naturally. 13 lists: 252 of 376 chapters nested under 61 parents (2-6 per
+  lecture), every derived file identical to the flat one apart from the leading spaces, 13/13 verifier-valid.
+- **Pipeline changes:** `snap_chapters_to_captions.py` dropped the indent (rewrote every line from the stripped
+  label) and now keeps it; `metric_readback.py` counts indented chapter lines. `remap_chapters.py` and
+  `metric_assemble.py` already kept it. Checked by re-snapping Դաս 15: output identical to the nested list.
+- **Alternatives rejected:** flat lists like 1-14 and the already pushed Դաս 15 (the user chose nesting); nesting
+  only 16-27 and leaving 15 flat (one video out of step; it is unlisted, so its re-push costs nothing).
+- **What would change this:** YouTube no longer keeping the indent or parsing indented chapters (then flatten all).
+- **Time format (the user's Q40 the same day, "H:MM:SS throughout"):** every time as H:MM:SS (`0:03:58`), as Ashot
+  (#34) and the ML course, instead of `03:58` mixed with `01:01:28`; all 13 lectures run over an hour. New opt-in
+  `--hms` in `remap_chapters.py` and `snap_chapters_to_captions.py` (their default is unchanged for the other
+  courses). Դաս 15 redone: seconds, labels and indents identical. Also for 1-14 at the end.
+
 ## 34. Ashot's chapters are nested like Metric Academy's; videos over an hour use H:MM:SS throughout
 
 - **Decision:** Indent sub-chapters by 4 spaces (one level, a parent has 2+ children) in all 9 Ինֆորմացիայի
