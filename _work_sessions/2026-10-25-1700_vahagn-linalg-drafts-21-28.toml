@@ -1,0 +1,60 @@
+title = "Vahagn linear algebra 21.1-28.4: studio pages, chapters, titles, descriptions and thumbnails for all 25 pieces, Codex-reviewed"
+date = "2026-10-25"
+time = "17:00"   # continues 2026-10-24-2103_vahagn-linalg-download-ashot-public.toml; the user away for most of it
+areas = ["_knowledge/vahagn_linalg", "scripts/non_essential", "scripts/archive/vahagn_2026-10", "scripts/fetch_captions_api.py", "output/2026-10-25_VidSection-*", "thumbnails/umath", "DECISIONS.md", "PLANNER.md"]
+
+done = [
+  "Studio pages (4 s, 360p previews) for all 25 pieces with scripts/non_essential/vahagn_plan_queue.py. 11 recordings have mains hum (noise floor ~-65 dB instead of ~-85): analysed from a 150 Hz high-passed copy (--highpass), which took 23.3.b from 45 cuts / 5.6 min ('91% silent') to 21 cuts / 1.9 min; previews keep the raw sound (DECISIONS #37)",
+  "Content cuts: only one, 23.1.a's aside on Germany around 1900 (04:13.5-05:02.1), unticked 'your call' (content_cut_notes.md). No logistics or off-topic talk elsewhere; students aren't on his mic",
+  "Chapters for all 25 on the raw timeline (edited_predicted/timestamps_raw.txt, one level of nesting, DECISIONS #36), self-reviewed, then 25 read-only Codex reviews (~25 min); every finding checked against the transcript, verdicts in codex_review.json; 8 titles changed on its advice",
+  "Titles (3 per piece), thumbnail text and dates in pieces.json; series rules in standard.md (title pattern, exact description template, his own terms, formulas in the book's notation)",
+  "vahagn_build_drafts.py on all 25: titles.txt, description.txt, chapters remapped onto the current cut list, verifier, glossary, thumbnail. All 25 valid, 0 DENY / 0 NEAR; the 8 ENG hits are nullity(T) in formulas, which is what his screen shows (frame of 21.2 at 15:05: 'rank(T) + nullity(T) = dim(V)'). 23.2 lost its 30 s gap after the remap (12:19 -> 12:49 became 20 s): folded the φ = 181° child into the 10:53 one",
+  "Review page _knowledge/vahagn_linalg/review_21-28.html (vahagn_review_page.py, 0.9 MB, standalone): 25 collapsible sections + TOC, thumbnails embedded, links to each studio.html. Checked in Playwright: 25/25 images load, only console error the favicon 404",
+  "Totals with the 4 s plans: 8.06 h raw -> 7.61 h (26.8 min cut); rendering at the measured 3x realtime ~2.5 h",
+  "21.2: the old upload brEvgF3isUE had no ASR; the user uploaded it again as nrKtWsRzEHA (unlisted, captions fetched, fetch_captions_api.py got --fps for fileDetails without a frame rate). brEvgF3isUE set unlisted (it had stayed private: my miss)",
+  "Disk full mid-run (0 MB free): on the user's word deleted the Ashot raw MOVs and the 3 caption-upload mp4s (13 GB free); a truncated 28.1.a hp150_source.wav and a 0-byte 21.2 WAV left by the failure were deleted and rebuilt",
+  "One-off scripts of the session archived in scripts/archive/vahagn_2026-10/ (README updated); the 3 reusable ones listed in scripts/non_essential/README.md",
+  "Plan changed (DECISIONS #38, replaces #35): only the sound is fixed locally, the cuts go in through Studio. Loudness samples page (output/vahagn_linalg_overview/audio/loudness_samples.html: 21.1 and 23.3.b at own level / -20 / -16 / -14 plus published 20.3 at -29.7 LUFS); the user picked -16",
+  "2026-10-26: all 25 pieces reviewed. Batch pages per lecture day (vahagn_batch_review.py build/split, DECISIONS #39; tested: untouched plans split back exactly, an edited list with every kind of change splits correctly, preview in sync 0 ms after fixing a 32 ms AAC offset), green markers where each piece starts, a timer that starts on the first edit",
+  "Webcam rule (DECISIONS #40): his camera is on from 6 May to the end (vahagn_camera_on.py, left black bar of the box); every cut there is an unticked suggestion; zero-cut plans now accepted where the file says '# 0 cuts' (map_transcript_to_edit, remap_chapters, cut_list, split)",
+  "Bug fixed: studio.html stored edits under a list id made from the cuts only, so the zero-cut batch pages shared one id and opened with the previous page's cuts; the id now includes the video (learning 2026-10-26-0120)",
+  "Final check of all 25: 1 likely accident (23.1.b opening), 7 ends with 1-3.6 s of padding, 3 off-topic candidates; the user kept all as returned. 8.06 h raw -> 7.85 h (12.7 min cut), 159 cuts to enter",
+  "scripts/non_essential/vahagn_audio_fix.py: all 25 in 31.8 min into vahagn_linalg/audio_fixed/ (1.36 GB), -16.5..-17.4 LUFS, peaks -0.5..-0.8 dBFS, picture copied and lengths checked; results in _knowledge/vahagn_linalg/audio_fix.json. Speed: ffmpeg 9 instead of PATH 5.1 and 48 kHz AAC (32 kHz was 2.3x slower)",
+  "The user uploaded the 25 fixed files (private); vahagn_push_metadata.py --chapters raw --apply: unlisted, titles, descriptions with raw-timeline chapters (uploads uncut), thumbnails, course playlist; read back 25/25 (3,750 units). Map in uploads_fixed.json",
+  "Noise that comes and goes (the user: 'static noise ... only at some point'): pause-background probe (scratchpad static_probe.py, block-wise; the first version took ~2 GB RAM and was stopped at 2.4 GB free): 8-17 dB rises in 6-16% of the 10 s windows of the 11 hum pieces + 22.1, 0-1% elsewhere; those stretches stay ~7 dB above the rest after the light denoise. Not yet confirmed by ear (status.md)",
+]
+
+pending = [
+  "Q100: the user names 1-2 spots where the static is audible; check the probe flags them; then A/B samples of a stronger denoise applied only inside the detected stretches",
+  "Q101: if the audio is redone, the affected pieces (11 hum + 22.1) need NEW uploads (YouTube can't replace a file): hold off the Studio cuts for those; the other 13 can be cut now",
+  "Q95: enter the 159 reviewed cuts in Studio (Playwright; its browser was locked by another session tonight); then vahagn_push_metadata.py --chapters edited --description-only per piece",
+  "Q92: remove the old 21.2 'Todo' (brEvgF3isUE) and the raw nrKtWsRzEHA from the playlist (both visible, unlisted); Q93: playlist sorts by date, so the 25 sit in upload order: switch to manual in Studio, then a section-aware sort (~4,500 units)",
+  "Publish on the user's word; Q84: delete the 25 raw caption uploads, the old 21.2 and Ashot's 3 private caption uploads; Q72: dates of the published pieces (2020 lines, 20.3)",
+  "Q85: delete Ashot's leftover recorder mp3 (1.47 GB) and renders (2.1 GB)? C: ~9 GB free",
+  "21.1's audio_samples/ (16 MB of listening files) left untracked on purpose",
+]
+
+next = "Q100 first (where the static is heard), then decide Q101; meanwhile the Studio cuts of the 13 unaffected pieces can go in once Playwright is free."
+
+files = [
+  "_knowledge/vahagn_linalg/{status.md, standard.md, pieces.json, uploads.json, drive_files.json, codex_review.json, content_cut_notes.md, drafts_status.json, review_21-28.html}",
+  "output/2026-10-25_VidSection-*/edited_predicted/{timestamps_raw.txt, timestamps.txt, titles.txt, description.txt, review_codex.md, glossary_check.txt, verify_report.json}",
+  "output/2026-10-25_VidSection-*/edit_review/studio.html (+ audio/, video/ 360p previews)",
+  "thumbnails/umath/linalg_*.png (25)",
+  "scripts/non_essential/{vahagn_plan_queue.py, vahagn_build_drafts.py, vahagn_review_page.py}, scripts/non_essential/README.md",
+  "scripts/archive/vahagn_2026-10/, scripts/archive/README.md",
+  "scripts/fetch_captions_api.py (--fps)",
+  "DECISIONS.md #35-#40, PLANNER.md",
+  "scripts/non_essential/{vahagn_audio_fix.py, vahagn_push_metadata.py, vahagn_batch_review.py, vahagn_camera_on.py}",
+  "scripts/find_edit_points.py (timer auto-start, video markers, camera_on.json, suggestions in the overview, list id with the video), scripts/cut_list.py / map_transcript_to_edit.py / remap_chapters.py ('# 0 cuts')",
+  "output/vahagn_b0504..b0525 (batch pages), output/2026-10-25_VidSection-*/{studio_cuts_edited.txt, studio_cuts_to_enter.txt, camera_on.json}",
+  "_learnings/2026-10-25-2050_vahagn-review-cuts-follow-speech-not-pause-length.md, _learnings/2026-10-26-0120_studio-list-id-must-include-the-video.md",
+]
+
+commits = ["2026-10-26 ~02:00: this session's files only (another session was working in the repo; its hunks in DECISIONS.md, the skill, find_edit_points.py, cut_list.py, umath_todo.md and the archive README were left unstaged)"]
+
+notes = [
+  "A chain like 'queue.py ... | grep -v FutureWarning && next' reports exit 0 even when queue.py fails (grep's code wins): the 21.2 failure only showed in the log. Don't pipe a step whose failure must stop the chain",
+  "remap_chapters moves a chapter that sits in a pause to the end of the cut covering it (33 such moves here, all a few seconds); a 30 s gap on the raw timeline can drop under 30 s after the pause between is cut, so lint again after every remap",
+  "C: is at 12 GB free of 476 GB; ~5.6 GB used by something outside the output folders was not investigated (the user: 'no need now')",
+]

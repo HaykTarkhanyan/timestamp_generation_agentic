@@ -75,9 +75,10 @@ def read_cuts(path: Path, fr: Frames) -> list[tuple[int, int, int, str]]:
     """(n, start frame, end frame, note) of every 'Cut N ...' line."""
     if not path.exists():
         raise FileNotFoundError(path)
-    cuts = [(int(m[1]), fr(m[2]), fr(m[3]), m[5].strip())
-            for line in path.read_text(encoding="utf-8").splitlines() if (m := CUT.match(line))]
-    if not cuts:
+    text = path.read_text(encoding="utf-8")
+    cuts = [(int(m[1]), fr(m[2]), fr(m[3]), m[5].strip()) for line in text.splitlines() if (m := CUT.match(line))]
+    # empty only when the file says so ("# 0 cuts ...": every cut a suggestion and none taken, DECISIONS #40)
+    if not cuts and not re.search(r"^# 0 cuts\b", text, flags=re.M):
         raise ValueError(f"no 'Cut N  start  ->  end  (d s)' lines in {path}")
     return cuts
 
@@ -174,6 +175,8 @@ def to_enter(d: Path, studio_end: str | None) -> int:
         extended = se - e
         merged[-1] = (s, se, ns)
     header = [f"# From {EDITED}: {len(paste)} cuts -> {len(merged)}"]
+    if not merged:
+        header.append("# 0 cuts to enter")   # tells the chapter scripts the empty list is meant
     if dropped:
         header.append(f"# dropped (under {MIN_CUT_S} s): " + ", ".join(f"Cut {n} ({t:.2f} s)" for n, t in dropped))
     if any(len(ns) > 1 for _, _, ns in merged):

@@ -234,12 +234,13 @@ student questions ("the dean's office told us that...") that must be cut.
 On YouTube: Part 1-5 in full (1.1 to 16.2.b, 57 pieces), Part 6's three full lectures 07-09 cut
 into Դաս 16.2-գ to 19.2 (10 pieces), Part 7's 20.1-20.3 and 21.2.
 
-- [ ] Missing, Part 7: 21.1, 22.1, 22.2, 22.3
-- [ ] Missing, Part 8: 23.1.a, 23.1.b, 23.2, 23.3.a, 23.3.b, 23.4, 24.1, 24.2.a, 24.2.b, 24.3, 24.4
-- [ ] Missing, Part 9: 27.1, 27.2, 28.1.a, 28.1.b, 28.2.a, 28.2.b, 28.3.a, 28.3.b, 28.4
+**2026-10-24: state, dates, Drive IDs and problems in `_knowledge/vahagn_linalg/status.md`.**
+
+- [x] Missing pieces downloaded 2026-10-24 via Playwright (Drive opens only for the user's personal
+      account, `drive/u/1`): Part 7 21.1, 22.1, 22.2, 22.3; Part 8 23.1.a-24.4 (11); Part 9 27.1-28.4 (9)
+- [ ] Upload, edit (the published pieces had ~15% cut), chapters, titles, descriptions, thumbnails
 - [ ] Դաս 21.2 is titled "Todo": give it a real title (and chapters)
-- [ ] Check what intro/outro the existing pieces use (a YSU course, so probably not the ASOF one)
-- [ ] Download tool for Drive folders: `gdown` is not installed yet
+- [x] Intro/outro: none (published 20.3 starts on the raw file's first frame)
 - [ ] Sort the playlist into lesson order (dry run: 67 of 73 move)
 - [ ] Not on YouTube at all, decide later: practical-session recordings, consultations
 - Sections 25 and 26 are not in the folder (probably never recorded)

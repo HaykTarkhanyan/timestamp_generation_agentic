@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio cuts D2mDYBhjoMk</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+
+.specscroll { overflow-x: auto; overflow-y: hidden; padding: 3px 0; margin-top: 3px; }
+.specwrap { position: relative; width: 100%; cursor: ew-resize; touch-action: none; user-select: none; }
+.specwrap img { display: block; width: 100%; height: 130px; border-radius: 6px; pointer-events: none; }
+.zoom button { min-width: 28px; }
+.zoom .zl { display: inline-block; min-width: 34px; text-align: center; font-variant-numeric: tabular-nums; }
+.bar { position: absolute; top: -3px; bottom: -3px; width: 3px; margin-left: -1px; background: #fff;
+       box-shadow: 0 0 0 1px #000; border-radius: 2px; pointer-events: none; z-index: 2; }
+.shade { position: absolute; top: 0; bottom: 0; background: rgba(217, 0, 18, .38); pointer-events: none;
+         border-left: 3px solid var(--red); border-right: 3px solid var(--red); box-sizing: border-box; }
+.shade.added { background: rgba(242, 168, 0, .40); border-color: var(--orange); }
+.shade.other { background: rgba(150, 150, 150, .40); border: none; }
+.edit, .added-row { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin: 4px 0; font-size: 14px; }
+.edit .times, .added-row .times { font-variant-numeric: tabular-nums; }
+.edit button, .added-row button { font-size: 13px; }
+.added-row .tag { color: var(--orange); font-weight: 650; }
+.was, .warn, .msg { font-size: 13px; color: var(--muted); }
+.warn, .msg { color: var(--red); }
+details.cut.changed > summary { color: var(--red); }
+details.cut.removed > summary { color: var(--muted); text-decoration: line-through; }
+.shade.gone { background: none; border: 2px dashed var(--red); }
+.edit button:disabled { opacity: .4; cursor: not-allowed; }
+#export { width: 100%; min-height: 220px; font: 13px/1.4 ui-monospace, Consolas, monospace; }
+#player { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 8px 0 10px; display: flex;
+          gap: 12px; align-items: flex-end; border-bottom: 1px solid var(--line); }
+#player video { width: 480px; max-width: 62vw; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; display: block; }
+#player.hidden video { display: none; }
+#player .pinfo { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
+body.has-video details.cut { scroll-margin-top: 300px; }
+.axis { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted);
+        font-variant-numeric: tabular-nums; }
+.axis .a0, .axis .a1 { white-space: nowrap; }
+.ctl { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 8px 0 4px; }
+.ctl .now { font-variant-numeric: tabular-nums; font-weight: 650; min-width: 90px; }
+.play { min-width: 74px; }
+.flag button { font-size: 12px; padding: 0 6px; margin-left: 6px; }
+.err { color: var(--red); }
+nav ol { columns: 2; font-variant-numeric: tabular-nums; }
+summary { font-variant-numeric: tabular-nums; }
+.stamp { font-size: 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--red);
+         border-radius: 6px; padding: 6px 10px; display: inline-block; }
+#worktimer { position: fixed; right: 12px; bottom: 12px; z-index: 20; display: flex; gap: 8px; align-items: center;
+             background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px;
+             font-size: 14px; font-variant-numeric: tabular-nums; box-shadow: 0 1px 4px rgba(0, 0, 0, .25); }
+#worktimer.on { border-color: var(--red); }
+
+.tlsec { width: calc(100vw - 48px); margin-left: calc(50% - 50vw + 16px); }
+.tlsec canvas { display: block; width: 100%; touch-action: none; user-select: none; border-radius: 4px; }
+.tl-over { margin: 6px 0 4px; cursor: pointer; background: var(--absorbed); }
+.tl-main { cursor: crosshair; }
+.tl-sel { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; min-height: 34px; font-size: 14px; margin: 6px 0 2px; }
+.tl-sel .times { font-variant-numeric: tabular-nums; }
+.tl-sel .why { color: var(--muted); flex-basis: 100%; }
+.tl-sel .tag { font-weight: 650; }
+.tl-line { font-size: 14px; min-height: 22px; }
+.tl-line .t { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tl-line .nx { color: var(--muted); }
+.tl-gaps, .tl-keys { font-size: 13px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.legend i { display: inline-block; width: 18px; height: 10px; margin-right: 5px; vertical-align: -1px; border-radius: 2px; }
+body.has-video #timeline { scroll-margin-top: 300px; }
+</style></head>
+<body class="has-video" data-fps="25" data-ctx="3" data-duration="1080.64" data-list="c6a64798" data-video="D2mDYBhjoMk"><main>
+<h1>Studio cuts: VidSection 24 4</h1>
+<p class="stamp"><b>0 cuts</b> &middot; list c6a64798 &middot; built 2026-10-26 01:19<span id="nchanged"></span>
+ - reload this tab if the list changed since you opened it</p>
+<p class="warn" id="storage"></p>
+<div id="worktimer"><span id="wt-time">0:00:00</span><button id="wt-btn">Start timer</button></div>
+<p class="sub">0 cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
+(25 fps, H:MM:SS:FF). Removes <span id="removed">0:00:00: 0:18:01 &rarr; 0:18:01</span>.</p>
+<nav><ol><li><a href="#timeline">Timeline: the whole lecture</a></li><li><a href="#cards">Each cut on its own (0 cuts)</a></li><li><a href="#export-list">Cut list with your changes (last first)</a></li></ol></nav>
+<div id="player"><video id="media" preload="metadata" playsinline src="../video/D2mDYBhjoMk_360p.mp4"></video><div class="pinfo"><span id="nowcut">Space plays the timeline</span><button id="vtoggle">Hide video</button></div></div>
+
+<details open class="tlsec" id="timeline"><summary>Timeline: the whole lecture</summary>
+<div class="ctl"><button class="tl-play play">Play</button><span class="now tl-now"></span>
+  <label><input type="checkbox" class="tl-skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="tl-zout">-</button> <span class="tl-zl"></span> <button class="tl-zin">+</button></span>
+  <span>speed <button class="tl-speed" title="1x, 2x, 4x (F)">1&times;</button></span>
+  <span><button class="tl-left" title="back">&larr;</button><button class="tl-right" title="forward">&rarr;</button></span>
+  <span>silence no cut covers <button data-j="gap" data-d="0">&lsaquo; prev</button><button data-j="gap" data-d="1">next &rsaquo;</button></span>
+  <span>cut <button data-j="cut" data-d="0">&lsaquo; prev</button><button data-j="cut" data-d="1">next &rsaquo;</button></span>
+  <button class="tl-add">Add a cut at the bar</button> <span class="tl-gaps"></span>
+  <span class="tl-keys"><b>Keys:</b> Space play/pause &middot; S skip the cuts &middot; 1 zoom out &middot; 2 zoom in (at the mouse when it is on the spectrogram) &middot; &larr;/&rarr; move the bar (Shift: 1 s) &middot; Delete remove the selected cut &middot; Z or Ctrl+Z bring back the last removed one &middot; F speed 1&times;/2&times;/4&times;</span></div>
+<canvas class="tl-over"></canvas>
+<canvas class="tl-main"></canvas>
+<div class="tl-sel tl-selbox"></div>
+<p class="msg tl-msg"></p>
+<div class="tl-line"></div>
+<div class="legend"><span><i style="background:#D90012"></i>cut, safe</span><span><i style="background:#F2A800"></i>cut, your call</span><span><i style="border:2px dashed #F2A800"></i>suggested, not ticked</span><span><i style="background:#0033A0"></i>yours: new or changed</span><span><i style="border:2px dashed #D90012"></i>removed</span><span><i style="background:#FFD60A"></i>silence of 2 s+ that no cut covers (+ hum: split by a hum, counted as one)</span><span><i style="background:#fff;border:1px solid #888"></i>white strip: overlaps another cut</span></div>
+<p class="note">The strip on top is the whole lecture: drag it to move the view. On the spectrogram: click to put the bar
+there (and select what is under it), drag across to draw a new cut, drag a cut's edge to move it. Ctrl+wheel zooms, Shift+wheel
+or a sideways swipe scrolls, the arrow buttons page. While it plays, the view follows the bar until you scroll away from it;
+scroll back to the bar (or click) and it follows again. Every change goes into the list at the bottom.</p>
+</details><details open id="cards"><summary>Each cut on its own (0 cuts)</summary><p class="sub">The same cut list as the timeline: a change here shows there and the other way round. Keys follow what you clicked last, a cut below or the timeline.
+Play starts 3 s before the cut and runs to the end of the spectrogram; space bar pauses, &larr;/&rarr; move the bar
+0.2 s (Shift: 1 s). <b>Zoom</b> with the +/- buttons or Ctrl+mouse wheel; the spectrogram then scrolls sideways
+(scrollbar or Shift+wheel) and follows the bar while playing. <b>To move a cut's edge</b>, drag it, or put the bar there and press Start = bar / End = bar
+(whole frames; the spectrogram has 20 s of room either side). <b>Add a cut at the bar</b> makes a new 1 s cut
+there, to drag into shape; every Cut number on the page and in the list follows Studio's order. <b>Remove cut</b> drops a
+planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it back).</p></details>
+<details open id="export-list"><summary>Cut list with your changes (last first)</summary>
+<p class="note">The same format as <code>studio_cuts.txt</code>, renumbered in Studio's order. Changed cuts say what they
+were, added ones say NEW, removed ones are listed at the end as REMOVED. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
+this list to Claude.</p>
+<p><button id="download" data-name="studio_cuts_edited_D2mDYBhjoMk.txt">Download list</button> <button id="copy">Copy list</button> <span id="copied"></span> <button id="reset-all">Put all cuts back</button></p>
+<textarea id="export" readonly data-header="# studio_cuts_edited_D2mDYBhjoMk.txt | VidSection 24 4 | 2026-10-25_VidSection-24-4_D2mDYBhjoMk"></textarea>
+</details>
+</main>
+<script>
+const A = document.getElementById('media');                  // the 360p video preview, or the WAV
+const FPS = +document.body.dataset.fps, CTX = +document.body.dataset.ctx;
+const NEW_LEN = 1.0;                                          // a cut added at the bar starts 1 s long
+const KEY = 'studio-edits-' + document.body.dataset.list;   // a new cut list starts with no edits
+const OVERLAP = ' - Studio would join them, adjust one of the two';
+const cards = [...document.querySelectorAll('details.cut')];
+let cur = null, raf = null, focusEl = null, uid = 0;
+function tc(t) { const f = Math.floor(t * FPS + 1e-6), s = Math.floor(f / FPS);
+  return Math.floor(s / 3600) + ':' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' +
+         String(s % 60).padStart(2, '0') + ':' + String(f % FPS).padStart(2, '0'); }
+const num = (el, k) => parseFloat(el.dataset[k]);
+const snap = t => Math.round(t * FPS) / FPS;   // Studio works in whole frames
+// Every cut on the page: each card's planned cut, plus the cuts added on this page (host = the card).
+const plan = cards.map(el => ({ host: el, s: num(el, 's0'), e: num(el, 'e0'), s0: num(el, 's0'), e0: num(el, 'e0'), added: false, removed: false }));
+cards.forEach((el, i) => { el.plan = plan[i]; });
+let added = [];
+const all = () => plan.filter(c => !c.removed).concat(added);   // a removed cut is out of the list and the numbering
+const own = el => [el.plan, ...added.filter(c => c.host === el)];
+const changed = c => !c.added && (Math.abs(c.s - c.s0) > 1e-6 || Math.abs(c.e - c.e0) > 1e-6);
+function storageError(what, err) {
+  document.getElementById('storage').textContent = `Edits can't be ${what} in this browser (${err.message}) - copy the list below before closing the tab.`;
+}
+function save() {
+  const edits = {};
+  plan.forEach(c => { if (changed(c)) edits[c.host.id] = [c.s, c.e]; });
+  try { localStorage.setItem(KEY, JSON.stringify({ edits, added: added.map(c => ({ host: c.host ? c.host.id : null, s: c.s, e: c.e })),
+                                                   removed: plan.filter(c => c.removed).map(c => c.host.id) })); }
+  catch (err) { storageError('saved', err); }
+  tAutoStart();   // every edit comes through here
+}
+function load() {
+  let o;
+  try { o = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (err) { storageError('loaded', err); return; }
+  const edits = 'edits' in o ? o.edits : o;    // the first version stored only {cardId: [s, e]}
+  plan.forEach(c => { if (edits[c.host.id]) [c.s, c.e] = edits[c.host.id]; });
+  (o.added || []).forEach(a => { const h = a.host === null ? null : document.getElementById(a.host);   // null: added on the timeline
+    if (h || a.host === null) added.push({ id: ++uid, host: h, s: a.s, e: a.e, added: true }); });
+  (o.removed || []).forEach(id => { const c = plan.find(p => p.host.id === id); if (c) c.removed = true; });
+}
+function show(el, t) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1');
+  t = Math.min(w1, Math.max(w0, t));
+  el.querySelector('.bar').style.left = (100 * (t - w0) / (w1 - w0)) + '%';
+  el.querySelector('.now').textContent = tc(t);
+  el.dataset.pos = t;
+  return t;
+}
+const ZOOMS = [1, 2, 4, 8, 16, 32, 64];
+const parts = el => ({ sc: el.querySelector('.specscroll'), wrap: el.querySelector('.specwrap'), w0: num(el, 'w0'), w1: num(el, 'w1') });
+function axis(el) {        // the times at the visible edges of the spectrogram
+  const { sc, wrap, w0, w1 } = parts(el), W = wrap.offsetWidth;
+  el.querySelector('.a0').textContent = tc(W ? w0 + sc.scrollLeft / W * (w1 - w0) : w0);
+  el.querySelector('.a1').textContent = tc(W ? Math.min(w1, w0 + (sc.scrollLeft + sc.clientWidth) / W * (w1 - w0)) : w1);
+}
+function zoomTo(el, z, t, x) {   // zoom level z, keeping time t at x px from the visible left edge
+  const { sc, wrap, w0, w1 } = parts(el);
+  el.dataset.zoom = z;
+  wrap.style.width = (100 * z) + '%';
+  sc.scrollLeft = (t - w0) / (w1 - w0) * wrap.offsetWidth - x;
+  el.querySelector('.zl').textContent = z + '\u00d7';
+  axis(el);
+}
+function zoomStep(el, dir, t, x) {   // one level in (+1) or out (-1), up to 4 screen px per image px
+  const zs = ZOOMS.filter(z => z === 1 || z * parts(el).sc.clientWidth <= 4 * num(el, 'pxw'));
+  let i = zs.indexOf(num(el, 'zoom'));
+  if (i < 0) i = zs.length - 1;                                 // the window got narrower since
+  zoomTo(el, zs[Math.max(0, Math.min(zs.length - 1, i + dir))], t, x);
+}
+function follow(el, t) {   // zoomed in: page the view along so the bar stays visible
+  const { sc, wrap, w0, w1 } = parts(el);
+  if (num(el, 'zoom') === 1) return;
+  const x = (t - w0) / (w1 - w0) * wrap.offsetWidth;
+  if (x < sc.scrollLeft || x > sc.scrollLeft + sc.clientWidth - 2) sc.scrollLeft = x - sc.clientWidth * 0.1;
+}
+const span = c => `${tc(c.s)} \u2192 ${tc(c.e)}   (${(c.e - c.s).toFixed(1)} s)`;
+function renderCard(el) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1'), p = el.plan, mine = own(el);
+  const box = el.querySelector('.shades');
+  box.textContent = '';
+  all().forEach(c => {
+    if (c.e <= w0 || c.s >= w1) return;
+    const d = document.createElement('div'), a = Math.max(c.s, w0), b = Math.min(c.e, w1);
+    d.className = 'shade' + (c.host !== el ? ' other' : c.added ? ' added' : '');
+    d.style.left = (100 * (a - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (b - a) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  });
+  if (p.removed) {                                              // where the removed cut was: a dashed outline
+    const d = document.createElement('div');
+    d.className = 'shade gone';
+    d.style.left = (100 * (p.s - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (p.e - p.s) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  }
+  el.querySelector('.times').textContent = p.removed ? `removed on this page (planned ${tc(p.s0)} - ${tc(p.e0)})`
+    : `start ${tc(p.s)}  end ${tc(p.e)}  (${(p.e - p.s).toFixed(2)} s)`;
+  el.querySelector('.was').textContent = changed(p) && !p.removed ? `was ${tc(p.s0)} - ${tc(p.e0)}` : '';
+  el.querySelector('.warn').textContent = p.warn.length ? p.warn.join(', ') + OVERLAP : '';
+  el.querySelector('.rm').textContent = p.removed ? 'Restore cut' : 'Remove cut';
+  ['.set-s', '.set-e', '.reset'].forEach(k => { el.querySelector(k).disabled = p.removed; });
+  el.querySelector('.added-cuts').innerHTML = mine.slice(1).map(c =>
+    `<div class="added-row"><span class="tag">New Cut ${c.n}</span><span class="times">start ${tc(c.s)}  end ${tc(c.e)}  (${(c.e - c.s).toFixed(2)} s)</span>` +
+    `<button data-id="${c.id}" data-do="s">Start = bar</button><button data-id="${c.id}" data-do="e">End = bar</button>` +
+    `<button data-id="${c.id}" data-do="x">Remove</button><span class="warn">${c.warn.length ? c.warn.join(', ') + OVERLAP : ''}</span></div>`).join('');
+  const extra = mine.length > 1 ? `   + new ${mine.slice(1).map(c => 'Cut ' + c.n).join(', ')}` : '';
+  const title = (p.removed ? `Removed   ${tc(p.s0)} \u2192 ${tc(p.e0)}` : `Cut ${p.n}   ${span(p)}` + (changed(p) ? '   changed' : '')) + extra;
+  el.classList.toggle('changed', (changed(p) && !p.removed) || mine.length > 1);
+  el.classList.toggle('removed', p.removed);
+  el.querySelector('summary').textContent = title;
+  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none on a timeline page (the contents list the cards' section only)
+  if (toc) toc.textContent = title;
+}
+function renderAll() {
+  const sorted = all().sort((a, b) => a.s - b.s || a.e - b.e);   // Studio numbers its list by start time
+  plan.forEach(c => { c.n = null; c.warn = []; });              // removed cuts get no number and no warnings
+  sorted.forEach((c, i) => { c.n = i + 1; c.warn = []; });
+  for (let i = 1; i < sorted.length; i++) if (sorted[i].s < sorted[i - 1].e) {
+    sorted[i].warn.push(`overlaps Cut ${sorted[i - 1].n}`); sorted[i - 1].warn.push(`overlaps Cut ${sorted[i].n}`); }
+  cards.forEach(renderCard);
+  const gone = plan.filter(c => c.removed);
+  const nChanged = plan.filter(c => changed(c) && !c.removed).length, nNew = added.length, nRemoved = gone.length;
+  let removed = 0, end = -1;                                    // union, so overlaps count once
+  sorted.forEach(c => { removed += Math.max(0, c.e - Math.max(c.s, end)); end = Math.max(end, c.e); });
+  const dur = +document.body.dataset.duration;
+  const hms = t => { t = Math.round(t); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+  document.getElementById('nchanged').textContent = nChanged || nNew || nRemoved
+    ? ` \u00b7 on this page: ${nChanged} changed, ${nNew} new, ${nRemoved} removed` : '';
+  document.getElementById('removed').textContent = `${hms(removed)}: ${hms(dur)} \u2192 ${hms(dur - removed)}`;
+  document.getElementById('export').value = document.getElementById('export').dataset.header + '\n' +
+    `# ${sorted.length} cuts (${nChanged} changed, ${nNew} new, ${nRemoved} removed on studio.html), numbered as in Studio, listed last first for entry\n` +
+    sorted.slice().reverse().map(c =>
+      `Cut ${String(c.n).padStart(2)}   ${tc(c.s)}  ->  ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)` +
+      (c.added ? '   NEW' : changed(c) ? `   CHANGED, was ${tc(c.s0)} -> ${tc(c.e0)}` : '')).join('\n') +
+    gone.map(c => `\n# REMOVED, was ${tc(c.s0)} -> ${tc(c.e0)}`).join('');      // planned cuts dropped on the page
+  if (window.tlRefresh) tlRefresh();                            // the timeline view, when the page has one
+}
+function setEdge(c, k, t, fromButton = false, lim = null, msgEl = null) {   // lim, msgEl: the timeline's (whole video)
+  const el = c.host, [lo, hi] = lim || [num(el, 'w0'), num(el, 'w1')], msg = msgEl || el.querySelector('.msg');
+  t = snap(Math.min(hi, Math.max(lo, t)));
+  const s = k === 's' ? t : c.s, e = k === 'e' ? t : c.e;
+  if (e - s < 1 / FPS - 1e-6) {
+    if (fromButton) msg.textContent = `Cut ${c.n}: the start has to stay before the end - move the bar first.`;
+    return;
+  }
+  msg.textContent = '';
+  c[k] = t;
+  renderAll();
+  if (fromButton) save();
+}
+function addCut(el) {
+  const w1 = num(el, 'w1');
+  let s = snap(num(el, 'pos')), e = snap(Math.min(w1, s + NEW_LEN));
+  if (e - s < NEW_LEN / 2) s = snap(e - NEW_LEN);                 // bar at the window's end: grow to the left
+  added.push({ id: ++uid, host: el, s, e, added: true });
+  renderAll(); save();
+}
+function tick() {
+  if (!cur) return;
+  let t = A.currentTime;
+  if (cur.querySelector('.skip').checked) {                      // jump over every cut, added ones too
+    const c = all().find(c => t >= c.s && t < c.e);
+    if (c) { A.currentTime = c.e; t = c.e; }
+  }
+  if (t >= num(cur, 'w1')) A.pause();                            // the end of the spectrogram
+  show(cur, t);
+  follow(cur, t);
+  if (!A.paused) raf = requestAnimationFrame(tick);
+}
+function label(el, playing) { el.querySelector('.play').textContent = playing ? 'Pause' : 'Play'; }
+function play(el) {
+  if (window.tlStop) tlStop();                                  // the timeline was playing
+  if (cur && cur !== el) { A.pause(); label(cur, false); }
+  cur = focusEl = el;
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = el.plan.removed ? 'Playing a removed cut' : `Playing Cut ${el.plan.n}`;
+  let t = num(el, 'pos');
+  if (t >= num(el, 'w1') - 0.05) t = show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  follow(el, t);
+  A.currentTime = t;
+  A.play().then(() => { label(el, true); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); })
+          .catch(err => { if (err.name !== 'AbortError') el.querySelector('.err').textContent = 'Could not play: ' + err.message; });  // AbortError = paused before playback began
+}
+A.addEventListener('pause', () => { if (cur) label(cur, false); cancelAnimationFrame(raf); });
+A.addEventListener('error', () => document.querySelectorAll('.err').forEach(e => e.textContent = 'Media failed to load: ' + A.src));
+const player = document.getElementById('player');
+if (player) {                                                   // video preview: hide/show, remembered per browser
+  const btn = document.getElementById('vtoggle');
+  const setHidden = h => { player.classList.toggle('hidden', h); btn.textContent = h ? 'Show video' : 'Hide video'; };
+  try { setHidden(localStorage.getItem('studio-video-hidden') === '1'); } catch (err) { storageError('loaded', err); }
+  btn.addEventListener('click', () => {
+    const h = !player.classList.contains('hidden');
+    setHidden(h); btn.blur();
+    try { localStorage.setItem('studio-video-hidden', h ? '1' : '0'); } catch (err) { storageError('saved', err); }
+  });
+}
+// Work timer: Start/Stop adds up the time spent reviewing, kept in this browser per video (a reload
+// or a rebuilt page keeps it). It counts wall-clock time, so it keeps running while the tab is closed.
+const TKEY = 'studio-timer-' + document.body.dataset.video;
+let tTotal = 0, tSince = null;                                  // ms so far, and when the running stretch began
+try { const o = JSON.parse(localStorage.getItem(TKEY) || 'null'); if (o) ({ total: tTotal, since: tSince } = o); }
+catch (err) { storageError('loaded', err); }
+const tBtn = document.getElementById('wt-btn');
+function tShow() {
+  const s = Math.floor((tTotal + (tSince ? Date.now() - tSince : 0)) / 1000);
+  document.getElementById('wt-time').textContent = Math.floor(s / 3600) + ':' +
+    String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  tBtn.textContent = tSince ? 'Stop timer' : 'Start timer';
+  document.getElementById('worktimer').classList.toggle('on', tSince !== null);
+}
+function tStore() {
+  try { localStorage.setItem(TKEY, JSON.stringify({ total: tTotal, since: tSince })); } catch (err) { storageError('saved', err); }
+}
+tBtn.addEventListener('click', () => {
+  if (tSince !== null) { tTotal += Date.now() - tSince; tSince = null; } else tSince = Date.now();
+  tStore(); tShow(); tBtn.blur();                               // so the space bar pauses playback, not the timer
+});
+// Any edit starts a stopped timer (the user, 2026-10-25: "i forget to start it sometimes"); Stop still works.
+function tAutoStart() {
+  if (tSince !== null) return;
+  tSince = Date.now(); tStore(); tShow();
+}
+setInterval(tShow, 1000);
+tShow();
+load();
+cards.forEach(el => {
+  el.dataset.zoom = 1;
+  show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  el.querySelector('.play').addEventListener('click', () => (cur === el && !A.paused) ? A.pause() : play(el));
+  const wrap = el.querySelector('.specwrap');
+  const tAt = ev => { const r = wrap.getBoundingClientRect();
+    return num(el, 'w0') + Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * (num(el, 'w1') - num(el, 'w0')); };
+  const px = t => { const r = wrap.getBoundingClientRect(); return r.left + (t - num(el, 'w0')) / (num(el, 'w1') - num(el, 'w0')) * r.width; };
+  const edgeAt = ev => {   // within 8 px of an edge of this card's cuts: drag that edge instead of the bar
+    let best = null, bd = 8;
+    own(el).filter(c => !c.removed).forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(ev.clientX - px(c[k])); if (d <= bd) { bd = d; best = { c, k }; } }));
+    return best; };
+  const sc = el.querySelector('.specscroll');
+  const barX = () => { const x = px(num(el, 'pos')) - sc.getBoundingClientRect().left;   // bar off screen: centre it
+    return x >= 0 && x <= sc.clientWidth ? x : sc.clientWidth / 2; };
+  ['zin', 'zout'].forEach((k, i) => el.querySelector('.' + k).addEventListener('click', ev => {
+    focusEl = el; ev.currentTarget.blur();                      // so the space bar plays again, not zooms again
+    zoomStep(el, i ? -1 : 1, num(el, 'pos'), barX()); }));
+  let wheel = 0;
+  sc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer (a trackpad pinch sends the same)
+    if (!ev.ctrlKey) return;
+    ev.preventDefault();
+    wheel += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;   // deltaMode 1: lines, not pixels
+    if (Math.abs(wheel) < 50) return;
+    const dir = wheel < 0 ? 1 : -1;
+    wheel = 0;
+    focusEl = el;
+    zoomStep(el, dir, tAt(ev), ev.clientX - sc.getBoundingClientRect().left); }, { passive: false });
+  sc.addEventListener('scroll', () => axis(el));
+  let drag = null;
+  const move = ev => {
+    if (drag === 'bar') { const t = show(el, tAt(ev)); if (cur === el && !A.paused) A.currentTime = t; }
+    else setEdge(drag.c, drag.k, tAt(ev)); };
+  wrap.addEventListener('pointerdown', ev => { focusEl = el; drag = edgeAt(ev) || 'bar'; wrap.setPointerCapture(ev.pointerId); move(ev); });
+  wrap.addEventListener('pointermove', ev => { if (drag) move(ev); else wrap.style.cursor = edgeAt(ev) ? 'col-resize' : 'ew-resize'; });
+  wrap.addEventListener('pointerup', () => { if (drag && drag !== 'bar') save(); drag = null; });
+  el.querySelector('.set-s').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 's', num(el, 'pos'), true); });
+  el.querySelector('.set-e').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 'e', num(el, 'pos'), true); });
+  el.querySelector('.reset').addEventListener('click', () => { el.plan.s = el.plan.s0; el.plan.e = el.plan.e0; renderAll(); save(); });
+  el.querySelector('.rm').addEventListener('click', ev => { focusEl = el; ev.currentTarget.blur();
+    el.plan.removed = !el.plan.removed; renderAll(); save(); });
+  el.querySelector('.add').addEventListener('click', () => { focusEl = el; addCut(el); });
+  el.querySelector('.added-cuts').addEventListener('click', ev => {   // buttons of the added cuts, rebuilt on every render
+    const b = ev.target.closest('button');
+    if (!b) return;
+    focusEl = el;
+    const c = added.find(x => x.id === +b.dataset.id);
+    if (b.dataset.do === 'x') { added = added.filter(x => x !== c); renderAll(); save(); }
+    else setEdge(c, b.dataset.do, num(el, 'pos'), true); });
+  el.querySelectorAll('.jump').forEach(b => b.addEventListener('click', () => { show(el, parseFloat(b.dataset.t)); play(el); }));
+});
+renderAll();
+cards.forEach(axis);
+window.addEventListener('resize', () => cards.forEach(axis));
+document.getElementById('copy').addEventListener('click', () =>
+  navigator.clipboard.writeText(document.getElementById('export').value)
+    .then(() => document.getElementById('copied').textContent = 'copied')
+    .catch(err => document.getElementById('copied').textContent = 'Copy failed: ' + err.message + ' - select the text and copy it by hand'));
+document.getElementById('download').addEventListener('click', ev => {   // a file in Downloads: safer than the clipboard
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([document.getElementById('export').value], { type: 'text/plain;charset=utf-8' }));
+  a.download = ev.currentTarget.dataset.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  document.getElementById('copied').textContent = 'downloaded as ' + a.download;
+});
+document.getElementById('reset-all').addEventListener('click', () => {
+  if (!confirm('Put every cut back to the planned times, restore the removed ones and drop the cuts you added?')) return;
+  plan.forEach(c => { c.s = c.s0; c.e = c.e0; c.removed = false; }); added = []; renderAll(); save(); });
+document.addEventListener('keydown', ev => {
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  const el = focusEl || cur;                                     // the card clicked last, or the one playing
+  if (ev.code === 'Space' && el && tag !== 'BUTTON') { ev.preventDefault(); (cur === el && !A.paused) ? A.pause() : play(el); }
+  if ((ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') && focusEl) {   // move the bar 0.2 s, Shift: 1 s
+    ev.preventDefault();
+    const t = show(focusEl, num(focusEl, 'pos') + (ev.code === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2));
+    follow(focusEl, t);
+    if (cur === focusEl && !A.paused) A.currentTime = t; } });
+</script>
+<script id="tl-data" type="application/json">{"tiles": {"key": {"version": 1, "wav_bytes": 34580558, "wav_mtime": 1792950440, "duration": 1080.64}, "vmax_db": -47.4, "hi": {"px_per_s": 80, "tile_s": 30, "n": 37, "src": "media/timeline/hi_"}, "lo": {"px_per_s": 8.0, "tile_s": 300, "n": 4, "src": "media/timeline/lo_"}}, "pauses": [[[0.0, 2.03]], [[14.76, 16.51], [16.99, 18.52]], [[32.92, 36.54]], [[51.0, 51.54], [51.79, 54.49]], [[102.65, 104.78]], [[135.75, 139.07]], [[139.35, 140.56], [140.81, 144.04]], [[176.59, 178.6]], [[207.84, 208.32], [209.09, 211.44]], [[229.26, 229.81], [230.32, 232.7]], [[243.38, 246.02]], [[248.64, 251.59], [252.08, 254.48]], [[258.04, 260.18]], [[262.27, 267.78]], [[269.82, 271.71], [271.97, 277.47]], [[279.65, 280.97], [281.19, 282.32]], [[293.98, 297.03]], [[315.62, 316.09], [316.4, 318.27]], [[323.82, 325.93]], [[346.52, 349.22]], [[356.61, 359.95]], [[371.75, 373.01], [373.41, 375.26]], [[378.51, 382.9]], [[423.3, 425.49], [425.97, 426.62]], [[494.01, 494.43], [494.76, 496.83]], [[499.89, 500.24], [500.53, 503.31]], [[523.52, 524.9], [525.44, 526.5]], [[534.45, 536.45]], [[549.14, 549.48], [549.77, 551.56]], [[555.64, 557.65]], [[562.49, 563.38], [563.85, 567.2]], [[573.19, 575.32]], [[587.36, 589.5], [589.95, 591.17]], [[601.9, 603.95]], [[607.39, 609.75]], [[616.97, 619.15]], [[627.55, 637.75]], [[638.03, 640.34]], [[646.99, 650.21]], [[650.69, 653.55]], [[660.78, 663.36]], [[675.12, 677.26]], [[697.33, 700.26]], [[704.67, 707.22]], [[711.41, 711.75], [712.03, 714.95]], [[737.15, 740.19]], [[741.12, 743.54]], [[749.64, 752.45]], [[753.16, 754.09], [754.57, 755.92]], [[783.32, 784.77], [785.47, 786.33]], [[810.05, 812.23]], [[817.69, 820.59]], [[833.24, 835.47]], [[866.07, 868.55]], [[871.7, 872.58], [872.82, 874.46]], [[892.72, 899.96]], [[906.52, 908.9]], [[912.71, 916.73]], [[920.78, 921.79], [922.06, 923.85]], [[926.73, 928.14], [928.34, 929.68]], [[933.73, 936.53]], [[972.85, 973.57], [973.93, 976.35]], [[988.44, 991.27]], [[991.59, 994.79]], [[1002.07, 1004.11], [1004.32, 1006.07]], [[1008.15, 1010.74]], [[1011.27, 1011.72], [1012.24, 1014.31]], [[1026.26, 1029.75]], [[1046.86, 1049.29], [1049.96, 1050.45]], [[1073.31, 1080.64]]], "loud": [25, 19, 80, 87, 87, 87, 83, 85, 87, 86, 68, 87, 87, 82, 73, 17, 86, 28, 88, 86, 87, 76, 83, 89, 83, 90, 89, 90, 67, 86, 82, 87, 86, 29, 50, 28, 76, 61, 83, 84, 89, 91, 75, 88, 87, 88, 87, 78, 83, 85, 81, 84, 19, 18, 88, 88, 86, 86, 73, 91, 89, 85, 86, 85, 83, 90, 77, 85, 15, 84, 65, 89, 64, 19, 91, 87, 88, 82, 83, 89, 90, 87, 92, 89, 88, 91, 87, 83, 89, 58, 88, 80, 90, 95, 84, 83, 82, 85, 79, 88, 90, 89, 87, 53, 90, 86, 84, 88, 83, 81, 91, 88, 83, 86, 83, 87, 83, 83, 84, 71, 80, 85, 79, 86, 79, 87, 86, 87, 80, 79, 91, 85, 79, 87, 84, 75, 14, 12, 19, 74, 81, 16, 17, 91, 92, 87, 90, 83, 84, 83, 83, 90, 83, 78, 81, 84, 86, 85, 79, 89, 91, 87, 86, 82, 92, 93, 92, 89, 93, 84, 95, 92, 86, 93, 92, 90, 89, 76, 96, 92, 79, 88, 85, 96, 84, 80, 72, 84, 85, 85, 85, 91, 90, 87, 81, 88, 87, 83, 85, 78, 85, 89, 56, 92, 87, 82, 84, 83, 80, 77, 86, 73, 88, 82, 44, 94, 83, 82, 77, 16, 69, 87, 84, 92, 90, 96, 90, 88, 87, 87, 73, 15, 96, 85, 87, 84, 90, 83, 80, 68, 77, 86, 90, 87, 14, 88, 83, 84, 90, 14, 91, 83, 76, 81, 89, 72, 77, 80, 83, 72, 93, 87, 81, 37, 77, 74, 16, 89, 81, 76, 78, 78, 16, 49, 14, 15, 26, 88, 83, 82, 80, 76, 84, 83, 93, 86, 93, 90, 83, 85, 88, 71, 84, 80, 72, 45, 88, 83, 76, 87, 86, 83, 83, 67, 85, 81, 88, 62, 82, 86, 90, 87, 85, 83, 16, 84, 77, 25, 84, 72, 84, 86, 81, 85, 78, 84, 86, 91, 79, 87, 84, 85, 80, 68, 85, 77, 80, 94, 89, 92, 51, 91, 86, 84, 93, 91, 76, 73, 85, 88, 79, 90, 90, 80, 91, 84, 79, 71, 93, 76, 88, 91, 84, 81, 83, 83, 89, 88, 83, 87, 88, 87, 29, 81, 11, 90, 91, 91, 87, 72, 17, 16, 87, 91, 88, 82, 87, 84, 78, 83, 90, 80, 76, 93, 86, 79, 85, 81, 69, 16, 92, 75, 86, 90, 76, 79, 79, 87, 75, 92, 91, 14, 91, 75, 81, 91, 94, 89, 85, 87, 83, 88, 83, 67, 78, 91, 83, 83, 89, 89, 82, 37, 82, 90, 91, 72, 88, 86, 73, 83, 85, 91, 88, 86, 90, 75, 94, 87, 88, 85, 86, 77, 81, 85, 79, 18, 86, 97, 92, 92, 78, 80, 89, 91, 87, 92, 92, 87, 88, 87, 83, 85, 89, 88, 90, 83, 86, 77, 75, 84, 72, 75, 70, 73, 90, 91, 84, 82, 81, 92, 85, 87, 80, 83, 83, 13, 79, 90, 86, 89, 76, 15, 13, 87, 92, 87, 83, 92, 86, 83, 78, 75, 90, 82, 88, 82, 15, 90, 95, 83, 13, 80, 89, 87, 75, 68, 93, 86, 92, 92, 79, 92, 84, 13, 89, 77, 92, 91, 82, 85, 87, 88, 90, 86, 90, 87, 90, 77, 92, 78, 8, 92, 86, 87, 75, 83, 64, 88, 86, 76, 91, 85, 89, 92, 10, 10, 12, 91, 83, 88, 86, 65, 90, 67, 31, 79, 75, 9, 85, 68, 82, 69, 73, 80, 83, 86, 82, 85, 89, 69, 27, 81, 69, 87, 86, 90, 77, 87, 83, 81, 81, 73, 50, 80, 85, 80, 83, 83, 78, 88, 83, 80, 83, 76, 84, 85, 89, 18, 11, 82, 81, 81, 83, 84, 86, 66, 69, 79, 9, 7, 20, 13, 12, 12, 9, 10, 12, 89, 73, 86, 82, 83, 81, 72, 88, 87, 86, 32, 13, 14, 82, 80, 21, 92, 79, 91, 86, 83, 70, 87, 76, 84, 82, 87, 91, 86, 83, 85, 79, 92, 89, 92, 86, 84, 73, 68, 89, 83, 91, 93, 84, 92, 86, 92, 92, 83, 89, 79, 84, 79, 92, 80, 92, 83, 66, 91, 80, 93, 14, 13, 88, 90, 89, 80, 88, 12, 91, 90, 83, 83, 76, 90, 44, 13, 69, 87, 90, 90, 91, 90, 84, 88, 89, 88, 85, 88, 86, 86, 89, 86, 85, 30, 91, 80, 37, 84, 66, 87, 82, 89, 89, 89, 87, 83, 82, 68, 90, 87, 84, 81, 14, 86, 85, 84, 73, 73, 83, 87, 89, 86, 84, 76, 86, 88, 84, 71, 88, 80, 85, 80, 80, 81, 65, 84, 65, 84, 73, 93, 89, 83, 92, 88, 80, 75, 94, 96, 84, 89, 91, 85, 86, 87, 87, 86, 84, 83, 90, 89, 16, 86, 80, 91, 85, 86, 85, 85, 85, 77, 91, 88, 66, 11, 89, 92, 93, 93, 81, 85, 45, 88, 92, 89, 90, 85, 90, 91, 73, 94, 88, 88, 83, 83, 96, 86, 11, 90, 70, 77, 81, 76, 82, 82, 81, 84, 85, 11, 88, 74, 93, 85, 42, 89, 92, 86, 83, 72, 78, 69, 77, 77, 83, 82, 90, 90, 88, 84, 81, 9, 89, 88, 87, 82, 85, 74, 80, 84, 48, 89, 85, 11, 84, 57, 86, 83, 81, 85, 83, 79, 85, 81, 84, 79, 84, 14, 9, 16, 74, 10, 91, 91, 90, 87, 87, 89, 83, 87, 72, 12, 87, 86, 84, 87, 85, 86, 60, 11, 89, 92, 80, 90, 85, 71, 62, 86, 84, 77, 85, 81, 79, 73, 85, 86, 90, 89, 78, 14, 91, 86, 87, 86, 81, 94, 88, 86, 92, 83, 92, 88, 88, 88, 79, 88, 93, 94, 82, 81, 89, 82, 90, 76, 87, 84, 78, 82, 81, 87, 88, 82, 81, 80, 89, 80, 77, 85, 72, 15, 85, 89, 37, 87, 83, 86, 73, 83, 62, 77, 89, 87, 78, 10, 11, 86, 14, 85, 91, 85, 61, 82, 93, 81, 88, 87, 69, 85, 87, 79, 85, 81, 80, 82, 91, 77, 80, 11, 94, 79, 79, 11, 80, 88, 10, 90, 86, 90, 90, 92, 82, 11, 13, 94, 90, 57, 83, 89, 81, 88, 86, 85, 12, 92, 80, 82, 74, 74, 72, 77, 73, 80, 83, 77, 85, 82, 83, 91, 90, 91, 88, 88, 82, 87, 79, 90, 84, 88, 76, 90, 90, 89, 82, 73, 24, 85, 89, 69, 56, 13, 21, 17, 17, 18], "kinds": {}, "suggestions": [{"s": 262.62, "e": 267.43, "reason": "5.5 s of silence - camera on: a cut makes him jump"}, {"s": 272.32, "e": 277.12, "reason": "5.5 s of silence - camera on: a cut makes him jump"}, {"s": 378.86, "e": 382.55, "reason": "4.4 s of silence - camera on: a cut makes him jump"}, {"s": 627.9, "e": 637.4, "reason": "10.2 s of silence - camera on: a cut makes him jump"}, {"s": 893.07, "e": 899.61, "reason": "7.2 s of silence - camera on: a cut makes him jump"}, {"s": 913.06, "e": 916.38, "reason": "4.0 s of silence - camera on: a cut makes him jump"}, {"s": 1073.66, "e": 1080.64, "reason": "7.3 s of silence - camera on: a cut makes him jump"}], "rows": [[2.0, "Ուրեմն"], [3.0, "դիագանալիզացիայի ևս մի հայտանիշ կա,"], [7.0, "իրականում դա նախորդ հայտանիշի"], [9.0, "կատարելագործումն է, որը որ իրապես շատ"], [13.0, "դեպքերում մեր հաշվարկները"], [18.0, "կարճացնում է և թույլ է տալիս խուսափել"], [20.0, "ավելորդ քայլերից: Նախ հիշենք, թե ինչ բան"], [24.0, "է արմատի պատիկությունը բազմանդամի համար:"], [29.0, "Դուք դա դպրոց"], [30.0, "անցել եք և գիտեք հետևյալը"], [36.0, "երևի"], [38.0, "հիշացնենք մի հատ արագ բեզուիը չէ եթե fx"], [41.0, "բազմանդամի համար a թիվը արմատ էր ապա"], [45.0, "ինքը ներկայացվում էր x - a * ինչ-որ gx"], [51.0, "տեսքով"], [54.0, "որտեղ gx-ը ինչ-որ համապատասխանաբար"], [57.0, "ընտրված բազմդամ էր հիմա կարող է այնպես"], [60.0, "պատահի, որ մեր նույն a-ն g(x)-ի համար"], [63.0, "նույնպես արմատ լինի: Այդ դեպքում սա"], [66.0, "կգրվի սենց x - a"], [69.0, "քառակուսի"], [71.0, "* hx"], [74.0, "Հիմա եթե hx-ի համար նույնիսկ արմատ"], [76.0, "լիներ, ստեղ երեք կդառնա, հետո չորս և այլ"], [78.0, "և այլ իսկ եթե hx-ի համար արմատ չի, ահա"], [82.0, "էս տեսքի վրա ֆիքսված կանգնում ենք ու"], [85.0, "ասում ենք, որտեղ Hիx-ի համար, որտեղ H-ն"], [90.0, "որտեղ հաշ-ն այլևս զրո չէ: Եվ այստեղ այս"], [93.0, "երկուսը կոնկրետ այս դեպքում կոչվում էր"], [96.0, "մեր բազմդամի"], [100.0, "A արմատի պատիկություն multiplicityի:"], [104.0, "Օրինակ եթե և այդտեղից անցնում էինք"], [108.0, "բազմդամի վերլուծությանը, որտեղ"], [110.0, "յուրաքանչյուր արմատի պատիկությունը"], [112.0, "երևում էր օրինակ էստեղ եթե գրված է f(x)"], [116.0, "հավասար քառակուսի գումարած"], [120.0, "նշանակում է նա ունի երկու արմատ"], [123.0, "զրոն"], [125.0, "ևը"], [127.0, "այստեղից զրոն այստեղից -2-ը զրոյի"], [130.0, "պատիկությունը երկուս է երկուսի զրոյի"], [133.0, "պատիկությունը երկուս է, երկուսի"], [134.0, "պատիկությունը մեկ"], [139.0, "հիմա"], [143.0, "օգտագործենք այս տերմինոլոգիան մի փոքրիկ"], [146.0, "փոփոխված ած բառերով: Ուրեմն ենթադրենք"], [151.0, "մեզ տված է t արտապատկերումը կամ որ"], [154.0, "նույնը a մատրիցը և լամդն էլ իրա ինչ-որ"], [156.0, "մի հատ սեփական արժեք է: Սեփական արժեք է"], [160.0, "նշանակում է ինքը իր սեփական ինքը իր"], [164.0, "բնութագրիչ բազմանդամի արմատ է, բայց"], [166.0, "բնութագրիչ բազմանդամը ի վերջո ինչ-որ մի"], [168.0, "հատ բազմանդամ է, չէ՞"], [171.0, "էդ բազմանդամի մեջ լամդան կարող է արմատը"], [174.0, "լինելուց բացի ունենալ նա նաև այ սպենս"], [176.0, "պատիկություն,"], [178.0, "այ այդ պատիկությունն էլ կոչվում է"], [181.0, "սեփական արժեքի հանրահաշվական"], [184.0, "պատիկություն ուրեմն"], [187.0, "օրինակ ենթադրենք այս մեր վերարված"], [190.0, "օրինակներից մեկին վերադառնանք նահան հենց"], [193.0, "այս սեփական բնութագրիչ բազմանդամն ուներ"], [197.0, "ուրեմն այ այս երկու սեփական արժեքները"], [199.0, "ուներ որոնցից զրոյի"], [203.0, "հանրահաշվական պատիկությունը երկուս է,"], [206.0, "իսկ -2-ի"], [210.0, "սեփական պատիկություն, մյուս երկուսի"], [212.0, "հանրահաշվական պատիկությունը մեկ,"], [215.0, "Ուրեմն յուրաքանչյուր սեփական արժեք ունի"], [217.0, "երկու"], [221.0, "պատիկություններ, մեկը իր երկրաչափական"], [224.0, "պատիկությունն է, որը իր այս E լամդայի"], [229.0, "չափողականությունն է: Մեկ էլ"], [232.0, "հանրահաշվական պատիկությունը դա այն"], [234.0, "աստիճան ճանն է, որով ինքը մտնում է իր"], [240.0, "բնութագրիչ բազմդամի ֆակտորիզացիայի մեջ:"], [245.0, "Այ այսպիսի մի հատ լեմա կա, որը ասում ա"], [250.0, "ցանկացած սեփականի"], [253.0, "երկարաչափական պատիկությունը"], [256.0, "միշտ նրա հանրաշվական պատիկությունից"], [260.0, "փոքր ու հավաս փոքր կամ հավասար է:"], [264.0, "փոքր կամ հավասար է:"], [267.0, "Այսինքն, եթե մենք արդեն հաշվել ենք, որ"], [269.0, "իրա երկրչափական պատիկությունը"], [277.0, "հանրաշվական պատիկությունը, եթե մենք"], [279.0, "տեսել ենք բնութագրիչ բազմանդամից, որ"], [282.0, "ենթադրենք երեք է, ուրեմն իր երկրաչափական"], [285.0, "պատիկությունը կարող է լինել 3,"], [289.0, "կամ մեկ զրո չի կարող լինել, քանի"], [292.0, "սեփական ենթատարածություն զրոյական չէ"], [294.0, "երբեք"], [296.0, "ապացույցը բավականին դյուրին է չնայած"], [300.0, "գրականության մեջ հիմնականում սա ինչ-որ"], [302.0, "երկար ինչ-որ էջ ու կեսանոց ապացույցներ"], [305.0, "են գրում բայց տեսեք ինչքան պարզ է այս"], [307.0, "ամեն խոսակցությունը"], [308.0, "նայեք ենթադրենքլդաշտիխ"], [311.0, "սեփական արժեքն է ֆիքսված"], [315.0, "նրան համապատասխան"], [317.0, "սեփական ենթատարածությունն է վերցված ու"], [320.0, "ենթադրենք չափ այ այս չափողականությունը"], [323.0, "k է: Եթե չափողականությունը k է,"], [326.0, "նշանակում է կա հատ վեկտոր կան, որոնք սրա"], [331.0, "բազիս են: Նայեք իրենք բազիս են սեփական"], [336.0, "ենթատարածության մեջ, բայց ամբողջ"], [338.0, "ենթատարածության մեջ կարող է բազիս"], [339.0, "չլինեն: Ամբողջ ենթատարածության մեջ բազի"], [343.0, "չեն, բայց հո անկախ են էլի:"], [347.0, "Անկախությունը չի փոխվում տարածությունը"], [349.0, "մեծացնելիս: Դե հիմա գրենք այս մեր կա"], [352.0, "հատիկ անկախ վեկտորները, որոնք դեպքերը"], [356.0, "կատարվում են իհարկե V տարածության մեջ ու"], [358.0, "ասենք այսպես, քանի որ սրանք անկախ են"], [361.0, "V-ում, մենք էլ ժամանակին լեմա գիտեինք"], [365.0, "կամ ավելի ճիշտ առաջադրության ինչ-որ մի"], [368.0, "կետ էր, ասում էր, որ յուրաքանչյուր"], [375.0, "համակարգ տարածության մեջ, որը բաղկացած է"], [378.0, "գծորեն անկախ վեկտորներից:"], [382.0, "կարելի է լրացնել մինչև բազիս, այսինքն"], [385.0, "այստեղ պոչից ավելացնում ենք +1 և այլն e"], [388.0, "nր վեկտորներ, այնպես որ բազիս է դառնում"], [391.0, "ամբողջ v-ում: Հիմա այդ բազիսում տեսնենք"], [395.0, "ինչ կլինի, ի՞նչ կլինի"], [400.0, "մեր արտապատկերման մատրից: Դե քանի որ"], [403.0, "V1-ը սեփական վեկտոր էր Լաման մեկին"], [406.0, "համապատասխան, առաջին սյունը սենց տեսք"], [408.0, "կունենա:"], [409.0, "լաիղ,"], [412.0, "որից հետո միայն զրոներ են շարած: Երկրորդ"], [414.0, "սյունը կլինի զրո լամ դաշտի զրոներ,"], [416.0, "kերորդ սյունը կլինի"], [419.0, "0 kր տեղում լամդաշտի մնացածը զրոն"], [423.0, "էրկմերությունը"], [426.0, "չենք իմանում ինչ կլի պատահական թվեր"], [429.0, "կլինեն մեզ չի հուզում"], [432.0, "հիմա նոր կառուցյալ բազիսում եկեք հաշվենք"], [436.0, "մեր բնութագրիչ բազմանդամը"], [439.0, "Հիշում եք չէ&lt;un&gt; բնութագրիչ բազմանդամը"], [441.0, "կախված չէ բազիսի ընտրությունից ի&lt;kչ պետք"], [444.0, "է անեինք այստեղ պետք է գրեինք այս"], [448.0, "անկյունագծի բոլոր էլեմենտներից պիտի"], [452.0, "հանեինք մի հատ լամդաներ"], [456.0, "այ սպս և այս ամեն ինչի դետերմինանտը պիտի"], [460.0, "հաշվեինք հիմա տեսեք դիտմամբ նույնպես"], [463.0, "այնպես են գրված այ այս սյուները որ"], [465.0, "լապլասի կանոնը եթե կա անգամ կիրառ"], [468.0, "կիրառենք, օրինակ, եթե առաջին անգամ"], [469.0, "լապլասի կանոնը կիրառենք, սա ստացվում ա"], [472.0, "էս արտադրիչ անգամ ահա այս անգամ այս"], [477.0, "մինոր անհրաժական լրացում -1 աստիճանը դեռ"], [482.0, "չի խաղում, որովհետև մեկ ա հաջորդ անգամ"], [485.0, "մի հատ էլ լապլասի կանոնը կիրառենք"], [487.0, "ստացվում ա սա անգամ էսքան լապլասի կանոնը"], [490.0, "կա անգամ կիրառելուց հետո մեր բնութագրիչ"], [493.0, "բազմանդամը ստացվում է"], [496.0, "այ սա լամ լի-լամայի"], [499.0, "կա աստիճան"], [503.0, "անգամ այ այս մնացած վերջին այ այս կտորի"], [507.0, "այ ասս հատվածի այ այսքանի այ սրա"], [509.0, "դետերմինանտը"], [511.0, "հիմա տեսնում ենք որ մեր բնութագրիչ"], [514.0, "բազմանդամի մեջ"], [517.0, "արդեն իսկլամդաշտիխը"], [521.0, "իրեն"], [523.0, "համապատասխան"], [526.0, "արտադրիչով"], [527.0, "մասնակցում է առնվազն կա անգամ, նշանակում"], [531.0, "է իր"], [534.0, "հանրահաշվական պատիկությունը գուցե կա"], [536.0, "էկեք կամ գուցե անգամ ավել այն դեպքում"], [540.0, "ավել կլինի եթե այստեղից նույնպես մի հատ"], [544.0, "լամդ շտրամա"], [546.0, "արտադրիչ դուրս գա դուրս կգա ուրեմն"], [549.0, "նշանակում է"], [551.0, "հանրաշվական պատիկությունը մի գլուխ ավելի"], [553.0, "է դուրս չգա նշանակում խիստ հավասար"], [557.0, "Այսինքն, մենք ավարտեցինք լեմայի"], [559.0, "ապացույցը: Այ այս լեմման բազմաթիվ"], [567.0, "հնարավորություններ է ընձեռնում մեր"], [569.0, "դիգանալիզացիայի ալգորիթմը թեթևացնելու:"], [572.0, "Նախ հլը թեորեմը ձևակերպենք:"], [575.0, "Եթե լամից լամդակ"], [578.0, "սեփական արժեքներն են մեր t արտապատկերման"], [582.0, "v տարածության մեջ, ապա t-ն"], [585.0, "դիագանալիզացվող ող եթե նրա երկրաչափական"], [588.0, "պատիկությունը"], [591.0, "ամեն մի սեփական արժեքի համար"], [593.0, "հանրահաշվական պատիկությանը հավասար է և"], [597.0, "հանրաժշտական պատիկությունների գումարը"], [600.0, "հավասար է լինվեին"], [603.0, "այստեղ ապացուցելու բան չկա որովհետև եթե"], [608.0, "երկրաշափական պատիկությունները հավասար են"], [610.0, "հանրաժշտական պատիկություններին և դրանց"], [612.0, "գումարն էլ դիմվեն է այսինքն երկրաշափական"], [615.0, "պատիկությունների ների գումարը հավասար է"], [619.0, "անհրաժվական պատի դիմվեին, այսինքն"], [622.0, "արտապատկերումը դիագանալիզացվող է ըստ"], [624.0, "նախորդ"], [627.0, "պնդման:"], [637.0, "Իսկ հակառակը,"], [639.0, "եթե ի՞նչ կլինի, եթե գոնե մի դեպքում,"], [642.0, "գոնե մի լիամդայի համար իր հանրաժշտական"], [644.0, "ԱՆ պատիկությունը հավասար չլինի"], [650.0, "երկրաչափական պատիկությանը:"], [653.0, "Ըստ նախորդ լեմայի երկրաչափականը միշտ"], [655.0, "փոքր էր հանրա փոքր կամ հավասար էր"], [657.0, "հանրահաշվականից: Եթե հավասար չի,"], [660.0, "նշանակում է երկրաչափական պատիկությունը"], [662.0, "խիստ փոքր է հանրահաշվականից:"], [664.0, "Հանրահաշվական պատկությունների գումարը"], [667.0, "դիմ էր, երկրաշափական պատիկությունների"], [670.0, "գումարը էս դեպքում, քանի որ գոնե մեկի"], [673.0, "համար խիստ փոքրություն ունենք"], [676.0, "երկրաչափական պատիկությունների գումարը չի"], [678.0, "կարող հավասար լինել հանրաշվական"], [681.0, "պատիկությունների գումարին, այսինքն չի"], [683.0, "կարող հանրահավասար դիմվեին, ինչը և"], [686.0, "ապացուցումը ապացույցը ավարտում է հիմա"], [690.0, "այստեղ մենք այսպիսի ալգորիթմ ենք ստանում"], [695.0, "որը ասում է դե վերցրեք"], [700.0, "երկրաչափական պատիկությունները, համեմատեք"], [702.0, "հանրահաշվական պատիկություններին րի հետ"], [706.0, "ու տեսեք արդյոք հավասար են և տեսեք"], [708.0, "արդյոք հանրաժշտական պատիկությունների"], [710.0, "գումարը հավասար է"], [714.0, "դիմվեին։"], [716.0, "Այստեղ դուք կարող եք առարկեք, բայց որ դե"], [719.0, "լավ է, բայց մենք մի ալգորիթմ արդեն"], [722.0, "ունեինք ու սա կարծես թե ոչ միայն լավ չի,"], [725.0, "այլև վատ է, որովհետև չեղած տեղից մի հատ"], [728.0, "էլ կողքից հանրահաշվական պատիկություն ենք"], [732.0, "ստիպված բերում, գործին մասնակցում"], [735.0, "ինչներիս էր պետք հիմա տեսնենք գործին"], [738.0, "տեսնենք ինչներիս է պետք պրակտիկ"], [740.0, "օրինակներ որտեղ ինքը շատ դյուրինացնում է"], [744.0, "գործը"], [746.0, "հանրահաշվական պատիկության կիրառումը"], [748.0, "նայենք էս պրակտիկ օրինակներին"], [751.0, "ասենք թե այ սա մեր արտապատկերումն ա ունի"], [756.0, "այ էս մատրիցը հաշվում ենք իր բնութագրիչ"], [759.0, "բազմդամը ու ստացվում ա այ սա նայեք էստեղ"], [763.0, "Այս աջ մասի արտադրիչի մեջ դ-ն ի՞նչ է իր"], [767.0, "դիսկրինանտը դ-ն կլինի"], [771.0, "երկուսի"], [773.0, "քառակուսի մինուս 4 * 5, որը բացասական"], [778.0, "թիվ է նշանակում է այս կտորը այս մասը մեր"], [786.0, "բազմանդամի արմատ չունի միակ արմատը λդն է"], [791.0, "այսինքն միակ սեփական արժեքը լը հավասար է"], [794.0, "1-ն է: Հիմա նայում ենք այս սա սեփական"], [799.0, "արժեք է իր հանրահաշվական պատիկությունը"], [803.0, "ի՞նչ է այստեղ մեկ է, որովհետև լամդ -1-ը"], [806.0, "1 աստիճանով է ման գալիս շատ լավ է մեկ է,"], [812.0, "հանրահաշվական պատիկությունը մեկ է, դե"], [815.0, "երկրաչափական պատիկությունը ընդհանրապես"], [817.0, "ասած էլի մեկ է, երկրաչափական"], [820.0, "պատիկությունը հավասար է, բայց ամբողջ"], [823.0, "դիմվեն"], [825.0, "երեք էր։"], [826.0, "Դե հանրահաշվական պատիկությունների"], [828.0, "գումարը այստեղ մեկ ա, որը խիստ փոքր է"], [831.0, "երեքից, այսինքն դիագնալիզացիա չկա։"], [835.0, "Ի՞նչ առավելություն ունենք մենք այստեղ։"], [837.0, "Մենք գրում ենք բնութագրիչ բազմանդամը ու"], [840.0, "հենց միայն բնութագրիչ բազմանդամի տեսքին"], [844.0, "նայելով"], [846.0, "եզրակացնում ենք, որ դիագանալիզացիա"], [849.0, "գոյություն չունի այլևս կա կարիք չկա"], [853.0, "ուսումնասիրել էս մեր"], [856.0, "E լա1 սեփական ենթատարածությունը չափել"], [861.0, "դրալիթին և ինչ-որ երկար քայլելուց հետո"], [864.0, "ռեֆիլ հասնելու նոր եզրակացնել"], [868.0, "բնութագրիչ բազմդամի տեսքը արդեն մեզ"], [871.0, "ասում է որ դիագանացվող չէ սա միլավ"], [875.0, "առավելություն"], [877.0, "հաջորդ օրինակը"], [880.0, "օրինակ"], [882.0, "Այ այստեղ ինչ-որ մի հատ բազմանդամ է"], [884.0, "տված, որը ունի այ էս բնութագրիչ"], [888.0, "ահա այս բնութագրիչ բազմամը երկու սեփական"], [892.0, "արժեքն էր"], [896.0, "տեսեք"], [898.0, "այստեղ այս տեսքից միանգամից զգացվում է,"], [901.0, "որ այ սա պատիկությունը հանրահաշվական"], [904.0, "երկուս է, սրա պատիկությունը մեկ է,"], [908.0, "և իսկապես նրանց գումար համարը հավասար է"], [911.0, "դիմվեին, որը տվյալ դեպքումդ dեգ f լամդ է"], [916.0, "բայց այդ օրինակում երբ որ մենք սկսում"], [919.0, "ենք հաշվելը"], [924.0, "առաջին հենց ամենաառաջին"], [927.0, "սեփական արժեքի համար այ այս սեփական"], [931.0, "ենթատարածությունը թարսի պես դուրս է"], [933.0, "գալիս մեկ չափանի"], [936.0, "եթե ինքը մեկ չափանի է նշանակում է այ"], [938.0, "հենց մեր առաջին լամդմի համար հանրաշվական"], [942.0, "և երկրչական պատիկությունները իրար"], [944.0, "հավասար չեն: Եթե իրար հավասար չեն, ապա"], [948.0, "ըստ էս մեր նորվա ասած թեորեմի"], [952.0, "դիագանալիզացիա տեղի չունի: Մենք այլևս"], [956.0, "կարիք չունենք, կարիք չունենք"], [959.0, "ուսումնասիրելու երկրորդ լամա2"], [964.0, "սեփական արժեքը հաշվելու e լա2-ի"], [968.0, "չափողականություն և այլն: Դրանք ավելորդ"], [970.0, "քայլեր են, տեսնում եք ևս մի գործը"], [973.0, "կարճացնելու մեթոդ։"], [976.0, "Հիմա նայենք էս մյուս օրինակին։"], [979.0, "Այ սա այ էս մի օրինակին մենք ունեինք ահա"], [983.0, "ահա էս բնութագրիչ բազմամը և երեք սեփական"], [988.0, "արժեքներ։"], [991.0, "Ըհ"], [993.0, "տեսեք,"], [994.0, "յուրաքանչյուրը մեկ չափանի է։"], [997.0, "Կներեք, դեռ չգիտենք քանի քանի չափանի է"], [1000.0, "օրենքով սրա"], [1003.0, "սեփական"], [1005.0, "ենթատարածությունները գտնելու համար պետք"], [1007.0, "է ինչ-որ հաշվեինք բայց մենք տեսնում ենք"], [1010.0, "որ այս մեր"], [1014.0, "բոլոր սեփական արժեքները"], [1018.0, "իրենք ունեն մեկ"], [1021.0, "հանրաշվական պատիկություն ուրեմն իրենց"], [1024.0, "երկրաչափական պատիկությունները մեկից ից"], [1029.0, "փոքր կամ հավասար չափանի են: Դե մեկից"], [1032.0, "փոքր կամ հավասար նշանակում է ի՞նչ կարող"], [1034.0, "է լինեն: Կամ կարող է լինեն զրո կամ էլ"], [1037.0, "կարող է լինեն մեկ:"], [1039.0, "Զրո չեն կարող լինել երկրաչափական"], [1041.0, "պատիկությունները, որովհետև սեփական"], [1043.0, "ենթատարածությունները զրոյական չեն: Ուստի"], [1047.0, "տեսնում ենք, որ"], [1050.0, "երկրաչափական պատիկությունների"], [1052.0, "պատիկությունները երեքին էլ պարտավոր ա"], [1054.0, "մեկը լինել առանց ոչ մի ռև հաշվելու ասում"], [1057.0, "ենք, որ պարտավոր են մեկ լինել: Դե եթե"], [1059.0, "մեկ են, նշանակում է հանրաժշտական"], [1061.0, "պատիկությունները հավասար են երկրաչափական"], [1063.0, "պատիկություններին, գումարն էլ երեք է,"], [1066.0, "ուրեմն ըստ մեր հայտանիշի դիագանալիզացիան"], [1068.0, "տեղի ունի:"], [1071.0, "Եղա&lt;unk այ այս վերջին օրինակն էլ խնդրում"], [1073.0, "եմ ինքնորեն նայեք:"]], "pause_min": 2.0, "marks": []}</script>
+<script>
+const TLD = JSON.parse(document.getElementById('tl-data').textContent);
+const TLS = document.getElementById('timeline'), DUR = +document.body.dataset.duration;
+const ov = TLS.querySelector('.tl-over'), mc = TLS.querySelector('.tl-main');
+const AX_H = 18, SP_H = 130, GAP_H = 15, TX_H = 22, MAIN_H = AX_H + SP_H + GAP_H + TX_H, OV_H = 56;
+const ZL = [0.5, 1, 2, 4, 8, 16, 32, 80, 160, 320];        // zoom levels, px per second
+const GAP_MIN = 1.5;                                       // shortest uncovered piece of a pause that gets marked
+const COL = { safe: '#D90012', judg: '#F2A800', mine: '#0033A0', gap: '#FFD60A' };
+const FILL = { safe: 'rgba(217,0,18,.33)', judg: 'rgba(242,168,0,.40)', mine: 'rgba(0,51,160,.45)' };
+const rootCss = getComputedStyle(document.documentElement);
+const FG = rootCss.getPropertyValue('--fg').trim(), MUTED = rootCss.getPropertyValue('--muted').trim();
+const ROWS = TLD.rows, PAUSES = TLD.pauses;
+const MARKS = TLD.marks || [], MARK_COL = '#16A34A';   // where each video starts on a page that joins several
+const markAt = t => { let m = null; for (const k of MARKS) if (k[0] <= t + 1e-6) m = k; return m; };
+const TL = { t0: 0, z: 5, bar: 0, sel: null, on: false, focus: false };
+let gapList = [], md = null, lineAt = -2, pending = false;
+const pps = () => ZL[TL.z], viewW = () => mc.clientWidth, vspan = () => viewW() / pps();
+const clampT0 = t => Math.max(0, Math.min(Math.max(0, DUR - vspan()), t));
+const xOf = t => (t - TL.t0) * pps();
+const hms = t => { t = Math.max(0, Math.floor(t)); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
+const kindOf = c => c.added || changed(c) ? 'mine' : ((TLD.kinds[c.host.id] || {}).kind === 'judgment' ? 'judg' : 'safe');
+const tlMsg = t => { TLS.querySelector('.tl-msg').textContent = t; };
+function rowAt(t) {                                        // the last transcript line starting at or before t
+  let lo = 0, hi = ROWS.length - 1, ans = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (ROWS[m][0] <= t) { ans = m; lo = m + 1; } else hi = m - 1; }
+  return ans;
+}
+function uncovered(s, e, cs) {                             // the parts of [s, e] that no cut covers (cs sorted)
+  const out = [];
+  let a = s;
+  for (const [x, y] of cs) {
+    if (y <= a) continue;
+    if (x >= e) break;
+    if (x > a) out.push([a, x]);
+    a = Math.max(a, y);
+    if (a >= e) break;
+  }
+  if (e > a) out.push([a, e]);
+  return out;
+}
+function gaps() {   // per pause (its silences, joined across hums): what no cut covers, as [start, end, silent s, hum]
+  const cs = all().map(c => [c.s, c.e]).sort((a, b) => a[0] - b[0]), out = [];
+  for (const g of PAUSES) {
+    let m = null;
+    const flush = () => { if (m && m[2] >= GAP_MIN) out.push(m); m = null; };
+    for (const [s, e] of g) for (const [a, b] of uncovered(s, e, cs)) {
+      if (m && !cs.some(([x, y]) => x < a && y > m[1])) { m[1] = b; m[2] += b - a; m[3] = true; }   // across a hum
+      else { flush(); m = [a, b, b - a, false]; }                                                   // a cut in between
+    }
+    flush();
+  }
+  return out;
+}
+const cache = new Map();                                   // decoded tiles, the 64 used last
+function tile(lv, i) {
+  const k = lv.src + i;
+  let im = cache.get(k);
+  if (im) { cache.delete(k); cache.set(k, im); return im; }
+  im = new Image();
+  im.onload = drawSoon;
+  im.onerror = () => tlMsg('Could not load ' + im.src + ' - rebuild the page with find_edit_points.py');
+  im.src = lv.src + String(i).padStart(4, '0') + '.jpg';
+  cache.set(k, im);
+  while (cache.size > 64) cache.delete(cache.keys().next().value);
+  return im;
+}
+function fit(cv, h) {
+  const d = window.devicePixelRatio || 1, w = cv.clientWidth;
+  if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+  const g = cv.getContext('2d');
+  g.setTransform(d, 0, 0, d, 0, 0);
+  return g;
+}
+function drawSoon() { if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; draw(); }); } }
+function drawMain() {
+  const g = fit(mc, MAIN_H), W = viewW(), p = pps(), t0 = TL.t0, t1 = t0 + W / p;
+  g.clearRect(0, 0, W, MAIN_H);
+  g.font = '11px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  const step = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800].find(s => s * p >= 90) || 3600;
+  for (let t = Math.ceil(t0 / step) * step; t <= t1; t += step) { const x = xOf(t); g.fillRect(x, AX_H - 5, 1, 5); g.fillText(hms(t), x + 3, 2); }
+  const lv = p > TLD.tiles.lo.px_per_s ? TLD.tiles.hi : TLD.tiles.lo;
+  const xa = Math.max(0, xOf(0)), xz = Math.min(W, xOf(DUR));
+  g.fillStyle = '#000'; g.fillRect(xa, AX_H, xz - xa, SP_H);
+  const i0 = Math.max(0, Math.floor(t0 / lv.tile_s)), i1 = Math.min(lv.n - 1, Math.floor(t1 / lv.tile_s));
+  for (let i = i0; i <= i1; i++) {
+    const im = tile(lv, i);
+    if (im.complete && im.naturalWidth) g.drawImage(im, xOf(i * lv.tile_s), AX_H, Math.min(lv.tile_s, DUR - i * lv.tile_s) * p, SP_H);
+  }
+  if (i1 + 1 < lv.n) tile(lv, i1 + 1);                     // the neighbours, so panning finds them loaded
+  if (i0 > 0) tile(lv, i0 - 1);
+  const box = (a, b) => [xOf(a), Math.max(2, xOf(b) - xOf(a))];
+  g.save(); g.lineWidth = 2; g.setLineDash([6, 4]);
+  TLD.suggestions.forEach((s, i) => {                      // unticked suggestions: dashed orange
+    if (s.e < t0 || s.s > t1) return;
+    const [x, w] = box(s.s, s.e);
+    if (TL.sel && TL.sel.sug === i) { g.fillStyle = 'rgba(242,168,0,.22)'; g.fillRect(x, AX_H, w, SP_H); }
+    g.strokeStyle = COL.judg; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  plan.filter(c => c.removed).forEach(c => {                // removed planned cuts: dashed red
+    if (c.e < t0 || c.s > t1) return;
+    const [x, w] = box(c.s, c.e);
+    g.strokeStyle = COL.safe; g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2);
+  });
+  g.restore();
+  all().forEach(c => {
+    if (c.e < t0 || c.s > t1) return;
+    const k = kindOf(c), [x, w] = box(c.s, c.e);
+    g.fillStyle = FILL[k]; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = COL[k]; g.fillRect(x, AX_H, 3, SP_H); g.fillRect(x + w - 3, AX_H, 3, SP_H);
+    if (w > 46) { g.fillStyle = '#fff'; g.font = '600 11px system-ui, sans-serif'; g.fillText('Cut ' + c.n, x + 6, AX_H + 4); }
+    if (c.warn && c.warn.length) { g.fillStyle = '#fff'; g.fillRect(x, AX_H + SP_H - 4, w, 4); }
+  });
+  const sc = TL.sel && TL.sel.c;
+  if (sc && !(sc.e < t0 || sc.s > t1)) {
+    const [x, w] = box(sc.s, sc.e);
+    g.save(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.setLineDash([4, 3]); g.strokeRect(x + 1, AX_H + 1, w - 2, SP_H - 2); g.restore();
+  }
+  if (md && md.kind === 'new') {                           // the cut being drawn
+    const [x, w] = box(Math.min(md.t, md.t1), Math.max(md.t, md.t1));
+    g.fillStyle = FILL.mine; g.fillRect(x, AX_H, w, SP_H);
+    g.fillStyle = '#fff'; g.fillRect(x, AX_H, 2, SP_H); g.fillRect(x + w - 2, AX_H, 2, SP_H);
+  }
+  const gy = AX_H + SP_H + 2;
+  gapList.forEach(([s, e, silent, hum]) => {               // silences no cut covers (the label counts silence only)
+    if (e < t0 || s > t1) return;
+    const [x, w] = box(s, e);
+    g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(x, gy, w, GAP_H - 4); g.globalAlpha = 1;
+    const txt = silent.toFixed(1) + ' s' + (hum ? ' + hum' : '');
+    if (w > (hum ? 66 : 38)) { g.fillStyle = '#1d1d1f'; g.font = '10px system-ui, sans-serif'; g.fillText(txt, x + 3, gy); }
+  });
+  const ty = AX_H + SP_H + GAP_H + 3;
+  g.font = '12px system-ui, sans-serif';
+  for (let i = Math.max(0, rowAt(t0)); i < ROWS.length && i >= 0; i++) {
+    const x = xOf(ROWS[i][0]);
+    if (x > W) break;
+    const xn = i + 1 < ROWS.length ? xOf(ROWS[i + 1][0]) : W;
+    g.fillStyle = MUTED; g.fillRect(x, ty - 2, 1, TX_H - 4);
+    if (p < 8 || xn - x < 24) continue;                   // too little room for words at this zoom
+    g.save(); g.beginPath(); g.rect(x, ty - 2, xn - x - 4, TX_H); g.clip();
+    g.fillStyle = FG; g.fillText(ROWS[i][1], x + 3, ty); g.restore();
+  }
+  g.font = '600 12px system-ui, sans-serif';
+  MARKS.forEach(([t, label]) => {                          // a new video starts: green line through every row + its name
+    const x = xOf(t);
+    if (x < -200 || x > W) return;
+    g.fillStyle = MARK_COL; g.fillRect(x - 1, 0, 3, MAIN_H);
+    const txt = '▶ ' + label, tw = g.measureText(txt).width;
+    g.fillRect(x + 2, AX_H + 3, tw + 10, 18);
+    g.fillStyle = '#fff'; g.fillText(txt, x + 7, AX_H + 6);
+  });
+  const xb = xOf(TL.bar);
+  if (xb >= -2 && xb <= W + 2) { g.fillStyle = '#000'; g.fillRect(xb - 2, AX_H - 3, 5, SP_H + GAP_H + 3); g.fillStyle = '#fff'; g.fillRect(xb - 1, AX_H - 3, 3, SP_H + GAP_H + 3); }
+}
+function drawOver() {
+  const g = fit(ov, OV_H), W = ov.clientWidth, k = W / DUR, L = TLD.loud;
+  g.clearRect(0, 0, W, OV_H);
+  g.fillStyle = MUTED; g.globalAlpha = 0.6;
+  for (let x = 0; x < W; x++) {                            // loudness, the loudest second under each pixel
+    let m = 0;
+    for (let i = Math.floor(x / k); i < Math.max(Math.floor(x / k) + 1, Math.floor((x + 1) / k)) && i < L.length; i++) m = Math.max(m, L[i]);
+    const h = m / 100 * 17; g.fillRect(x, 31 - h, 1, h);
+  }
+  g.globalAlpha = 1;
+  g.strokeStyle = COL.judg; g.lineWidth = 1.5;              // unticked suggestions as orange outlines (a page with
+  TLD.suggestions.forEach(s => g.strokeRect(s.s * k, 3.5, Math.max(2, (s.e - s.s) * k), 8));   // the camera on has only these)
+  all().forEach(c => { g.fillStyle = COL[kindOf(c)]; g.fillRect(c.s * k, 3, Math.max(1, (c.e - c.s) * k), 9); });
+  gapList.forEach(([s, e, silent]) => { g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(s * k, 33, Math.max(1, (e - s) * k), 8); });
+  g.globalAlpha = 1;
+  g.font = '10px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
+  for (let t = 600; t < DUR; t += 600) { g.fillRect(t * k, OV_H - 12, 1, 12); g.fillText(hms(t).replace(/:00$/, ''), t * k + 3, OV_H - 12); }
+  MARKS.forEach(([t, label]) => {                          // where each video starts, with its name if there is room
+    g.fillStyle = MARK_COL; g.fillRect(t * k - 1, 0, 2, OV_H - 13);
+    g.font = '600 10px system-ui, sans-serif';
+    g.fillRect(t * k + 1, 14, g.measureText(label).width + 6, 13);
+    g.fillStyle = '#fff'; g.fillText(label, t * k + 4, 15);
+  });
+  g.font = '10px system-ui, sans-serif'; g.fillStyle = MUTED;
+  g.strokeStyle = FG; g.lineWidth = 2; g.strokeRect(TL.t0 * k + 1, 1, Math.max(4, vspan() * k - 2), OV_H - 15);
+  g.fillStyle = COL.safe; g.fillRect(TL.bar * k - 1, 0, 2, OV_H - 13);
+}
+function draw() {
+  drawMain(); drawOver();
+  const mk = markAt(TL.bar);                               // on a joined page: which video, and the time inside it
+  TLS.querySelector('.tl-now').textContent = tc(TL.bar) + (mk ? ' · ' + mk[1] + ' ' + tc(TL.bar - mk[0]) : '');
+  const s = vspan();
+  TLS.querySelector('.tl-zl').textContent = (s < 120 ? Math.round(s) + ' s' : (s / 60).toFixed(s < 600 ? 1 : 0) + ' min') + ' on screen';
+  const i = rowAt(TL.bar);
+  if (i !== lineAt) {                                      // the transcript line under the bar, in full
+    lineAt = i;
+    const r = ROWS[i], n = ROWS[i + 1];
+    TLS.querySelector('.tl-line').innerHTML = r ? `<span class="t">${hms(r[0])}</span>${esc(r[1])}` +
+      (n ? `   <span class="nx"><span class="t">${hms(n[0])}</span>${esc(n[1])}</span>` : '') : '';
+  }
+}
+function renderSel() {
+  const box = TLS.querySelector('.tl-selbox'), s = TL.sel;
+  if (s && s.c && s.c.added && !added.includes(s.c)) TL.sel = null;   // deleted elsewhere on the page
+  if (!TL.sel) { box.innerHTML = '<span class="note">Click a cut to select it; drag across the spectrogram to draw a new one.</span>'; return; }
+  if (s.sug !== undefined) {
+    const g = TLD.suggestions[s.sug];
+    box.innerHTML = `<span class="tag" style="color:${COL.judg}">Suggested, not ticked</span><span class="times">${tc(g.s)} → ${tc(g.e)}   (${(g.e - g.s).toFixed(1)} s)</span>` +
+      `<button data-do="adds">Add as a cut</button><span class="why">${esc(g.reason)}</span>`;
+    return;
+  }
+  const c = s.c, k = kindOf(c), info = c.host && !c.added ? TLD.kinds[c.host.id] : null;
+  const name = c.removed ? 'Removed cut' : (c.added ? 'New Cut ' : 'Cut ') + c.n;
+  const tag = c.removed ? '' : c.added ? 'yours' : changed(c) ? 'changed by you' : k === 'judg' ? 'your call' : 'safe';
+  box.innerHTML = `<b>${name}</b><span class="tag" style="color:${COL[k]}">${tag}</span>` +
+    `<span class="times">${c.removed ? `planned ${tc(c.s0)} → ${tc(c.e0)}` : `${tc(c.s)} → ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)`}</span>` +
+    (changed(c) && !c.removed ? `<span class="was">was ${tc(c.s0)} - ${tc(c.e0)}</span>` : '') +
+    (c.removed ? '' : '<button data-do="s">Start = bar</button><button data-do="e">End = bar</button>') +
+    (!c.added && changed(c) && !c.removed ? '<button data-do="reset">Reset</button>' : '') +
+    (c.added ? '<button data-do="del">Delete</button>' : `<button data-do="rm">${c.removed ? 'Restore cut' : 'Remove cut'}</button>`) +
+    (c.warn && c.warn.length ? `<span class="warn">${c.warn.join(', ')}${OVERLAP}</span>` : '') +
+    (info ? `<span class="why">${esc(info.reason)}</span>` : '');
+}
+window.tlRefresh = () => {                                 // after every change to the cut list (renderAll)
+  gapList = gaps();
+  const n4 = gapList.filter(g => g[2] >= 4).length, nh = gapList.filter(g => g[3]).length;
+  TLS.querySelector('.tl-gaps').textContent = `${gapList.length} silences no cut covers (${n4} of 4 s or more, ${nh} split by a hum)`;
+  renderSel(); drawSoon();
+};
+function tlTouch() { TL.focus = true; focusEl = null; tlMsg(''); }   // keys now go to the timeline, not a card
+function keepBar() { if (TL.bar < TL.t0 || TL.bar > TL.t0 + vspan()) TL.t0 = clampT0(TL.bar - 0.1 * vspan()); }
+function center(t) { TL.t0 = clampT0(t - 0.35 * vspan()); }
+function zoomAt(z, t, x) { TL.z = Math.max(0, Math.min(ZL.length - 1, z)); TL.t0 = clampT0(t - x / pps()); drawSoon(); }
+function tlLabel() { TLS.querySelector('.tl-play').textContent = TL.on && !A.paused ? 'Pause' : 'Play'; }
+function tlLoop() {
+  if (!TL.on || A.paused) return;
+  let t = A.currentTime;
+  if (TLS.querySelector('.tl-skip').checked) { const c = all().find(c => t >= c.s && t < c.e); if (c) { A.currentTime = c.e; t = c.e; } }
+  const seen = TL.bar >= TL.t0 && TL.bar <= TL.t0 + vspan();   // scrolled away from the bar: look around, don't pull back
+  TL.bar = t;
+  if (seen && (t > TL.t0 + 0.92 * vspan() || t < TL.t0)) TL.t0 = clampT0(t - 0.1 * vspan());   // page along
+  draw();
+  requestAnimationFrame(tlLoop);
+}
+function tlPlay() {
+  if (cur) { A.pause(); label(cur, false); cur = null; }   // one player: a card that was playing stops
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = 'Playing the timeline';
+  keepBar();
+  TL.on = true;
+  A.currentTime = TL.bar;
+  A.play().then(() => { tlLabel(); requestAnimationFrame(tlLoop); })
+          .catch(err => { if (err.name !== 'AbortError') tlMsg('Could not play: ' + err.message); });
+}
+window.tlStop = () => { TL.on = false; tlLabel(); };
+A.addEventListener('pause', tlLabel);
+const evT = (ev, cv) => (ev.clientX - cv.getBoundingClientRect().left);
+function hit(ev) {                                          // what is under the pointer on the spectrogram
+  const x = evT(ev, mc), t = TL.t0 + x / pps();
+  let best = null, bd = 7;
+  all().forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(xOf(c[k]) - x); if (d <= bd) { bd = d; best = { edge: k, c }; } }));
+  if (best) return best;
+  const c = all().find(c => t >= c.s && t < c.e) || plan.find(c => c.removed && t >= c.s && t < c.e);
+  if (c) return { c };
+  const i = TLD.suggestions.findIndex(s => t >= s.s && t < s.e);
+  return i >= 0 ? { sug: i } : null;
+}
+mc.addEventListener('pointerdown', ev => {
+  tlTouch(); mc.setPointerCapture(ev.pointerId);
+  const h = hit(ev), t = TL.t0 + evT(ev, mc) / pps();
+  md = h && h.edge ? { kind: 'edge', c: h.c, k: h.edge } : { kind: 'press', x: ev.clientX, t, t1: t, h };
+  if (md.kind === 'edge') TL.sel = { c: h.c };
+});
+mc.addEventListener('pointermove', ev => {
+  if (!md) { const h = hit(ev); mc.style.cursor = h && h.edge ? 'col-resize' : h ? 'pointer' : 'crosshair'; return; }
+  const t = TL.t0 + evT(ev, mc) / pps();
+  if (md.kind === 'edge') { setEdge(md.c, md.k, t, false, [0, DUR], TLS.querySelector('.tl-msg')); return; }
+  if (md.kind === 'press' && Math.abs(ev.clientX - md.x) > 4) md.kind = 'new';
+  if (md.kind === 'new') { md.t1 = Math.max(0, Math.min(DUR, t)); drawSoon(); }
+});
+mc.addEventListener('pointerup', () => {
+  if (!md) return;
+  const m = md;
+  md = null;
+  if (m.kind === 'edge') { save(); tlRefresh(); return; }
+  if (m.kind === 'new') {
+    const a = snap(Math.min(m.t, m.t1)), b = snap(Math.max(m.t, m.t1));
+    if (b - a >= 0.2) { const c = { id: ++uid, host: null, s: a, e: b, added: true }; added.push(c); TL.sel = { c }; renderAll(); save(); }
+    else drawSoon();
+    return;
+  }
+  TL.bar = m.t;                                            // a click: the bar goes there, and what is under it is selected
+  if (TL.on && !A.paused) A.currentTime = m.t;
+  TL.sel = m.h ? (m.h.c ? { c: m.h.c } : { sug: m.h.sug }) : null;
+  tlRefresh();
+});
+let wacc = 0;
+mc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer; Shift+wheel or a sideways swipe scrolls
+  if (ev.ctrlKey) {
+    ev.preventDefault();
+    wacc += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;
+    if (Math.abs(wacc) < 50) return;
+    const dir = wacc < 0 ? 1 : -1;
+    wacc = 0; tlTouch();
+    zoomAt(TL.z + dir, TL.t0 + evT(ev, mc) / pps(), evT(ev, mc));
+    return;
+  }
+  const dx = ev.shiftKey ? ev.deltaY : ev.deltaX;
+  if (!dx) return;
+  ev.preventDefault();
+  TL.t0 = clampT0(TL.t0 + (ev.deltaMode === 1 ? dx * 33 : dx) / pps()); drawSoon();
+}, { passive: false });
+let ovDrag = false;
+const ovMove = ev => { TL.t0 = clampT0(evT(ev, ov) / ov.clientWidth * DUR - vspan() / 2); drawSoon(); };
+ov.addEventListener('pointerdown', ev => { tlTouch(); ovDrag = true; ov.setPointerCapture(ev.pointerId); ovMove(ev); });
+ov.addEventListener('pointermove', ev => { if (ovDrag) ovMove(ev); });
+ov.addEventListener('pointerup', () => { ovDrag = false; });
+const btn = (cls, f) => TLS.querySelector(cls).addEventListener('click', ev => { tlTouch(); ev.currentTarget.blur(); f(); });
+btn('.tl-play', () => (TL.on && !A.paused) ? A.pause() : tlPlay());
+btn('.tl-left', () => { TL.t0 = clampT0(TL.t0 - 0.8 * vspan()); drawSoon(); });
+btn('.tl-right', () => { TL.t0 = clampT0(TL.t0 + 0.8 * vspan()); drawSoon(); });
+let hoverX = null;   // the pointer's x over the spectrogram: keys 1/2 zoom there (the user's ask, 2026-10-22)
+mc.addEventListener('pointermove', ev => { hoverX = evT(ev, mc); });
+mc.addEventListener('pointerleave', () => { hoverX = null; });
+const anchor = () => {
+  if (hoverX !== null) return [TL.t0 + hoverX / pps(), hoverX];
+  const x = xOf(TL.bar); return x >= 0 && x <= viewW() ? [TL.bar, x] : [TL.t0 + vspan() / 2, viewW() / 2];
+};
+const undo = [];   // cuts removed or deleted, newest last: Z brings them back one by one
+function removeSel() {
+  const c = TL.sel && TL.sel.c;
+  if (!c) { tlMsg('Select a cut first (click it), then Delete'); return; }
+  if (c.added) { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; }
+  else if (!c.removed) { c.removed = true; undo.push({ c, kind: 'rm' }); }
+  else { tlMsg('Already removed (Z brings back the last one)'); return; }
+  tlMsg('Removed - Z brings it back'); renderAll(); save();
+}
+function undoRemove() {
+  const u = undo.pop();
+  if (!u) { tlMsg('Nothing to bring back'); return; }
+  if (u.kind === 'del') added.push(u.c); else u.c.removed = false;
+  TL.sel = { c: u.c }; center(u.c.s); tlMsg('Brought back'); renderAll(); save();
+}
+btn('.tl-zin', () => zoomAt(TL.z + 1, ...anchor()));
+btn('.tl-zout', () => zoomAt(TL.z - 1, ...anchor()));
+btn('.tl-add', () => {
+  const s = snap(Math.min(TL.bar, DUR - 1)), c = { id: ++uid, host: null, s, e: snap(s + NEW_LEN), added: true };
+  added.push(c); TL.sel = { c }; keepBar(); renderAll(); save();
+});
+TLS.querySelectorAll('[data-j]').forEach(b => b.addEventListener('click', () => {
+  tlTouch(); b.blur();
+  const fwd = b.dataset.d === '1';
+  if (b.dataset.j === 'gap') {
+    const g = fwd ? gapList.find(g => g[0] > TL.bar + 1.05) : [...gapList].reverse().find(g => g[0] < TL.bar + 0.95);
+    if (!g) { tlMsg(`No uncovered silence ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, g[0] - 1); TL.sel = null; center(g[0]);
+  } else {
+    const cs = all().sort((a, b) => a.s - b.s);
+    const c = fwd ? cs.find(c => c.s > TL.bar + 1.05) : cs.reverse().find(c => c.s < TL.bar + 0.95);
+    if (!c) { tlMsg(`No cut ${fwd ? 'after' : 'before'} the bar`); return; }
+    TL.bar = Math.max(0, c.s - 1); TL.sel = { c }; center(c.s);
+  }
+  if (TL.on && !A.paused) A.currentTime = TL.bar;
+  tlRefresh();
+}));
+TLS.querySelector('.tl-selbox').addEventListener('click', ev => {
+  const b = ev.target.closest('button');
+  if (!b) return;
+  tlTouch(); b.blur();
+  const s = TL.sel, d = b.dataset.do;
+  if (d === 'adds') {                                      // whole frames inside the suggestion, as Studio cuts are
+    const g = TLD.suggestions[s.sug];
+    const c = { id: ++uid, host: null, s: Math.ceil(g.s * FPS - 1e-6) / FPS, e: Math.floor(g.e * FPS + 1e-6) / FPS, added: true };
+    added.push(c); TL.sel = { c }; renderAll(); save(); return;
+  }
+  const c = s.c;
+  if (d === 's' || d === 'e') setEdge(c, d, TL.bar, true, [0, DUR], TLS.querySelector('.tl-msg'));
+  else if (d === 'reset') { c.s = c.s0; c.e = c.e0; renderAll(); save(); }
+  else if (d === 'rm') { c.removed = !c.removed; if (c.removed) undo.push({ c, kind: 'rm' }); renderAll(); save(); }
+  else if (d === 'del') { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; renderAll(); save(); }
+});
+document.addEventListener('pointerdown', ev => { if (!TLS.contains(ev.target)) TL.focus = false; }, true);
+document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's, unless a cut card below was clicked last
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyZ') { ev.preventDefault(); ev.stopPropagation(); undoRemove(); return; }
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  const take = () => { ev.preventDefault(); ev.stopPropagation(); if (tag === 'BUTTON') document.activeElement.blur(); };
+  const c = ev.code;                                        // key positions, so the Armenian layout works too
+  if (!TL.focus && focusEl && (c === 'Space' || c === 'ArrowLeft' || c === 'ArrowRight')) return;   // the card's own keys (DECISIONS #41)
+  if (c === 'Space') { take(); (TL.on && !A.paused) ? A.pause() : tlPlay(); }
+  else if (c === 'Delete' || c === 'Backspace') { take(); removeSel(); }
+  else if (c === 'KeyZ') { take(); undoRemove(); }
+  else if (c === 'ArrowLeft' || c === 'ArrowRight') {
+    take();
+    TL.bar = Math.max(0, Math.min(DUR, TL.bar + (c === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2)));
+    if (TL.on && !A.paused) A.currentTime = TL.bar;
+    keepBar(); drawSoon();
+  }
+  else if (c === 'Digit2' || c === 'Numpad2') { take(); zoomAt(TL.z + 1, ...anchor()); }   // the user's pick (was + / -)
+  else if (c === 'Digit1' || c === 'Numpad1') { take(); zoomAt(TL.z - 1, ...anchor()); }
+  else if (c === 'KeyS') {
+    take();
+    const b = TLS.querySelector('.tl-skip');
+    b.checked = !b.checked; tlMsg(b.checked ? 'Skipping the cuts (S to play everything)' : 'Playing everything (S to skip the cuts)');
+  }
+  else if (c === 'KeyF') { take(); nextSpeed(); }
+}, true);
+const SPEEDS = [1, 2, 4];                                   // playbackRate on the same media: no extra renders
+function nextSpeed() {
+  const r = SPEEDS[(SPEEDS.indexOf(A.playbackRate) + 1) % SPEEDS.length];
+  A.playbackRate = r;
+  TLS.querySelector('.tl-speed').textContent = r + '×';
+  tlMsg(`Speed ${r}× (F to change)`);
+}
+TLS.querySelector('.tl-speed').addEventListener('click', ev => { ev.currentTarget.blur(); nextSpeed(); });
+mc.style.height = MAIN_H + 'px'; ov.style.height = OV_H + 'px';
+window.addEventListener('resize', drawSoon);
+TLS.addEventListener('toggle', drawSoon);
+tlRefresh();
+</script>
+</body></html>

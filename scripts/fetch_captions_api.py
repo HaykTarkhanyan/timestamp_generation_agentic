@@ -51,6 +51,9 @@ def main() -> None:
     ap.add_argument("--lang", default="hy")
     ap.add_argument("--output-base", default="output")
     ap.add_argument("--output-dir", type=Path, help="exact output dir instead of '<date>_<slug>_<id>'")
+    ap.add_argument("--fps", type=float,
+                    help="frame rate of the uploaded file, when fileDetails has none (Vahagn 21.2, uploaded by "
+                         "someone else in March 2026: no frameRateFps); take it from the local file")
     args = ap.parse_args()
 
     t0 = time.time()
@@ -67,15 +70,21 @@ def main() -> None:
         raise ValueError(f"{args.video_id}: no such video visible to the {args.channel} token")
     video = items[0]
     streams = video.get("fileDetails", {}).get("videoStreams", [])
-    if not streams or "frameRateFps" not in streams[0]:
-        raise ValueError(f"{args.video_id}: no frame rate in fileDetails (only the owner's token gets it)")
+    if streams and "frameRateFps" in streams[0]:
+        fps = streams[0]["frameRateFps"]
+    elif args.fps:
+        fps = args.fps
+        log.info(f"No frame rate in fileDetails; using --fps {fps}")
+    else:
+        raise ValueError(f"{args.video_id}: no frame rate in fileDetails (only the owner's token gets it); "
+                         "pass --fps from the local file")
     metadata = {
         "id": video["id"],
         "title": video["snippet"]["title"],
         "duration": iso_seconds(video["contentDetails"]["duration"]),
         "url": f"https://youtu.be/{video['id']}",
         "uploader": video["snippet"]["channelTitle"],
-        "fps": streams[0]["frameRateFps"],
+        "fps": fps,
     }
     log.info(f"Title: {metadata['title']}, {metadata['duration']} s, {metadata['fps']} fps")
 

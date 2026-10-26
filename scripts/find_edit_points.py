@@ -589,7 +589,9 @@ def timeline_data(x, data: dict, scuts: list[dict], rows, media: Path, wav: Path
     log.info(f"Timeline: {len(pauses)} pauses of {TL_PAUSE_MIN_S:g} s+ silence ({sum(len(g) > 1 for g in groups)} "
              f"split by a hum), {len(suggestions)} unticked suggestions")
     return {"tiles": tiles, "pauses": pauses, "loud": loud.round().astype(int).tolist(), "kinds": kinds,
-            "suggestions": suggestions, "rows": [[r[0], r[2]] for r in rows], "pause_min": TL_PAUSE_MIN_S}
+            "suggestions": suggestions, "rows": [[r[0], r[2]] for r in rows], "pause_min": TL_PAUSE_MIN_S,
+            # [start s, label] of each video on a page that joins several (vahagn_batch_review.py); none otherwise
+            "marks": data.get("marks", [])}
 
 
 # ---------------------------------------------------------------- transcript
@@ -894,6 +896,7 @@ function save() {
   try { localStorage.setItem(KEY, JSON.stringify({ edits, added: added.map(c => ({ host: c.host ? c.host.id : null, s: c.s, e: c.e })),
                                                    removed: plan.filter(c => c.removed).map(c => c.host.id) })); }
   catch (err) { storageError('saved', err); }
+  tAutoStart();   // every edit comes through here
 }
 function load() {
   let o;
@@ -1074,11 +1077,18 @@ function tShow() {
   tBtn.textContent = tSince ? 'Stop timer' : 'Start timer';
   document.getElementById('worktimer').classList.toggle('on', tSince !== null);
 }
+function tStore() {
+  try { localStorage.setItem(TKEY, JSON.stringify({ total: tTotal, since: tSince })); } catch (err) { storageError('saved', err); }
+}
 tBtn.addEventListener('click', () => {
   if (tSince !== null) { tTotal += Date.now() - tSince; tSince = null; } else tSince = Date.now();
-  try { localStorage.setItem(TKEY, JSON.stringify({ total: tTotal, since: tSince })); } catch (err) { storageError('saved', err); }
-  tShow(); tBtn.blur();                                         // so the space bar pauses playback, not the timer
+  tStore(); tShow(); tBtn.blur();                               // so the space bar pauses playback, not the timer
 });
+// Any edit starts a stopped timer (the user, 2026-10-25: "i forget to start it sometimes"); Stop still works.
+function tAutoStart() {
+  if (tSince !== null) return;
+  tSince = Date.now(); tStore(); tShow();
+}
 setInterval(tShow, 1000);
 tShow();
 load();
@@ -1196,6 +1206,8 @@ const FILL = { safe: 'rgba(217,0,18,.33)', judg: 'rgba(242,168,0,.40)', mine: 'r
 const rootCss = getComputedStyle(document.documentElement);
 const FG = rootCss.getPropertyValue('--fg').trim(), MUTED = rootCss.getPropertyValue('--muted').trim();
 const ROWS = TLD.rows, PAUSES = TLD.pauses;
+const MARKS = TLD.marks || [], MARK_COL = '#16A34A';   // where each video starts on a page that joins several
+const markAt = t => { let m = null; for (const k of MARKS) if (k[0] <= t + 1e-6) m = k; return m; };
 const TL = { t0: 0, z: 5, bar: 0, sel: null, on: false, focus: false };
 let gapList = [], md = null, lineAt = -2, pending = false;
 const pps = () => ZL[TL.z], viewW = () => mc.clientWidth, vspan = () => viewW() / pps();
@@ -1324,6 +1336,15 @@ function drawMain() {
     g.save(); g.beginPath(); g.rect(x, ty - 2, xn - x - 4, TX_H); g.clip();
     g.fillStyle = FG; g.fillText(ROWS[i][1], x + 3, ty); g.restore();
   }
+  g.font = '600 12px system-ui, sans-serif';
+  MARKS.forEach(([t, label]) => {                          // a new video starts: green line through every row + its name
+    const x = xOf(t);
+    if (x < -200 || x > W) return;
+    g.fillStyle = MARK_COL; g.fillRect(x - 1, 0, 3, MAIN_H);
+    const txt = '▶ ' + label, tw = g.measureText(txt).width;
+    g.fillRect(x + 2, AX_H + 3, tw + 10, 18);
+    g.fillStyle = '#fff'; g.fillText(txt, x + 7, AX_H + 6);
+  });
   const xb = xOf(TL.bar);
   if (xb >= -2 && xb <= W + 2) { g.fillStyle = '#000'; g.fillRect(xb - 2, AX_H - 3, 5, SP_H + GAP_H + 3); g.fillStyle = '#fff'; g.fillRect(xb - 1, AX_H - 3, 3, SP_H + GAP_H + 3); }
 }
@@ -1337,17 +1358,27 @@ function drawOver() {
     const h = m / 100 * 17; g.fillRect(x, 31 - h, 1, h);
   }
   g.globalAlpha = 1;
+  g.strokeStyle = COL.judg; g.lineWidth = 1.5;              // unticked suggestions as orange outlines (a page with
+  TLD.suggestions.forEach(s => g.strokeRect(s.s * k, 3.5, Math.max(2, (s.e - s.s) * k), 8));   // the camera on has only these)
   all().forEach(c => { g.fillStyle = COL[kindOf(c)]; g.fillRect(c.s * k, 3, Math.max(1, (c.e - c.s) * k), 9); });
   gapList.forEach(([s, e, silent]) => { g.globalAlpha = silent >= 4 ? 1 : 0.55; g.fillStyle = COL.gap; g.fillRect(s * k, 33, Math.max(1, (e - s) * k), 8); });
   g.globalAlpha = 1;
   g.font = '10px system-ui, sans-serif'; g.textBaseline = 'top'; g.fillStyle = MUTED;
   for (let t = 600; t < DUR; t += 600) { g.fillRect(t * k, OV_H - 12, 1, 12); g.fillText(hms(t).replace(/:00$/, ''), t * k + 3, OV_H - 12); }
+  MARKS.forEach(([t, label]) => {                          // where each video starts, with its name if there is room
+    g.fillStyle = MARK_COL; g.fillRect(t * k - 1, 0, 2, OV_H - 13);
+    g.font = '600 10px system-ui, sans-serif';
+    g.fillRect(t * k + 1, 14, g.measureText(label).width + 6, 13);
+    g.fillStyle = '#fff'; g.fillText(label, t * k + 4, 15);
+  });
+  g.font = '10px system-ui, sans-serif'; g.fillStyle = MUTED;
   g.strokeStyle = FG; g.lineWidth = 2; g.strokeRect(TL.t0 * k + 1, 1, Math.max(4, vspan() * k - 2), OV_H - 15);
   g.fillStyle = COL.safe; g.fillRect(TL.bar * k - 1, 0, 2, OV_H - 13);
 }
 function draw() {
   drawMain(); drawOver();
-  TLS.querySelector('.tl-now').textContent = tc(TL.bar);
+  const mk = markAt(TL.bar);                               // on a joined page: which video, and the time inside it
+  TLS.querySelector('.tl-now').textContent = tc(TL.bar) + (mk ? ' · ' + mk[1] + ' ' + tc(TL.bar - mk[0]) : '');
   const s = vspan();
   TLS.querySelector('.tl-zl').textContent = (s < 120 ? Math.round(s) + ' s' : (s / 60).toFixed(s < 600 ? 1 : 0) + ' min') + ' on screen';
   const i = rowAt(TL.bar);
@@ -1579,9 +1610,11 @@ tlRefresh();
 """
 
 
-def list_id(scuts) -> str:
-    """Short fingerprint of a Studio cut list, shown on studio.html and by --check-studio."""
-    return hashlib.sha1(json.dumps([[c["start_tc"], c["end_tc"]] for c in scuts]).encode()).hexdigest()[:8]
+def list_id(scuts, video_id: str) -> str:
+    """Short fingerprint of a Studio cut list, shown on studio.html and by --check-studio. studio.html keeps its edits
+    under it, so it includes the video: from the cuts alone, every page with no pre-ticked cut (a lecturer on camera,
+    DECISIONS #40) got the same id, and each Vahagn batch page opened with the previous one's cuts (2026-10-26)."""
+    return hashlib.sha1(json.dumps([video_id, [[c["start_tc"], c["end_tc"]] for c in scuts]]).encode()).hexdigest()[:8]
 
 
 def check_studio(out_dir: Path, markers_file: Path) -> None:
@@ -1609,7 +1642,7 @@ def check_studio(out_dir: Path, markers_file: Path) -> None:
     studio = sorted(pairs[1:], key=lambda c: sec(c[0]))
     page_n = (out_dir / "edit_review" / "studio.html").read_text(encoding="utf-8").count('<details open class="cut"')
     log.info(f"Studio: {len(studio)} cuts | plan (edit_points.json): {len(plan)} | studio.html: {page_n} "
-             f"| list {list_id(data['studio_cuts'])} | whole video {whole[0]} - {whole[1]}")
+             f"| list {list_id(data['studio_cuts'], data['video_id'])} | whole video {whole[0]} - {whole[1]}")
     only_plan = [c for c in plan if c not in studio]
     only_studio = [c for c in studio if c not in plan]
     for c in only_plan:
@@ -1742,9 +1775,9 @@ planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Studio cuts {esc(data['video_id'])}</title>
 <style>{PAGE_CSS}{STUDIO_CSS}{TL_CSS if timeline else ''}</style></head>
-<body{' class="has-video"' if video else ''} data-fps="{data['fps']:g}" data-ctx="{PLAY_CONTEXT_S:g}" data-duration="{data['duration']}" data-list="{list_id(scuts)}" data-video="{esc(data['video_id'])}"><main>
+<body{' class="has-video"' if video else ''} data-fps="{data['fps']:g}" data-ctx="{PLAY_CONTEXT_S:g}" data-duration="{data['duration']}" data-list="{list_id(scuts, data['video_id'])}" data-video="{esc(data['video_id'])}"><main>
 <h1>Studio cuts: {esc(data['title'])}</h1>
-<p class="stamp"><b>{len(scuts)} cuts</b> &middot; list {list_id(scuts)} &middot; built {time.strftime("%Y-%m-%d %H:%M")}<span id="nchanged"></span>
+<p class="stamp"><b>{len(scuts)} cuts</b> &middot; list {list_id(scuts, data['video_id'])} &middot; built {time.strftime("%Y-%m-%d %H:%M")}<span id="nchanged"></span>
  - reload this tab if the list changed since you opened it</p>
 <p class="warn" id="storage"></p>
 <div id="worktimer"><span id="wt-time">0:00:00</span><button id="wt-btn">Start timer</button></div>
@@ -1828,6 +1861,18 @@ def analyse(out_dir: Path, min_silence: float, pad: float, source: Path | None =
     for k, c in enumerate(sorted(cuts, key=lambda c: c["start"]), 1):
         c["id"] = f"S{k:03d}"
     all_cuts = content + sorted(cuts, key=lambda c: c["start"])
+    cam_path = out_dir / "camera_on.json"
+    if cam_path.exists():
+        # While the lecturer's webcam is on screen, a cut makes him jump, so every cut touching a camera stretch is
+        # only a suggestion (the user, Vahagn 6 May: 70 of 75 planned cuts removed for that reason). The intervals
+        # come from scripts/non_essential/vahagn_camera_on.py.
+        cam = json.loads(cam_path.read_text(encoding="utf-8"))["intervals"]
+        n = 0
+        for c in all_cuts:
+            if c["default"] and any(c["start"] < b and c["end"] > a for a, b in cam):
+                c["default"], c["kind"], n = False, "judgment", n + 1
+                c["reason"] += " - camera on: a cut makes him jump"
+        log.info(f"{n} cuts unticked: they touch the {len(cam)} camera stretch(es) in {cam_path.name}")
     return {
         "video_id": meta["id"], "title": meta["title"], "duration": round(duration, 2),
         "params": {"min_silence": min_silence, "pad": pad, "floor_db": round(floor, 1),

@@ -120,9 +120,11 @@ from the API's uploads list), 4 `fHPN7fJEusA`, 5 `0WSFqm9E-Pc`; playlist `PLz3Nr
 - [x] Final audit of all 9 (`scripts/archive/info_theory_2026-10/audit_info.py`): every check passes except Դաս 3's
       27 s gap (10:57 -> 11:24), an old public list, YouTube's floor is 10 s. Overview page:
       `videos_overview.html` (standalone, all 9 at a glance).
-- [ ] **Waiting on Ashot:** the user sends him the message (Telegram, Armenian, links + titles of Դաս 4-8, slides
-      folder, 1.25x except Դաս 5, Դաս 6's lost picture). Public only after his OK (agreement of 25 Jan); then
-      make 4-8 public with their own status fields, read back.
+- [x] **Ashot's OK (2026-10-25):** «Բան չեմ նկատել, բացի մի ուղղագրական մանրուքից: Առաջին վիդեոյում ավելացված
+      տեքստային հուշման մեջ «կսկսվի ... րոպեյից» պիտի լինի «րոպեից»». The slip is the filming team's red overlay
+      «Մեկ րոպեյից կսկսվի տեսագրությունը» burned into Դաս 4 at ~0:06-0:18 (Premiere, not our render): left as is
+      (the user: "not worth it"). Դաս 4-8 made public 2026-10-25 via the API, only privacyStatus changed, read
+      back; status before in `descriptions_before_publish_2026-10-25.json`.
 
 ## 3. Course-wide
 
@@ -136,7 +138,7 @@ from the API's uploads list), 4 `fHPN7fJEusA`, 5 `0WSFqm9E-Pc`; playlist `PLz3Nr
       anyone with the link can view (checked signed out). The 📚 block of Դաս 0-5, 7, 8 now has the page
       range, the deck link and the folder link; pushed and read back (`descriptions_after_slides_2026-10-24.json`;
       before: `descriptions_before_2026-10-24.json`). Դաս 6 (`LRQ6r_DaAVU`): pages 22-39, with its chapters.
-- [ ] Դաս 4-8 are unlisted: public together after his OK (the user's word, then the API).
+- [x] Դաս 4-8 public together after his OK (2026-10-25).
 - [x] Playlist into lesson order (2026-10-24): `sort-playlist --by lesson --apply` moved 5 of 9 (it was
       already Manual), read back Դաս 0-8 in order.
 - [ ] Message him: drafted 2026-10-24, the user sends it. Still to ask: 15 May (Q36), the 1-2 lectures he wanted to add.

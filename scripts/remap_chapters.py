@@ -39,8 +39,11 @@ def read_cuts(path: Path, fps: float) -> list[tuple[float, float]]:
     if not path.exists():
         raise FileNotFoundError(path)
     tc = lambda s: (lambda h, m, sec, f: ((h * 60 + m) * 60 + sec) + f / fps)(*map(int, s.split(":")))
-    cuts = sorted((tc(m[1]), tc(m[2])) for line in path.read_text(encoding="utf-8").splitlines() if (m := CUT.match(line)))
-    if not cuts:
+    text = path.read_text(encoding="utf-8")
+    cuts = sorted((tc(m[1]), tc(m[2])) for line in text.splitlines() if (m := CUT.match(line)))
+    # an empty list only when the file says so (find_edit_points writes "# 0 cuts at ..." when every cut is a
+    # suggestion, e.g. a lecturer on camera, DECISIONS #40); any other file without cut lines is the wrong file
+    if not cuts and not re.search(r"^# 0 cuts\b", text, flags=re.M):
         raise ValueError(f"no 'Cut N  start  ->  end' lines in {path}")
     return cuts
 

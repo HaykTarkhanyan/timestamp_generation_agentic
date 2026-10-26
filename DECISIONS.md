@@ -47,6 +47,117 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   `--hms` in `remap_chapters.py` and `snap_chapters_to_captions.py` (their default is unchanged for the other
   courses). Դաս 15 redone: seconds, labels and indents identical. Also for 1-14 at the end.
 
+## 40. While the lecturer's webcam is on screen, cuts are only suggestions
+
+- **Decision:** A piece with `camera_on.json` (`scripts/non_essential/vahagn_camera_on.py`) gets every cut that touches
+  a camera stretch unticked (`find_edit_points.py`, reason "camera on: a cut makes him jump"); the user ticks the ones
+  worth a jump on studio.html.
+- **Date / status:** 2026-10-26, active (the user, returning the 6 May batch with 70 of 75 planned cuts removed: "he
+  had his video on and editing too much would make him teleport. pls for next batches see when hes on screen during
+  the lecture, not just very beginning then make all the cuts unticked").
+- **Why:** his webcam box (top-right, black bars on both sides) is on from 6 May to the end: 23.1.b-28.4 at 95-100%
+  of every second, against 0% for 21.1-23.1.a. The only camera-off stretch in the 15 unreviewed pieces is 28.3.a
+  18:09-18:37 (toolbar visible on the frame), so its cuts there stay ticked. Detector: the left bar's luminance in
+  the 360p preview, dark under 100 (0-52 with the camera, ~219 without); the picture inside the box runs 42-192 as
+  he moves, so it is not used.
+- **Alternatives rejected:** dropping the cuts altogether (the user still added 8 cuts on 6 May, so suggestions are
+  useful); a stricter threshold on the camera pieces (the user's call is which jumps are acceptable, not a length).
+- **What would change this:** the user ticking most suggestions on a camera piece (then pre-tick the long pauses).
+  Already reviewed pieces keep their plans: a camera file there would change the plan under the reviewed list.
+
+## 39. Vahagn's remaining pieces are reviewed in batches, one studio.html per lecture day
+
+- **Decision:** Join each lecture day's pieces (2-4, 35-81 min) into one studio.html with one cut-list download, and
+  split the download back into per-piece lists (`scripts/non_essential/vahagn_batch_review.py build` / `split`).
+- **Date / status:** 2026-10-25, active (the user: "since here the vids are short i dont want to do one by one and
+  keep on downloading many txts").
+- **Why:** one page and one file per sitting; a day's pieces are consecutive parts of one lecture, so the page plays
+  like the whole lecture. The page code is unchanged: the batch is a virtual output folder (pieces' analysis WAVs
+  side by side on whole-frame slots, previews' pictures joined by stream copy, their sound re-encoded once, each
+  piece's own planned cuts shifted unchanged). Tested on b0504 and b0506: an untouched plan splits back to every
+  planned cut (26/26, 76/76, including a tail cut and the next piece's opening cut that the page joins into one); an
+  edited list with a moved start, a moved end, a removed cut, a new cut and a new cut across a boundary splits into
+  exactly those changes and passes `cut_list.py check`; the preview is in sync with the analysis audio (0 ms at the
+  start and end of every piece; joining the sound by stream copy had put it 32 ms late, AAC's start-up delay).
+- **Alternatives rejected:** one page per piece (the user's complaint); one page with every piece in a frame (file://
+  pages can't read each other, so no single download); a fresh analysis of the joined audio (clean and hum pieces have
+  different noise floors, and each piece's plan must stay its own for `check`).
+- **What would change this:** batches too long to review in one sitting (then split a day in two: `build` takes any
+  list of sections).
+
+## 38. Vahagn's 25 pieces: only the sound is fixed locally; the cuts go in through YouTube Studio
+
+- **Decision:** Fix the sound of 21.1-28.4 locally (`scripts/non_essential/vahagn_audio_fix.py`: Ashot's chain, 80 Hz
+  low cut + light afftdn, then a per-piece gain to -16 LUFS with peaks limited to -1 dBFS, 48 kHz AAC 128k), copy the
+  picture untouched, upload the results as new videos, and enter the reviewed studio.html cut lists in YouTube Studio
+  afterwards. Replaces #35's local render with the cuts.
+- **Date / status:** 2026-10-25, active (the user: "if we only do audio work how long will it take? cuts can be done
+  in studio youtube later", then Q88 "yes"; the level picked on `output/vahagn_linalg_overview/audio/loudness_samples.html`:
+  "Cleanup, raised to -16 LUFS").
+- **Why:** speed and no waiting. Sound only: 21.1 (22:07) in 30 s, 28.3.b (5:14) in 11.6 s with gain, ~18 min for all
+  25 on one core, against ~2.5 h of full-CPU rendering with the cuts, each piece blocked until its review. The picture is
+  stream-copied, so the timeline does not move (21.1: 1327.456 s in and out) and the cut lists apply unchanged. No loss
+  against the series: YouTube serves the published pieces at 720p at most (20.1), as it will the copied 1366x768.
+- **Level:** the raw files are about -24 LUFS, the published pieces play at -29.7 (20.3's YouTube copy), and YouTube
+  never turns quiet videos up (our raw 21.1 upload stayed at -24.2). Figures are ebur128 on mono files; counted as
+  dual-mono (two speakers) the -16 output is -13.5 LUFS (28.3.b), at YouTube's ~-14 reference, so YouTube may turn it
+  down by up to 0.5 dB. At -14 the 21.1 peaks would need ~8 dB of limiting (whole-piece peak -3.0 dBFS, gain +10.2 dB).
+- **Chapters on the uploads** (added 2026-10-25 21:00, at the push): the uploads are uncut, so their descriptions
+  carry the raw-timeline chapters (`timestamps_raw.txt`); once a piece's cuts are saved in Studio its description
+  gets the remapped ones (`vahagn_push_metadata.py --chapters edited --description-only`). Every description
+  matches its video at every moment; the 23 unreviewed pieces need the second push anyway.
+- **Speed details:** ffmpeg 9 (#31), not the chocolatey 5.1 on PATH (pass 2 of 28.3.b 23.6 s against 8.6 s); 48 kHz
+  output (AAC at the recordings' 32 kHz took 11.9 s for 28.3.b, at 48 kHz 5.2 s).
+- **Alternatives rejected:** #35's render with the cuts (above); the recording's own level, -20 or -14 LUFS (samples
+  page); Studio cuts on the existing raw uploads (sound stays raw, the reason for #35).
+- **What would change this:** Studio's editor proving impractical for 25 videos (then render with the cuts after all);
+  the finished hum pieces still sounding bad (Q83: then a stronger chain for those 11 only).
+
+## 37. Vahagn 22.1-28.4: cut plans from pauses of 4 s, content cuts only where his talk leaves the topic
+
+- **Decision:** Plan every remaining piece at `--min-silence 4` with a 360p video preview
+  (`scripts/non_essential/vahagn_plan_queue.py`), plus content cuts only for off-topic talk (as unticked `judgment`
+  suggestions where it is his own aside); the user reviews each on studio.html.
+- **Date / status:** 2026-10-25, active (the user on 21.1: "for 21 s studio pls use 4 seconds as threshold").
+- **Why:** On 21.1 the 4 s plan (15 cuts, 1.3 min) came back with all 15 kept, 7 edges adjusted and 4 short pauses
+  added (2.8-4.6 s, plus the first 1.3 s): 19 cuts, 1.5 min. The recordings are dense; students' answers are not on
+  them (only his mic), so his question-and-wait spots are plain silences the pause rule already takes.
+- **Alternatives rejected:** 2 s (67 cuts, 3.0 min on 21.1) and 3 s (26 cuts, 1.8 min), the user picked 4 s; matching
+  the previous editor's ~15% (not measurable: the published audio was processed, see #35).
+- **Recordings with mains hum** (11 of 25, noise floor ~-65 dB against ~-85 dB, a 47 or 70 Hz line plus harmonics)
+  are analysed from a 150 Hz high-passed copy (`vahagn_plan_queue.py --highpass`): the hum lifts the "floor + 20 dB"
+  threshold over quiet speech (23.3.b: 91% of frames "silent", a 45-cut plan removing 5.6 of 9.6 min; filtered: 21 cuts,
+  1.9 min; 23.2: 64% -> 54% silent). The preview and the render keep the original sound.
+- **What would change this:** the user adding many short cuts on review again (21.1 added 4), which would argue for 3 s.
+
+## 36. Vahagn's new pieces get one level of nested chapters, unlike the flat published 1.1-20.3
+
+- **Decision:** Chapters for 21.1-28.4 nest one level where a topic has 2+ sub-chapters (4 spaces before the time,
+  as DECISIONS #34 for Ashot); a parent never has a single child, and short theorem-then-proof pairs stay flat.
+- **Date / status:** 2026-10-25, active (the user: "for the timestamps pls use 1 level hierarchy whenever its useful").
+- **Why:** the user's request; the pieces are 5-30 min of tightly linked definition / theorem / proof / example runs,
+  where a parent label reads faster than a flat list.
+- **Alternatives rejected:** flat lists matching 1.1-20.3 (consistent with the published pieces, but not what the
+  user asked for); renesting the 72 published pieces (not asked).
+- **What would change this:** the user wanting the playlist uniform (then either flatten these or nest the old ones).
+
+## 35. Vahagn's 24 missing pieces are rendered locally (cuts + improved sound) and uploaded as new videos
+
+- **Decision:** Cut and fix the sound of Գծային հանրահաշիվ 21.1-28.4 locally with ffmpeg
+  (`scripts/render_lecture.py`: the reviewed cut list, `--speed 1`, no intro/outro, no dip to black) and upload
+  the results as new videos. The 24 raw uploads of 2026-10-24 only supply captions (set unlisted for yt-dlp);
+  no titles, descriptions or Studio cuts go on them, and they go once the new ones are up.
+- **Date / status:** 2026-10-25, superseded by #38 the same day (sound fixed locally, cuts in Studio). Was: (the user: "we need to improve the audios for those vids as well so i
+  guess no need to do much updates on those videos on youtube because we will be uploading new ones anyways").
+- **Why:** Studio can cut but can't touch the sound. The published pieces were processed: 20.1 and 20.3 are
+  6 dB quieter than their raw files (-30.9 / -29.7 LUFS against -24.9 / -23.7) with a lower noise floor
+  (-94.7 dB against -79.8 dB), so they were denoised and re-levelled outside YouTube. A local render also
+  makes the number of cuts free (no Studio entry), so short pauses can go.
+- **Alternatives rejected:** Studio cuts on the existing uploads (raw sound stays); Ashot's 1.25x speed (the
+  published Vahagn pieces are 1x: the best speed match of published vs raw was 1.00x in 5 of 6 windows).
+- **What would change this:** the user's pick on the audio samples showing the raw sound is fine as it is (then
+  Studio cuts on the existing uploads would do).
+
 ## 34. Ashot's chapters are nested like Metric Academy's; videos over an hour use H:MM:SS throughout
 
 - **Decision:** Indent sub-chapters by 4 spaces (one level, a parent has 2+ children) in all 9 Ինֆորմացիայի

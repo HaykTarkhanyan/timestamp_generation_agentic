@@ -127,6 +127,12 @@ pauses and logistics are cut as usual. Details in the preferences learning (ML52
 
 **Keep:** student questions and their answers, content tangents, and course-plan announcements.
 
+**Lecturer's webcam on screen: cuts are suggestions only** (DECISIONS #40). Every cut makes a visible face jump; on
+Vahagn's 6 May batch the user removed 70 of 75 planned cuts for that reason ("editing too much would make him
+teleport"). Check the frames for a webcam overlay through the whole lecture, not just the start. Write
+`<output_dir>/camera_on.json` (`{"intervals": [[start_s, end_s], ...]}`; Vahagn: `scripts/non_essential/vahagn_camera_on.py`)
+before the analysis, and every cut touching a camera stretch comes out unticked, with the reason "camera on".
+
 **A lecturer whose hums read as speech** (Arnak, DECISIONS #17): his "ըըը" is as loud as speech,
 so a hum splits one long pause into two cuts. After the silence pass, join them through the captions:
 
@@ -279,10 +285,20 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
     corner. The total is kept in localStorage per video (`studio-timer-<id>`), so reloads and rebuilt pages
     keep it. It counts wall-clock time, so a running timer keeps going while the tab is closed. Ask the user
     for the time when a review comes back; it tells how long a review takes per cut.
+    **Any edit starts a stopped timer** (added 2026-10-25: "i forget to start it sometimes"): `save()`, which
+    every edit goes through, calls `tAutoStart()`. Opening or playing the page doesn't; Stop still works and the
+    next edit starts it again. Tested in Playwright on Vahagn 21.2 (Remove cut: "Start timer" -> "Stop timer").
+    Pages built before that need a rebuild (`--report-only --video-preview`) to get it.
   - **Speed and download** (added 2026-10-23 at the user's request): a speed button in the timeline bar
     and the F key cycle 1x / 2x / 4x (the media element's `playbackRate`, so nothing is re-rendered), and
     "Download list" next to "Copy list" saves the cut list as `studio_cuts_edited_<id>.txt` (the user:
     "download feels safer" than the clipboard).
+  - **Several videos on one page** (added 2026-10-25/26 for Vahagn's short pieces, DECISIONS #39):
+    `scripts/non_essential/vahagn_batch_review.py build` joins pieces into one virtual output folder and `split`
+    turns the one download back into per-piece lists. An optional `marks` list in edit_points.json ([start s,
+    label]) draws a green line and label where each video starts, in the main view and the overview strip, and the
+    time readout adds the video and the time inside it ("0:17:52:07 · Դաս 22.2 0:00:03:19"; the user: "add a visual
+    indication on where a new vid starts"). Pages without `marks` are unchanged.
   - **Video preview** (added 2026-10-12 at the user's request, opt-in): `--video-preview` makes
     `<output_dir>/video/<id>_360p.mp4` from the local recording, and studio.html then plays it
     in a panel that stays at the top while scrolling (with a Hide video button) instead of the WAV.

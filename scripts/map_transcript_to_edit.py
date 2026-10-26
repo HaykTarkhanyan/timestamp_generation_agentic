@@ -45,9 +45,12 @@ def fmt(t: float, hours: bool) -> str:
 
 def read_cuts(path: Path, fps: float) -> list[tuple[float, float]]:
     frames = lambda tc: (lambda h, m, s, f: ((h * 60 + m) * 60 + s) + f / fps)(*map(int, tc.split(":")))
-    cuts = sorted((frames(m[1]), frames(m[2])) for line in path.read_text(encoding="utf-8").splitlines()
+    text = path.read_text(encoding="utf-8")
+    cuts = sorted((frames(m[1]), frames(m[2])) for line in text.splitlines()
                   if (m := re.match(r"Cut\s+\d+\s+(\S+)\s+->\s+(\S+)", line)))
-    if not cuts:
+    # an empty list only when the file says so (find_edit_points writes "# 0 cuts at ..." when every cut is a
+    # suggestion, e.g. a lecturer on camera, DECISIONS #40); any other file without cut lines is the wrong file
+    if not cuts and not re.search(r"^# 0 cuts\b", text, flags=re.M):
         raise ValueError(f"no 'Cut N  start  ->  end' lines in {path}")
     for (s0, e0), (s1, e1) in zip(cuts, cuts[1:]):
         if s1 < e0:

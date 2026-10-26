@@ -7,7 +7,7 @@ go to `DEFERRED_TODO.md`, decisions to `DECISIONS.md`, per-course detail to `_kn
 **Status:** `DONE` · `RUNNING` (in progress now) · `WAIT-YT` (YouTube is processing) ·
 `YOU` (waits on you) · `DECIDE` (your decision needed) · `TODO` (Claude, can start) · `LATER`
 
-Last update: 2026-10-24 20:45 (Munich)
+Last update: 2026-10-26 01:40 (Munich)
 
 ## Now
 
@@ -17,7 +17,8 @@ Last update: 2026-10-24 20:45 (Munich)
 | Tserunyan 16-27: review the 5 s cut plans on studio.html | `YOU` | Give the list with "pw": Claude enters and saves it if the diff and length check pass (DECISIONS #27) |
 | Audit batch 2 (60 descriptions) | `DONE` | 2026-10-23 12:01, all 80 of the batch read back matching |
 | Glossary scan of both channels | `DONE` | 13:32 after the term fixes: 664 items, 0 DENY, 40 NEAR, 383 ENG |
-| Ashot Դաս 4-8: send the message, wait for his OK | `YOU` | Message drafted (Armenian, links + titles); all 9 videos finished and audited, 4-8 unlisted. After his OK: Claude makes 4-8 public (status fields kept) and reads back |
+| Ashot Դաս 4-8: send the message, wait for his OK | `DONE` | 2026-10-25: his OK (one spelling slip, burned into Դաս 4's overlay, left as is); 4-8 public, read back |
+| Vahagn linear algebra: 24 missing pieces + 21.2 | `TODO` | All 25 reviewed (2026-10-26, batch pages, camera rule); 159 cuts to enter in Studio on the 25 sound-fixed uploads (Playwright), then edited chapters pushed, playlist cleanup + order (Q92, Q93), publish, delete the raw caption uploads (Q84); dates (Q72) |
 | Commit this session's work | `DONE` | 2026-10-24 20:5x, pushed; Metric Academy leftovers from other sessions (ML48/49/52-54, Claude Code, fonts) left out again |
 
 ## Tserunyan - Մետրիկական տարածություններ և տոպոլոգիա (channel umath)
@@ -65,9 +66,10 @@ linked. Only open item: end screens for 2-13 + 2025 (`LATER`, `DEFERRED_TODO.md`
 
 | Course | Status | Detail |
 |---|---|---|
-| Ashot, Information Theory | `YOU` | Դաս 6-8 rendered (1.25x, ffmpeg), uploaded, chaptered (nested, DECISIONS #34), titled, thumbnailed; slides folder on the math-team Drive linked from all 9 with page ranges (#33); Դաս 4/5 labels fixed; playlist sorted 0-8. Waiting: your message to him, then his OK -> 4-8 public. Open: Q36 (15 May), Q46 end screens, Q38 Դաս 5 speed, delete 3 private caption uploads. Todo: `_knowledge/info_theory/todo.md`, overview: `_knowledge/info_theory/videos_overview.html` |
+| Ashot, Information Theory | `DONE` | 2026-10-25: all 9 public after his OK. Open: Q36 (15 May), Q46 end screens, Q38 Դաս 5 speed, delete 3 private caption uploads (you, Studio), raw MOVs on the Desktop can go (your word). Todo: `_knowledge/info_theory/todo.md`, overview: `_knowledge/info_theory/videos_overview.html` |
 | Sevak, Complex Analysis | `DONE` | His email answered by you (2026-10-23); his Honors Linear Algebra channel: chapters posted as comments |
-| Vahagn Mikaelian, Linear Algebra + Groups | `LATER` | ~24 missing pieces, Դաս 21.2 "Todo" title, playlist sort (67 of 73); Groups not checked |
+| Vahagn Mikaelian, Linear Algebra | `RUNNING` | 2026-10-26: all 25 pieces reviewed and uploaded (unlisted, metadata pushed); next: Studio cuts. State: `_knowledge/vahagn_linalg/status.md` |
+| Vahagn Mikaelian, Groups | `LATER` | Not checked |
 | Papikian, Galois Theory (ARCS-ai 2025) | `LATER` | Publish or not |
 
 ## Decisions and reviews for you
