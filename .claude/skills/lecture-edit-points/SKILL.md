@@ -127,7 +127,7 @@ pauses and logistics are cut as usual. Details in the preferences learning (ML52
 
 **Keep:** student questions and their answers, content tangents, and course-plan announcements.
 
-**Lecturer's webcam on screen: cuts are suggestions only** (DECISIONS #40). Every cut makes a visible face jump; on
+**Lecturer's webcam on screen: cuts are suggestions only** (DECISIONS #45). Every cut makes a visible face jump; on
 Vahagn's 6 May batch the user removed 70 of 75 planned cuts for that reason ("editing too much would make him
 teleport"). Check the frames for a webcam overlay through the whole lecture, not just the start. Write
 `<output_dir>/camera_on.json` (`{"intervals": [[start_s, end_s], ...]}`; Vahagn: `scripts/non_essential/vahagn_camera_on.py`)
@@ -224,9 +224,10 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
     - Editing: click puts the bar there and selects what is under it, dragging across draws a new
       cut, dragging an edge moves it; the panel under it has Start/End = bar, Remove/Restore,
       Delete. Cuts drawn here are stored with `host: null`; `cut_list.py` reads the paste unchanged.
-    - **The per-cut cards are hidden** when the page has the timeline (the user, 2026-10-21: "i dont
-      need the old view"; DECISIONS #21). They stay in the DOM because STUDIO_JS builds the cut list
-      from them; the contents list shows only the timeline and the copyable list.
+    - **The per-cut cards sit below the timeline** in one section, "Each cut on its own" (the user,
+      2026-10-25: "include the view we had before where each cut was separately as a list, but also keep
+      the full timeline"; DECISIONS #41, which superseded #21's hidden cards). Both views edit one cut
+      list. Space and the arrows act on what was clicked last: a card, or the timeline.
     - **Keys anywhere on the page** (except in a text box): Space play/pause, S skip the cuts, 1 zoom
       out, 2 zoom in (the user's pick, 2026-10-21; + / - before, then 1 in / 2 out, which the user
       found backwards), arrows move the bar (Shift: 1 s).
@@ -293,7 +294,7 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
     and the F key cycle 1x / 2x / 4x (the media element's `playbackRate`, so nothing is re-rendered), and
     "Download list" next to "Copy list" saves the cut list as `studio_cuts_edited_<id>.txt` (the user:
     "download feels safer" than the clipboard).
-  - **Several videos on one page** (added 2026-10-25/26 for Vahagn's short pieces, DECISIONS #39):
+  - **Several videos on one page** (added 2026-10-25/26 for Vahagn's short pieces, DECISIONS #44):
     `scripts/non_essential/vahagn_batch_review.py build` joins pieces into one virtual output folder and `split`
     turns the one download back into per-piece lists. An optional `marks` list in edit_points.json ([start s,
     label]) draws a green line and label where each video starts, in the main view and the overview strip, and the
@@ -349,9 +350,17 @@ python scripts/cut_list.py entry-js --output-dir <output_dir>    # -> .playwrigh
    New Cut button is there, and how many of the list's cuts Studio already has.
 3. Run `_01ofNN.js`, `_02ofNN.js`, ... one at a time. Each returns `done`, `already` and the cut
    count in Studio; any surprise throws with the cuts done so far. A batch that stopped can be run
-   again as it is: cuts already in Studio are skipped. 14 cuts per batch. A call over ~120 s moves
-   to the background; that is fine (the result arrives as a notification), just run the next batch
-   only after reading it.
+   again as it is: cuts already in Studio are skipped. 40 cuts per batch (14 until 2026-10-25). A call
+   over ~120 s moves to the background; that is fine (the result arrives as a notification), just run
+   the next batch only after reading it.
+   - **Since 2026-10-25 the loop skips the start box** (New Cut already starts the cut at the playhead;
+     the box's `value` is empty, its `aria-label` holds the time, and that is compared), puts each time
+     in with one `insertText` (read back, slow retype if wrong), and polls instead of sleeping. Each batch
+     returns `msPerCut` and `startsTyped` (should be 0). Tserunyan Դաս 17: 122 cuts in 18.3 min, against
+     ~55 min for Դաս 16's 120 on the old loop (`_learnings/2026-10-26-0012_studio-entry-skip-the-start-and-send-fewer-events.md`).
+   - Per cut still grows with the cuts already in Studio (Դաս 17: 3.5, 6.6, 17.1 s for 0-41, 41-82,
+     82-122): Studio answers every event more slowly as cuts pile up. A click that times out at 30 s has
+     usually taken effect: read the markers, then rerun the batch.
 4. Read the markers back and run `cut_list.py diff` (below). Never Save.
 
 **If batch 1 fails on cut 1 with "not in Studio after Cut" and the markers show that cut one frame
@@ -380,6 +389,12 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
 
 - **Getting in:** `https://studio.youtube.com/video/<ID>/editor`, then the "Add trim"
   button (Trim & cut), then "New Cut".
+- **Check the channel first.** One Google login manages Metric Academy, umath and Ուղեղամպրոպ, and Studio
+  opens another channel's video editor under whichever channel is selected (2026-10-25: Tserunyan Դաս 16, a
+  umath video, opened under Metric; the user spotted it in the top-right). Before the dry run, the account
+  button must name the video's channel ("Համալսարանական մաթեմատիկա You're a manager" for umath; the owner is
+  `snippet.channelId` in the API). Switch with the account button > Switch account > the channel; the tab
+  reloads, so do it before entering any cut (unsaved cuts are lost; a "beforeunload" dialog asks first).
 - **Times:** the boxes take `H:MM:SS:FF` at the video's frame rate. ML48 was 25 fps;
   the script reads the rate per video. Studio keeps the **original timeline** while you
   edit, so the times in the list stay valid.

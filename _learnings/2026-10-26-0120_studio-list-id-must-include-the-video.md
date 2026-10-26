@@ -7,7 +7,7 @@ called mine, i think u have a bug somewhere". Both pages opened with the cuts th
 **Cause**
 studio.html keeps the user's edits in localStorage under `studio-edits-<list id>`, and `list_id()` in
 find_edit_points.py hashed only the pre-ticked cut list. Once every cut on a camera page became a suggestion
-(DECISIONS #40), the five camera batches b0511-b0525 all had zero pre-ticked cuts, so all got list id `97d170e1` and
+(DECISIONS #45), the five camera batches b0511-b0525 all had zero pre-ticked cuts, so all got list id `97d170e1` and
 each page loaded what the previous one had saved.
 
 **Consequences**

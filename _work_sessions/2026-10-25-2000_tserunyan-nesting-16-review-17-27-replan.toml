@@ -1,7 +1,7 @@
-title = "Tserunyan: nested chapters, H:MM:SS, the user's Դաս 16 review, 17-27 re-planned"
+title = "Tserunyan: nested chapters, H:MM:SS, all 16-27 reviewed, cut in Studio and pushed; 1-14 nested live"
 date = "2026-10-25"
 time = "20:00"
-areas = ["_knowledge/tserunyan_metric", "_knowledge/umath_todo.md", "output/2026-10-21_Das-15..27-Metric-*", "scripts", "scripts/non_essential", "scripts/archive/tserunyan_2026-10", "_learnings", "DECISIONS.md", "~/.claude/CLAUDE.md"]
+areas = ["_knowledge/tserunyan_metric", "_knowledge/umath_todo.md", "output/2026-10-21_Das-15..27-Metric-*", "scripts", "scripts/non_essential", "scripts/archive/tserunyan_2026-10", "_learnings", "DECISIONS.md", "~/.claude/CLAUDE.md", ".claude/skills/lecture-edit-points"]
 
 done = [
   "Status rundown of the Tserunyan course for the user (what was left)",
@@ -11,37 +11,43 @@ done = [
   "Q40 H:MM:SS throughout: new opt-in --hms in remap_chapters.py and snap_chapters_to_captions.py; Դաս 15 edited/ redone (seconds, labels, indents identical), 16-27 drafts too",
   "Դաս 16: the user's studio.html list found in Downloads by its exact name (studio_cuts_edited_<id>.txt from the page code), copied to studio_cuts_edited.txt; cut_list.py check OK (121 cuts, 13.0 min); to-enter 120 cuts, 1:42:35 -> 1:29:35; chapters remapped onto it",
   "Analysis of the user's 15 + 16 edits (learning 2026-10-25-2052): share of each pause length cut, join-across-short-sounds disproven, her math/talk content cuts unticked, practical ones kept",
-  "Questions asked with the interview tool (Q40-Q50); answers recorded in DECISIONS #40",
-  "17-27 re-planned (DECISIONS #40): 4 s pauses, math/talk cuts as suggestions, 17/18 ends after her next-time line (17's chatter before it as a suggestion: no pause separates them), 22's wrap-up and 27's farewell kept; 74-139 cuts, 9.6-16.3 min each, all verifier-valid, previews reused; 960 s",
-  "Review page rebuilt (nested chapters, the user's own list for 15 and 16), checked standalone, opened",
+  "17-27 re-planned three times on the user's word: 4 s pauses (DECISIONS #40), 7 s for 19-27 (#42, 'automated are toooo much extra work'), content cuts only for 22-27 (#43, 'im fed up with them')",
+  "studio.html shows the timeline plus every cut on its own again (DECISIONS #41, supersedes #21)",
   "Global CLAUDE.md: find a download by the exact name its page gives it (notes repo 645186d, not pushed)",
+  "Commit 26420af (Tserunyan only; shared files staged as HEAD + this session's changes)",
+  "Studio entry loop sped up on the user's request: start box skipped, insertText, polling, batches of 40. Դաս 17: 18.3 min vs ~55 min for Դաս 16. Learning 2026-10-26-0012",
+  "Studio, the user's standing 'pw' (Q63): all 12 of 16-27 entered and SAVED, each diff identical frame for frame and each Save dialog the predicted length; the tab had been on the Metric channel once (Q56). 18 and 20 store cuts a frame late (--type-shift -1). 22: 37 cuts (a one-off with pauses); 23, 24, 26, 27: left-out suggestions asked about before Save (Q64-Q68, all 'save as is'); 25: cuts 1+2 overlapped, merged",
+  "2026-10-26 end step for 16-27 (Q57/Q70): edits applied on YouTube (API lengths), captions with yt-dlp (24, 26, 27 on the second try), snapped --hms, 12/12 verifier-valid, 0 DENY, descriptions assembled, 13 date lines match the recordings",
+  "Codex review of all 13 titles + descriptions (the user's ask, 211 s, 34.6k tokens): titles kept; 9 label fixes taken in 15, 17, 18, 21, 26, 27 (one found by Claude), the Դաս 24 'ոչ տրիվիալ' finding rejected with her own definition; codex_desc_review_2026-10-26.json",
+  "Push of 15-27 (Q71): 16-27 title + description + thumbnail, Դաս 15 description; 13/13 read back; live check as a viewer: titles, every chapter parsed (nested too), served thumbnails = ours; all still unlisted (Q73 'not yet')",
+  "Playlist sorted into lesson order (Q72): it was on 'Date published (newest)', switched to 'Manually sorted in YouTube' in Studio, 15 of 25 moved, read back",
+  "DECISIONS #39 for the published Դաս 1-14 (Q75): 160 of 295 chapters nested under 50 parents, H:MM:SS, only indent and format changed (proved), 12/12 read back identical, YouTube parses every chapter",
+  "Q76: DECISIONS.md had two #39 and two #40 (this session and the Vahagn session numbered at once); Vahagn's moved to #44/#45 at the top, 14 citations in 9 files renumbered",
 ]
 
 pending = [
-  "Դաս 16 not entered in Studio (Q49 'Not now')",
-  "The user reviews 17-27 on studio.html",
-  "Re-push Դաս 15's description (nested, H:MM:SS) with the 16-27 batch (Q41)",
-  "Nest and H:MM:SS the published Դաս 1-14 at the end",
-  "scripts/archive/README.md: two Vahagn rows are glued together ('|| `review_diff.py`', '|| `pause_visual.py`'); left for that session",
+  "Make 15-27 public together (Q25; Q73 'not yet'), then message her (Q74 'later')",
+  "If the team finds lecture 1's recording, add it",
 ]
 
 next = [
-  "When the user sends a list with 'pw': cut_list.py check / to-enter / entry-js, enter in Studio, diff, save (DECISIONS #27); after processing: fetch captions to edited/, map_transcript_to_edit.py, remap_chapters.py --to-cuts studio_cuts_to_enter.txt --hms, snap_chapters_to_captions.py --hms, verifier, metric_assemble.py, glossary check, push, metric_readback.py",
-  "Watch the 17-27 reviews against DECISIONS #40's revisit trigger (many 3-4 s pauses added, or practical cuts unticked)",
+  "When the user says so: 15-27 public (videos.update part=status with each video's own status fields sent back, readback), then the message to her",
 ]
 
 files = [
-  "DECISIONS.md (#39, #40)",
-  "_learnings/2026-10-25-2052_tserunyan-edits-keep-her-math-talk-cut-pauses-from-4s.md",
-  "_knowledge/umath_todo.md (Tserunyan section), _knowledge/tserunyan_metric/finish_15-27.md, review_15-27.json",
-  "scripts/remap_chapters.py, scripts/non_essential/{snap_chapters_to_captions,metric_assemble,metric_readback,metric_review_page}.py, scripts/non_essential/README.md, scripts/archive/README.md, scripts/archive/tserunyan_2026-10/",
-  "output/2026-10-21_Das-15..27-Metric-*: timestamps_raw(.txt, _flat), timestamps, description, content_cuts (+ _before_v4, _v4_4s), studio_cuts (+ _v4_4s), edit_points.json, edit_review/*.html; Դաս 16 studio_cuts_edited.txt, studio_cuts_to_enter.txt; Դաս 15 edited/",
+  "DECISIONS.md (#39-#43; Vahagn's renumbered #44, #45)",
+  "_learnings/2026-10-25-2052_tserunyan-edits-keep-her-math-talk-cut-pauses-from-4s.md, _learnings/2026-10-26-0012_studio-entry-skip-the-start-and-send-fewer-events.md",
+  "_knowledge/umath_todo.md (Tserunyan section), _knowledge/tserunyan_metric/{finish_15-27.md, review_15-27.json, codex_desc_review_2026-10-26.json, descriptions_before_nest_2026-10-26.json, nest_1-14_preview.html}",
+  "scripts/{cut_list.py, find_edit_points.py, studio_enter_cuts.js, remap_chapters.py, map_transcript_to_edit.py}, scripts/non_essential/{snap_chapters_to_captions,metric_assemble,metric_readback,metric_review_page}.py, both READMEs, scripts/archive/tserunyan_2026-10/",
+  ".claude/skills/lecture-edit-points/SKILL.md (channel check, card view, faster loop)",
+  "output/2026-10-21_Das-15..27-Metric-*: studio_cuts_edited/to_enter, edited/ (captions, snapped chapters, descriptions), edited_predicted/",
 ]
 
-commits = ["one commit of the Tserunyan work only; DECISIONS.md, umath_todo.md and both script READMEs staged as HEAD + this session's changes, so the Vahagn session's uncommitted entries stay in the working tree for its own commit"]
+commits = ["26420af (2026-10-25)", "one more at the end of 2026-10-26: this session's work since 26420af, staged file by file so other sessions' uncommitted work stays out"]
 
 notes = """
-The Vahagn session ran at the same time and edited DECISIONS.md (#35-#38), umath_todo.md, both script READMEs and _learnings.
-Until it commits, the committed DECISIONS.md jumps from #34 to #39.
-find_edit_points refuses a content-cut edge on speech: check --speech-map before splitting an end cut; the captions run ~1 s off.
+The Vahagn session ran at the same time and edited DECISIONS.md, umath_todo.md, both script READMEs and _learnings.
+DECISIONS.md: next free number #46; check the top before numbering.
+YouTube makes the edited video's auto-captions some minutes after the edit is applied, not at once.
+A read right after a description write can still serve the old text: retry the readback for ~20 s.
 """

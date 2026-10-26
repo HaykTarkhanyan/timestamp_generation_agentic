@@ -977,7 +977,7 @@ function renderCard(el) {
   el.classList.toggle('changed', (changed(p) && !p.removed) || mine.length > 1);
   el.classList.toggle('removed', p.removed);
   el.querySelector('summary').textContent = title;
-  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none when the cards are hidden behind the timeline
+  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none on a timeline page (the contents list the cards' section only)
   if (toc) toc.textContent = title;
 }
 function renderAll() {
@@ -1164,7 +1164,8 @@ document.getElementById('reset-all').addEventListener('click', () => {
 document.addEventListener('keydown', ev => {
   const tag = document.activeElement.tagName;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
-  if (ev.code === 'Space' && cur && tag !== 'BUTTON') { ev.preventDefault(); A.paused ? play(cur) : A.pause(); }
+  const el = focusEl || cur;                                     // the card clicked last, or the one playing
+  if (ev.code === 'Space' && el && tag !== 'BUTTON') { ev.preventDefault(); (cur === el && !A.paused) ? A.pause() : play(el); }
   if ((ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') && focusEl) {   // move the bar 0.2 s, Shift: 1 s
     ev.preventDefault();
     const t = show(focusEl, num(focusEl, 'pos') + (ev.code === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2));
@@ -1570,13 +1571,14 @@ TLS.querySelector('.tl-selbox').addEventListener('click', ev => {
   else if (d === 'del') { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; renderAll(); save(); }
 });
 document.addEventListener('pointerdown', ev => { if (!TLS.contains(ev.target)) TL.focus = false; }, true);
-document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's (the cards are hidden)
+document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's, unless a cut card below was clicked last
   const tag = document.activeElement.tagName;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
   if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyZ') { ev.preventDefault(); ev.stopPropagation(); undoRemove(); return; }
   if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
   const take = () => { ev.preventDefault(); ev.stopPropagation(); if (tag === 'BUTTON') document.activeElement.blur(); };
   const c = ev.code;                                        // key positions, so the Armenian layout works too
+  if (!TL.focus && focusEl && (c === 'Space' || c === 'ArrowLeft' || c === 'ArrowRight')) return;   // the card's own keys (DECISIONS #41)
   if (c === 'Space') { take(); (TL.on && !A.paused) ? A.pause() : tlPlay(); }
   else if (c === 'Delete' || c === 'Backspace') { take(); removeSel(); }
   else if (c === 'KeyZ') { take(); undoRemove(); }
@@ -1613,7 +1615,7 @@ tlRefresh();
 def list_id(scuts, video_id: str) -> str:
     """Short fingerprint of a Studio cut list, shown on studio.html and by --check-studio. studio.html keeps its edits
     under it, so it includes the video: from the cuts alone, every page with no pre-ticked cut (a lecturer on camera,
-    DECISIONS #40) got the same id, and each Vahagn batch page opened with the previous one's cuts (2026-10-26)."""
+    DECISIONS #45) got the same id, and each Vahagn batch page opened with the previous one's cuts (2026-10-26)."""
     return hashlib.sha1(json.dumps([video_id, [[c["start_tc"], c["end_tc"]] for c in scuts]]).encode()).hexdigest()[:8]
 
 
@@ -1693,7 +1695,7 @@ def build_studio_page(data, scuts, rows, page: Path, wav: Path, video: Path | No
     Studio's order. The changes stay in
     the browser's localStorage and feed a copyable list at the bottom.
     With `timeline` (timeline_data()) the page shows the whole lecture on one zoomable
-    spectrogram instead, and the cards stay in the page hidden, holding the cut list it edits."""
+    spectrogram first, with the cards below it in one section (DECISIONS #41); both edit the same cut list."""
     media_file = video or wav
     if not media_file.exists():
         raise FileNotFoundError(f"The Studio page plays {media_file}, which is missing")
@@ -1738,8 +1740,19 @@ def build_studio_page(data, scuts, rows, page: Path, wav: Path, video: Path | No
 <div class="added-cuts"></div>
 <div class="tx">{''.join(tx)}</div>
 </details>"""))
-    if timeline:   # the user reviews on the timeline only; the hidden cards still hold the cut list STUDIO_JS builds (DECISIONS #21)
-        sections.append(("cards", "", '<div id="cards" hidden>' + "".join(inner for _, _, inner in cards) + "</div>"))
+    card_help = f"""
+Play starts {PLAY_CONTEXT_S:g} s before the cut and runs to the end of the spectrogram; space bar pauses, &larr;/&rarr; move the bar
+0.2 s (Shift: 1 s). <b>Zoom</b> with the +/- buttons or Ctrl+mouse wheel; the spectrogram then scrolls sideways
+(scrollbar or Shift+wheel) and follows the bar while playing. <b>To move a cut's edge</b>, drag it, or put the bar there and press Start = bar / End = bar
+(whole frames; the spectrogram has {STUDIO_MARGIN_S:g} s of room either side). <b>Add a cut at the bar</b> makes a new 1 s cut
+there, to drag into shape; every Cut number on the page and in the list follows Studio's order. <b>Remove cut</b> drops a
+planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it back)."""
+    if timeline:   # the timeline, then every cut on its own below it (DECISIONS #41; #21 had hidden the cards): one cut list, two views
+        cards_title = f"Each cut on its own ({len(scuts)} cuts)"
+        sections.append(("cards", cards_title, f'<details open id="cards"><summary>{cards_title}</summary>'
+                         f'<p class="sub">The same cut list as the timeline: a change here shows there and the other way round. '
+                         f'Keys follow what you clicked last, a cut below or the timeline.{card_help}</p>'
+                         + "".join(inner for _, _, inner in cards) + "</details>"))
     else:
         sections += cards
     removed = sum(c["end"] - c["start"] for c in scuts)
@@ -1763,13 +1776,7 @@ this list to Claude.</p>
                   '<button id="vtoggle">Hide video</button></div></div>')
     else:
         player = f'<audio id="media" preload="metadata" src="{rel_media}"></audio>'
-    howto = "" if timeline else f"""
-Play starts {PLAY_CONTEXT_S:g} s before the cut and runs to the end of the spectrogram; space bar pauses, &larr;/&rarr; move the bar
-0.2 s (Shift: 1 s). <b>Zoom</b> with the +/- buttons or Ctrl+mouse wheel; the spectrogram then scrolls sideways
-(scrollbar or Shift+wheel) and follows the bar while playing. <b>To move a cut's edge</b>, drag it, or put the bar there and press Start = bar / End = bar
-(whole frames; the spectrogram has {STUDIO_MARGIN_S:g} s of room either side). <b>Add a cut at the bar</b> makes a new 1 s cut
-there, to drag into shape; every Cut number on the page and in the list follows Studio's order. <b>Remove cut</b> drops a
-planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it back)."""
+    howto = "" if timeline else card_help
     page.write_text(f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

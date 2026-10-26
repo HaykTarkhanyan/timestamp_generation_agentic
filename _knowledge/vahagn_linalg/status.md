@@ -146,7 +146,7 @@ These uploads are only a caption source. Each piece is cut and its sound fixed l
   to where speech resumes after the cut covering them (listed per piece on the review page). Predicted lengths with
   the 4 s plans: 25 pieces, 8.06 h raw -> 7.61 h (26.8 min of pauses cut; 21.1 with the user's 19 cuts). At the
   measured 3x realtime that is ~2.5 h of rendering.
-- **Batch review (DECISIONS #39, 2026-10-25):** the 23 unreviewed pieces are reviewed one lecture day per page:
+- **Batch review (DECISIONS #44, 2026-10-25):** the 23 unreviewed pieces are reviewed one lecture day per page:
   `output/vahagn_b0504` (22.1-23.1.a), `b0506` (23.1.b-23.3.b), `b0511` (23.4-24.2.a), `b0513` (24.2.b-24.4), `b0518`
   (27.1-28.1.a), `b0520` (28.1.b, 28.3.a, 28.3.b, 28.4), `b0525` (28.2.a, 28.2.b). The download is
   `studio_cuts_edited_vahagn_<name>.txt`; `python scripts/non_essential/vahagn_batch_review.py split <name> --file <it>`
@@ -164,7 +164,7 @@ These uploads are only a caption source. Each piece is cut and its sound fixed l
   28.1.a-28.4) and 22.1 (8%); 0-1% in the other 13. In those stretches the pause background sits ~7 dB higher
   (relative to speech) than in the rest of the same video, and the light denoise (-8 to -10 dB everywhere) keeps the
   gap (28.4: -20.6 vs -28.1 dB; 23.3.a -22.2 vs -29.7). Not yet confirmed by ear that these are what the user hears.
-- **Webcam (DECISIONS #40, 2026-10-26):** his camera box is on screen from 6 May (23.1.b) to the end; in the 15
+- **Webcam (DECISIONS #45, 2026-10-26):** his camera box is on screen from 6 May (23.1.b) to the end; in the 15
   unreviewed pieces every cut is now an unticked suggestion, except in 28.3.a 18:09-18:37 (camera off). Each piece's
   stretches in its `camera_on.json`.
 - **After the user's review of a piece on studio.html:** save the list as `studio_cuts_edited.txt`, run

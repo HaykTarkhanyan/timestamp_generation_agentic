@@ -202,11 +202,62 @@ share links from the filming team's Telegram (still downloadable, no passcode).
 - [x] Դաս 16 reviewed by the user on studio.html (2026-10-25): 121 cuts (56 new, 5 content cuts unticked),
       `cut_list.py check` OK, entry list `studio_cuts_to_enter.txt` 120 cuts, 1:42:35 -> 1:29:35; chapters
       remapped onto it (H:MM:SS, verifier valid)
-- [ ] Դաս 16: enter in Studio by Playwright and save (Q49 2026-10-25: "Not now"; when the user says "pw")
+- [x] Դաս 16 entered in Studio and saved (2026-10-26 ~00:01, under the umath channel: the tab had been on Metric,
+      switched on the user's Q56): 120 cuts, diff identical frame for frame, dialog 1:29:34 as predicted
+- [x] Դաս 17 reviewed by the user (2026-10-25): 124 cuts (21 new, 12 changed, 2 removed), `cut_list.py check` OK,
+      entry list 122 cuts (119+120, 123+124 merged), 1:49:34 -> 1:35:17; chapters remapped, verifier valid
+- [x] Դաս 17 entered in Studio and saved (2026-10-26 ~00:22): 122 cuts in 18.3 min with the faster loop,
+      diff identical, dialog 1:35:17 as predicted
+- [x] Դաս 18 reviewed by the user (86 cuts -> 83, 1:15:03) and saved in Studio 2026-10-26 ~01:12; this upload stores
+      cuts a frame late, entered with `--type-shift -1` after cut 1 came out shifted (deleted, re-entered)
+- [x] Դաս 19 reviewed by the user (88 cuts: 53 new, 20 changed -> 87 to enter) and saved in Studio 2026-10-26 ~01:56,
+      1:27:14 as predicted, no frame shift; the user keeps 7 s for 20-27 (Q61)
+- [x] Դաս 20 reviewed (19 cuts: 2 new, 7 changed, 6 removed) and saved in Studio 2026-10-26 ~02:00, 1:25:13 as
+      predicted; frame-late upload like 18 (`--type-shift -1`)
+- [x] Դաս 21 reviewed (all 17 pause cuts removed, 6 content cuts kept) and saved in Studio 2026-10-26 ~02:08, 1:29:20
+- [x] Դաս 22-27 re-planned with content cuts only, no pause cuts (DECISIONS #43, the user: "im fed up with them")
+- [x] Դաս 22 reviewed (37 cuts: 30 new, mostly pauses, 6 changed) and saved in Studio 2026-10-26 ~12:39, 1:19:55 as
+      predicted, no frame shift (162 s of entry). The user: the added pauses are a "one time thingy", 23-27 stay
+      content cuts only (DECISIONS #43 unchanged)
+- [x] Դաս 23 reviewed (7 cuts: 2 suggestions taken, 4 changed, 1 removed) and saved in Studio 2026-10-26 ~12:52,
+      1:23:03 as predicted, no frame shift. Two suggestions left out on purpose (Q64 "Save as is"): the 24 s
+      "allergy to the real numbers" aside and the 6.9 min König's lemma discussion
+- [x] Դաս 24 reviewed (2 cuts: start and end, both changed; 4 ticked cuts in 0:23-0:33 removed) and saved in Studio
+      2026-10-26 ~13:06, 1:28:11 as predicted, no frame shift. Q65 "save as is": the 0:52 poll, 1:26 false start
+      and 1:31 course plan suggestions stay
+- [x] Դաս 25 reviewed (7 cuts: 6 changed, 1 new, 4 ticked removed; cuts 1+2 overlapped by 6 frames, merged -> 6)
+      and saved in Studio 2026-10-26 ~13:10, 1:31:14 as predicted, no frame shift; no suggestions in this plan
+- [x] Դաս 26 reviewed (3 cuts, all changed; the ticked 1:19:15 questions + Alexander false start removed) and saved
+      in Studio 2026-10-26 ~13:14, 1:41:47 as predicted, no frame shift; start cut still covers the Gmail tab.
+      Q67 "save as is": the 0:42 drawing, 0:58 "Any ideas?" and 1:00 thinking-aloud suggestions stay
+- [x] Դաս 27 reviewed (1 cut: the start, now to 0:02:13:19, still past the bedroom; the other 5 ticked cuts removed)
+      and saved in Studio 2026-10-26 ~13:22, 1:39:45 as predicted, no frame shift. Q68 "save as is": the 0:07
+      name fumble, 1:01 wait, 1:34 wrap-up and the farewell stay. **All 16-27 are now saved in Studio**
+- Not a preference to carry over (the user, Q69, 2026-10-26: "those arent learning, i just got fed up with this
+  course"): the light 23-27 reviews (15 of 33 ticked cuts removed, 2 of 16 suggestions taken) say nothing about
+  how to plan the next course
+- (26 and 27 were done under the user's Q66 "Keep holding Save": each list compared with the suggestions, cuts
+  entered, the left-out suggestions asked about, then saved)
+- **Standing "pw" for 20-27** (the user's Q63, 2026-10-26: "Yes, 20 now and all pasted lists"): every list the user
+  pastes is checked, entered in Studio and saved when the frame diff is identical and the dialog shows the predicted
+  length (DECISIONS #27 checks); report after each
+- [x] Դաս 19-27 re-planned with pauses from 7 s (DECISIONS #42, the user's "automated are toooo much extra work")
+- [x] At the end, for all of 16-27 together (the user's Q57, 2026-10-26: "we do all together in the end"), once
+      YouTube has processed each edit: fetch the edited captions into `edited/`,
+      `map_transcript_to_edit.py`, remap `--hms`, snap `--hms`, verifier, `metric_assemble.py`, glossary, push
+      title/description/thumbnail, `metric_readback.py` (with Դաս 15's re-push, Q41)
+  - 2026-10-26 ~14:25, local part DONE for all 12 (Q70 "start, stop before push"): all 12 edits applied on YouTube
+    (API lengths match), edited captions fetched with yt-dlp (24, 26, 27 only on the second try ~10 min later),
+    snapped `--hms`, 12/12 verifier-valid, 0 DENY, `edited/description.txt` assembled, 13 dates match the files.
+    Codex review of all 13 titles + descriptions (the user's ask): titles kept, 9 label fixes taken in 15, 17, 18,
+    21, 26, 27, the Դաս 24 "ոչ տրիվիալ" finding rejected (`codex_desc_review_2026-10-26.json`). Review page rebuilt.
+    **Next: the user's go for the push (16-27 title/description/thumbnail + Դաս 15 description), then readback**
+- [x] studio.html shows the timeline and every cut on its own again (DECISIONS #41): 18-27 rebuilt, 18 checked in
+      Playwright; 26 and 27 keep her thinking-invitation waits (Q52, DECISIONS #40 refinement): 84 and 138 cuts
 - [x] Դաս 17-27 re-planned from the user's 16 edit (2026-10-25, DECISIONS #40): pauses from 4 s, her math/talk
       cuts as suggestions, ends after her next-time line, Դաս 27's farewell kept. 74-139 cuts, 9.6-16.3 min
       each; all 11 verifier-valid, video previews kept; review page rebuilt
-- [ ] Դաս 17-27: the user reviews each on `edit_review/studio.html` and sends the list with "pw"; Claude enters
+- [x] (done 2026-10-26, all 12 saved, processed and pushed) Դաս 17-27: the user reviews each on `edit_review/studio.html` and sends the list with "pw"; Claude enters
       and saves it (DECISIONS #27), then after processing the steps in `_knowledge/tserunyan_metric/finish_15-27.md`
       (captions, remap from `timestamps_raw.txt` with `--hms`, snap with `--hms`, verifier,
       `metric_assemble.py`, glossary, push, `metric_readback.py`). Keep the start cuts of Դաս 20, 26, 27
@@ -217,11 +268,26 @@ share links from the filming team's Telegram (still downloadable, no passcode).
 - [x] Chapters nested, 15-27 (2026-10-25, DECISIONS #39): 252 of 376 under 61 parents, in the masters
       `edited_predicted/timestamps_raw.txt` (flat copies `timestamps_raw_flat.txt`) and Դաս 15's `edited/`
 - [x] Times H:MM:SS throughout (Q40, 2026-10-25): Դաս 15's `edited/` redone, 16-27 drafts too
-- [ ] Re-push Դաս 15's description (now nested, H:MM:SS) together with the 16-27 pushes (Q41)
-- [ ] At the end: nest the published Դաս 1-14 the same way and write their times H:MM:SS (DECISIONS #39)
+- [x] Re-push Դաս 15's description (now nested, H:MM:SS) together with the 16-27 pushes (Q41): done 2026-10-26
+- [x] **15-27 pushed 2026-10-26 14:28-14:31** (the user's Q71 "Push all 13"; scratchpad `metric_push.py`): 16-27
+      title + description + thumbnail, Դաս 15 description; `metric_readback.py` after each: 13/13 title OK,
+      description OK, chapter lines 26-34, all still unlisted
+- [ ] Make 15-27 public together (Q25), then message her
+- [x] At the end: nest the published Դաս 1-14 the same way and write their times H:MM:SS (DECISIONS #39): done
+      2026-10-26 16:25-16:27 (the user's Q75): 160 of 295 chapters under 50 parents, labels and seconds unchanged,
+      12/12 read back identical (one retry: a read right after the write served the old text), YouTube parses every
+      chapter. Backup `_knowledge/tserunyan_metric/descriptions_before_nest_2026-10-26.json`, preview
+      `nest_1-14_preview.html`
 - [x] Scripts the push needs are in the repo now: `scripts/non_essential/metric_assemble.py`,
       `metric_readback.py`, `metric_review_page.py` (finished ones in `scripts/archive/tserunyan_2026-10/`)
-- [ ] Sort the playlist into lesson order (dry run: 11 moves)
+- [x] Playlist sorted into lesson order 2026-10-26 14:38 (the user's Q72): it was on "Date published (newest)",
+      switched to "Manually sorted in YouTube" in Studio first (as in learning 2026-10-20-2221); 15 of 25 moved,
+      read back 1-2, 3-6, 8-27 (lecture 7 was never recorded)
+- Q73 "Not yet": 15-27 stay unlisted for now; Q74: the message to her comes later, after they are public
+- [x] 2026-10-26 live check of 15-27 as a viewer (yt-dlp): 13/13 titles OK, YouTube parses every chapter (nested
+      included), the served thumbnails are ours (mean difference 0.1 of 255), all unlisted
+- Note for every session: DECISIONS.md numbers collided (two #39, two #40 from two sessions at once); the Vahagn
+  ones are #44 and #45 now (the user's Q76). **Next free number: #46.** Check the top of the file before numbering
 - [ ] If the team finds lecture 1's recording, add it
 
 ## Vahagn Mikaelian - Գծային հանրահաշիվ (YSU, 2021 recordings)

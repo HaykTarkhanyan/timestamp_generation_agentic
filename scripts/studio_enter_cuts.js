@@ -6,10 +6,11 @@
 // signed-in Studio tab, with the Trim & cut panel open. Never presses Save and never navigates the tab.
 //
 // Per cut (the order measured on ML48/ML49): playhead to the cut's start (the time box outside the panel),
-// New Cut, end box, start box, the panel's Cut button, then check the cut is among Studio's trim markers.
+// New Cut, end box, the start box only if it doesn't already read the cut's start (since 2026-10-25), the
+// panel's Cut button, then wait until the cut is among Studio's trim markers. The result carries msPerCut.
 // Cuts already in Studio are skipped, so a batch that stopped halfway can simply be run again.
-// Any surprise throws, with the cuts done so far in the message. ~6 s per cut (ML51: 15 cuts in 87 s);
-// keep a batch under ~100 s, the MCP moves calls over ~120 s to the background.
+// Any surprise throws, with the cuts done so far in the message. Per cut: ~6 s on an empty timeline (ML51),
+// 8-15 s with 0-42 cuts in (Tserunyan Դաս 16, the old loop). A call over ~120 s moves to the background; fine.
 async (page) => {
   const JOB = __JOB__;  // {video, overOneHour, batch, batches, dryRun, cuts: [[n, 'H:MM:SS:FF', 'H:MM:SS:FF'], ...]}
   const t0 = Date.now();
@@ -50,10 +51,12 @@ async (page) => {
     for (let i = 2; i < m.length; i += 2) pairs.push(`${m[i]}-${m[i + 1]}`);   // pair 0 is the whole-video trim
     return pairs;
   };
-  const typeIn = async (loc, tc) => {
+  // One insertText instead of a keystroke per character (2026-10-25, tested on Tserunyan Դաս 16 cut 99: the box
+  // read back exactly). With 100+ cuts in, Studio takes 2-4 s to answer any event, so fewer events matter more
+  const typeIn = async (loc, tc, slow = false) => {
     await loc.click({ timeout: CLICK_MS });
     await page.keyboard.press('Control+A');
-    await page.keyboard.type(typed(tc));
+    if (slow) await page.keyboard.type(typed(tc), { delay: 40 }); else await page.keyboard.insertText(typed(tc));
     await page.keyboard.press('Tab');
     await page.waitForTimeout(300);
   };
@@ -62,11 +65,8 @@ async (page) => {
   // time is typed slower and read back, and retyped up to 3 times before giving up
   const typePlayhead = async (n, tc) => {
     for (let attempt = 1; ; attempt++) {
-      await playhead.click({ timeout: CLICK_MS });
-      await page.keyboard.press('Control+A');
-      await page.keyboard.type(typed(tc), { delay: 40 });
-      await page.keyboard.press('Tab');
-      await page.waitForTimeout(300 * attempt);
+      await typeIn(playhead, tc, attempt > 1);   // insertText first, then the slow keystrokes
+      await page.waitForTimeout(300 * (attempt - 1));
       const got = (await playhead.inputValue()).trim();
       if (got === typed(tc)) return;
       if (attempt === 3) fail(`cut ${n}: typed ${typed(tc)} into the playhead box, it reads "${got}" after 3 tries`);
@@ -85,21 +85,50 @@ async (page) => {
   const todo = JOB.cuts.filter(([n]) => !already.includes(n));
   if (JOB.dryRun) return { dryRun: true, playheadLabel: label, cutsInStudio: before.length, alreadyInStudio: already.length, toEnter: todo.length };
 
+  // Poll for a state instead of sleeping a fixed time (until 2026-10-25: 700 ms after New Cut, 800 ms after Cut)
+  const until = async (cond, what) => {
+    const t1 = Date.now();
+    while (!(await cond())) {
+      if (Date.now() - t1 > CLICK_MS) fail(what);
+      await page.waitForTimeout(100);
+    }
+  };
+  const ms = { playhead: 0, newCut: 0, end: 0, start: 0, cut: 0 };   // where the time goes, summed over the batch
+  let lapT = Date.now(), startsTyped = 0;
+  const startSeen = [];   // what the start box read when it was not the cut's start (first 3)
+  // " 1 hour 8 minutes 11 seconds 23 frames" -> "1:08:11:23" (no hour part under an hour; "1 hour", "2 hours")
+  const labelTc = lbl => {
+    const g = k => Number((lbl.match(new RegExp(`(\\d+) ${k}`)) || [0, 0])[1]);
+    const p2 = x => String(x).padStart(2, '0');
+    return `${g('hour')}:${p2(g('minute'))}:${p2(g('second'))}:${p2(g('frame'))}`;
+  };
+  const lap = k => { const now = Date.now(); ms[k] += now - lapT; lapT = now; };
+
   for (const [n, s, e] of todo) {
     if (await playhead.count() !== 1) fail(`cut ${n}: playhead time box not unique`);
     await openRow(n);
-    await typePlayhead(n, s);
+    lapT = Date.now();
+    await typePlayhead(n, s); lap('playhead');
     await page.getByRole('button', { name: 'New Cut' }).click({ timeout: CLICK_MS });
-    await page.waitForTimeout(700);
-    const nr = await editRow.count();
-    if (nr !== 2) fail(`cut ${n}: the editing row has ${nr} inputs, expected 2`);
+    await until(async () => (await editRow.count()) === 2, `cut ${n}: the editing row did not open with 2 inputs`); lap('newCut');
     await typeIn(editRow.nth(1), e);
-    await typeIn(editRow.nth(0), s);
+    if ((await editRow.nth(1).inputValue()).trim() !== typed(e)) await typeIn(editRow.nth(1), e, true);
+    lap('end');
+    // New Cut starts the cut at the playhead, which is already on the cut's start: type the start only if the
+    // box says otherwise (the user, 2026-10-25: "i think you have a redundant step"). The box's value stays
+    // empty until typed into; its aria-label carries the time (" 1 hour 8 minutes 11 seconds 23 frames",
+    // Tserunyan Դաս 16 cut 85), so that is what is compared
+    const startLabel = (await editRow.nth(0).getAttribute('aria-label')) || '';
+    if (labelTc(startLabel) !== full(shifted(s))) {
+      if (startSeen.length < 3) startSeen.push({ n, label: startLabel, want: full(shifted(s)) });
+      await typeIn(editRow.nth(0), s); startsTyped++;
+    }
+    lap('start');
     await page.locator('#panel-container').getByRole('button', { name: 'Cut', exact: true }).click({ timeout: CLICK_MS });
-    await page.waitForTimeout(800);
-    if (!(await cutsInStudio()).includes(`${s}-${e}`)) fail(`cut ${n} (${s}-${e}) not in Studio after Cut`);
+    await until(async () => (await cutsInStudio()).includes(`${s}-${e}`), `cut ${n} (${s}-${e}) not in Studio after Cut`); lap('cut');
     done.push(n);
   }
+  const per = Object.fromEntries(Object.entries(ms).map(([k, v]) => [k, done.length ? Math.round(v / done.length) : 0]));
   return { batch: `${JOB.batch} of ${JOB.batches}`, done, already, cutsInStudio: (await cutsInStudio()).length,
-           seconds: Math.round((Date.now() - t0) / 1000) };
+           seconds: Math.round((Date.now() - t0) / 1000), msPerCut: per, startsTyped, startSeen };
 }

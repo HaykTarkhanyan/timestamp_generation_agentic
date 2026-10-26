@@ -35,6 +35,23 @@ three still needed for the push went to `non_essential/` (`metric_assemble.py`, 
 | `metric_replan4.py` | Re-planned 17-27 from the user's answers (DECISIONS #40): unticked her math/talk content cuts, moved the 17/18 end cuts after her next-time line, kept Դաս 27's farewell, ran `find_edit_points.py --min-silence 4` (previews reused), kept `*_v4_4s`, remapped the nested chapters with `--hms`, verifier. 960 s for 11. | Re-planning again after the next review. |
 | `metric_end_words.py`, `word_times.py` | Caption words with times around each end cut, and in any window (`word_times.py <lesson> <from> <to>`), to place cut edges at her sentences; check `--speech-map` too, captions run ~1 s off. | Placing a content-cut edge by her words. |
 | `same_chapters.py` | Proves two chapter lists differ only in time format (same indents, seconds, labels). | After a reformat such as `--hms`. |
+| `metric_replan7.py` | 19-27 re-planned with pauses from 7 s (DECISIONS #42), content cuts unchanged, the Q52 waits in 26/27 unticked again, `*_v5_7s` copies, chapters remapped `--hms`, verifier. 581 s for 9 (23-46 cuts each, from 80-139). | Re-planning at another pause length; it also redoes the Q52 step itself. |
+| `metric_keep_waits.py` | Q52: unticked Դաս 26's "Any ideas?" and Դաս 27's "shall we think about it?" content cuts and the silence cuts inside them (edit_points.json, then `--report-only`), remapped the chapters, verifier. ~2.5 min each. | **After any full `find_edit_points.py` run on 26 or 27**, which re-ticks those silences. |
+| `metric_content_only.py` | 22-27 with content cuts only, no pause cuts (DECISIONS #43): `find_edit_points.py --min-silence 100000`, `*_v6_content` copies, chapters remapped `--hms`, verifier. 30-60 s per lecture. | Re-planning a course without pause cuts. |
+
+Added 2026-10-26, the end of the course (copied from the session scratchpad):
+
+| script | what it did | when you would look at it again |
+| --- | --- | --- |
+| `missed_suggestions.py` | Which planned content cuts (ticked or suggested) a returned `studio_cuts_edited.txt` left out, with each cut's reason. Instant. | Before entering a reviewed list, to ask about left-out suggestions (the user's Q66). Worth promoting. |
+| `edit_status.py` | Whether YouTube has applied the Studio edits: each video's API length against the Save dialog's. 1 API unit. | After a batch of Studio saves. |
+| `metric_finish_batch.py` | The end step for 16-27: captions with yt-dlp into `edited/` (no quota), a stale-caption check, snap `--hms`, verifier, `metric_assemble.py`, glossary, title length and title line. ~10-25 s per lecture. 24, 26, 27 had no captions yet on the first run and went through ~10 min later. | Finishing the next course's edited videos. |
+| `codex_desc_prompt.py`, `codex_desc_apply.py` | One Codex prompt with all 13 titles and descriptions plus the series rules (211 s, 34.6k tokens), and the apply step for the taken verdicts (`_knowledge/tserunyan_metric/codex_desc_review_2026-10-26.json`): label replaced in the master, regenerated, proved that only the labels changed. | A cross-course Codex pass over finished descriptions. |
+| `date_check.py` | Each description's date line against the date in the recording's file name. Instant. | Before publishing a course. |
+| `metric_push.py` | Pushed 15-27 (16-27 title, description, thumbnail; Դաս 15 description) with `metric_readback.py` after each. 141 s. | The next course push. |
+| `live_check.py` | As a viewer (yt-dlp): title, the chapters YouTube parsed against ours, the served thumbnail against our PNG. ~4 s per video. | After any push. |
+| `fetch_1_14.py`, `nest_1_14.py`, `nest_1_14_page.py`, `push_1_14.py`, `diff_live.py` | DECISIONS #39 for the published Դաս 1-14: live descriptions fetched, nested by a hand-picked plan (160 of 295 under 50 parents) and written H:MM:SS with proof that only indent and format changed, a preview page, the push with an API and a yt-dlp readback (a read right after the write can still serve the old text: it retries ~20 s), and a live-vs-file diff. Backup: `_knowledge/tserunyan_metric/descriptions_before_nest_2026-10-26.json`. | Nesting another published course. |
+| `renumber_vahagn.py` | Q76: DECISIONS.md had two #39 and two #40 (two sessions numbered at once); Vahagn's moved to #44 and #45 with their citations. | If two sessions collide on a number again. |
 
 ## vahagn_2026-10/ (Vahagn Mikaelian, Գծային հանրահաշիվ 21.1-28.4; copied 2026-10-25 from the session scratchpad)
 

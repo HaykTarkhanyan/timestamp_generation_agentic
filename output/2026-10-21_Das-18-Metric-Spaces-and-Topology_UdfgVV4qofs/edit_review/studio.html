@@ -104,13 +104,13 @@ body.has-video #timeline { scroll-margin-top: 300px; }
 </style></head>
 <body class="has-video" data-fps="25" data-ctx="3" data-duration="5145.43" data-list="51f66472" data-video="UdfgVV4qofs"><main>
 <h1>Studio cuts: Das 18   Metric Spaces and Topology   Tserunyan   2023 04 18</h1>
-<p class="stamp"><b>74 cuts</b> &middot; list 51f66472 &middot; built 2026-10-25 20:49<span id="nchanged"></span>
+<p class="stamp"><b>74 cuts</b> &middot; list 51f66472 &middot; built 2026-10-25 21:31<span id="nchanged"></span>
  - reload this tab if the list changed since you opened it</p>
 <p class="warn" id="storage"></p>
 <div id="worktimer"><span id="wt-time">0:00:00</span><button id="wt-btn">Start timer</button></div>
 <p class="sub">74 cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
 (25 fps, H:MM:SS:FF). Removes <span id="removed">0:09:37: 1:25:45 &rarr; 1:16:08</span>.</p>
-<nav><ol><li><a href="#timeline">Timeline: the whole lecture</a></li><li><a href="#export-list">Cut list with your changes (last first)</a></li></ol></nav>
+<nav><ol><li><a href="#timeline">Timeline: the whole lecture</a></li><li><a href="#cards">Each cut on its own (74 cuts)</a></li><li><a href="#export-list">Cut list with your changes (last first)</a></li></ol></nav>
 <div id="player"><video id="media" preload="metadata" playsinline src="../video/UdfgVV4qofs_360p.mp4"></video><div class="pinfo"><span id="nowcut">Space plays the timeline</span><button id="vtoggle">Hide video</button></div></div>
 
 <details open class="tlsec" id="timeline"><summary>Timeline: the whole lecture</summary>
@@ -133,7 +133,13 @@ body.has-video #timeline { scroll-margin-top: 300px; }
 there (and select what is under it), drag across to draw a new cut, drag a cut's edge to move it. Ctrl+wheel zooms, Shift+wheel
 or a sideways swipe scrolls, the arrow buttons page. While it plays, the view follows the bar until you scroll away from it;
 scroll back to the bar (or click) and it follows again. Every change goes into the list at the bottom.</p>
-</details><div id="cards" hidden>
+</details><details open id="cards"><summary>Each cut on its own (74 cuts)</summary><p class="sub">The same cut list as the timeline: a change here shows there and the other way round. Keys follow what you clicked last, a cut below or the timeline.
+Play starts 3 s before the cut and runs to the end of the spectrogram; space bar pauses, &larr;/&rarr; move the bar
+0.2 s (Shift: 1 s). <b>Zoom</b> with the +/- buttons or Ctrl+mouse wheel; the spectrogram then scrolls sideways
+(scrollbar or Shift+wheel) and follows the bar while playing. <b>To move a cut's edge</b>, drag it, or put the bar there and press Start = bar / End = bar
+(whole frames; the spectrogram has 20 s of room either side). <b>Add a cut at the bar</b> makes a new 1 s cut
+there, to drag into shape; every Cut number on the page and in the list follows Studio's order. <b>Remove cut</b> drops a
+planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it back).</p>
 <details open class="cut" id="cut-1" data-w0="0.0" data-w1="163.28" data-s0="8.92" data-e0="143.28" data-pxw="13062">
 <summary>Cut 1   0:00:08:23 → 0:02:23:07   (134.4 s)</summary>
 <div class="reason"><span class="badge safe">safe</span> Pre-lecture: 43 s of dead air, then &#x27;can you hear me&#x27;, fixing the Zoom sound and the screen share with the room, &#x27;hello again, can I start, Aram?&#x27;. Ends right before &#x27;I remembered something I forgot to say&#x27;</div><div class="flag">short sound at 0:01:11.1 (-49 dB) - listen<button class="jump" data-t="70.10">play here</button></div><div class="flag">short sound at 0:01:11.4 (-48 dB) - listen<button class="jump" data-t="70.40">play here</button></div><div class="flag">short sound at 0:01:11.5 (-41 dB) - listen<button class="jump" data-t="70.50">play here</button></div><div class="flag">short sound at 0:02:03.2 (-44 dB) - listen<button class="jump" data-t="122.20">play here</button></div>
@@ -1095,7 +1101,7 @@ scroll back to the bar (or click) and it follows again. Every change goes into t
   <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
 <div class="added-cuts"></div>
 <div class="tx"><div class=""><span class="t">1:24:40</span>է նշանակում first countable բայց զուտ</div><div class=""><span class="t">1:24:42</span>մյուս շաբաթ կշարունակենք</div><div class="in"><span class="t">1:24:44</span>հարցեր ունեք</div><div class="in"><span class="t">1:24:46</span>աբստրակտ սահմանումներից</div><div class="in"><span class="t">1:24:53</span>Մյուս շաբաթ ասվածը ուրբաթ չէ</div><div>...</div><div class="in"><span class="t">1:25:23</span>եղավ դե ես թռա, եթե այս աբստրակտ բաներից</div><div class="in"><span class="t">1:25:26</span>հարցեր ունենաք</div><div class="in"><span class="t">1:25:29</span>գրեք հաճույքով կպատասխանեմ</div><div class="in"><span class="t">1:25:33</span>ցտեսություն բոլորին</div></div>
-</details></div>
+</details></details>
 <details open id="export-list"><summary>Cut list with your changes (last first)</summary>
 <p class="note">The same format as <code>studio_cuts.txt</code>, renumbered in Studio's order. Changed cuts say what they
 were, added ones say NEW, removed ones are listed at the end as REMOVED. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
@@ -1214,7 +1220,7 @@ function renderCard(el) {
   el.classList.toggle('changed', (changed(p) && !p.removed) || mine.length > 1);
   el.classList.toggle('removed', p.removed);
   el.querySelector('summary').textContent = title;
-  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none when the cards are hidden behind the timeline
+  const toc = document.querySelector(`nav a[href="#${el.id}"]`);   // none on a timeline page (the contents list the cards' section only)
   if (toc) toc.textContent = title;
 }
 function renderAll() {
@@ -1401,7 +1407,8 @@ document.getElementById('reset-all').addEventListener('click', () => {
 document.addEventListener('keydown', ev => {
   const tag = document.activeElement.tagName;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
-  if (ev.code === 'Space' && cur && tag !== 'BUTTON') { ev.preventDefault(); A.paused ? play(cur) : A.pause(); }
+  const el = focusEl || cur;                                     // the card clicked last, or the one playing
+  if (ev.code === 'Space' && el && tag !== 'BUTTON') { ev.preventDefault(); (cur === el && !A.paused) ? A.pause() : play(el); }
   if ((ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') && focusEl) {   // move the bar 0.2 s, Shift: 1 s
     ev.preventDefault();
     const t = show(focusEl, num(focusEl, 'pos') + (ev.code === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2));
@@ -1764,13 +1771,14 @@ TLS.querySelector('.tl-selbox').addEventListener('click', ev => {
   else if (d === 'del') { added = added.filter(x => x !== c); undo.push({ c, kind: 'del' }); TL.sel = null; renderAll(); save(); }
 });
 document.addEventListener('pointerdown', ev => { if (!TLS.contains(ev.target)) TL.focus = false; }, true);
-document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's (the cards are hidden)
+document.addEventListener('keydown', ev => {   // capture: the page's keys are the timeline's, unless a cut card below was clicked last
   const tag = document.activeElement.tagName;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
   if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyZ') { ev.preventDefault(); ev.stopPropagation(); undoRemove(); return; }
   if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
   const take = () => { ev.preventDefault(); ev.stopPropagation(); if (tag === 'BUTTON') document.activeElement.blur(); };
   const c = ev.code;                                        // key positions, so the Armenian layout works too
+  if (!TL.focus && focusEl && (c === 'Space' || c === 'ArrowLeft' || c === 'ArrowRight')) return;   // the card's own keys (DECISIONS #41)
   if (c === 'Space') { take(); (TL.on && !A.paused) ? A.pause() : tlPlay(); }
   else if (c === 'Delete' || c === 'Backspace') { take(); removeSel(); }
   else if (c === 'KeyZ') { take(); undoRemove(); }

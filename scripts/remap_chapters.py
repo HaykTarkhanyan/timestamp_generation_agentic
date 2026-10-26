@@ -42,7 +42,7 @@ def read_cuts(path: Path, fps: float) -> list[tuple[float, float]]:
     text = path.read_text(encoding="utf-8")
     cuts = sorted((tc(m[1]), tc(m[2])) for line in text.splitlines() if (m := CUT.match(line)))
     # an empty list only when the file says so (find_edit_points writes "# 0 cuts at ..." when every cut is a
-    # suggestion, e.g. a lecturer on camera, DECISIONS #40); any other file without cut lines is the wrong file
+    # suggestion, e.g. a lecturer on camera, DECISIONS #45); any other file without cut lines is the wrong file
     if not cuts and not re.search(r"^# 0 cuts\b", text, flags=re.M):
         raise ValueError(f"no 'Cut N  start  ->  end' lines in {path}")
     return cuts

@@ -134,7 +134,10 @@ for folder in sorted((REPO / "output").glob("2026-10-21_Das-*-Metric-Spaces-and-
         "removed_s": round(sum(b - a for a, b in ticked), 1),  # merged, so overlaps count once
         "user_list": None if user is None else {"cuts": len(user), "removed_s": round(sum(b - a for a, b in user), 1)},
         "duration_s": ep_json["duration"],
-        "description": (ep / "description.txt").read_text(encoding="utf-8"),
+        # the assembled one (chapters snapped to the edited captions) once it exists, else the draft
+        "description": ((folder / "edited" / "description.txt") if (folder / "edited" / "description.txt").exists()
+                        else (ep / "description.txt")).read_text(encoding="utf-8"),
+        "description_final": (folder / "edited" / "description.txt").exists(),
         "review": notes.get(n, ""),
         "codex": codex.get(n),
     })
@@ -258,7 +261,10 @@ for l in lectures:
         out.append(f'<tr class="{"" if c["ticked"] else "unticked"}"><td>{E(c["id"])}</td><td class="num">{c["start"]}</td>'
                    f'<td class="num">{c["end"]}</td><td class="num">{c["dur"]}</td><td>{E(c["kind"])}{"" if c["ticked"] else " (off)"}</td>'
                    f'<td>{E(c["reason"])}</td></tr>')
-    out.append(f'</table><p><b>Description</b> <span class="muted">(the first 4 lines are local only)</span></p><pre>{E(l["description"])}</pre></details>')
+    state = ("final: chapters snapped to the edited captions" if l["description_final"]
+             else "draft: the edited captions are not on YouTube yet, times may still move by 1-2 s")
+    out.append(f'</table><p><b>Description</b> <span class="muted">({state}; the first 4 lines are local only)</span></p>'
+               f'<pre>{E(l["description"])}</pre></details>')
 out.append("</body></html>")
 page = KNOW / "review_15-27.html"
 page.write_text("\n".join(out), encoding="utf-8")

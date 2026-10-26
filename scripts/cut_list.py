@@ -14,7 +14,7 @@
 
     python scripts/cut_list.py check    --output-dir output/<dir>
     python scripts/cut_list.py to-enter --output-dir output/<dir> [--studio-end 1:38:59:15]
-    python scripts/cut_list.py entry-js --output-dir output/<dir> [--batch-size 14]
+    python scripts/cut_list.py entry-js --output-dir output/<dir> [--batch-size 40]
     python scripts/cut_list.py diff     --output-dir output/<dir> --markers .playwright-mcp/<name>.json
     # each ~1 s; exits 1 on any problem
 
@@ -77,7 +77,7 @@ def read_cuts(path: Path, fr: Frames) -> list[tuple[int, int, int, str]]:
         raise FileNotFoundError(path)
     text = path.read_text(encoding="utf-8")
     cuts = [(int(m[1]), fr(m[2]), fr(m[3]), m[5].strip()) for line in text.splitlines() if (m := CUT.match(line))]
-    # empty only when the file says so ("# 0 cuts ...": every cut a suggestion and none taken, DECISIONS #40)
+    # empty only when the file says so ("# 0 cuts ...": every cut a suggestion and none taken, DECISIONS #45)
     if not cuts and not re.search(r"^# 0 cuts\b", text, flags=re.M):
         raise ValueError(f"no 'Cut N  start  ->  end  (d s)' lines in {path}")
     return cuts
@@ -233,7 +233,7 @@ def entry_js(d: Path, batch_size: int, type_shift: int = 0) -> int:
         path.write_text(template.replace("__JOB__", json.dumps(job)), encoding="utf-8")
         log.info(f"{path}: {'dry run, ' if dry else ''}cuts {b[0][0]}-{b[-1][0]}")
     log.info(f"{len(rows)} cuts from {d / TO_ENTER} in {len(batches)} batches of up to {batch_size} "
-             f"(~{6 * batch_size} s each at ~6 s per cut); over an hour: {over}; typed times shifted by "
+             f"(~{4 * batch_size}-{17 * batch_size} s each at 4-17 s per cut); over an hour: {over}; typed times shifted by "
              f"{type_shift} frame(s)")
     return 0
 
@@ -273,7 +273,7 @@ def main() -> None:
         if name == "to-enter":
             p.add_argument("--studio-end", help="Studio's End trim marker, if the last cut must end on it")
         if name == "entry-js":
-            p.add_argument("--batch-size", type=int, default=14, help="cuts per batch (~6 s each; stay under ~100 s)")
+            p.add_argument("--batch-size", type=int, default=40, help="cuts per batch (3.5-17 s each, slower as cuts pile up; a long call just moves to the background)")
             p.add_argument("--type-shift", type=int, default=0,
                            help="frames added to every typed time; -1 for an upload on which Studio stores each cut "
                                 "one frame later than typed (Papikian Դաս 20); cuts are still checked at the planned times")

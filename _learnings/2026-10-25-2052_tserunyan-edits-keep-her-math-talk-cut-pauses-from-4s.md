@@ -41,3 +41,16 @@ word but fillers, matched fewer of the user's cuts at every setting (16, min 3 s
   a 0.1 s gap). find_edit_points refuses a content-cut edge on speech, so check `--speech-map` before splitting an end cut.
 - This differs from the Metric Academy lessons (`2026-10-03-1548_edit-point-preferences-from-ml48-studio.md`), where
   the user cut thinking aloud in full: what gets cut is decided per lecturer, not once for all courses.
+
+## Դաս 17 (2026-10-25, the first 4 s plan): fewer additions, two new nuances
+
+105 planned cuts -> 124 (21 new, 12 changed, 2 removed), 1:49:34 -> 1:35:17; on Դաս 16 the user had added 56.
+- **A thinking invitation keeps its wait.** Planned cut 0:49:58-0:50:18, "~20 s waiting for the students to find how to
+  use generic ergodicity": the user cut only the silence before her "քիչ կսպասեմ, որովհետև հավես ա" ("I'll wait a bit,
+  it's fun", 0:50:07) and kept the invitation and the ~10 s wait after it. Bare "any questions?" prompts stay cut (Q46).
+- **Homework talk about the exercise just done stays.** Planned practical cut 1:35:56-1:36:07 ("I set that exercise
+  especially for today... maybe I said it was optional, I don't remember") was removed; a 3.5 s pause before it was
+  cut instead. One case so far; the other practical cuts of 17 (two household interruptions) were kept.
+- **The ending:** the user ticked the suggestion holding her chatter and next-time line (1:48:44-1:49:04), so the whole
+  ending went after all. 11 of the 12 changed cuts grew, their edges moved outward by 0.24-3.08 s (swallowing breaths
+  and lead-ins); one (Cut 40) started 1.2 s later.

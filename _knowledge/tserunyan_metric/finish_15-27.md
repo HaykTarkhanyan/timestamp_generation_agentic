@@ -39,6 +39,11 @@ Assemble with `python scripts/non_essential/metric_assemble.py <N>`, read back w
 `studio_cuts_to_enter.txt`, Studio not entered yet (Q49 "Not now"). 17-27: pauses from 4 s, her math/talk cuts as
 suggestions, plans `*_v4_4s`, backups `content_cuts_before_v4.json`; script `scripts/archive/tserunyan_2026-10/metric_replan4.py`.
 
+**2026-10-25 later:** Դաս 17 reviewed by the user (entry list ready, Studio not entered). studio.html shows the
+timeline plus every cut on its own again (DECISIONS.md #41); 18-25 rebuilt with `--report-only`. Դաս 26 and 27: the
+thinking-invitation waits are kept (Q52), with the silence cuts inside them unticked in `edit_points.json` by
+`metric_keep_waits.py`. **A full `find_edit_points.py` run on 26 or 27 re-ticks those silences: rerun that script after it.**
+
 ## Cut plans (2026-10-23, DECISIONS.md #26)
 
 Դաս 15: the user's studio.html edit, `studio_cuts_edited.txt` (92 cuts, 14.8 min, content cut 0:04:57-0:05:49

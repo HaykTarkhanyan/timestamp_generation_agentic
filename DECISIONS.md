@@ -2,6 +2,95 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 45. While the lecturer's webcam is on screen, cuts are only suggestions
+
+- **Decision:** A piece with `camera_on.json` (`scripts/non_essential/vahagn_camera_on.py`) gets every cut that touches
+  a camera stretch unticked (`find_edit_points.py`, reason "camera on: a cut makes him jump"); the user ticks the ones
+  worth a jump on studio.html.
+- **Date / status:** 2026-10-26, active (the user, returning the 6 May batch with 70 of 75 planned cuts removed: "he
+  had his video on and editing too much would make him teleport. pls for next batches see when hes on screen during
+  the lecture, not just very beginning then make all the cuts unticked").
+- **Why:** his webcam box (top-right, black bars on both sides) is on from 6 May to the end: 23.1.b-28.4 at 95-100%
+  of every second, against 0% for 21.1-23.1.a. The only camera-off stretch in the 15 unreviewed pieces is 28.3.a
+  18:09-18:37 (toolbar visible on the frame), so its cuts there stay ticked. Detector: the left bar's luminance in
+  the 360p preview, dark under 100 (0-52 with the camera, ~219 without); the picture inside the box runs 42-192 as
+  he moves, so it is not used.
+- **Alternatives rejected:** dropping the cuts altogether (the user still added 8 cuts on 6 May, so suggestions are
+  useful); a stricter threshold on the camera pieces (the user's call is which jumps are acceptable, not a length).
+- **What would change this:** the user ticking most suggestions on a camera piece (then pre-tick the long pauses).
+  Already reviewed pieces keep their plans: a camera file there would change the plan under the reviewed list.
+- **Number:** was #40 until 2026-10-26; renumbered because this session and the Tserunyan session both used
+  #39 and #40 (the user's Q76).
+
+## 44. Vahagn's remaining pieces are reviewed in batches, one studio.html per lecture day
+
+- **Decision:** Join each lecture day's pieces (2-4, 35-81 min) into one studio.html with one cut-list download, and
+  split the download back into per-piece lists (`scripts/non_essential/vahagn_batch_review.py build` / `split`).
+- **Date / status:** 2026-10-25, active (the user: "since here the vids are short i dont want to do one by one and
+  keep on downloading many txts").
+- **Why:** one page and one file per sitting; a day's pieces are consecutive parts of one lecture, so the page plays
+  like the whole lecture. The page code is unchanged: the batch is a virtual output folder (pieces' analysis WAVs
+  side by side on whole-frame slots, previews' pictures joined by stream copy, their sound re-encoded once, each
+  piece's own planned cuts shifted unchanged). Tested on b0504 and b0506: an untouched plan splits back to every
+  planned cut (26/26, 76/76, including a tail cut and the next piece's opening cut that the page joins into one); an
+  edited list with a moved start, a moved end, a removed cut, a new cut and a new cut across a boundary splits into
+  exactly those changes and passes `cut_list.py check`; the preview is in sync with the analysis audio (0 ms at the
+  start and end of every piece; joining the sound by stream copy had put it 32 ms late, AAC's start-up delay).
+- **Alternatives rejected:** one page per piece (the user's complaint); one page with every piece in a frame (file://
+  pages can't read each other, so no single download); a fresh analysis of the joined audio (clean and hum pieces have
+  different noise floors, and each piece's plan must stay its own for `check`).
+- **What would change this:** batches too long to review in one sitting (then split a day in two: `build` takes any
+  list of sections).
+- **Number:** was #39 until 2026-10-26; renumbered because this session and the Tserunyan session both used
+  #39 and #39 (the user's Q76).
+
+## 43. Tserunyan 22-27: content cuts only, no pause cuts at all
+
+- **Decision:** Re-plan 22-27 with no pause cuts (`--min-silence 100000`, so no silence qualifies); the content cuts
+  stay as #40 and Q52 left them. For this playlist only. Supersedes #42 for 22-27.
+- **Date / status:** 2026-10-26, active (the user, with the Դաս 21 list, where they had removed all 17 pause cuts and
+  kept the 6 content cuts: "new plan no more waiting to write cuts for the rest of the videos in this playlist only.
+  im fed up with them now. just content related staff pls, update the next htmls").
+- **Why:** reviewing pauses cost the user more than they were willing to spend; on Դաս 21 they dropped every pause cut
+  of the 7 s plan.
+- **Alternatives rejected:** keeping a higher pause threshold (the user said no pause cuts at all).
+- **What would change this:** a later course; the rule is for this playlist only.
+
+## 42. Tserunyan 19-27: pauses only from 7 s, so the review is mostly content cuts
+
+- **Decision:** Re-plan 19-27 with `--min-silence 7` instead of 4; the content cuts stay as #40 left them (math/talk
+  as suggestions, practical and prompts ticked, next-time lines kept, Q52 waits kept with the silences inside them
+  unticked). The review page still shows both pauses and content cuts (the user's Q59 "Show me both"). Դաս 15-18 keep
+  the lists the user already made. Supersedes #40's 4 s for 19-27.
+- **Date / status:** 2026-10-26, active (the user, sending the Դաս 18 list: "this is too much work - new approach im
+  okay with waiting for her to type, that can be only cut if its super long, i need to know anout any content cuts
+  but automated are toooo much extra work"; Q58 "7s").
+- **Why:** reviewing 80-139 pause cuts per lecture cost the user more than the pauses cost viewers. Counted on the 4 s
+  plans of 19-27: pauses of 8 s+ are 12-25 per lecture (156, 31.7 min), 10 s+ 6-17 (80, 21.4 min), 15 s+ 2-4 (23,
+  11.3 min); the content cuts are 4-10 ticked plus 0-5 suggestions per lecture.
+- **Alternatives rejected:** 15 s (offered as the recommendation), 10 s, 20 s, no pause cuts at all; showing only the
+  content cuts on the page (the user wants both).
+- **What would change this:** the user again adding many short pauses on 19-27, or asking for fewer cuts still.
+
+## 41. studio.html shows the timeline and, below it, every cut on its own again
+
+- **Decision:** a timeline page shows the per-cut cards again, in one collapsible section "Each cut on its own" under
+  the timeline (one contents entry for it, not one per cut). Both views edit the one cut list STUDIO_JS keeps, so an
+  edit in either shows in the other and in the exported list. Keys follow the last click: after a click on a card,
+  Space and the arrows act on that card; after a click on the timeline, on the timeline (all other timeline keys
+  unchanged). Supersedes #21.
+- **Date / status:** 2026-10-25, active (the user, sending the Դաս 17 list: "for the next ones also include the view
+  we had before where each cut was seperatley as as list, but also keep the full timeline as well").
+- **Why:** #21's own trigger ("the user wanting a cut's own close-up view back"). No model change was needed:
+  `renderAll()` already re-rendered every card and then called `tlRefresh()`; only the timeline's capture-phase key
+  handler, which claimed Space and the arrows everywhere while the cards were hidden, had to let a clicked card have
+  them. Checked in Playwright on Դաս 18 (74 cards): Remove cut on a card -> REMOVED in the export and in the
+  timeline's data, Restore undoes it; Start = bar -> CHANGED line, Reset undoes it; ArrowRight after a card click
+  moved that card's bar 0.2 s and not the timeline's, after a timeline click the reverse.
+- **Alternatives rejected:** a show/hide toggle (the user asked for both at once); one contents entry per cut
+  (74-139 lines above the timeline).
+- **What would change this:** the user preferring one view again, or the next rework of STUDIO_JS (#21's JSON idea).
+
 ## 40. Tserunyan 17-27 re-planned from the user's Դաս 16 edit: 4 s pauses, her math talk kept
 
 - **Decision:** For 17-27: silences of 4 s or more pre-ticked (`--min-silence 4`, no hum join); her math or talk
@@ -25,6 +114,11 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
 - **Alternatives rejected:** 4 s ticked + 3-4 s as unticked suggestions and 3.5 s ticked (offered, the user picked
   4 s only); keeping 5 s (53 hand-added cuts on 16); unticking every judgment cut (the user: only the math/talk ones).
 - **What would change this:** the user again adding many 3-4 s pauses or unticking practical cuts on 17-27.
+- **Refined the same evening, after the user's Դաս 17 review:** a thinking invitation keeps its wait (Q52 "Keep words
+  and wait, as suggestions": Դաս 26 0:58:01 "Any ideas?" + 21 s, Դաս 27 1:01:51 "shall we think about it?" + 10 s).
+  The content cut and the silence cuts inside it are unticked, since the pause rule would still cut the wait
+  (scripts/archive/tserunyan_2026-10/metric_keep_waits.py; a later full find_edit_points run re-ticks those silences).
+  Homework talk stays cut (Q54 "Leave them cut", although on 17 the user kept one such remark).
 
 ## 39. Tserunyan's chapters are nested (15-27 now, the published 1-14 at the end of the course)
 
@@ -46,44 +140,6 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   (#34) and the ML course, instead of `03:58` mixed with `01:01:28`; all 13 lectures run over an hour. New opt-in
   `--hms` in `remap_chapters.py` and `snap_chapters_to_captions.py` (their default is unchanged for the other
   courses). Դաս 15 redone: seconds, labels and indents identical. Also for 1-14 at the end.
-
-## 40. While the lecturer's webcam is on screen, cuts are only suggestions
-
-- **Decision:** A piece with `camera_on.json` (`scripts/non_essential/vahagn_camera_on.py`) gets every cut that touches
-  a camera stretch unticked (`find_edit_points.py`, reason "camera on: a cut makes him jump"); the user ticks the ones
-  worth a jump on studio.html.
-- **Date / status:** 2026-10-26, active (the user, returning the 6 May batch with 70 of 75 planned cuts removed: "he
-  had his video on and editing too much would make him teleport. pls for next batches see when hes on screen during
-  the lecture, not just very beginning then make all the cuts unticked").
-- **Why:** his webcam box (top-right, black bars on both sides) is on from 6 May to the end: 23.1.b-28.4 at 95-100%
-  of every second, against 0% for 21.1-23.1.a. The only camera-off stretch in the 15 unreviewed pieces is 28.3.a
-  18:09-18:37 (toolbar visible on the frame), so its cuts there stay ticked. Detector: the left bar's luminance in
-  the 360p preview, dark under 100 (0-52 with the camera, ~219 without); the picture inside the box runs 42-192 as
-  he moves, so it is not used.
-- **Alternatives rejected:** dropping the cuts altogether (the user still added 8 cuts on 6 May, so suggestions are
-  useful); a stricter threshold on the camera pieces (the user's call is which jumps are acceptable, not a length).
-- **What would change this:** the user ticking most suggestions on a camera piece (then pre-tick the long pauses).
-  Already reviewed pieces keep their plans: a camera file there would change the plan under the reviewed list.
-
-## 39. Vahagn's remaining pieces are reviewed in batches, one studio.html per lecture day
-
-- **Decision:** Join each lecture day's pieces (2-4, 35-81 min) into one studio.html with one cut-list download, and
-  split the download back into per-piece lists (`scripts/non_essential/vahagn_batch_review.py build` / `split`).
-- **Date / status:** 2026-10-25, active (the user: "since here the vids are short i dont want to do one by one and
-  keep on downloading many txts").
-- **Why:** one page and one file per sitting; a day's pieces are consecutive parts of one lecture, so the page plays
-  like the whole lecture. The page code is unchanged: the batch is a virtual output folder (pieces' analysis WAVs
-  side by side on whole-frame slots, previews' pictures joined by stream copy, their sound re-encoded once, each
-  piece's own planned cuts shifted unchanged). Tested on b0504 and b0506: an untouched plan splits back to every
-  planned cut (26/26, 76/76, including a tail cut and the next piece's opening cut that the page joins into one); an
-  edited list with a moved start, a moved end, a removed cut, a new cut and a new cut across a boundary splits into
-  exactly those changes and passes `cut_list.py check`; the preview is in sync with the analysis audio (0 ms at the
-  start and end of every piece; joining the sound by stream copy had put it 32 ms late, AAC's start-up delay).
-- **Alternatives rejected:** one page per piece (the user's complaint); one page with every piece in a frame (file://
-  pages can't read each other, so no single download); a fresh analysis of the joined audio (clean and hum pieces have
-  different noise floors, and each piece's plan must stay its own for `check`).
-- **What would change this:** batches too long to review in one sitting (then split a day in two: `build` takes any
-  list of sections).
 
 ## 38. Vahagn's 25 pieces: only the sound is fixed locally; the cuts go in through YouTube Studio
 
@@ -394,7 +450,7 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   listed in the contents: they sit in a `<div id="cards" hidden>`. STUDIO_JS still builds the cut
   list (`plan`, the edits in localStorage keyed by card id) from them, and the timeline edits that
   list. The page's keys (Space, S, +/-, arrows) now act on the timeline wherever the focus is.
-- **Date / status:** 2026-10-21, active (the user, after reviewing lesson 12 on the timeline: "i
+- **Date / status:** 2026-10-21, superseded by #41 on 2026-10-25 (the cards are shown again under the timeline). Was active (the user, after reviewing lesson 12 on the timeline: "i
   dont need the old view this wide timeline is perfect for me").
 - **Why:** the timeline shows everything a card did (cut, reason, captions, playback with the cuts
   skipped) across the whole lecture. Hiding keeps the saved edits of pages already open
