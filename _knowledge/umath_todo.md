@@ -164,6 +164,10 @@ videos for "Գալուա" / "Galois" finds nothing).
 
 ## Anush Tserunyan - Մետրիկական տարածություններ և տոպոլոգիա (ASOF, spring 2023)
 
+**DONE 2026-10-27** (the user: "make Anush as done"). Դաս 15-27 cut in Studio, chaptered (nested, H:MM:SS), titled,
+thumbnailed, pushed and public; Դաս 1-14 nested; playlist in lesson order; notes and homework on the math-team Drive;
+email to her sent 2026-10-27 11:11 UTC. Nothing open; only if the team ever finds lecture 1's recording.
+
 Lessons from finishing Papikian, step by step: `_knowledge/umath_course_playbook.md`.
 Playlist `PLz3NrXxHz_CA3NjE0D_amd_QcTMx5HJvZ`. Course page
 https://www.math.mcgill.ca/atserunyan/Courses/2023_S.Yerevan.Metric&Top/ (27 lectures; 1 and 7
@@ -272,7 +276,20 @@ share links from the filming team's Telegram (still downloadable, no passcode).
 - [x] **15-27 pushed 2026-10-26 14:28-14:31** (the user's Q71 "Push all 13"; scratchpad `metric_push.py`): 16-27
       title + description + thumbnail, Դաս 15 description; `metric_readback.py` after each: 13/13 title OK,
       description OK, chapter lines 26-34, all still unlisted
-- [ ] Make 15-27 public together (Q25), then message her
+- [x] 2026-10-27 terms (DECISIONS #49, the user's Q84 A / Q85 A): "Գեներիկ էրգոդիկություն" -> "Էրգոդիկություն ըստ
+      Բեռի" in Դաս 16, 17 (titles, thumbnails, 6 chapters), "Պրոֆինիտ տոպոլոգիա" -> "Թվաբանական պրոգրեսիաների
+      տոպոլոգիա" in Դաս 19 (2 chapters); she says both in English. Masters + snapped lists edited, assembled, 0 DENY,
+      pushed 11:48 and read back (API + viewer: titles, 29/34/30 chapters parsed, served thumbnails ours), still unlisted.
+      Both words in the glossary denylist. Review page rebuilt
+- [x] Drive renamed 2026-10-27 11:59-12:00 (Q87, Playwright at `drive/u/2`, right-click -> Rename): notes 16 and 17 to
+      the new titles, and our homework name "Տնային 8 - ..., գեներիկ էրգոդիկություն, ..." -> "..., էրգոդիկություն ըստ
+      Բեռի, ..."; IDs unchanged, `drive_folder_ids.json` keys updated; folder search finds no "Պրոֆինիտ"
+- [x] **15-27 public** 2026-10-27 11:58 (Q25, the user: "yes make public"; `scripts/archive/tserunyan_2026-10/make_public.py`):
+      videos.update(part=status), own writable fields sent back; read back 13/13 public, no other status field changed;
+      backup `_knowledge/tserunyan_metric/status_before_public_2026-10-27.json`; ~650 quota units. Playlist was already public
+- [x] Message her (Q74): **sent by the user 2026-10-27 11:11 UTC** (no earlier thread with her in this mailbox), to
+      her McGill address from her course sheet, Aprikyan in cc as for Papikian, Armenian, playlist + Drive folder with
+      the full URLs ("put the urls as well"); the user edited the wording before sending
 - [x] At the end: nest the published Դաս 1-14 the same way and write their times H:MM:SS (DECISIONS #39): done
       2026-10-26 16:25-16:27 (the user's Q75): 160 of 295 chapters under 50 parents, labels and seconds unchanged,
       12/12 read back identical (one retry: a read right after the write served the old text), YouTube parses every
@@ -287,8 +304,8 @@ share links from the filming team's Telegram (still downloadable, no passcode).
 - [x] 2026-10-26 live check of 15-27 as a viewer (yt-dlp): 13/13 titles OK, YouTube parses every chapter (nested
       included), the served thumbnails are ours (mean difference 0.1 of 255), all unlisted
 - Note for every session: DECISIONS.md numbers collided (two #39, two #40 from two sessions at once); the Vahagn
-  ones are #44 and #45 now (the user's Q76). **Next free number: #46.** Check the top of the file before numbering
-- [ ] If the team finds lecture 1's recording, add it
+  ones are #44 and #45 now (the user's Q76). **Next free number: #50** (2026-10-27). Check the top of the file before numbering
+- If the team ever finds lecture 1's recording, add it (not an open task)
 
 ## Vahagn Mikaelian - Գծային հանրահաշիվ (YSU, 2021 recordings)
 

@@ -2,6 +2,26 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 49. An English term with no Armenian equivalent gets an Armenian description, not the English word in Armenian letters
+
+- **Decision:** Tserunyan's "generic ergodicity" is "Էրգոդիկություն ըստ Բեռի (generic ergodicity)" (Դաս 16, 17: titles,
+  thumbnails, 6 chapters) and the profinite topology on ℤ is "Թվաբանական պրոգրեսիաների տոպոլոգիա ℤ-ի վրա (profinite)"
+  (Դաս 19, 2 chapters), replacing "Գեներիկ" and "Պրոֆինիտ". Both words are in the glossary denylist now.
+- **Date / status:** 2026-10-27, active (the user: "in armenian generic sounds weird"; Q84 A and Q85 A).
+- **Why:** she never says either word in Armenian: "generic ergodicity" / "generically ergodic" in English (Դաս 16
+  0:35:42, 1:20:32; Դաս 17 0:39:40, 0:45:25), "profinite" in English (Դաս 19 1:16:30), and her notes are in English. At
+  1:20:32 she explains "generic բառը նշանակում է որպես Բեռի կատեգորիայի", and the series already has "Ըստ Բեռի չափելի
+  (Baire measurable)" (Դաս 15, 18). The open sets of the profinite topology on ℤ are the progressions a + bℤ, a school
+  term. A web search (8 queries, Armenian and Russian) found no Armenian math use of "գեներիկ" or any Armenian term for
+  either; across all 727 videos of the three channels the two words were only in these three.
+- **Alternatives rejected:** the English word in Latin letters as the main label (the series puts English only in
+  parentheses); "Տիպիկ էրգոդիկություն" from the Russian "типичный" (not a term we could confirm in Armenian either);
+  keeping the transliterations. Not changed on the same pass (the user: "its fine, titles are the important thing"):
+  "բինար ծառեր", "shift-ը", "կոմբինատոր դինամիկա" in Դաս 16-17 chapters. "Չնչին / կոչնչին" for meager / comeager stay:
+  the published Դաս 1-14 set them.
+- **What would change this:** an Armenian textbook or glossary with an established term for "generic" or "profinite",
+  or the lecturer's own Armenian wording.
+
 ## 45. While the lecturer's webcam is on screen, cuts are only suggestions
 
 - **Decision:** A piece with `camera_on.json` (`scripts/non_essential/vahagn_camera_on.py`) gets every cut that touches

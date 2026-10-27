@@ -114,3 +114,5 @@ happened and what to do differently.
   contact had gone through Hayk Aprikyan), so it was a new draft to the address on his own site, in
   Armenian, Aprikyan in cc, links as short text («այս playlist-ում», «այս Drive թղթապանակում») rather
   than bare URLs: playlist, materials folder, thanks, offer of help. Draft only; the user sends it.
+  Since Tserunyan (2026-10-27, the user: "put the urls as well"): the full URL on its own line after each
+  short text.
