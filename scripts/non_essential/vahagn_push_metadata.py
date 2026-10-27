@@ -64,6 +64,59 @@ def upload_map(yt) -> dict:
     return found
 
 
+REPLACED_FILE = REPO / "_knowledge/vahagn_linalg/uploads_replaced.json"
+
+
+def remap_dehum(yt, ids: dict) -> list[str]:
+    """Point the sections that got a buzz-free re-upload ('VidSection 23 3 b dehum', DECISIONS #48) at it. The old
+    upload's id goes to REPLACED_FILE (section -> list of ids replaced), for taking it out of the playlist and deleting
+    it later. Returns every section with a dehum upload, remapped now or by an earlier run: the dry run already writes
+    the map, so returning only the new ones left the --apply run with none, which then meant all 25 sections."""
+    ch = yt.channels().list(part="contentDetails", mine=True).execute()["items"][0]
+    pl = ch["contentDetails"]["relatedPlaylists"]["uploads"]
+    found, token = {}, None
+    for _ in range(3):
+        resp = yt.playlistItems().list(part="snippet", playlistId=pl, maxResults=50, pageToken=token).execute()
+        for it in resp["items"]:
+            m = re.fullmatch(r"VidSection (.+) dehum", it["snippet"]["title"])
+            if m:
+                sec = m[1].replace(" ", ".")
+                if sec in found:
+                    raise RuntimeError(f"{sec}: two dehum uploads ({found[sec]}, {it['snippet']['resourceId']['videoId']})")
+                found[sec] = it["snippet"]["resourceId"]["videoId"]
+        token = resp.get("nextPageToken")
+        if not token:
+            break
+    replaced = json.loads(REPLACED_FILE.read_text(encoding="utf-8")) if REPLACED_FILE.exists() else {}
+    changed = []
+    for sec, new in sorted(found.items()):
+        if sec not in ids:
+            raise RuntimeError(f"dehum upload for unknown section {sec}")
+        if ids[sec] != new:
+            replaced.setdefault(sec, []).append(ids[sec])
+            ids[sec] = new
+            changed.append(sec)
+    MAP_FILE.write_text(json.dumps(ids, ensure_ascii=False, indent=1), encoding="utf-8")
+    REPLACED_FILE.write_text(json.dumps(replaced, ensure_ascii=False, indent=1), encoding="utf-8")
+    log.info(f"{len(found)} dehum uploads found, {len(changed)} sections now point at them: {changed}")
+    if not found:
+        raise SystemExit("no 'VidSection X dehum' upload found")
+    return sorted(found)
+
+
+def drop_replaced(yt) -> None:
+    """Take the replaced uploads out of the course playlist (50 units each); the videos themselves stay."""
+    replaced = {v for ids in json.loads(REPLACED_FILE.read_text(encoding="utf-8")).values() for v in ids}
+    items = [it for it in yt_publish._playlist_items(yt, PLAYLIST) if it["contentDetails"]["videoId"] in replaced]
+    for it in items:
+        yt.playlistItems().delete(id=it["id"]).execute()
+        log.info(f"removed {it['contentDetails']['videoId']} ({it['snippet']['title']}) from the playlist")
+    left = [it for it in yt_publish._playlist_items(yt, PLAYLIST) if it["contentDetails"]["videoId"] in replaced]
+    if left:
+        raise RuntimeError(f"still in the playlist after removal (reads can lag; reread): {[it['snippet']['title'] for it in left]}")
+    log.info(f"{len(items)} replaced uploads out of the playlist ({len(items) * 50} units)")
+
+
 def description(out: Path, chapters: str) -> str:
     ep = out / "edited_predicted"
     text = yt_publish.strip_title_header((ep / "description.txt").read_text(encoding="utf-8").strip("\n"))
@@ -85,11 +138,19 @@ def main() -> None:
     ap.add_argument("--chapters", choices=["raw", "edited"], required=True)
     ap.add_argument("--description-only", action="store_true")
     ap.add_argument("--apply", action="store_true")
+    ap.add_argument("--remap-dehum", action="store_true", help="first point the sections with a 'VidSection X dehum' "
+                    "upload at it (old ids kept in uploads_replaced.json); local files only")
+    ap.add_argument("--drop-replaced", action="store_true", help="with --apply: also take the replaced uploads out of "
+                    "the playlist")
     args = ap.parse_args()
     yt_publish.TOKEN_FILE = yt_publish.TOKEN_FILES["umath"]
     yt = yt_publish.get_service()
 
     ids = upload_map(yt)
+    if args.remap_dehum:
+        with_dehum = remap_dehum(yt, ids)
+        if not args.sections:
+            args.sections = with_dehum
     status = json.loads((REPO / "_knowledge/vahagn_linalg/drafts_status.json").read_text(encoding="utf-8"))
     fixed = json.loads((REPO / "_knowledge/vahagn_linalg/audio_fix.json").read_text(encoding="utf-8"))
     secs = args.sections or sorted(status, key=lambda s: [int(p) if p.isdigit() else p for p in s.split(".")])
@@ -106,9 +167,12 @@ def main() -> None:
     for s in secs:
         vid, out = ids[s], REPO / status[s]["output_dir"]
         it = live[vid]
-        dur, want = iso_s(it["contentDetails"]["duration"]), fixed[s]["duration_s"]
+        # edited chapters go on a video whose Studio cuts are saved and processed: its length is the cut list's
+        dur = iso_s(it["contentDetails"]["duration"])
+        want = status[s]["predicted_length_s"] if args.chapters == "edited" else fixed[s]["duration_s"]
         if abs(dur - want) > 1.5:
-            raise RuntimeError(f"{s} {vid}: YouTube {dur} s vs fixed file {want:.1f} s - wrong upload?")
+            raise RuntimeError(f"{s} {vid}: YouTube {dur} s vs {'the cut list' if args.chapters == 'edited' else 'fixed file'} "
+                               f"{want:.1f} s - {'cuts not saved or not processed yet?' if args.chapters == 'edited' else 'wrong upload?'}")
         title = (out / "edited_predicted/titles.txt").read_text(encoding="utf-8").splitlines()[0].strip()
         desc = description(out, args.chapters)
         if len(title) > yt_publish.MAX_TITLE_CHARS or len(desc) > yt_publish.MAX_DESCRIPTION_CHARS:
@@ -174,6 +238,8 @@ def main() -> None:
     if bad:
         log.error(f"CHECK (reads can lag; reread before concluding): {bad}")
         raise SystemExit(1)
+    if args.drop_replaced:
+        drop_replaced(yt)
 
 
 if __name__ == "__main__":

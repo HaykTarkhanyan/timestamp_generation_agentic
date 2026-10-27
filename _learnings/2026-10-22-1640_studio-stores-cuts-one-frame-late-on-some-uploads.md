@@ -22,6 +22,16 @@ and the diff against the user's list was identical frame for frame on both.
 run again. Do not just re-run: the batch's "already in Studio" check compares exact times, so it would
 enter cut 1 a second time over the shifted one.
 
+**Update 2026-10-27 (Vahagn, 18 dehum uploads).** 3 of 18 shifted (23.1.b `BeLdw9R5Ykc`, 23.3.b, 28.1.b), 15 did
+not, and ffprobe again shows nothing: all 18 files have video and audio `start_time` 0.000, 25/1, time base 1/30000,
+made the same way. Two new facts: a typed **0 stays 0** (typed 0:00:00:00-0:00:06:22, stored 0:00:00:00-0:00:06:23;
+typed 14:50:06-14:55:07, stored 14:50:07-14:55:08), so `shifted()` in `scripts/studio_enter_cuts.js` now clamps at 0
+(-1 typed a negative frame before). And the shift can be handled without a person: the batch driver
+(`.playwright-mcp/vahagn18_driver_*.js`, made by the session's scratch `make_drivers2.py`) runs the plain entry,
+and if it fails with every off-plan pair exactly a planned pair one frame later (0 staying 0), closes the tab unsaved
+(the cuts go with it, nothing to delete) and enters the piece again in a fresh tab with the -1 entry; anything else
+still stops it. All 3 went in identical that way.
+
 **Two more things from the same session.**
 - Rejecting (cancelling) a `browser_run_code_unsafe` call in the chat does not stop the code already
   running in the browser. Դաս 18-19's batch 2 was "rejected" and still entered cuts 16-30 by itself;

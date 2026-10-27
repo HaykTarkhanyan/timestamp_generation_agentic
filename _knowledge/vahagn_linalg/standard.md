@@ -55,7 +55,8 @@ lecture, Tue ~14:2x / Thu ~11:0x (status.md, checked on 20.1). Table in `status.
 - Notation as published: `ker(T)`, `im(T)`, `rank(A)`, `nullity(A)`, `rref(A)`, `col(A)`, `row(A)`, `R^5 → R^3`,
   `P_3`, `[T]_B`, `I_n`, `⇔`, `⇒`. No ASCII `<` `>` (use `＜` `＞`).
 - Terms: his own words where he uses them (դիագոնալիզացիա / դիագոնալիզացվող, not the glossary's
-  անկյունագծայնացում; երկրաչափական / հանրահաշվական պատիկություն; Գրամ-Շմիդտ; օրթոգոնալիզացիա), else `glossary.csv`: միջուկ (kernel), պատկեր (image), դեֆեկտ
+  անկյունագծայնացում; երկրաչափական / հանրահաշվական պատիկություն; Գրամ-Շմիթ as he says it, not Շմիդտ; դետերմինանտ,
+  not the glossary's որոշիչ, which he never says; օրթոգոնալիզացիա; DECISIONS #50), else `glossary.csv`: միջուկ (kernel), պատկեր (image), դեֆեկտ
   (nullity), ռանգ (rank), ինյեկտիվ / սյուրյեկտիվ / բիեկտիվ, պրոյեկցիա, պտույտ, ածանցյալ, զրոյական տարածություն,
   աստիճանաձև տեսք (REF), բերված աստիճանաձև տեսք (RREF), ազատ փոփոխական.
 - Drafted on the **raw** timeline in `edited_predicted/timestamps_raw.txt` (times may carry tenths), then

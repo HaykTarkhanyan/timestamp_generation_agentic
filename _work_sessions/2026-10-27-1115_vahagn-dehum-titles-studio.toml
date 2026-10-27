@@ -1,0 +1,37 @@
+title = "Vahagn linear algebra 21.1-28.4: buzz removed, titles checked, all 25 cut, chaptered and unlisted"
+date = "2026-10-27"
+time = "11:15"
+areas = ["scripts/non_essential", "scripts/archive/vahagn_2026-10", "scripts (cut_list.py, studio_enter_cuts.js)", "_knowledge/vahagn_linalg", "output/2026-10-25_VidSection-*", "output/vahagn_*", "thumbnails/umath", "_learnings", "DECISIONS.md"]
+
+done = [
+  "Mains buzz: found from the user's noise mark (48.39 Hz ladder + 90/113.8/138.3 Hz); vahagn_dehum.py (DECISIONS #48): tracking forward-only notches + afftdn learning a buzz sample; 18 pieces rendered",
+  "Per-minute check (dehum_check.json) found bad minutes the median hid (28.3.a min 3 -45.5 dB): denoise sample must hold the buzz (28.3.a had learned digital silence); notches moved to each chunk's own quiet-block peaks (v3); 6 pieces re-rendered; 4 worst spots passed the user's ear; all 18 checked on dehum_all.html",
+  "7 clean pieces: cuts entered and saved in Studio (62 cuts), edited chapters pushed",
+  "Titles: vahagn_title_words.py checks every word against his captions, published titles/chapters, glossary; 4 retitled (22.3, 23.3.a, 27.2, 28.2.b), դետերմինանտ and Գրամ-Շմիթ in chapters and 2 thumbnails (DECISIONS #50)",
+  "Push: 18 dehum uploads remapped, titled, raw chapters, thumbnails, unlisted, playlist; 18 old uploads out of the playlist; 2 stray 21.2 entries out (Q92)",
+  "Studio: 97 cuts on the 18 new uploads entered and saved (each identical to its list, Save only after Studio's new length matched); one-frame shift on 3 uploads handled automatically (--type-shift -1, clamp at 0); M:SS:FF time boxes under ten minutes fixed in the template",
+  "Edited-timeline chapters pushed to the 18 after processing; all 25 done and unlisted (~5,000 quota units today)",
+]
+pending = [
+  "Publishing the 25 (the user: 'not yet, overall review' first)",
+  "Playlist order (Q93): the playlist auto-sorts newest first; needs Manual ordering, then either the full 1.1-28.4 sort (93 moves, ~4,650 units) or only the 25 in section order on top (~24 moves)",
+  "Deleting replaced uploads (Q84): 18 old fixed uploads (uploads_replaced.json), the raw caption uploads, old 21.2 (brEvgF3isUE), nrKtWsRzEHA",
+  "Test variants in vahagn_linalg/audio_dehum/tests (13 files) can go once the user is happy",
+]
+next = [
+  "Overall review of the 25 before publishing (ask the user what form: a page with every piece's title, thumbnail, chapters, length and link?)",
+  "Q93 playlist order",
+]
+files = [
+  "scripts/non_essential/vahagn_dehum.py", "scripts/non_essential/vahagn_title_words.py", "scripts/non_essential/vahagn_push_metadata.py (--remap-dehum, --drop-replaced, edited length check)",
+  "scripts/non_essential/vahagn_batch_review.py (--noise, --listen, noise-collect)", "scripts/cut_list.py (entry-js --video)", "scripts/studio_enter_cuts.js (shift clamp, M:SS:FF)",
+  "scripts/archive/vahagn_2026-10/{static_probe,buzz_band,f0_fit,dehum_samples,dehum_measure,dehum_all_page}.py",
+  "_knowledge/vahagn_linalg/{status.md,standard.md,pieces.json,dehum.json,dehum_check.json,buzz_band.json,title_words.json,uploads_fixed.json,uploads_replaced.json}",
+  "_learnings/2026-10-27-1230/1231/1232/1813, update to 2026-10-22-1640",
+]
+commits = ["this session's commit (Vahagn 21.1-28.4 dehum, titles, Studio cuts)"]
+notes = [
+  "A background watcher piped through grep reported exit 0 after crashing on a Wi-Fi drop: use set -o pipefail for background runs",
+  "The other Claude session works in the same repo (end screens, ML48/49, Ուղեղամպրոպ, Tserunyan): DECISIONS.md and scripts/non_essential/README.md were committed hunk by hunk, only this session's entries",
+  "The Playwright session was on Metric when Studio work started; switched to umath through the account chip before any cut",
+]

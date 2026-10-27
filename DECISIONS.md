@@ -2,6 +2,27 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 50. Vahagn's titles, chapters and thumbnails use only his words, or the glossary's where he has none; his word wins
+
+- **Decision:** Every Armenian word in a Vahagn title, chapter or thumbnail is one he says (his captions, any piece) or,
+  where he has no word, the glossary's. Where he has one, his word wins over the glossary: «դետերմինանտ», not the
+  glossary's «որոշիչ» (he says դետերմինանտ 8-26 times in each of 22.2, 23.3.a, 24.1, 28.2.b and որոշիչ never), and
+  «Գրամ-Շմիթ» as he pronounces it, not my «Շմիդտ». Checked with `scripts/non_essential/vahagn_title_words.py`.
+- **Date / status:** 2026-10-27, active (the user: "its important that u dont invent words in armenian which the prof
+  didnt use or they are not in glossary"; then Q115-Q119).
+- **Why:** the check found every title word his or the glossary's, but four needed reading. «որոնումը» (23.3.a) was
+  mine: he says «ինչպես գտնել» -> `Բնութագրիչ բազմանդամ։ Ինչպես գտնել սեփական արժեքները`. «Որոշիչի» (28.2.b) passed
+  through the glossary only -> `Դետերմինանտի մոդուլը QR ֆակտորիզացիայով`, and the same word in 4 chapter lists and
+  28.2.b's thumbnail. «h(T)» (22.3) was cryptic -> `h(T), h ∈ F[x]`, his board notation (an Armenian wording does not
+  fit under 100 characters). «Շմիդտ» (27.2) -> «Շմիթ» in the title, 4 chapter lists and 27.2's thumbnail. The
+  captions misspell his «դիագոնալիզացիա» as «դիագանալ-» (46 times in 24.x), which first looked like 4 invented titles;
+  he defines the term himself (24.2.a 01:16).
+- **Alternatives rejected:** the glossary first (`standard.md` already put his words first; the user confirmed it on
+  «դետերմինանտ»); «Շմիդտ», the letters of the name (no Armenian source found to back either spelling; the user took his
+  pronunciation); keeping «h(T)» alone.
+- **What would change this:** a published Armenian textbook or his own book's spelling of Schmidt; a term he says only
+  in a garbled form the captions cannot confirm (then the glossary, and say so).
+
 ## 49. An English term with no Armenian equivalent gets an Armenian description, not the English word in Armenian letters
 
 - **Decision:** Tserunyan's "generic ergodicity" is "Էրգոդիկություն ըստ Բեռի (generic ergodicity)" (Դաս 16, 17: titles,
@@ -21,6 +42,55 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   the published Դաս 1-14 set them.
 - **What would change this:** an Armenian textbook or glossary with an established term for "generic" or "profinite",
   or the lecturer's own Armenian wording.
+
+## 48. Vahagn's mains buzz is removed only where it is: notches at its peaks + a denoise that learns a noise sample
+
+- **Decision:** For every piece with buzz (`_knowledge/vahagn_linalg/buzz_band.json`: 12 throughout, 6 on and off),
+  render the sound again with `scripts/non_essential/vahagn_dehum.py`: inside a 10 s buzz map, FORWARD-ONLY notches
+  (Q 30) at the narrow peaks of the hum, re-fitted every 30 s on that stretch's steadiest pure-buzz 2 s (the hum
+  drifts), plus afftdn 20 dB learning one pure-buzz sample; outside it, the light chain of #38; joins at the quietest
+  moment near each boundary with 50 ms crossfades; -16 LUFS, picture copied. Those pieces are uploaded again, and
+  their Studio cuts go onto the new uploads. The 7 pieces without buzz keep their #38 uploads.
+- **Date / status:** 2026-10-27, active (the user found it: "some lectures have a static noise ... it comes only at
+  some point"; marked a pure-noise stretch, 28.3.a 20:47.6-20:51.0; on the samples page: notches "quite good",
+  notches + learning denoise "also great").
+- **Why:** it is mains buzz, a 48.39 Hz ladder plus a 90/113.8/138.3 Hz source, 20-30 dB over a clean pause below
+  600 Hz and nearly nothing above 2 kHz. In the user's stretch, relative to speech: raw -34.6 dB, the #38 upload -37.4
+  (2.8 dB removed), notches -43.4, learning denoise -55.7, both -62.2 (28 dB), both at 30 dB -72.1. Both kept the
+  voice natural to the user; the chosen one removes three times what notches alone do. Tracking the drift was
+  needed: 23.3.b's hum moves 73.5-76.7 Hz; with one fixed set of notches its minute 7 kept the whole ladder (the user:
+  "in 7th minute i still hear some") and the piece reached -58.5 dB vs speech; tracked, -67.9 (minute 7 -58.1 ->
+  -68.3, no ladder left). 24.1 (steady 48.8 Hz): -44.4 -> -74.4, the level of the clean pieces. Forward-only, not
+  zero-phase: the user heard "kind of an echo" in the first tracked version; on 23.3.b 6:50-7:30 in six variants
+  (`output/vahagn_linalg_overview/audio/echo_test.html`) only the two zero-phase ones had it ("only a and C"), since
+  forward-backward filtering makes sharp notches ring before each sound too. All of A-E left -67.6..-67.9 dB, so the
+  forward-only notches cost nothing; re-learning the noise once a minute changed nothing measurable and was dropped;
+  the plain light denoise after the notches (F) left -57.7.
+- **Alternatives rejected:** notches only (8.8 dB); the 30 dB version (more removal, more risk to the voice, not what
+  was picked); the learning denoise over the whole piece of a mixed one (it would subtract a noise that is not there
+  in the clean stretches); the earlier detector in 3-7.5 kHz (measured the wrong band, see status.md).
+- **What would change this:** artifacts heard in a full re-rendered piece (then notches only, or a weaker nr); a
+  piece whose buzz has no pause long enough to learn from (the script refuses it).
+- **Revisited 2026-10-27 (the batch run):** 24.4 has no steady 3.4 s of pure buzz (his pauses are short: steadiest
+  window std 2.06 dB against the 2.0 limit, speech windows ~13 dB), but 80 windows of 2 s pass (best 0.97 dB). The
+  noise sample now falls back to 2 s with a warning, rather than relaxing the steadiness limit: a pure 2 s sample
+  beats a 3.4 s one with a breath in it. The length used is in `dehum.json` (`noise_sample`). The script still
+  refuses a piece with no steady 2 s either.
+- **Revisited 2026-10-27 (per-minute check of the 18 outputs, `_knowledge/vahagn_linalg/dehum_check.json`):** the
+  logged median per piece hid single bad minutes: 28.3.a min 3 at -45.5 dB vs speech (median -71.1), 28.1.a min 9 at
+  -51.2. Two causes, two fixes. (1) The denoise sample could be a dropout: steady and quiet, so 28.3.a learned digital
+  silence (its 150-600 Hz band at -163 dB vs a buzz at -42) and 28.1.a a weak-buzz stretch (-66 vs -42); the sample
+  must now hold the buzz (band at most 6 dB under the piece's median buzz). (2) A chunk with no steady 2 s borrowed
+  the nearest one's notches, and the hum had moved (28.3.a min 3: 49.2 Hz vs the sample's 48.2, 9 Hz off at 442 Hz).
+  Notches fitted only on each chunk's quietest 1 s blocks (v2) found 0-3 lines where speech hid them (28.1.a min 4:
+  -68.7 -> -44.3), so the final fitting (v3) takes the sample's lines and moves each to where the chunk's own quiet
+  blocks have it (+-2.5%), adding the chunk's strong lines the sample lacks. Worst minute v1 -> v2 -> v3: 28.3.a
+  -45.5 / -57.5 / -68.9, 28.1.a -51.2 / -44.3 / -60.9, 23.3.b -63.4 / -56.8 / -63.4, 28.2.a -65.7 / - / -65.6; no
+  minute worse by over 2 dB. Rendered with v3: 28.3.a, 28.1.a, 23.3.b, 28.2.a, 28.2.b, 28.1.b; the other 12 stay on
+  v1 (worst minute -68..-75 already, the clean pieces' range is -73..-77). The 4 worst minutes left in the 18 (28.1.a
+  min 9 -60.9, 23.3.b min 0-1 -65.2/-63.4, 28.1.b min 5 -64.6, 28.2.a min 6 -65.6) passed the user's ear: "all are
+  good" (`output/vahagn_linalg_overview/audio/dehum_check.html`). So about -61 dB vs speech in the quietest frames is
+  inaudible here; -57 was "some, but not much".
 
 ## 45. While the lecturer's webcam is on screen, cuts are only suggestions
 

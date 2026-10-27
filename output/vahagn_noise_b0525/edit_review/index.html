@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit points vahagn_noise_b0525</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+</style></head>
+<body><main>
+<h1>Edit points: Vahagn noise b0525: mark the stretches with constant noise (28.2.a, 28.2.b)</h1>
+<p class="sub">0:34:37 raw recording, https://youtu.be/vahagn_noise_b0525</p>
+<div class="stats">
+  <span>Studio cuts <b id="n-cuts"></b></span>
+  <span>removed <b id="t-removed"></b></span>
+  <span>new length <b id="t-new"></b></span>
+  <span>min silence <select id="minsil"><option value="4" selected>4 s</option><option value="5">5 s</option><option value="8">8 s</option></select></span>
+</div>
+<nav><ol><li><a href="#how">How to apply this in YouTube Studio</a></li><li><a href="#content">Content cuts (15)</a></li><li><a href="#sil-long">Silence cuts, 5 s and longer (0)</a></li><li><a href="#sil-short">Silence cuts, under 5 s (0)</a></li><li><a href="#export">Final cut list for Studio (last first)</a></li></ol></nav>
+<details open id="how"><summary>How to apply this in YouTube Studio</summary>
+<ul class="how">
+  <li>Listen to <b>after the cut</b> first: it is 4 s before the cut joined to 4 s after, so you hear exactly how the edit will sound. <b>What gets removed</b> is the cut part itself, boosted so faint sounds are audible.</li>
+  <li>Untick anything you want to keep. Ticks are remembered in this browser. The minimum-silence menu at the top hides the shorter silence cuts.</li>
+  <li>In Studio: Editor &rarr; Trim &amp; cut &rarr; New Cut for each line of the list in the last section. It uses Studio's own numbering (Cut 1..N by start time) and its <code>H:MM:SS:FF</code> frame times, the same as <code>studio.html</code>, listed last first. Studio keeps the original timeline while you edit, so the times stay valid.</li>
+  <li>Times are rounded inward to whole frames, so a cut never eats into speech.</li>
+  <li>Studio edits can't be undone after saving. Keep your original recording.</li>
+  <li>Chapters come after the edit: every cut shifts the times after it.</li>
+</ul>
+<p class="note">Silence = speech-band level below -49 dB (noise floor -69 dB + 20) for at least 4 s; clicks under 0.2 s count as silence. Each silence cut leaves 0.35 s of pause on both sides. Content cuts come from the transcript, with edges snapped to the speech edge.</p></details><details open id="content"><summary>Content cuts (15)</summary>
+<div class="card" id="card-p1N01">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N01"> p1N01 &nbsp; 0:04:30.0 &rarr; 0:04:40.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +9 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N01_spec.png" alt="spectrogram p1N01">
+  <div class="note">spectrogram 0-5 kHz, 0:04:27 to 0:04:43, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N01_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) <audio controls preload="none" src="media/p1N01_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:04:24</span>վերին</div><div class=""><span class="t">0:04:26</span>եռանկյունի մատրից էր, վերին եռանկյունի</div><div class=""><span class="t">0:04:28</span>մատրից էլ հիշում եք որն էր, սպենես մի</div><div class="in"><span class="t">0:04:30</span>հատ մատրից էր, որը այս գլխավոր</div><div class="in"><span class="t">0:04:32</span>անկյունագրից վերև ինչ կարող էր լինել ինչ</div><div class="in"><span class="t">0:04:35</span>ասեց կարող էր լինել</div><div class="in"><span class="t">0:04:37</span>անկյունագծից ներքև զրոներ մենակ թե ստեղ</div><div class=""><span class="t">0:04:41</span>հավալման էլ կար ասում է հակադարձելի</div><div class=""><span class="t">0:04:44</span>եռանկյունի մատրից այսինքն</div></div>
+</div>
+<div class="card" id="card-p1N02">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N02"> p1N02 &nbsp; 0:06:10.0 &rarr; 0:06:20.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +12 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N02_spec.png" alt="spectrogram p1N02">
+  <div class="note">spectrogram 0-5 kHz, 0:06:07 to 0:06:23, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N02_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) <audio controls preload="none" src="media/p1N02_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:06:05</span>ապա այդ</div><div class=""><span class="t">0:06:08</span>կոորդինատները դյուին է գտնել, ոչ մի</div><div class="in"><span class="t">0:06:10</span>ռոեշելոն տեսքեր, ռեֆներ, բաներ բերելու</div><div class="in"><span class="t">0:06:13</span>կարիք չկա: Պարզապես Vեն-ն մեխանիկորեն</div><div class="in"><span class="t">0:06:15</span>բռնում առանց երկար մտածելու,</div><div class="in"><span class="t">0:06:17</span>բազմապատկում ենք Ee-ի հետ ստացվում է E3</div><div class="in"><span class="t">0:06:19</span>կոորդինատը:</div><div class=""><span class="t">0:06:21</span>Հիմա օգտագործենք այ այս մեր գեղեցիկ</div><div class=""><span class="t">0:06:23</span>լեման հա այս իրավիճակում:</div></div>
+</div>
+<div class="card" id="card-p1N03">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N03"> p1N03 &nbsp; 0:07:50.0 &rarr; 0:08:00.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +10 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N03_spec.png" alt="spectrogram p1N03">
+  <div class="note">spectrogram 0-5 kHz, 0:07:47 to 0:08:03, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N03_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/p1N03_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:07:46</span>Ահա տեսեք</div><div class=""><span class="t">0:07:48</span>այ սա մեր գրամշմիտ պրոցեսն է ի նկատի</div><div class="in"><span class="t">0:07:51</span>ունեմ առաջին քայլը օրթոգոնոնալիզացիան</div><div class="in"><span class="t">0:07:54</span>տեսեք մենք առաջին քայլում H1-ը հենց</div><div class="in"><span class="t">0:07:57</span>V1-ին էինք վերցնում մեջ էինք վերցնում</div><div class="in"><span class="t">0:07:59</span>կարո&amp;lt;un&amp;gt; եմ ասել որ H1-ը</div><div class=""><span class="t">0:08:02</span>ոչ միայն V1-ն այլ V1-ի ընկած H1-ը սպենց</div></div>
+</div>
+<div class="card" id="card-p1N04">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N04"> p1N04 &nbsp; 0:09:50.0 &rarr; 0:10:00.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +8 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N04_spec.png" alt="spectrogram p1N04">
+  <div class="note">spectrogram 0-5 kHz, 0:09:47 to 0:10:03, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N04_after.wav"></audio></span>
+    <span>what gets removed (boosted +1 dB) <audio controls preload="none" src="media/p1N04_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:09:45</span>V1V-ի և այլն, և այլն:</div><div class="in"><span class="t">0:09:49</span>Հիմա այս փաստը, որը բուն գրամշմիտի</div><div class="in"><span class="t">0:09:53</span>կիրառությունների մեջ են համապատասխան</div><div class="in"><span class="t">0:09:55</span>պարագրաֆում դեր չխաղաց, մեզ էսպես է</div><div class="in"><span class="t">0:09:59</span>օգնելու է:</div><div class=""><span class="t">0:10:03</span>Նայեք, տեսեք,</div></div>
+</div>
+<div class="card" id="card-p1N05">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N05"> p1N05 &nbsp; 0:10:20.0 &rarr; 0:10:30.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +8 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N05_spec.png" alt="spectrogram p1N05">
+  <div class="note">spectrogram 0-5 kHz, 0:10:17 to 0:10:33, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N05_after.wav"></audio></span>
+    <span>what gets removed (boosted +3 dB) <audio controls preload="none" src="media/p1N05_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:10:17</span>իսկ այս մեր E-երը ոնց էին ստացվում,</div><div class="in"><span class="t">0:10:20</span>դրանք նույն այդ H-երն էին մի քիչ ձգած</div><div class="in"><span class="t">0:10:22</span>սեղմած: Ձգած ձգել սեղմելուց</div><div class="in"><span class="t">0:10:27</span>գծային թաղանթը չէր փոխվում և հետևյալ</div><div class="in"><span class="t">0:10:29</span>հավասարությունն էր</div><div class=""><span class="t">0:10:32</span>այստեղից հետևում V1VK մ1</div></div>
+</div>
+<div class="card" id="card-p1N06">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N06"> p1N06 &nbsp; 0:15:40.0 &rarr; 0:16:00.0</label>
+    <span>20.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +13 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N06_spec.png" alt="spectrogram p1N06">
+  <div class="note">spectrogram 0-5 kHz, 0:15:37 to 0:16:03, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N06_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) <audio controls preload="none" src="media/p1N06_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:15:35</span>եթե մենք R-ով նոր մի հատ R մատրից</div><div class="in"><span class="t">0:15:39</span>սահմանենք, սա նոր է սահմանվում, սա ի՞նչ</div><div class="in"><span class="t">0:15:41</span>մատրից է: Տեսեք գլխավոր անկյունագծի վրա</div><div class="in"><span class="t">0:15:45</span>գրած է V1, E1 սկալի արտադրյալ, V2, E2</div><div class="in"><span class="t">0:15:47</span>սկալի արտադրյալ, VN, EN սկալի արտադրյալ,</div><div class="in"><span class="t">0:15:50</span>գլխավոր անկյունագծից ներքև գրած է</div><div class="in"><span class="t">0:15:53</span>զրոններ, իսկ գլխավոր անկյունագծից</div><div class="in"><span class="t">0:15:56</span>դեպի աջ, տեսեք այստեղ ինչ է գրված այստեղ</div><div class="in"><span class="t">0:15:58</span>V1, V1V2 և այլ և այլն, V1 Eնենք:</div></div>
+</div>
+<div class="card" id="card-p1N07">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N07"> p1N07 &nbsp; 0:18:20.0 &rarr; 0:18:30.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +9 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N07_spec.png" alt="spectrogram p1N07">
+  <div class="note">spectrogram 0-5 kHz, 0:18:17 to 0:18:33, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N07_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) <audio controls preload="none" src="media/p1N07_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:18:15</span>E1</div><div class=""><span class="t">0:18:17</span>սկալյար արտադրյալի հետ</div><div class="in"><span class="t">0:18:20</span>E1 V1 E1 սկալյար արտադրյալը ասենք թե V1</div><div class="in"><span class="t">0:18:24</span>E1 Մեկ-ի առաջին կոորդինատն էր հինգ, հետո</div><div class="in"><span class="t">0:18:27</span>գալիս էր յոթ, չգիտեմ ինչ-որ սպենսի թվեր</div><div class=""><span class="t">0:18:32</span>սրա առաջին կոորդինատը եթե բազմպատկվի</div></div>
+</div>
+<div class="card" id="card-p1N08">
+  <div class="head">
+    <label><input type="checkbox" data-id="p1N08"> p1N08 &nbsp; 0:24:10.0 &rarr; 0:24:20.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.a] detector: pause background +9 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p1N08_spec.png" alt="spectrogram p1N08">
+  <div class="note">spectrogram 0-5 kHz, 0:24:07 to 0:24:23, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p1N08_after.wav"></audio></span>
+    <span>what gets removed (boosted +5 dB) <audio controls preload="none" src="media/p1N08_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:24:07</span>Ուրեմն, եթե ես էս V1V2-ը գրելով որպես</div><div class="in"><span class="t">0:24:11</span>սյուներ ստանամ էս մատրիցը,</div><div class="in"><span class="t">0:24:14</span>նրա համար Q կլինի այս Q մատրիցը, որը</div><div class="in"><span class="t">0:24:17</span>ստացվել է այ էսպես:</div><div class="in"><span class="t">0:24:19</span>Այս սյուներն էլ գրած են, այս վեկտորներ</div><div class=""><span class="t">0:24:22</span>են գրած են սյուներով, այսմեկը</div></div>
+</div>
+<div class="card" id="card-p2N01">
+  <div class="head">
+    <label><input type="checkbox" data-id="p2N01"> p2N01 &nbsp; 0:25:25.0 &rarr; 0:25:35.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.b] detector: pause background +8 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p2N01_spec.png" alt="spectrogram p2N01">
+  <div class="note">spectrogram 0-5 kHz, 0:25:22 to 0:25:38, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p2N01_after.wav"></audio></span>
+    <span>what gets removed (boosted +5 dB) <audio controls preload="none" src="media/p2N01_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:25:20</span>մեր դասընթացում մի երկու կիրառության</div><div class=""><span class="t">0:25:22</span>ծանոթանանք, որոնցից ից մեկը կապված է</div><div class="in"><span class="t">0:25:26</span>դետերմինանտի հետ կլինի հենց այ այս</div><div class="in"><span class="t">0:25:29</span>լքցիայի մեջ, մյուսն էլ սեփական</div><div class="in"><span class="t">0:25:32</span>վեկտորների և սեփական արժեքների հետ է</div><div class="in"><span class="t">0:25:34</span>կապված, դա էլ կլինի տնային աշխատանքների</div><div class=""><span class="t">0:25:37</span>մեջ տեսեք</div></div>
+</div>
+<div class="card" id="card-p2N02">
+  <div class="head">
+    <label><input type="checkbox" data-id="p2N02"> p2N02 &nbsp; 0:26:35.0 &rarr; 0:26:45.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.b] detector: pause background +10 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p2N02_spec.png" alt="spectrogram p2N02">
+  <div class="note">spectrogram 0-5 kHz, 0:26:32 to 0:26:48, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p2N02_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) <audio controls preload="none" src="media/p2N02_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:26:32</span>դա նշանակում է, որ</div><div class="in"><span class="t">0:26:36</span>ո&amp;lt;un կհիշացնի, մենք սպս մի հատ կանոն</div><div class="in"><span class="t">0:26:38</span>ունեինք, եթե m-ն ու n-ը երկու հատ</div><div class="in"><span class="t">0:26:40</span>քառակուսի մատրիցներ էին, դրանց</div><div class="in"><span class="t">0:26:43</span>դետերմինանտը հավասար էր ինչի, ով է</div><div class="in"><span class="t">0:26:45</span>ուզում հիշացնել</div><div class=""><span class="t">0:26:48</span>zn</div></div>
+</div>
+<div class="card" id="card-p2N03">
+  <div class="head">
+    <label><input type="checkbox" data-id="p2N03"> p2N03 &nbsp; 0:28:35.0 &rarr; 0:28:45.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.b] detector: pause background +8 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p2N03_spec.png" alt="spectrogram p2N03">
+  <div class="note">spectrogram 0-5 kHz, 0:28:32 to 0:28:48, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p2N03_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/p2N03_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:28:30</span>մեզ անհայտ, որովհետև q-ն կարող են պլյուս</div><div class=""><span class="t">0:28:32</span>մինուս մեկ, որպեսզի պլյուս մինուս մեկի</div><div class="in"><span class="t">0:28:35</span>պրոբլեմը շրջանցենք եկեք այստեղ տեսնում</div><div class="in"><span class="t">0:28:38</span>եք մոդուլի նշաններ ենք դրել ավելացրել էս</div><div class="in"><span class="t">0:28:41</span>մեր խոսակցության վրա Եթե մոդուլի նշաններ</div><div class="in"><span class="t">0:28:43</span>ենք դնում էստեղ տեղ բոլորի վրա</div><div class=""><span class="t">0:28:48</span>սա որ ձեռքերի ազատությունն էր պլյուս</div></div>
+</div>
+<div class="card" id="card-p2N04">
+  <div class="head">
+    <label><input type="checkbox" data-id="p2N04"> p2N04 &nbsp; 0:31:45.0 &rarr; 0:32:05.0</label>
+    <span>20.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.b] detector: pause background +11 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p2N04_spec.png" alt="spectrogram p2N04">
+  <div class="note">spectrogram 0-5 kHz, 0:31:42 to 0:32:08, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p2N04_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/p2N04_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:31:41</span>Նայեք, սեփական արժեքները լրիվ ուրիշ</div><div class="in"><span class="t">0:31:44</span>ասպարեզից էին, չէ՞, բնութագրիչ բազմամի</div><div class="in"><span class="t">0:31:46</span>արմատներն էին, որը հեչ նման չէր այստեղ</div><div class="in"><span class="t">0:31:49</span>քննարկված հարցերին: Դետերմինանտներ մի</div><div class="in"><span class="t">0:31:52</span>հատ ուրիշ պատմություն էր, էլի կրկ նման</div><div>...</div><div class="in"><span class="t">0:32:01</span>սկալար արտադրյալի միջոցով</div><div class="in"><span class="t">0:32:02</span>հնարավորություն ա ցույց տալիս էնպիսի</div><div class="in"><span class="t">0:32:05</span>փաստերի մեջ շախկապել իրար, ասենք,</div><div class=""><span class="t">0:32:07</span>ինչպիսին են ըմ</div></div>
+</div>
+<div class="card" id="card-p2N05">
+  <div class="head">
+    <label><input type="checkbox" data-id="p2N05"> p2N05 &nbsp; 0:32:25.0 &rarr; 0:32:35.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.b] detector: pause background +12 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p2N05_spec.png" alt="spectrogram p2N05">
+  <div class="note">spectrogram 0-5 kHz, 0:32:22 to 0:32:38, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p2N05_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/p2N05_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:32:19</span>սեփական արժեքները, որոնք նույնպես</div><div class=""><span class="t">0:32:21</span>սկալտադրել հետ կապ չունեին, չէ՞, երբ որ</div><div class=""><span class="t">0:32:23</span>մենք սեփական արժեքների ամբողջ թեման</div><div class="in"><span class="t">0:32:26</span>անցնում էինք, նրա մեջ ոչ մի տեղ սկալարեր</div><div class="in"><span class="t">0:32:29</span>արտադրյալը չհիշատակվեց, նույնը</div><div class="in"><span class="t">0:32:31</span>դետերմինանտների թեման, մենք լրիվ անցանք</div><div class="in"><span class="t">0:32:33</span>ոչ մի հատ սկալար արտադրյալ մեջը չկար,</div><div class="in"><span class="t">0:32:35</span>բայց գրամշմիտի պրոցեսը</div><div class=""><span class="t">0:32:37</span>ըըը էդ դրանց մեջ կապ է հաստատում։</div></div>
+</div>
+<div class="card" id="card-p2N06">
+  <div class="head">
+    <label><input type="checkbox" data-id="p2N06"> p2N06 &nbsp; 0:32:55.0 &rarr; 0:33:05.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.b] detector: pause background +12 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p2N06_spec.png" alt="spectrogram p2N06">
+  <div class="note">spectrogram 0-5 kHz, 0:32:52 to 0:33:08, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p2N06_after.wav"></audio></span>
+    <span>what gets removed (boosted +4 dB) <audio controls preload="none" src="media/p2N06_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:32:50</span>մի բան տեսա, որ կուզենայի այստեղ</div><div class=""><span class="t">0:32:51</span>ավելացնեի</div><div class=""><span class="t">0:32:53</span>մի քանի տարի առաջվա, երևի մի երեք թե</div><div class="in"><span class="t">0:32:56</span>չորս տարի առաջվա մի հատ նոր ֆիլմ չդուրս</div><div class="in"><span class="t">0:32:59</span>եկավ, չգիտեմ տեսել եք թե չէ, անգլերեն</div><div class="in"><span class="t">0:33:01</span>կոչում էր hidden figures, ռուսերենսօր</div><div class="in"><span class="t">0:33:04</span>թարգմանեցինսրետն է չիսլը, թե սկրիտի է,</div><div class=""><span class="t">0:33:09</span>ֆիգուրի, թե եսիմ ինչ էլի դա ինչ-որ</div></div>
+</div>
+<div class="card" id="card-p2N07">
+  <div class="head">
+    <label><input type="checkbox" data-id="p2N07"> p2N07 &nbsp; 0:33:25.0 &rarr; 0:33:35.0</label>
+    <span>10.0 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">[28.2.b] detector: pause background +13 dB over this piece&#x27;s usual</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/p2N07_spec.png" alt="spectrogram p2N07">
+  <div class="note">spectrogram 0-5 kHz, 0:33:22 to 0:33:38, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/p2N07_after.wav"></audio></span>
+    <span>what gets removed (boosted +1 dB) <audio controls preload="none" src="media/p2N07_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:33:21</span>տիեզերք, այդտեղ աշխատում են հաշվող, քանի</div><div class="in"><span class="t">0:33:24</span>որ այն ժամանակներում կոմպյուտեր չկա, էս</div><div class="in"><span class="t">0:33:26</span>բոլոր հաշվարկները ձեռքով էին արվում,</div><div class="in"><span class="t">0:33:28</span>բնականաբար, այն առաջին հրթիռները, որ</div><div class="in"><span class="t">0:33:30</span>թռել ա, բոլոր հաշվարկները ձեռքով են</div><div class="in"><span class="t">0:33:32</span>արվել և իրենք հերիք չի թե հերիք չի, թե</div><div class="in"><span class="t">0:33:35</span>այդտեղ աշխատում էին, հե՛լ սևամորթ էին և,</div><div class=""><span class="t">0:33:38</span>բնականաբար, էն էլ ըըը 50-60-ական</div></div>
+</div></details><details open id="sil-long"><summary>Silence cuts, 5 s and longer (0)</summary></details><details open id="sil-short"><summary>Silence cuts, under 5 s (0)</summary></details><details open id="export"><summary>Final cut list for Studio (last first)</summary>
+<p><button id="copy">Copy list</button> <button id="reset">Reset to my picks</button></p>
+<textarea id="export" readonly data-header="# index.html cut list | Vahagn noise b0525: mark the stretches with constant noise (28.2.a, 28.2.b) | vahagn_noise_b0525"></textarea></details>
+</main>
+<script id="data" type="application/json">{"video_id": "vahagn_noise_b0525", "title": "Vahagn noise b0525: mark the stretches with constant noise (28.2.a, 28.2.b)", "duration": 2076.72, "fps": 25, "params": {"min_silence": 4.0, "pad": 0.35, "floor_db": -69.3, "audio_source": "C:\\Users\\hayk_\\OneDrive\\Desktop\\timestamp_generation_agentic\\output\\vahagn_noise_b0525\\audio\\vahagn_noise_b0525_16k.wav", "threshold_db": -49.3, "blip_s": 0.2}, "cuts": [{"id": "p1N01", "source": "content", "kind": "judgment", "default": false, "start": 270.0, "end": 280.0, "requested": [270.0, 280.0], "flags": [], "reason": "[28.2.a] detector: pause background +9 dB over this piece's usual", "removed_gain_db": 2.1, "spec_window": [267.0, 283.0], "spec_px": 960}, {"id": "p1N02", "source": "content", "kind": "judgment", "default": false, "start": 370.0, "end": 380.0, "requested": [370.0, 380.0], "flags": [], "reason": "[28.2.a] detector: pause background +12 dB over this piece's usual", "removed_gain_db": 2.3, "spec_window": [367.0, 383.0], "spec_px": 960}, {"id": "p1N03", "source": "content", "kind": "judgment", "default": false, "start": 470.0, "end": 480.0, "requested": [470.0, 480.0], "flags": [], "reason": "[28.2.a] detector: pause background +10 dB over this piece's usual", "removed_gain_db": 0.8, "spec_window": [467.0, 483.0], "spec_px": 960}, {"id": "p1N04", "source": "content", "kind": "judgment", "default": false, "start": 590.0, "end": 600.0, "requested": [590.0, 600.0], "flags": [], "reason": "[28.2.a] detector: pause background +8 dB over this piece's usual", "removed_gain_db": 1.2, "spec_window": [587.0, 603.0], "spec_px": 960}, {"id": "p1N05", "source": "content", "kind": "judgment", "default": false, "start": 620.0, "end": 630.0, "requested": [620.0, 630.0], "flags": [], "reason": "[28.2.a] detector: pause background +8 dB over this piece's usual", "removed_gain_db": 2.8, "spec_window": [617.0, 633.0], "spec_px": 960}, {"id": "p1N06", "source": "content", "kind": "judgment", "default": false, "start": 940.0, "end": 960.0, "requested": [940.0, 960.0], "flags": [], "reason": "[28.2.a] detector: pause background +13 dB over this piece's usual", "removed_gain_db": 2.5, "spec_window": [937.0, 963.0], "spec_px": 960}, {"id": "p1N07", "source": "content", "kind": "judgment", "default": false, "start": 1100.0, "end": 1110.0, "requested": [1100.0, 1110.0], "flags": [], "reason": "[28.2.a] detector: pause background +9 dB over this piece's usual", "removed_gain_db": 2.1, "spec_window": [1097.0, 1113.0], "spec_px": 960}, {"id": "p1N08", "source": "content", "kind": "judgment", "default": false, "start": 1450.0, "end": 1460.0, "requested": [1450.0, 1460.0], "flags": [], "reason": "[28.2.a] detector: pause background +9 dB over this piece's usual", "removed_gain_db": 4.6, "spec_window": [1447.0, 1463.0], "spec_px": 960}, {"id": "p2N01", "source": "content", "kind": "judgment", "default": false, "start": 1525.0, "end": 1535.0, "requested": [1525.0, 1535.0], "flags": [], "reason": "[28.2.b] detector: pause background +8 dB over this piece's usual", "removed_gain_db": 4.6, "spec_window": [1522.0, 1538.0], "spec_px": 960}, {"id": "p2N02", "source": "content", "kind": "judgment", "default": false, "start": 1595.0, "end": 1605.0, "requested": [1595.0, 1605.0], "flags": [], "reason": "[28.2.b] detector: pause background +10 dB over this piece's usual", "removed_gain_db": 1.6, "spec_window": [1592.0, 1608.0], "spec_px": 960}, {"id": "p2N03", "source": "content", "kind": "judgment", "default": false, "start": 1715.0, "end": 1725.0, "requested": [1715.0, 1725.0], "flags": [], "reason": "[28.2.b] detector: pause background +8 dB over this piece's usual", "removed_gain_db": 0.2, "spec_window": [1712.0, 1728.0], "spec_px": 960}, {"id": "p2N04", "source": "content", "kind": "judgment", "default": false, "start": 1905.0, "end": 1925.0, "requested": [1905.0, 1925.0], "flags": [], "reason": "[28.2.b] detector: pause background +11 dB over this piece's usual", "removed_gain_db": 0.4, "spec_window": [1902.0, 1928.0], "spec_px": 960}, {"id": "p2N05", "source": "content", "kind": "judgment", "default": false, "start": 1945.0, "end": 1955.0, "requested": [1945.0, 1955.0], "flags": [], "reason": "[28.2.b] detector: pause background +12 dB over this piece's usual", "removed_gain_db": 0.4, "spec_window": [1942.0, 1958.0], "spec_px": 960}, {"id": "p2N06", "source": "content", "kind": "judgment", "default": false, "start": 1975.0, "end": 1985.0, "requested": [1975.0, 1985.0], "flags": [], "reason": "[28.2.b] detector: pause background +12 dB over this piece's usual", "removed_gain_db": 3.6, "spec_window": [1972.0, 1988.0], "spec_px": 960}, {"id": "p2N07", "source": "content", "kind": "judgment", "default": false, "start": 2005.0, "end": 2015.0, "requested": [2005.0, 2015.0], "flags": [], "reason": "[28.2.b] detector: pause background +13 dB over this piece's usual", "removed_gain_db": 1.4, "spec_window": [2002.0, 2018.0], "spec_px": 960}], "marks": [[0.0, "Դաս 28.2-ա"], [1495.0, "Դաս 28.2-բ"]], "batch": [{"section": "28.2.a", "video_id": "p-C8DuXT5pE", "output_dir": "output\\2026-10-25_VidSection-28-2-a_p-C8DuXT5pE", "offset_frames": 0, "frames": 37375, "floor_db": -69.0}, {"section": "28.2.b", "video_id": "kvoH5DhjFwY", "output_dir": "output\\2026-10-25_VidSection-28-2-b_kvoH5DhjFwY", "offset_frames": 37375, "frames": 14543, "floor_db": -69.3}], "studio_cuts": [], "signature": "2b0fd2404dbc"}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const KEY = 'edit-points-' + DATA.video_id + '-' + DATA.signature;   // a changed cut list starts from the defaults
+const byId = Object.fromEntries(DATA.cuts.map(c => [c.id, c]));
+let ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id));
+try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) ticked = new Set(saved); } catch (e) {}
+const minSel = document.getElementById('minsil');
+function fmt(sec, d=1) { sec = Math.round(sec * 10**d) / 10**d; const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60;
+  return h + ':' + String(m).padStart(2,'0') + ':' + s.toFixed(d).padStart(d ? 3+d : 2, '0'); }
+function active(c) { return ticked.has(c.id) && (c.source !== 'silence' || c.run_len >= +minSel.value); }
+function union(iv) { const out=[]; iv.sort((a,b)=>a[0]-b[0]);
+  for (const [s,e] of iv) { if (out.length && s <= out[out.length-1][1]+0.05) out[out.length-1][1]=Math.max(out[out.length-1][1],e); else out.push([s,e]); }
+  return out; }
+function tc(f) { const F = DATA.fps, s = Math.floor(f / F);
+  return Math.floor(s/3600) + ':' + String(Math.floor(s%3600/60)).padStart(2,'0') + ':' +
+         String(s%60).padStart(2,'0') + ':' + String(f%F).padStart(2,'0'); }
+function studio(iv) {   // Studio's Cut 1..N (by start), whole frames rounded inward, listed last first
+  const F = DATA.fps;
+  const rows = iv.map(([s,e], i) => [i+1, Math.ceil(s*F - 1e-6), Math.floor(e*F + 1e-6)]);
+  return rows.reverse().map(([n,fs,fe]) => 'Cut ' + String(n).padStart(2) + '   ' + tc(fs) + '  ->  ' + tc(fe) +
+                                         '   (' + ((fe-fs)/F).toFixed(2) + ' s)'); }
+function refresh() {
+  const on = DATA.cuts.filter(active);
+  const content = on.filter(c => c.source === 'content');
+  for (const c of DATA.cuts) {
+    const el = document.getElementById('card-' + c.id); if (!el) continue;
+    const hidden = c.source === 'silence' && c.run_len < +minSel.value;
+    el.style.display = hidden ? 'none' : '';
+    el.classList.toggle('off', !ticked.has(c.id));
+    const host = c.source === 'silence' && content.find(k => k.start <= c.start && k.end >= c.end);
+    el.classList.toggle('absorbed', !!host);
+    const n = el.querySelector('.absorbed-note'); if (n) n.textContent = host ? 'inside ' + host.id + ', which is ticked' : '';
+    el.querySelector('input').checked = ticked.has(c.id);
+  }
+  const iv = union(on.map(c => [c.start, c.end]));
+  const removed = iv.reduce((a,[s,e]) => a + e - s, 0);
+  document.getElementById('n-cuts').textContent = iv.length;
+  document.getElementById('t-removed').textContent = fmt(removed, 0);
+  document.getElementById('t-new').textContent = fmt(DATA.duration - removed, 0);
+  document.getElementById('export').value = [document.getElementById('export').dataset.header, ...studio(iv)].join('\n');
+  try { localStorage.setItem(KEY, JSON.stringify([...ticked])); } catch (e) {}
+}
+document.querySelectorAll('.card input').forEach(cb => cb.addEventListener('change', e => {
+  const id = e.target.dataset.id; if (e.target.checked) ticked.add(id); else ticked.delete(id); refresh(); }));
+minSel.addEventListener('change', refresh);
+document.getElementById('reset').addEventListener('click', () => {
+  ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id)); refresh(); });
+document.getElementById('copy').addEventListener('click', async () => {
+  const ta = document.getElementById('export');
+  try { await navigator.clipboard.writeText(ta.value); } catch (e) { ta.select(); document.execCommand('copy'); }
+  document.getElementById('copy').textContent = 'Copied'; setTimeout(() => document.getElementById('copy').textContent = 'Copy list', 1500); });
+refresh();
+</script>
+</body></html>

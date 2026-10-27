@@ -215,7 +215,7 @@ def to_enter(d: Path, studio_end: str | None) -> int:
     return 1 if problems else 0
 
 
-def entry_js(d: Path, batch_size: int, type_shift: int = 0) -> int:
+def entry_js(d: Path, batch_size: int, type_shift: int = 0, video: str | None = None) -> int:
     data, fr = load(d)
     cuts = sorted((s, e) for _, s, e, _ in read_cuts(d / TO_ENTER, fr))
     template = ENTRY_TEMPLATE.read_text(encoding="utf-8")
@@ -223,7 +223,7 @@ def entry_js(d: Path, batch_size: int, type_shift: int = 0) -> int:
         raise ValueError(f"{ENTRY_TEMPLATE}: expected exactly one __JOB__ placeholder")
     rows = [[i, fr.tc(s), fr.tc(e)] for i, (s, e) in enumerate(cuts, 1)]
     batches = [rows[i:i + batch_size] for i in range(0, len(rows), batch_size)]
-    vid, over = data["video_id"], data["duration"] >= 3600   # Studio drops the hour field under an hour
+    vid, over = video or data["video_id"], data["duration"] >= 3600   # Studio drops the hour field under an hour
     ENTRY_DIR.mkdir(exist_ok=True)
     jobs = [("dryrun", 0, rows, True)] + [(f"{k:02d}of{len(batches):02d}", k, b, False) for k, b in enumerate(batches, 1)]
     for tag, k, b, dry in jobs:
@@ -277,13 +277,15 @@ def main() -> None:
             p.add_argument("--type-shift", type=int, default=0,
                            help="frames added to every typed time; -1 for an upload on which Studio stores each cut "
                                 "one frame later than typed (Papikian Դաս 20); cuts are still checked at the planned times")
+            p.add_argument("--video", help="enter on this upload instead of the output dir's video (same recording, "
+                           "same timeline: Vahagn's sound-fixed re-uploads, DECISIONS #38)")
         if name == "diff":
             p.add_argument("--markers", type=Path, required=True)
     a = ap.parse_args()
     t0 = time.time()
     code = (check(a.output_dir) if a.cmd == "check" else
             to_enter(a.output_dir, a.studio_end) if a.cmd == "to-enter" else
-            entry_js(a.output_dir, a.batch_size, a.type_shift) if a.cmd == "entry-js" else diff(a.output_dir, a.markers))
+            entry_js(a.output_dir, a.batch_size, a.type_shift, a.video) if a.cmd == "entry-js" else diff(a.output_dir, a.markers))
     log.info(f"done in {time.time() - t0:.1f} s")
     sys.exit(code)
 

@@ -158,7 +158,43 @@ These uploads are only a caption source. Each piece is cut and its sound fixed l
   padding, cuts with words inside, off-topic markers in the transcripts) in the session of 2026-10-26: one likely
   mistake (23.1.b's opening cut takes "Ուրեմն, ինչպես տեսանք, սեփական"), 7 ends left uncut, 3 off-topic candidates
   (23.1.a Germany aside, kept by the user; 23.3.a 9:49-9:59 lecture-or-practical exchange; 28.2.b 7:51-end film).
-- **Noise that comes and goes (investigated 2026-10-26, the user: "some lectures have a static noise ... it comes only
+- **The noise is mains buzz (2026-10-27, from the user's pure-noise mark, 28.3.a 20:47.6-20:51.0):** a 48.39 Hz ladder
+  (harmonics 1, 4-9, 11, 12) plus a second source at 90 / 113.8 / 138.3 Hz (and 900, 1080), 20-30 dB over a clean
+  pause between 20 and 500 Hz, nearly nothing above 2 kHz. Measure that separates (`buzz_band.json`,
+  scripts/archive/vahagn_2026-10/buzz_band.py): the 150-600 Hz band in each minute's quietest 10% of 128 ms frames,
+  vs speech: buzz -37..-48 dB, clean -73..-77. **Constant** in 23.1.b, 23.2, 23.3.a, 23.3.b, 24.4, 28.1.a-28.4 (12);
+  **on and off** in 22.1 (min 6-7, 10-11), 22.2 (0-1, 11-17), 22.3 (12), 23.1.a (0, 3-10), 24.1 (0-6), 24.3 (9-26);
+  **none** in 21.1, 21.2, 23.4, 24.2.a, 24.2.b, 27.1, 27.2. The uploaded light chain removes only 2.8 dB of it; on
+  28.3.a 20:30-21:00 notches take 8.8 dB, a denoise learning the user's sample 21 dB, both 28 dB, both stronger 37.5
+  dB (`output/vahagn_linalg_overview/audio/dehum_samples.html`). Earlier detectors measured the wrong things (below).
+- **Dehum (DECISIONS #48, 2026-10-27):** `scripts/non_essential/vahagn_dehum.py` re-renders the 18 buzz pieces from the
+  raw files into `vahagn_linalg\audio_dehum\VidSection <section> dehum.mp4` (forward-only notches re-fitted every 30 s,
+  then a denoise that learns the piece's own buzz sample; results `dehum.json`, per minute `dehum_check.json`). Batch
+  2026-10-27 12:19-13:05; the per-minute check then found bad minutes in 6 pieces (DECISIONS #48, revisited), re-rendered
+  with the fixed script (v3). The 4 worst minutes left passed the user's ear ("all are good", `dehum_check.html`):
+  all 18 ready to upload; the user also checked all 18 on `dehum_all.html` (spectrograms after/before): "all are
+  good". Test variants (`dehum B|C|D|E|F|nr30|v2|v3`, 13 files) moved to `audio_dehum\tests\` (their paths in
+  `dehum.json` still point one folder up). The 7 clean ones keep their fixed
+  uploads: **cuts entered in Studio 2026-10-27, done 12:37,** on 21.1 `CS5iTMBvSCE` (19), 21.2 `cwKeODpB3Yw` (33), 23.4
+  `lnI-KjKRJYM` (3), 24.2.a `2snt8ZwED5M` (2), 24.2.b `1vlmDHMD5b8` (2), 27.1 `MI4K2rXisXE` (2), 27.2 `JiGi6wcHhwY` (1),
+  each read back identical frame for frame (`cut_list.py diff`). **Titles reviewed 2026-10-27 (DECISIONS #50):** 22.3,
+  23.3.a, 27.2, 28.2.b retitled; դետերմինանտ and Գրամ-Շմիթ in chapters and 2 thumbnails (27.2, 28.2.b); drafts rebuilt.
+  The user: push everything together once the 18 are uploaded (18 raw-timeline with --remap-dehum --drop-replaced, the 7
+  with edited chapters, 27.2 also its title and thumbnail). **Pushed 2026-10-27 17:38-17:45 (~4,000 units):** the 18
+  dehum uploads (user-uploaded ~17:30, private) remapped in `uploads_fixed.json` (old ids in `uploads_replaced.json`),
+  titled, raw-timeline chapters, thumbnails, unlisted, in the playlist, read back 18/18; the 18 old fixed uploads out
+  of the playlist (re-read: 99 items, none old, all 25 in; the old videos stay on the channel); the 7 saved pieces'
+  edited chapters (27.2 also title + thumbnail), read back 7/7, lengths = their cut lists. **Studio cuts on the 18 new
+  uploads entered and saved 2026-10-27 17:55-18:12:** 97 cuts, each piece read back identical to its list, each Save
+  only after Studio's new length matched (22.1 17:03 ... 28.4 24:49). 3 uploads stored cuts one frame late and went
+  in with --type-shift -1 (23.1.b, 23.3.b, 28.1.b); 23.3.b, 28.2.b, 28.3.b are under ten minutes (M:SS:FF time boxes,
+  template fixed; `_learnings/2026-10-27-1813_...`). **Edited chapters pushed 20:30** (all 18 processed, lengths = cut
+  lists; read back 18/18; 900 units). **All 25 pieces done and unlisted.** Open: publishing (the user's word), playlist
+  order (Q93), the 2 stray 21.2 entries (Q92), deletions of the replaced uploads (Q84). **Saved ~12:55** (the user: "pls u save all"); Studio's
+  confirm dialog showed the predicted lengths (20:38, 25:09, 18:28, 16:40, 10:19, 27:23, 18:05; it drops the fraction).
+  Next for these 7, once Studio has processed them: chapters on the edited timeline (`--chapters edited
+  --description-only --apply <section>`).
+- **Noise that comes and goes (investigated 2026-10-26, WRONG BAND, superseded by the entry above; the user: "some lectures have a static noise ... it comes only
   at some point"):** pause background per 10 s window in a 3-7.5 kHz band (scratchpad `static_probe.py`): 8-17 dB
   rises over the piece's usual pause level in 6-16% of the windows of the 11 hum pieces (23.1.b-23.3.b, 24.4,
   28.1.a-28.4) and 22.1 (8%); 0-1% in the other 13. In those stretches the pause background sits ~7 dB higher

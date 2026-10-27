@@ -4,6 +4,14 @@ the vids are short i dont want to do one by one and keep on downloading many txt
     python scripts/non_essential/vahagn_batch_review.py plan                       # batches by lecture day
     python scripts/non_essential/vahagn_batch_review.py build b0504 22.1 22.2 22.3 23.1.a
     python scripts/non_essential/vahagn_batch_review.py split b0504 [--file <downloaded list>]
+    python scripts/non_essential/vahagn_batch_review.py build b0504 22.1 22.2 22.3 23.1.a --noise
+    python scripts/non_essential/vahagn_batch_review.py noise-collect b0504 [--file <downloaded list>]
+
+--noise: a page for MARKING CONSTANT NOISE instead of cuts (the user, 2026-10-27: "create a new file where ill add
+'cuts' the parts that have constant noise"): output/vahagn_noise_<name>/, no cuts, the noise detector's stretches
+(_knowledge/vahagn_linalg/noise_probe.json) as unticked suggestions; its WAV and preview are hard links to the review
+batch output/vahagn_<name> when that exists (~1 min), else built (~2 min). noise-collect turns the page's download
+into per-piece intervals in _knowledge/vahagn_linalg/noise_marked.json.
 
 build: joins the pieces' analysis WAVs, 360p previews (stream copy), transcripts and captions onto one timeline
 (each piece starts on a whole frame), shifts every piece's own planned cuts onto it unchanged, and builds the page
@@ -20,6 +28,7 @@ batch rounds the shifted times again). An existing studio_cuts_edited.txt is kep
 import argparse
 import json
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -98,13 +107,14 @@ def cmd_plan() -> None:
         log.info(f"{date:18s} {' '.join(secs):32s} {mins:5.1f} min" + (f"   reviewed: {' '.join(done)}" if done else ""))
 
 
-def cmd_build(name: str, secs: list[str]) -> None:
+def cmd_build(name: str, secs: list[str], noise: bool = False, listen: bool = False) -> None:
     t0 = time.time()
     dirs = piece_dirs()
     pieces = {p["section"]: p for p in
               json.loads((REPO / "_knowledge/vahagn_linalg/pieces.json").read_text(encoding="utf-8"))["pieces"]}
-    out = REPO / "output" / f"vahagn_{name}"
-    bid = f"vahagn_{name}"
+    bid = f"vahagn_listen_{name}" if listen else f"vahagn_noise_{name}" if noise else f"vahagn_{name}"
+    noise = noise or listen          # a listening page is a noise page without suggestions and without video
+    out = REPO / "output" / bid
     (out / "audio").mkdir(parents=True, exist_ok=True)
     (out / "video").mkdir(exist_ok=True)
     datas = [json.loads((dirs[s] / "edit_points.json").read_text(encoding="utf-8")) for s in secs]
@@ -121,6 +131,101 @@ def cmd_build(name: str, secs: list[str]) -> None:
     offs = [sum(frames[:i]) for i in range(len(frames))]
     total = sum(frames) / fps
 
+    wav = (link_media(out, bid, name, secs, frames) if noise and not listen else None) or \
+        build_media(out, bid, secs, datas, dirs, offs, frames, fps, floor, total, video=not listen)
+    probe = (json.loads((REPO / "_knowledge/vahagn_linalg/noise_probe.json").read_text(encoding="utf-8"))
+             if noise and not listen else {})
+
+    # cuts (a noise page: the detector's stretches as unticked suggestions instead), transcript, captions shifted
+    cuts, rows, vtt = [], [], ["WEBVTT", ""]
+    for k, (s, d, o) in enumerate(zip(secs, datas, offs), 1):
+        off = o / fps
+        for c in ([] if noise else d["cuts"]):
+            c = dict(c)
+            c["id"] = f"p{k}{c['id']}"
+            c["start"], c["end"] = round(c["start"] + off, 3), round(c["end"] + off, 3)
+            for key in ("requested", "spec_window"):   # requested: content_cuts.json's own text ("0:04:13.5", "end")
+                if key in c:
+                    c[key] = [round((d["duration"] if v == "end" else v if isinstance(v, (int, float)) else
+                                     sum(float(p) * 60 ** i for i, p in enumerate(reversed(v.split(":"))))) + off, 3)
+                              for v in c[key]]
+            c["flags"] = [FLAG_T.sub(lambda m: f"at {hms(sum(float(p) * 60 ** i for i, p in enumerate(reversed(m[1].split(':')))) + off, 1)}", f)
+                          for f in c["flags"]]
+            if c["source"] == "content":
+                c["reason"] = f"[{s}] {c['reason']}"
+            cuts.append(c)
+        for j, (a, b, db) in enumerate(probe.get(s, {}).get("stretches", []), 1):
+            a, b = round(a + off, 3), round(min(b, d["duration"]) + off, 3)
+            cuts.append({"id": f"p{k}N{j:02d}", "source": "content", "kind": "judgment", "default": False,
+                         "start": a, "end": b, "requested": [a, b], "flags": [],
+                         "reason": f"[{s}] detector: pause background +{db:.0f} dB over this piece's usual"})
+        rows.append(f"{hms(off)}  ===== Դաս {pieces[s]['label']} ({s}) =====")
+        for ln in (dirs[s] / "transcript.txt").read_text(encoding="utf-8").splitlines():
+            m = re.match(r"^(\d+:\d\d(?::\d\d)?)\s+(.*)$", ln)
+            if m:
+                t = sum(float(p) * 60 ** i for i, p in enumerate(reversed(m[1].split(":"))))
+                rows.append(f"{hms(t + off)}  {m[2]}")
+        src_vtt = (dirs[s] / f"{d['video_id']}.hy.vtt").read_text(encoding="utf-8")
+        body = src_vtt.split("\n\n", 1)[1] if src_vtt.startswith("WEBVTT") else src_vtt
+        vtt.append(TIME.sub(lambda m: shift_vtt_time(m[0], off), body))
+    (out / "transcript.txt").write_text("\n".join(rows) + "\n", encoding="utf-8")
+    (out / f"{bid}.hy.vtt").write_text("\n".join(vtt), encoding="utf-8")
+    title = (f"Vahagn: listen for buzz ({', '.join(secs)})" if listen
+             else f"Vahagn noise {name}: mark the stretches with constant noise ({', '.join(secs)})" if noise
+             else f"Vahagn {name}: {', '.join(secs)}")
+    meta = {"id": bid, "title": title, "duration": total, "fps": fps, "url": "", "silence_margin_db": margin}
+    (out / "metadata.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
+    data = {"video_id": bid, "title": meta["title"], "duration": total, "fps": fps,
+            "params": {"min_silence": datas[0]["params"]["min_silence"], "pad": datas[0]["params"]["pad"],
+                       "floor_db": floor, "audio_source": str(wav.resolve()), "threshold_db": floor + margin,
+                       "blip_s": datas[0]["params"]["blip_s"]},
+            "cuts": cuts,
+            "marks": [[round(o / fps, 3), f"Դաս {pieces[s]['label']}"] for s, o in zip(secs, offs)],
+            "batch": [{"section": s, "video_id": d["video_id"], "output_dir": str(dirs[s].relative_to(REPO)),
+                       "offset_frames": o, "frames": n, "floor_db": d["params"]["floor_db"]}
+                      for s, d, o, n in zip(secs, datas, offs, frames)]}
+    (out / "edit_points.json").write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+    r = subprocess.run([sys.executable, "scripts/find_edit_points.py", "--output-dir", str(out), "--report-only"],
+                       cwd=REPO, capture_output=True, text=True, encoding="utf-8")
+    if r.returncode != 0:
+        raise RuntimeError(f"find_edit_points failed:\n{r.stderr[-2000:]}")
+    got = len(json.loads((out / "edit_points.json").read_text(encoding="utf-8"))["studio_cuts"])
+    if noise:
+        log.info(f"noise {name}: {len(secs)} pieces, {total / 60:.1f} min, {len(cuts)} detector suggestions, "
+                 f"{got} cuts, {time.time() - t0:.0f} s")
+    else:
+        planned = sum(len(d["studio_cuts"]) for d in datas)
+        log.info(f"{name}: {len(secs)} pieces, {total / 60:.1f} min, {got} cuts on the page ({planned} in the pieces' "
+                 f"plans; fewer = a tail cut and the next piece's opening cut joined at a boundary), "
+                 f"{time.time() - t0:.0f} s")
+    log.info(f"page: {out / 'edit_review' / 'studio.html'}")
+
+
+def link_media(out: Path, bid: str, name: str, secs: list[str], frames: list[int]) -> Path | None:
+    """A noise page over the same pieces as the review batch output/vahagn_<name> uses that batch's joined WAV and
+    preview through hard links (same timeline, no copy, no re-encoding). None when there is no such batch."""
+    src = REPO / "output" / f"vahagn_{name}"
+    if not (src / "edit_points.json").exists():
+        return None
+    batch = json.loads((src / "edit_points.json").read_text(encoding="utf-8"))["batch"]
+    if [b["section"] for b in batch] != secs or [b["frames"] for b in batch] != frames:
+        raise ValueError(f"output/vahagn_{name} joins other pieces or lengths than {secs}: build the noise page "
+                         "under another name")
+    wav, proxy = out / "audio" / f"{bid}_16k.wav", out / "video" / f"{bid}_360p.mp4"
+    for a, b in ((src / "audio" / f"vahagn_{name}_16k.wav", wav), (src / "video" / f"vahagn_{name}_360p.mp4", proxy)):
+        if b.exists():
+            if not os.path.samefile(a, b):
+                raise ValueError(f"{b} exists and is not a link to {a}")
+        else:
+            os.link(a, b)
+    wav.with_suffix(".source.txt").write_text(str(wav.resolve()), encoding="utf-8")
+    proxy.with_suffix(".source.txt").write_text(f"hard link to {src.name}'s preview\naudio: {wav.resolve()}\n",
+                                                encoding="utf-8")
+    log.info(f"media: hard links to output/vahagn_{name} (checked in sync when that batch was built)")
+    return wav
+
+
+def build_media(out: Path, bid: str, secs, datas, dirs, offs, frames, fps, floor, total, video: bool = True) -> Path:
     # audio: each piece on its frame-exact slot, scaled so its floor sits on the batch floor (all gains <= 0)
     x = np.zeros(round(total * SR), dtype=np.float32)
     for s, d, o, n in zip(secs, datas, offs, frames):
@@ -133,6 +238,8 @@ def cmd_build(name: str, secs: list[str]) -> None:
     wav = out / "audio" / f"{bid}_16k.wav"
     sf.write(wav, x, SR)
     wav.with_suffix(".source.txt").write_text(str(wav.resolve()), encoding="utf-8")
+    if not video:                    # a listening page plays the WAV itself
+        return wav
 
     # video: the previews' pictures joined without re-encoding ('duration' fixes where the next piece starts);
     # their sound decoded, fitted to each slot and encoded once. Joining the sound by stream copy put it 32 ms late
@@ -174,58 +281,7 @@ def cmd_build(name: str, secs: list[str]) -> None:
     if max(abs(l) for l in lags) > 0.010:
         raise ValueError(f"the joined preview is out of sync with the analysis audio: {lags}")
     proxy.with_suffix(".source.txt").write_text(f"{lst}\naudio: {wav.resolve()}\n", encoding="utf-8")
-
-    # cuts, transcript, captions shifted onto the batch timeline
-    cuts, rows, vtt = [], [], ["WEBVTT", ""]
-    for k, (s, d, o) in enumerate(zip(secs, datas, offs), 1):
-        off = o / fps
-        for c in d["cuts"]:
-            c = dict(c)
-            c["id"] = f"p{k}{c['id']}"
-            c["start"], c["end"] = round(c["start"] + off, 3), round(c["end"] + off, 3)
-            for key in ("requested", "spec_window"):   # requested: content_cuts.json's own text ("0:04:13.5", "end")
-                if key in c:
-                    c[key] = [round((d["duration"] if v == "end" else v if isinstance(v, (int, float)) else
-                                     sum(float(p) * 60 ** i for i, p in enumerate(reversed(v.split(":"))))) + off, 3)
-                              for v in c[key]]
-            c["flags"] = [FLAG_T.sub(lambda m: f"at {hms(sum(float(p) * 60 ** i for i, p in enumerate(reversed(m[1].split(':')))) + off, 1)}", f)
-                          for f in c["flags"]]
-            if c["source"] == "content":
-                c["reason"] = f"[{s}] {c['reason']}"
-            cuts.append(c)
-        rows.append(f"{hms(off)}  ===== Դաս {pieces[s]['label']} ({s}) =====")
-        for ln in (dirs[s] / "transcript.txt").read_text(encoding="utf-8").splitlines():
-            m = re.match(r"^(\d+:\d\d(?::\d\d)?)\s+(.*)$", ln)
-            if m:
-                t = sum(float(p) * 60 ** i for i, p in enumerate(reversed(m[1].split(":"))))
-                rows.append(f"{hms(t + off)}  {m[2]}")
-        src_vtt = (dirs[s] / f"{d['video_id']}.hy.vtt").read_text(encoding="utf-8")
-        body = src_vtt.split("\n\n", 1)[1] if src_vtt.startswith("WEBVTT") else src_vtt
-        vtt.append(TIME.sub(lambda m: shift_vtt_time(m[0], off), body))
-    (out / "transcript.txt").write_text("\n".join(rows) + "\n", encoding="utf-8")
-    (out / f"{bid}.hy.vtt").write_text("\n".join(vtt), encoding="utf-8")
-    meta = {"id": bid, "title": f"Vahagn {name}: {', '.join(secs)}", "duration": total, "fps": fps,
-            "url": "", "silence_margin_db": margin}
-    (out / "metadata.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
-    data = {"video_id": bid, "title": meta["title"], "duration": total, "fps": fps,
-            "params": {"min_silence": datas[0]["params"]["min_silence"], "pad": datas[0]["params"]["pad"],
-                       "floor_db": floor, "audio_source": str(wav.resolve()), "threshold_db": floor + margin,
-                       "blip_s": datas[0]["params"]["blip_s"]},
-            "cuts": cuts,
-            "marks": [[round(o / fps, 3), f"Դաս {pieces[s]['label']}"] for s, o in zip(secs, offs)],
-            "batch": [{"section": s, "video_id": d["video_id"], "output_dir": str(dirs[s].relative_to(REPO)),
-                       "offset_frames": o, "frames": n, "floor_db": d["params"]["floor_db"]}
-                      for s, d, o, n in zip(secs, datas, offs, frames)]}
-    (out / "edit_points.json").write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
-    r = subprocess.run([sys.executable, "scripts/find_edit_points.py", "--output-dir", str(out), "--report-only"],
-                       cwd=REPO, capture_output=True, text=True, encoding="utf-8")
-    if r.returncode != 0:
-        raise RuntimeError(f"find_edit_points failed:\n{r.stderr[-2000:]}")
-    planned = sum(len(d["studio_cuts"]) for d in datas)
-    got = len(json.loads((out / "edit_points.json").read_text(encoding="utf-8"))["studio_cuts"])
-    log.info(f"{name}: {len(secs)} pieces, {total / 60:.1f} min, {got} cuts on the page ({planned} in the pieces' plans; "
-             f"fewer = a tail cut and the next piece's opening cut joined at a boundary), {time.time() - t0:.0f} s")
-    log.info(f"page: {out / 'edit_review' / 'studio.html'}")
+    return wav
 
 
 def cmd_split(name: str, file: Path | None, dry_run: bool = False) -> None:
@@ -336,6 +392,33 @@ def cmd_split(name: str, file: Path | None, dry_run: bool = False) -> None:
     log.info(f"split {name} into {len(secs)} pieces; chapters remapped, review page rebuilt")
 
 
+def cmd_noise_collect(name: str, file: Path | None) -> None:
+    """The user's marks on a noise page ("cuts" over the stretches with constant noise, ticked detector suggestions
+    included) -> per piece intervals in that piece's own seconds, in _knowledge/vahagn_linalg/noise_marked.json."""
+    out = REPO / "output" / f"vahagn_noise_{name}"
+    data, fr = cut_list.load(out)
+    src = file or out / cut_list.EDITED
+    if file:
+        (out / cut_list.EDITED).write_text(file.read_text(encoding="utf-8"), encoding="utf-8")
+    text = src.read_text(encoding="utf-8")
+    marks = sorted((fr(m[2]), fr(m[3])) for line in text.splitlines() if (m := cut_list.CUT.match(line)))
+    if not marks and not re.search(r"^# 0 cuts\b", text, flags=re.M):
+        raise ValueError(f"no cut lines in {src}")
+    res_path = REPO / "_knowledge/vahagn_linalg/noise_marked.json"
+    res = json.loads(res_path.read_text(encoding="utf-8")) if res_path.exists() else {}
+    for b in data["batch"]:
+        o, n = b["offset_frames"], b["frames"]
+        iv = [[round((max(s, o) - o) / fr.fps, 2), round((min(e, o + n) - o) / fr.fps, 2)]
+              for s, e in marks if min(e, o + n) - max(s, o) > 2]
+        secs_marked = sum(e - s for s, e in iv)
+        res[b["section"]] = {"intervals": iv, "marked_s": round(secs_marked, 1), "share": round(secs_marked / (n / fr.fps), 3),
+                             "page": f"vahagn_noise_{name}", "collected": time.strftime("%Y-%m-%d %H:%M")}
+        log.info(f"{b['section']:7} {len(iv):3d} noisy stretches, {secs_marked:6.1f} s ({secs_marked / (n / fr.fps) * 100:4.1f}% "
+                 f"of {n / fr.fps / 60:.1f} min)")
+    res_path.write_text(json.dumps(dict(sorted(res.items())), ensure_ascii=False, indent=1), encoding="utf-8")
+    log.info(f"{len(marks)} marks from {src.name} -> {res_path.relative_to(REPO)}")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -343,6 +426,13 @@ def main() -> None:
     b = sub.add_parser("build")
     b.add_argument("name")
     b.add_argument("sections", nargs="+")
+    b.add_argument("--noise", action="store_true", help="a page for marking constant noise instead of cuts: "
+                   "output/vahagn_noise_<name>/, the detector's stretches as unticked suggestions")
+    b.add_argument("--listen", action="store_true", help="a listening page: the pieces' audio and spectrogram only "
+                   "(no cuts, no suggestions, no video), output/vahagn_listen_<name>/")
+    nc = sub.add_parser("noise-collect")
+    nc.add_argument("name")
+    nc.add_argument("--file", type=Path)
     s = sub.add_parser("split")
     s.add_argument("name")
     s.add_argument("--file", type=Path)
@@ -352,7 +442,9 @@ def main() -> None:
     if args.cmd == "plan":
         cmd_plan()
     elif args.cmd == "build":
-        cmd_build(args.name, args.sections)
+        cmd_build(args.name, args.sections, args.noise, args.listen)
+    elif args.cmd == "noise-collect":
+        cmd_noise_collect(args.name, args.file)
     else:
         cmd_split(args.name, args.file, args.dry_run)
 

@@ -28,21 +28,30 @@ async (page) => {
   const editRow = page.locator('#panel-container input:visible');
   const openRow = async n => { if (await editRow.count() !== 0)
     fail(`${n ? `cut ${n}: ` : ''}a cut's editing row is already open (a half-made cut): finish it (end, start, Cut) or cancel it first`); };
-  // Studio types and labels times without the hour field on videos under an hour (MM:SS:FF)
-  const full = tc => (tc.split(':').length === 4 ? tc : `0:${tc}`);
+  // Studio types and labels times without the hour field on videos under an hour (MM:SS:FF), and with one minute
+  // digit under ten minutes (M:SS:FF: Vahagn 23.3.b, 9:37, 2026-10-27: the box holds 7 characters, so "00:00:00"
+  // became "00:00:0", and its markers read "0:00:00")
+  const full = tc => { const p = tc.split(':'); return p.length === 4 ? tc : `0:${p[0].padStart(2, '0')}:${p[1]}:${p[2]}`; };
+  let underTen = false;                     // set from the playhead box below
   // On some uploads Studio stores every cut one frame later than typed (Papikian Դաս 20, 2026-10-22:
   // typed 0:00:24:05-0:00:28:01, stored 0:00:24:06-0:00:28:02), so cut_list.py entry-js --type-shift -1
-  // types each time that many frames off; the checks below still use the planned times
+  // types each time that many frames off; the checks below still use the planned times. A time at 0 stays 0: Studio
+  // stores a typed 0 as 0 on such an upload too (Vahagn 23.1.b dehum, 2026-10-27: typed 0:00:00:00-0:00:06:22, stored
+  // 0:00:00:00-0:00:06:23; typed 14:50:06-14:55:07, stored 14:50:07-14:55:08), and -1 would type a negative frame
   const shifted = tc => {
     if (!JOB.typeShift) return tc;
     const [h, m, s, f] = full(tc).split(':').map(Number);
-    let n = ((h * 60 + m) * 60 + s) * JOB.fps + f + JOB.typeShift;
+    let n = Math.max(0, ((h * 60 + m) * 60 + s) * JOB.fps + f + JOB.typeShift);
     const ff = n % JOB.fps; n = (n - ff) / JOB.fps;
     const ss = n % 60; n = (n - ss) / 60;
     const p2 = x => String(x).padStart(2, '0');
     return `${(n - n % 60) / 60}:${p2(n % 60)}:${p2(ss)}:${p2(ff)}`;
   };
-  const typed = tc => { const t = shifted(tc); return JOB.overOneHour ? t : t.replace(/^0:/, ''); };
+  const typed = tc => {
+    const t = shifted(tc);
+    if (JOB.overOneHour) return t;
+    return underTen ? t.replace(/^0:0/, '') : t.replace(/^0:/, '');
+  };
   const cutsInStudio = async () => {
     const m = (await page.evaluate(() => [...document.querySelectorAll(
       '[aria-label^="Start trim marker"], [aria-label^="End trim marker"]')]
@@ -77,6 +86,8 @@ async (page) => {
   if (nph !== 1) fail(`${nph} playhead time boxes outside the panel, expected 1`);
   const label = await playhead.getAttribute('aria-label');
   if (/hour/.test(label) !== JOB.overOneHour) fail(`playhead label "${label}" does not fit overOneHour=${JOB.overOneHour}`);
+  // the box's maxlength: 7 = M:SS:FF, 8 = MM:SS:FF (its value is no guide: 23.3.b's did not read "0:00:00" at the start)
+  underTen = !JOB.overOneHour && Number(await playhead.getAttribute('maxlength')) === 7;
   if (await page.getByRole('button', { name: 'New Cut' }).count() !== 1) fail('no single New Cut button: is the Trim & cut panel open?');
   await openRow(0);
 
