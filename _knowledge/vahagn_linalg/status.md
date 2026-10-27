@@ -189,8 +189,14 @@ These uploads are only a caption source. Each piece is cut and its sound fixed l
   only after Studio's new length matched (22.1 17:03 ... 28.4 24:49). 3 uploads stored cuts one frame late and went
   in with --type-shift -1 (23.1.b, 23.3.b, 28.1.b); 23.3.b, 28.2.b, 28.3.b are under ten minutes (M:SS:FF time boxes,
   template fixed; `_learnings/2026-10-27-1813_...`). **Edited chapters pushed 20:30** (all 18 processed, lengths = cut
-  lists; read back 18/18; 900 units). **All 25 pieces done and unlisted.** Open: publishing (the user's word), playlist
-  order (Q93), the 2 stray 21.2 entries (Q92), deletions of the replaced uploads (Q84). **Saved ~12:55** (the user: "pls u save all"); Studio's
+  lists; read back 18/18; 900 units). **All 25 pieces done and unlisted.** Stray 21.2 entries out of the playlist (Q92,
+  100 units). **Playlist sorted 1.1 -> 28.4 in the browser (Q93/Q124, no quota):** it is a YouTube "Course"; the
+  newest-first view was an auto sort over the stored order; youtube.com playlist page, each item More actions > Move to
+  bottom in target order, a reload after each (the page does not redraw after a move), 97 moves in 891 s; the API reads
+  0 moves left. **Overall review** (Q125): `scripts/non_essential/vahagn_overall_review.py` ->
+  `output/vahagn_linalg_overview/overall_review.html`, 25/25 as drafted, playlist #73-97. Studio shows all 25 as
+  **Draft** (upload dialog never finished): publishing means finishing each draft. Open: publishing (the user's word),
+  deletions of the replaced uploads (Q84). **Saved ~12:55** (the user: "pls u save all"); Studio's
   confirm dialog showed the predicted lengths (20:38, 25:09, 18:28, 16:40, 10:19, 27:23, 18:05; it drops the fraction).
   Next for these 7, once Studio has processed them: chapters on the edited timeline (`--chapters edited
   --description-only --apply <section>`).
