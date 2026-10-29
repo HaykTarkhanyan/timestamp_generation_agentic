@@ -1,0 +1,47 @@
+title = "Metric Academy end screens: Python - Դասեր, ML course and Math for ML done and verified"
+date = "2026-10-27"
+time = "13:00"
+areas = ["scripts/non_essential", "output/endscreens", ".playwright-mcp (gitignored job files)"]
+
+done = [
+  "Counted the 13 Metric Academy playlists (read-only API): ML math 78, ML 56, Python - Դասեր 46, Python Profound 35, [2023] Python 30, Python Libraries 20, smaller ones 11/10/5/2/2/1/1.",
+  "Python - Դասեր (46): surveyed every editor read-only. 43 already had Subscribe + Video + Playlist end screens; added the 3 missing ([05] String, Libraries [07], [18] guest lecture); switched 9 Libraries ones from 'Best for viewer' to the next video, times kept (endscreen_edit_template.js). Record: output/endscreens/python_daser_survey.json.",
+  "ML course (Մեքենայական ուսուցում, 56): all 56 saved, 10 s, [N] -> [N+1], playlist Մեքենայական ուսուցում; [54], Claude Code workshop and Q&A -> Best for viewer. Verified read-only 56/56 (output/endscreens/ml_course_verify.json).",
+  "Math for ML (78): course order (lectures + practicals by publish date, lectures in number order), Դաս 52 -> Best for viewer. 38 added by batches; of 38 older end screens: 26 Best for viewer and 3 pointing back at Դաս 9 repointed to the next video (Q13, Q14, times kept), 8 with Subscribe + 2 videos rebuilt by hand to the standard (Q15), Գործնական 17 left (Q16). Verified read-only 77/78 (output/endscreens/math4ml_verify.json).",
+  "Checked on a live watch page that an end-screen playlist element opens the playlist at its TOP video (BaQ0-hrcRtI: Python - Դասեր link -> videoId 3MuWl8UOeHY, position 0). The user chose to keep ML and Math for ML newest first anyway (Q11).",
+  "Template fixes found on the way: Studio session channel check (it was on umath); search box refuses keyboard focus -> set value from the page; titles with double spaces -> whitespace-insensitive compare; Save can take > 7 s -> poll 30 s; search results can take ~10 s -> poll 20 s; batches skip videos that already have an end screen ('ALREADY:').",
+]
+
+pending = [
+  "Rebuild mode of endscreen_template.js was rewritten to match the 8 manual rebuilds but has not run as a script yet.",
+  "Other Metric playlists (Python Profound 35/11/10/5, [2023] Python 30, Python Libraries 20, ...) have no end-screen pass yet.",
+  "When ML [55] / Math Դաս 53 is uploaded: give it an end screen and repoint the previous newest lesson from Best for viewer to it.",
+  "Arnak (umath) end screens 2-13 + 2025 still parked (DEFERRED_TODO).",
+]
+
+next = [
+  "If a batch stops: read its 'failed' / 'error', reset the page (accept the beforeunload prompt), rebuild the remaining jobs with make_endscreen_batch.py and rerun. Afterwards run make_endscreen_verify.py only on the videos that changed.",
+  "If a call returns early on a 'leave page?' prompt the code keeps running in the browser: watch page.url(), and kill it with browser_close if needed (the profile keeps the login).",
+]
+
+files = [
+  "scripts/non_essential/endscreen_template.js",
+  "scripts/non_essential/endscreen_edit_template.js",
+  "scripts/non_essential/make_endscreen_jobs.py",
+  "scripts/non_essential/make_endscreen_jobs_python.py",
+  "scripts/non_essential/make_endscreen_jobs_ml.py",
+  "scripts/non_essential/make_endscreen_jobs_math4ml.py",
+  "scripts/non_essential/make_endscreen_batch.py",
+  "scripts/non_essential/README.md",
+  "output/endscreens/python_daser_survey.json",
+  "output/endscreens/ml_course_verify.json",
+  "output/endscreens/math4ml_verify.json",
+  "scripts/non_essential/make_endscreen_verify.py",
+]
+
+commits = []
+
+notes = [
+  "~1 min per new end screen, ~48 s per edit. A network drop (ERR_NAME_NOT_RESOLVED / ERR_NETWORK_CHANGED in the console) makes the editor or search come back empty; the batch then stops before Save.",
+  "One Save ([12]) only showed as saved after the old 7 s wait; a fresh reload confirmed it had saved.",
+]

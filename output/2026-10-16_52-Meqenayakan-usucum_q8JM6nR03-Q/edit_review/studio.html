@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio cuts q8JM6nR03-Q</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+
+.specscroll { overflow-x: auto; overflow-y: hidden; padding: 3px 0; margin-top: 3px; }
+.specwrap { position: relative; width: 100%; cursor: ew-resize; touch-action: none; user-select: none; }
+.specwrap img { display: block; width: 100%; height: 130px; border-radius: 6px; pointer-events: none; }
+.zoom button { min-width: 28px; }
+.zoom .zl { display: inline-block; min-width: 34px; text-align: center; font-variant-numeric: tabular-nums; }
+.bar { position: absolute; top: -3px; bottom: -3px; width: 3px; margin-left: -1px; background: #fff;
+       box-shadow: 0 0 0 1px #000; border-radius: 2px; pointer-events: none; z-index: 2; }
+.shade { position: absolute; top: 0; bottom: 0; background: rgba(217, 0, 18, .38); pointer-events: none;
+         border-left: 3px solid var(--red); border-right: 3px solid var(--red); box-sizing: border-box; }
+.shade.added { background: rgba(242, 168, 0, .40); border-color: var(--orange); }
+.shade.other { background: rgba(150, 150, 150, .40); border: none; }
+.edit, .added-row { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin: 4px 0; font-size: 14px; }
+.edit .times, .added-row .times { font-variant-numeric: tabular-nums; }
+.edit button, .added-row button { font-size: 13px; }
+.added-row .tag { color: var(--orange); font-weight: 650; }
+.was, .warn, .msg { font-size: 13px; color: var(--muted); }
+.warn, .msg { color: var(--red); }
+details.cut.changed > summary { color: var(--red); }
+details.cut.removed > summary { color: var(--muted); text-decoration: line-through; }
+.shade.gone { background: none; border: 2px dashed var(--red); }
+#export { width: 100%; min-height: 220px; font: 13px/1.4 ui-monospace, Consolas, monospace; }
+#player { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 8px 0 10px; display: flex;
+          gap: 12px; align-items: flex-end; border-bottom: 1px solid var(--line); }
+#player video { width: 480px; max-width: 62vw; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; display: block; }
+#player.hidden video { display: none; }
+#player .pinfo { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
+body.has-video details.cut { scroll-margin-top: 300px; }
+.axis { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted);
+        font-variant-numeric: tabular-nums; }
+.axis .a0, .axis .a1 { white-space: nowrap; }
+.ctl { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 8px 0 4px; }
+.ctl .now { font-variant-numeric: tabular-nums; font-weight: 650; min-width: 90px; }
+.play { min-width: 74px; }
+.flag button { font-size: 12px; padding: 0 6px; margin-left: 6px; }
+.err { color: var(--red); }
+nav ol { columns: 2; font-variant-numeric: tabular-nums; }
+summary { font-variant-numeric: tabular-nums; }
+.stamp { font-size: 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--red);
+         border-radius: 6px; padding: 6px 10px; display: inline-block; }
+</style></head>
+<body data-fps="25" data-ctx="3" data-duration="5939.58" data-list="d2cc8a73"><main>
+<h1>Studio cuts: [52] | Մեքենայական ուսուցում</h1>
+<p class="stamp"><b>48 cuts</b> &middot; list d2cc8a73 &middot; built 2026-10-17 00:14<span id="nchanged"></span>
+ - reload this tab if the list changed since you opened it</p>
+<p class="warn" id="storage"></p>
+<p class="sub">48 cuts, numbered and timed exactly as in YouTube Studio's Trim &amp; cut list
+(25 fps, H:MM:SS:FF). Removes <span id="removed">0:24:15: 1:39:00 &rarr; 1:14:45</span>.
+Play starts 3 s before the cut and runs to the end of the spectrogram; space bar pauses, &larr;/&rarr; move the bar
+0.2 s (Shift: 1 s). <b>Zoom</b> with the +/- buttons or Ctrl+mouse wheel; the spectrogram then scrolls sideways
+(scrollbar or Shift+wheel) and follows the bar while playing. <b>To move a cut's edge</b>, drag it, or put the bar there and press Start = bar / End = bar
+(whole frames; the spectrogram has 20 s of room either side). <b>Add a cut at the bar</b> makes a new 1 s cut
+there, to drag into shape; every Cut number on the page and in the list follows Studio's order. <b>Remove cut</b> drops a
+planned cut (it leaves the list and the numbering; <b>Restore cut</b> brings it back).</p>
+<audio id="media" preload="metadata" src="../audio/q8JM6nR03-Q_16k.wav"></audio>
+<nav><ol><li><a href="#cut-1">Cut 1   0:00:00:00 → 0:14:12:19   (852.8 s)</a></li><li><a href="#cut-2">Cut 2   0:15:29:10 → 0:15:32:03   (2.7 s)</a></li><li><a href="#cut-3">Cut 3   0:16:19:01 → 0:16:45:08   (26.3 s)</a></li><li><a href="#cut-4">Cut 4   0:19:50:05 → 0:20:03:15   (13.4 s)</a></li><li><a href="#cut-5">Cut 5   0:23:02:04 → 0:23:14:24   (12.8 s)</a></li><li><a href="#cut-6">Cut 6   0:24:01:12 → 0:24:17:15   (16.1 s)</a></li><li><a href="#cut-7">Cut 7   0:24:46:15 → 0:24:57:00   (10.4 s)</a></li><li><a href="#cut-8">Cut 8   0:24:58:23 → 0:25:04:10   (5.5 s)</a></li><li><a href="#cut-9">Cut 9   0:25:54:12 → 0:25:57:15   (3.1 s)</a></li><li><a href="#cut-10">Cut 10   0:26:43:07 → 0:26:58:13   (15.2 s)</a></li><li><a href="#cut-11">Cut 11   0:28:41:03 → 0:28:48:07   (7.2 s)</a></li><li><a href="#cut-12">Cut 12   0:31:35:18 → 0:31:59:06   (23.5 s)</a></li><li><a href="#cut-13">Cut 13   0:32:12:10 → 0:32:15:00   (2.6 s)</a></li><li><a href="#cut-14">Cut 14   0:41:15:24 → 0:41:18:10   (2.4 s)</a></li><li><a href="#cut-15">Cut 15   0:41:20:16 → 0:41:24:14   (3.9 s)</a></li><li><a href="#cut-16">Cut 16   0:42:20:12 → 0:43:07:15   (47.1 s)</a></li><li><a href="#cut-17">Cut 17   0:44:11:00 → 0:44:14:04   (3.2 s)</a></li><li><a href="#cut-18">Cut 18   0:49:02:07 → 0:49:27:11   (25.2 s)</a></li><li><a href="#cut-19">Cut 19   0:51:07:06 → 0:51:10:10   (3.2 s)</a></li><li><a href="#cut-20">Cut 20   0:51:39:16 → 0:51:42:12   (2.8 s)</a></li><li><a href="#cut-21">Cut 21   0:51:51:21 → 0:51:55:02   (3.2 s)</a></li><li><a href="#cut-22">Cut 22   0:52:02:24 → 0:52:05:24   (3.0 s)</a></li><li><a href="#cut-23">Cut 23   0:53:32:11 → 0:53:34:21   (2.4 s)</a></li><li><a href="#cut-24">Cut 24   0:54:50:18 → 0:55:03:13   (12.8 s)</a></li><li><a href="#cut-25">Cut 25   0:55:33:15 → 0:55:39:06   (5.6 s)</a></li><li><a href="#cut-26">Cut 26   0:56:06:13 → 0:56:26:01   (19.5 s)</a></li><li><a href="#cut-27">Cut 27   0:59:22:14 → 0:59:37:06   (14.7 s)</a></li><li><a href="#cut-28">Cut 28   1:02:01:01 → 1:02:27:23   (26.9 s)</a></li><li><a href="#cut-29">Cut 29   1:03:52:22 → 1:03:58:00   (5.1 s)</a></li><li><a href="#cut-30">Cut 30   1:04:31:07 → 1:04:37:10   (6.1 s)</a></li><li><a href="#cut-31">Cut 31   1:05:43:09 → 1:05:45:21   (2.5 s)</a></li><li><a href="#cut-32">Cut 32   1:05:47:22 → 1:05:54:11   (6.6 s)</a></li><li><a href="#cut-33">Cut 33   1:08:41:18 → 1:08:55:24   (14.2 s)</a></li><li><a href="#cut-34">Cut 34   1:08:59:13 → 1:09:02:16   (3.1 s)</a></li><li><a href="#cut-35">Cut 35   1:09:44:15 → 1:09:47:03   (2.5 s)</a></li><li><a href="#cut-36">Cut 36   1:11:30:19 → 1:11:33:12   (2.7 s)</a></li><li><a href="#cut-37">Cut 37   1:15:27:11 → 1:15:30:03   (2.7 s)</a></li><li><a href="#cut-38">Cut 38   1:16:22:12 → 1:16:39:22   (17.4 s)</a></li><li><a href="#cut-39">Cut 39   1:18:33:19 → 1:18:36:20   (3.0 s)</a></li><li><a href="#cut-40">Cut 40   1:20:23:02 → 1:21:09:04   (46.1 s)</a></li><li><a href="#cut-41">Cut 41   1:22:55:05 → 1:22:57:17   (2.5 s)</a></li><li><a href="#cut-42">Cut 42   1:25:45:17 → 1:26:40:05   (54.5 s)</a></li><li><a href="#cut-43">Cut 43   1:26:56:11 → 1:27:10:08   (13.9 s)</a></li><li><a href="#cut-44">Cut 44   1:33:19:16 → 1:33:23:02   (3.4 s)</a></li><li><a href="#cut-45">Cut 45   1:34:27:20 → 1:34:45:02   (17.3 s)</a></li><li><a href="#cut-46">Cut 46   1:36:04:09 → 1:36:06:22   (2.5 s)</a></li><li><a href="#cut-47">Cut 47   1:36:55:12 → 1:37:41:17   (46.2 s)</a></li><li><a href="#cut-48">Cut 48   1:38:24:15 → 1:38:59:15   (35.0 s)</a></li><li><a href="#export-list">Cut list with your changes (last first)</a></li></ol></nav>
+
+<details open class="cut" id="cut-1" data-w0="0.0" data-w1="872.76" data-s0="0.0" data-e0="852.76" data-pxw="16000">
+<summary>Cut 1   0:00:00:00 → 0:14:12:19   (852.8 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> Dead air, greetings, the attendance ranking (&#x27;first place shows Hayk...&#x27;), waiting for people to join</div><div class="reason"><span class="badge judgment">your call</span> Pre-lecture: a student&#x27;s question about the AI-skills list their bank sent (RAG, structured outputs, LLMOps...). Off-topic for the snake practical, 9 min - recommend cutting</div><div class="reason"><span class="badge safe">safe</span> &#x27;Any other questions?&#x27;, send your project GitHub for feedback, the Telegram channel got passive, &#x27;OK people, let&#x27;s start&#x27; - up to &#x27;let&#x27;s finally close CNNs&#x27;</div><div class="flag">short sound at 0:00:55.7 (-19 dB) - listen<button class="jump" data-t="54.70">play here</button></div><div class="flag">short sound at 0:00:56.0 (-35 dB) - listen<button class="jump" data-t="55.00">play here</button></div><div class="flag">short sound at 0:00:56.3 (-22 dB) - listen<button class="jump" data-t="55.30">play here</button></div><div class="flag">short sound at 0:02:53.0 (-34 dB) - listen<button class="jump" data-t="172.00">play here</button></div><div class="flag">short sound at 0:03:27.1 (-48 dB) - listen<button class="jump" data-t="206.10">play here</button></div><div class="flag">short sound at 0:03:35.0 (-43 dB) - listen<button class="jump" data-t="214.00">play here</button></div><div class="flag">short sound at 0:03:42.8 (-22 dB) - listen<button class="jump" data-t="221.80">play here</button></div><div class="flag">short sound at 0:05:04.9 (-43 dB) - listen<button class="jump" data-t="303.90">play here</button></div><div class="flag">short sound at 0:05:09.0 (-41 dB) - listen<button class="jump" data-t="308.00">play here</button></div><div class="flag">short sound at 0:05:09.3 (-32 dB) - listen<button class="jump" data-t="308.30">play here</button></div><div class="flag">short sound at 0:05:16.9 (-47 dB) - listen<button class="jump" data-t="315.90">play here</button></div><div class="flag">short sound at 0:13:16.8 (-40 dB) - listen<button class="jump" data-t="795.80">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio01_spec.png" alt="spectrogram cut 1"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:00:00.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:14:32.8</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class="in"><span class="t">0:01:00</span>Ըհ, հա, ողջույններ:</div><div class="in"><span class="t">0:01:04</span>Եթե ինչ-որ ցանկացած քննարկելու բան,</div><div class="in"><span class="t">0:01:06</span>հարցմարց, համեցե&amp;lt;un&amp;gt;ք</div><div class="in"><span class="t">0:01:09</span>եթե չէ բան, մի քիչ սպասենք:</div><div class="in"><span class="t">0:01:17</span>խնդրել էի բան անի</div><div>...</div><div class="in"><span class="t">0:14:00</span>եթե ինչ տեղ։</div><div class="in"><span class="t">0:14:06</span>Ու դե լավ, ժողովուրդ, դե եկեք սկսենք։ Սա</div><div class="in"><span class="t">0:14:09</span>բերեմ մի հատ մի հատ այստեղ, այսպես</div><div class=""><span class="t">0:14:13</span>CNN-ները հազիվ փակենք։ Հա ու, ժողովուրդ,</div></div>
+</details>
+<details open class="cut" id="cut-2" data-w0="909.4" data-w1="952.12" data-s0="929.4" data-e0="932.12" data-pxw="3418">
+<summary>Cut 2   0:15:29:10 → 0:15:32:03   (2.7 s)</summary>
+<div class="reason">3.5 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio02_spec.png" alt="spectrogram cut 2"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:15:09.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:15:52.1</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:15:24</span>բարկոդ վերլուծող բան սարքել։ Այսինքն էս</div><div class=""><span class="t">0:15:27</span>ու՞ր ա, մի հատ նկար ցույց տուր։</div><div class=""><span class="t">0:15:33</span>լինի, ինքը դրա կոդը դուրս բերի ու այնտեղ</div><div class=""><span class="t">0:15:36</span>նաև կարելի ա ինտերնետից բան անել, ոնց որ</div></div>
+</details>
+<details open class="cut" id="cut-3" data-w0="959.04" data-w1="1025.32" data-s0="979.04" data-e0="1005.32" data-pxw="5302">
+<summary>Cut 3   0:16:19:01 → 0:16:45:08   (26.3 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Looking for the thumbnail example in the folder (garbled: &#x27;a song...&#x27;, &#x27;where is it&#x27;, &#x27;won&#x27;t be here&#x27;), up to &#x27;OK, in short: making a thumbnail from a photo&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio03_spec.png" alt="spectrogram cut 3"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:15:59.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:17:05.3</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:16:16</span>վերջնական բան մտքովս անցել էր որդ պահին</div><div class="in"><span class="t">0:16:20</span>մի հատ բան երգ էի երգի բանն էի տեսել</div><div class="in"><span class="t">0:16:25</span>ուր է գտնվի</div><div class="in"><span class="t">0:16:32</span>ավելի հասկանալի սարքի մի քիչ շատերը բոռա</div><div class="in"><span class="t">0:16:41</span>հեսա չի լինելու բան այստեղ բանում դրած</div><div class="in"><span class="t">0:16:43</span>օրինակը thumbnail-ի։</div><div class="in"><span class="t">0:16:45</span>Այ լավ, մի խոսքով այ էս ոճի բան</div><div class=""><span class="t">0:16:47</span>thumbnail սարքել նկարից, էդ էր մտքս</div></div>
+</details>
+<details open class="cut" id="cut-4" data-w0="1170.2" data-w1="1223.6" data-s0="1190.2" data-e0="1203.6" data-pxw="4272">
+<summary>Cut 4   0:19:50:05 → 0:20:03:15   (13.4 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;That&#x27;s our plan - notes, questions, anything, people?&#x27; + silence + &#x27;let&#x27;s go&#x27;, up to the imports</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio04_spec.png" alt="spectrogram cut 4"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:19:30.2</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:20:23.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:19:46</span>նեյրոնային ցանցը որտեղ է նայում որ</div><div class=""><span class="t">0:19:48</span>գուշակություն անի</div><div class="in"><span class="t">0:19:51</span>բայց հա ս մեր պլանը նշում հարց ցանկացած</div><div class="in"><span class="t">0:19:53</span>ինչոր բան ժողովուրդ</div><div class="in"><span class="t">0:20:02</span>Դե գնացինք</div><div class=""><span class="t">0:20:05</span>ստանդարտ իմպորտներ է մեր մոտ, բայց մի</div><div class=""><span class="t">0:20:07</span>քանի բան, որ տենց առանձին սարքած</div></div>
+</details>
+<details open class="cut" id="cut-5" data-w0="1362.16" data-w1="1414.96" data-s0="1382.16" data-e0="1394.96" data-pxw="4224">
+<summary>Cut 5   0:23:02:04 → 0:23:14:24   (12.8 s)</summary>
+<div class="reason">13.6 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio05_spec.png" alt="spectrogram cut 5"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:22:42.2</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:23:35.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:22:58</span>որը հետո կօգնի կակրաս օրինաչափություն</div><div class=""><span class="t">0:23:17</span>տեսանկյունից կամ շորերի լավ շատ-շատ մեծ</div></div>
+</details>
+<details open class="cut" id="cut-6" data-w0="1421.48" data-w1="1477.6" data-s0="1441.48" data-e0="1457.6" data-pxw="4490">
+<summary>Cut 6   0:24:01:12 → 0:24:17:15   (16.1 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> False start: &#x27;I can show the capture process now... OK no, let&#x27;s continue&#x27;, up to &#x27;If you run that file yourself&#x27;</div><div class="flag">short sound at 0:24:04.8 (-42 dB) - listen<button class="jump" data-t="1443.80">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio06_spec.png" alt="spectrogram cut 6"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:23:41.5</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:24:37.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:23:56</span>Այս խակի մտքում պահենք էլի, սա</div><div class=""><span class="t">0:23:57</span>հետագայում տեսնելու ենք, թե խի ա մեր</div><div class=""><span class="t">0:23:59</span>համար գլխացավ լինում ահավոր։</div><div class="in"><span class="t">0:24:08</span>նկարների ստանալու պրոցեսը եղել ա էն, որ</div><div class="in"><span class="t">0:24:10</span>էդ բանը բացում պրծպի կարամ հիմա էլ ցույց</div><div class="in"><span class="t">0:24:12</span>տամ պրոցեսը ոնց ա, բայց</div><div class="in"><span class="t">0:24:15</span>լավ չէ եկեք շարունակենք սենց</div><div class=""><span class="t">0:24:18</span>Այդ ֆայլը, եթե դուք ձեր մոտ աշխատացնեք,</div><div class=""><span class="t">0:24:20</span>կտեսնեք, որ ինքը մի հատ պատուհան է</div><div class=""><span class="t">0:24:21</span>բացում ում իր մեջ կտցնում ենք ու ինքը</div></div>
+</details>
+<details open class="cut" id="cut-7" data-w0="1466.6" data-w1="1517.0" data-s0="1486.6" data-e0="1497.0" data-pxw="4032">
+<summary>Cut 7   0:24:46:15 → 0:24:57:00   (10.4 s)</summary>
+<div class="reason">11.1 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio07_spec.png" alt="spectrogram cut 7"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:24:26.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:25:17.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:24:43</span>testումը բայց հլը պատկերացնենք երկու</div></div>
+</details>
+<details open class="cut" id="cut-8" data-w0="1478.92" data-w1="1524.4" data-s0="1498.92" data-e0="1504.4" data-pxw="3638">
+<summary>Cut 8   0:24:58:23 → 0:25:04:10   (5.5 s)</summary>
+<div class="reason">6.2 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio08_spec.png" alt="spectrogram cut 8"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:24:38.9</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:25:24.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:25:08</span>էր խնդիրը,</div></div>
+</details>
+<details open class="cut" id="cut-9" data-w0="1534.48" data-w1="1577.6" data-s0="1554.48" data-e0="1557.6" data-pxw="3450">
+<summary>Cut 9   0:25:54:12 → 0:25:57:15   (3.1 s)</summary>
+<div class="reason">3.8 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio09_spec.png" alt="spectrogram cut 9"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:25:34.5</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:26:17.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:25:51</span>կարող ինչի չեմ կարող ի՞նչն է պրոբլեմ դրա</div></div>
+</details>
+<details open class="cut" id="cut-10" data-w0="1583.28" data-w1="1638.52" data-s0="1603.28" data-e0="1618.52" data-pxw="4419">
+<summary>Cut 10   0:26:43:07 → 0:26:58:13   (15.2 s)</summary>
+<div class="reason">15.9 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio10_spec.png" alt="spectrogram cut 10"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:26:23.3</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:27:18.5</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:26:40</span>այսինքն հեշտ լինի վրա գուշակելը</div><div class=""><span class="t">0:27:01</span>պրոբլեմը, որ երբ որ ուղղակի մի հատ</div></div>
+</details>
+<details open class="cut" id="cut-11" data-w0="1701.12" data-w1="1748.28" data-s0="1721.12" data-e0="1728.28" data-pxw="3773">
+<summary>Cut 11   0:28:41:03 → 0:28:48:07   (7.2 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;Is this clear, people?&#x27; + silence, up to the student&#x27;s comment</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio11_spec.png" alt="spectrogram cut 11"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:28:21.1</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:29:08.3</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:28:36</span>թեստ է նրա, թե իրական կյանքում մոդելը</div><div class=""><span class="t">0:28:39</span>ինչ տվյալներ է տեսնելու</div><div class="in"><span class="t">0:28:42</span>Սա պարզ է ժողովուրդ:</div><div class=""><span class="t">0:28:50</span>էլ եղել ա, որ ըը ես այսպես լրիվ իրար հետ</div></div>
+</details>
+<details open class="cut" id="cut-12" data-w0="1875.72" data-w1="1939.24" data-s0="1895.72" data-e0="1919.24" data-pxw="5082">
+<summary>Cut 12   0:31:35:18 → 0:31:59:06   (23.5 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;I&#x27;m saying the same thing in different ways, I&#x27;ll stop and listen; if there&#x27;s a question...&#x27; + silence + &#x27;shall we go down [to the code]?&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio12_spec.png" alt="spectrogram cut 12"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:31:15.7</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:32:19.2</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:31:30</span>սկզբի փուլում սխալվել քան ըտեղ սխալվել</div><div class=""><span class="t">0:31:32</span>դրա համար ոնց որ այստեղին պետք ա լավ</div><div class=""><span class="t">0:31:34</span>զգույշ լինենք բայց ոնց որ նույն բանը մի</div><div class="in"><span class="t">0:31:36</span>քանի տարբեր ձևով եմ ասում ստոպ կտ կտամ</div><div class="in"><span class="t">0:31:39</span>ու լսեմ, եթե ինչ-որ հարց կա շարունակեմ,</div><div class="in"><span class="t">0:31:42</span>եթե չէ կոդով իջնեմ։</div><div class="in"><span class="t">0:31:55</span>Դե իջնե՞նք։</div><div class=""><span class="t">0:32:01</span>այստեղ, այստեղ դա ոնց որ բստ է ինքը սրան</div></div>
+</details>
+<details open class="cut" id="cut-13" data-w0="1912.4" data-w1="1955.0" data-s0="1932.4" data-e0="1935.0" data-pxw="3408">
+<summary>Cut 13   0:32:12:10 → 0:32:15:00   (2.6 s)</summary>
+<div class="reason">3.3 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio13_spec.png" alt="spectrogram cut 13"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:31:52.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:32:35.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:32:09</span>այսինքն ըստ տարբեր սեսիաների</div></div>
+</details>
+<details open class="cut" id="cut-14" data-w0="2455.96" data-w1="2498.4" data-s0="2475.96" data-e0="2478.4" data-pxw="3395">
+<summary>Cut 14   0:41:15:24 → 0:41:18:10   (2.4 s)</summary>
+<div class="reason">3.2 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio14_spec.png" alt="spectrogram cut 14"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:40:56.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:41:38.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:41:10</span>loss յաբախտից համար լավ չէր, հիմա էլ մի</div><div class=""><span class="t">0:41:14</span>պստիկ ա ավելի լավ։</div></div>
+</details>
+<details open class="cut" id="cut-15" data-w0="2460.64" data-w1="2504.56" data-s0="2480.64" data-e0="2484.56" data-pxw="3514">
+<summary>Cut 15   0:41:20:16 → 0:41:24:14   (3.9 s)</summary>
+<div class="reason">4.6 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio15_spec.png" alt="spectrogram cut 15"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:41:00.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:41:44.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:41:28</span>այդպես ասենք կարմիր շորով չլինի,</div></div>
+</details>
+<details open class="cut" id="cut-16" data-w0="2520.48" data-w1="2607.6" data-s0="2540.48" data-e0="2587.6" data-pxw="6970">
+<summary>Cut 16   0:42:20:12 → 0:43:07:15   (47.1 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;Questions, people? One sec, I&#x27;ll mute until you think of questions&#x27; + 20 s silence + &#x27;no other questions, let&#x27;s continue as usual&#x27;</div><div class="flag">short sound at 0:42:32.1 (-40 dB) - listen<button class="jump" data-t="2551.10">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio16_spec.png" alt="spectrogram cut 16"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:42:00.5</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:43:27.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:42:15</span>բայց հա, կարճ ասած չեմ ստուգել, բայց շատ</div><div class=""><span class="t">0:42:18</span>լավ բան է ստուգելու համար։</div><div class="in"><span class="t">0:42:26</span>հարց ժողովուրդ</div><div class="in"><span class="t">0:42:28</span>ու մի վայրկյան ես մի հատ անմյութ լինեմ</div><div class="in"><span class="t">0:42:30</span>մինչև հարց մտածեք</div><div class="in"><span class="t">0:42:57</span>պահի տակ, ասեցի՝ քանի հարցեր եք տալիս</div><div class="in"><span class="t">0:43:00</span>դրա հետ բռնացնեմ, բայց լավ, այլ հարցեր</div><div class="in"><span class="t">0:43:01</span>չկան, լավ շարունակենք սովորական։</div><div class=""><span class="t">0:43:11</span>իսկ ինչ է եղել, որ ինքը ինչ է գուշակել</div></div>
+</details>
+<details open class="cut" id="cut-17" data-w0="2631.0" data-w1="2674.16" data-s0="2651.0" data-e0="2654.16" data-pxw="3453">
+<summary>Cut 17   0:44:11:00 → 0:44:14:04   (3.2 s)</summary>
+<div class="reason">3.9 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio17_spec.png" alt="spectrogram cut 17"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:43:51.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:44:34.2</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:44:05</span>տալիս error անալոզիս անելու էլի մի հատ</div><div class=""><span class="t">0:44:08</span>ուշադիր նայելու թե որտեղ ինչ խնդիր</div></div>
+</details>
+<details open class="cut" id="cut-18" data-w0="2922.28" data-w1="2987.44" data-s0="2942.28" data-e0="2967.44" data-pxw="5213">
+<summary>Cut 18   0:49:02:07 → 0:49:27:11   (25.2 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> &#x27;People, up to here?&#x27; + silence, an inaudible exchange ending in &#x27;yes, downscaled&#x27;. Listen: if a student question is audible, keep it</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio18_spec.png" alt="spectrogram cut 18"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:48:42.3</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:49:47.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:48:57</span>կար ինչ-որ չափով կոմպիցե լինի էլի պետք է</div><div class=""><span class="t">0:48:59</span>մի քիչ ավելի տեղը տեղին համեմատություն</div><div class="in"><span class="t">0:49:07</span>ժողովուրդ մինչև այստեղ</div><div class="in"><span class="t">0:49:24</span>հա փոքրացրած</div><div class="in"><span class="t">0:49:27</span>դե ժողովուրդ եկեք մի հատ ուսումնասիրենք</div><div class=""><span class="t">0:49:29</span>այս մեր դատան տեսնենք այդ մեջը ինչ է</div><div class=""><span class="t">0:49:30</span>կատարվում Այստեղ</div></div>
+</details>
+<details open class="cut" id="cut-19" data-w0="3047.24" data-w1="3090.4" data-s0="3067.24" data-e0="3070.4" data-pxw="3453">
+<summary>Cut 19   0:51:07:06 → 0:51:10:10   (3.2 s)</summary>
+<div class="reason">3.9 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio19_spec.png" alt="spectrogram cut 19"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:50:47.2</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:51:30.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:51:02</span>լավանում, արդեն մոռացա, վերև, աջ ու ոչ</div><div class=""><span class="t">0:51:05</span>մի բանն էր լավանում</div><div class=""><span class="t">0:51:14</span>մայկայով էի, բայց էդ երկարաթևով էի, բայց</div></div>
+</details>
+<details open class="cut" id="cut-20" data-w0="3079.64" data-w1="3122.48" data-s0="3099.64" data-e0="3102.48" data-pxw="3427">
+<summary>Cut 20   0:51:39:16 → 0:51:42:12   (2.8 s)</summary>
+<div class="reason">3.6 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio20_spec.png" alt="spectrogram cut 20"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:51:19.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:52:02.5</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:51:36</span>լրիվ այն հիպոթեզով էի, որ կանաչ շորն է</div><div class=""><span class="t">0:51:38</span>երկու տեղն է բռնում:</div><div class=""><span class="t">0:51:46</span>է կարող անի:</div></div>
+</details>
+<details open class="cut" id="cut-21" data-w0="3091.84" data-w1="3135.08" data-s0="3111.84" data-e0="3115.08" data-pxw="3459">
+<summary>Cut 21   0:51:51:21 → 0:51:55:02   (3.2 s)</summary>
+<div class="reason">4.0 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio21_spec.png" alt="spectrogram cut 21"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:51:31.8</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:52:15.1</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:51:46</span>է կարող անի:</div><div class=""><span class="t">0:51:49</span>Ռադիատորը նույն ձև է չէ ամեն տեղ:</div></div>
+</details>
+<details open class="cut" id="cut-22" data-w0="3102.96" data-w1="3145.96" data-s0="3122.96" data-e0="3125.96" data-pxw="3440">
+<summary>Cut 22   0:52:02:24 → 0:52:05:24   (3.0 s)</summary>
+<div class="reason">3.8 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio22_spec.png" alt="spectrogram cut 22"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:51:43.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:52:26.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:52:08</span>ձեռքը բռնելն էլ է տարբեր: Օ, գիտեմ, բան</div></div>
+</details>
+<details open class="cut" id="cut-23" data-w0="3192.44" data-w1="3234.84" data-s0="3212.44" data-e0="3214.84" data-pxw="3392">
+<summary>Cut 23   0:53:32:11 → 0:53:34:21   (2.4 s)</summary>
+<div class="reason">3.1 s of silence</div><div class="flag">short sound at 0:53:35.0 (-47 dB) - listen<button class="jump" data-t="3214.00">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio23_spec.png" alt="spectrogram cut 23"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:53:12.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:53:54.8</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:53:28</span>հետո մի քիչ ավելի դանդաղ կարդալ։</div><div class=""><span class="t">0:53:37</span>ոնց որ այս հիպոթեզները, որ օրինակ աթոռն</div></div>
+</details>
+<details open class="cut" id="cut-24" data-w0="3270.72" data-w1="3323.52" data-s0="3290.72" data-e0="3303.52" data-pxw="4224">
+<summary>Cut 24   0:54:50:18 → 0:55:03:13   (12.8 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Thinking aloud: &#x27;it seems filtered for one piece, if I&#x27;m not mistaken... I won&#x27;t check now, could be on everything&#x27;, up to &#x27;But either way the conclusion is the same&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio24_spec.png" alt="spectrogram cut 24"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:54:30.7</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:55:23.5</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:54:48</span>արժեք ընդամենը դա</div><div class="in"><span class="t">0:54:51</span>ստեղ ոնց որ թե ֆիլտրած է ինչ-որ կոնկրետ</div><div class="in"><span class="t">0:54:54</span>կտորի համարդատի եթե չեմ սխալվում</div><div class="in"><span class="t">0:54:57</span>x regլավդ</div><div class="in"><span class="t">0:55:00</span>հիմա շատ չստուգեմ կարող նաև ամեն ինչի</div><div class="in"><span class="t">0:55:02</span>վրա արած</div><div class="in"><span class="t">0:55:03</span>Բայց ամեն դեպքում ոնց որ մեկ է</div><div class=""><span class="t">0:55:05</span>եզրակացությունը նույն ձևը երևում է էլի,</div></div>
+</details>
+<details open class="cut" id="cut-25" data-w0="3313.6" data-w1="3359.24" data-s0="3333.6" data-e0="3339.24" data-pxw="3651">
+<summary>Cut 25   0:55:33:15 → 0:55:39:06   (5.6 s)</summary>
+<div class="reason">6.3 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio25_spec.png" alt="spectrogram cut 25"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:55:13.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:55:59.2</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:55:28</span>տոկոսը ընկած ա շատ 20 տոկոս ռանդամ</div><div class=""><span class="t">0:55:32</span>գուշակելու մակարդակի։</div><div class=""><span class="t">0:55:42</span>հարմար բան, որ կարելի է անել, էդ բանն ա։</div></div>
+</details>
+<details open class="cut" id="cut-26" data-w0="3346.52" data-w1="3406.04" data-s0="3366.52" data-e0="3386.04" data-pxw="4762">
+<summary>Cut 26   0:56:06:13 → 0:56:26:01   (19.5 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Thinking aloud about the distance (&#x27;computing cosine, if the vectors have the same length, maybe normalized&#x27;), up to &#x27;and if we look at the nearest image&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio26_spec.png" alt="spectrogram cut 26"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:55:46.5</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:56:46.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:56:02</span>ուղղակի նույնիսկ հասարակ բանով հաշվենք</div><div class=""><span class="t">0:56:04</span>քառակուսային շեղումով</div><div class="in"><span class="t">0:56:10</span>երկու կոսինուս է հաշվել եթե բայց բաները</div><div class="in"><span class="t">0:56:14</span>նույնը լինեն վեկտորները</div><div class="in"><span class="t">0:56:17</span>մի երկարության լինի կարող է նորմալիզացիա</div><div class="in"><span class="t">0:56:19</span>էլ արելս</div><div class="in"><span class="t">0:56:26</span>ու ամենամոտիկ նկարը եթե նայենք</div><div class=""><span class="t">0:56:28</span>պիքսելների արժեքներով</div><div class=""><span class="t">0:56:30</span>վերևի համար վերև-վերև այ սա էր</div></div>
+</details>
+<details open class="cut" id="cut-27" data-w0="3542.56" data-w1="3597.24" data-s0="3562.56" data-e0="3577.24" data-pxw="4374">
+<summary>Cut 27   0:59:22:14 → 0:59:37:06   (14.7 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;Any questions up to here, people?&#x27; + silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio27_spec.png" alt="spectrogram cut 27"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">0:59:02.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">0:59:57.2</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">0:59:18</span>ոբշմ իմ ապոկալիպտիկ մտքերը կպահեմ ինձ</div><div class="in"><span class="t">0:59:23</span>մինչև այստեղ ինչ-որ հարցեր ժողովուրդ</div><div class="in"><span class="t">0:59:37</span>ոնց որ ֆիքսեցինք, որ թրեյնingինգ դատան</div><div class=""><span class="t">0:59:40</span>մեր ֆունդամենտալ պրոբլեմն ա կարա միտք</div></div>
+</details>
+<details open class="cut" id="cut-28" data-w0="3701.04" data-w1="3767.92" data-s0="3721.04" data-e0="3747.92" data-pxw="5350">
+<summary>Cut 28   1:02:01:01 → 1:02:27:23   (26.9 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;Questions from here, people?&#x27; + 15 s silence, up to the random-split comparison</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio28_spec.png" alt="spectrogram cut 28"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:01:41.0</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:02:47.9</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:01:57</span>խայտառակությունը չկա, արդեն այստեղ շատ</div><div class=""><span class="t">1:01:59</span>ավելի լավ է իրեն պահում:</div><div class="in"><span class="t">1:02:10</span>հարց է այստեղից ժողովուրդ</div><div class=""><span class="t">1:02:30</span>random splitի պահը, որ ասում էինք</div></div>
+</details>
+<details open class="cut" id="cut-29" data-w0="3812.88" data-w1="3858.0" data-s0="3832.88" data-e0="3838.0" data-pxw="3610">
+<summary>Cut 29   1:03:52:22 → 1:03:58:00   (5.1 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;Questions from here?&#x27; + silence, up to the student&#x27;s question about KNN</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio29_spec.png" alt="spectrogram cut 29"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:03:32.9</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:04:18.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:03:51</span>ըըը ուրիշների մոդելներին։</div><div class="in"><span class="t">1:03:54</span>Հարցեր ստեղից։</div><div class=""><span class="t">1:04:01</span>էր բան անում,</div></div>
+</details>
+<details open class="cut" id="cut-30" data-w0="3851.28" data-w1="3897.4" data-s0="3871.28" data-e0="3877.4" data-pxw="3690">
+<summary>Cut 30   1:04:31:07 → 1:04:37:10   (6.1 s)</summary>
+<div class="reason">6.9 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio30_spec.png" alt="spectrogram cut 30"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:04:11.3</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:04:57.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:04:28</span>Հա, Մինկովսկին ըստ էության մեր մոտ</div><div class=""><span class="t">1:04:29</span>Էֆկլիդյանն ա էլի։</div><div class=""><span class="t">1:04:39</span>ինչքան ավելի լավ արդյունք կստացվի:</div></div>
+</details>
+<details open class="cut" id="cut-31" data-w0="3923.36" data-w1="3965.84" data-s0="3943.36" data-e0="3945.84" data-pxw="3398">
+<summary>Cut 31   1:05:43:09 → 1:05:45:21   (2.5 s)</summary>
+<div class="reason">3.2 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio31_spec.png" alt="spectrogram cut 31"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:05:23.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:06:05.8</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:05:38</span>դատաստը շատ սահմանափակ ա,</div><div class=""><span class="t">1:05:41</span>բայց հեսա իրեն կփորձենք։</div></div>
+</details>
+<details open class="cut" id="cut-32" data-w0="3927.88" data-w1="3974.44" data-s0="3947.88" data-e0="3954.44" data-pxw="3725">
+<summary>Cut 32   1:05:47:22 → 1:05:54:11   (6.6 s)</summary>
+<div class="reason">7.3 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio32_spec.png" alt="spectrogram cut 32"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:05:27.9</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:06:14.4</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:05:56</span>Դե եկեք էս Resnet 18-ը քաշենք</div><div class=""><span class="t">1:05:58</span>ինտերնետից։ Այստեղ torch vision.modelsից</div></div>
+</details>
+<details open class="cut" id="cut-33" data-w0="4101.72" data-w1="4155.96" data-s0="4121.72" data-e0="4135.96" data-pxw="4339">
+<summary>Cut 33   1:08:41:18 → 1:08:55:24   (14.2 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Forgot a predicted class name (&#x27;for left, harp... forgot&#x27;), up to &#x27;in short, it makes interesting predictions&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio33_spec.png" alt="spectrogram cut 33"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:08:21.7</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:09:16.0</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:08:36</span>հաջորդը եղել ա էլեկտրիկ ու ակուստիկները</div><div class=""><span class="t">1:08:39</span>կարող է իրոք էս լարերի վրա գնում էլի</div><div class="in"><span class="t">1:08:42</span>հա ձախի համար էլ հարբ</div><div class="in"><span class="t">1:08:47</span>քնահոն քնաֆա</div><div class="in"><span class="t">1:08:53</span>չմոռացել եմ</div><div class=""><span class="t">1:08:56</span>մի խոսքով հետաքրքր գուշակություն է անում</div></div>
+</details>
+<details open class="cut" id="cut-34" data-w0="4119.52" data-w1="4162.64" data-s0="4139.52" data-e0="4142.64" data-pxw="3450">
+<summary>Cut 34   1:08:59:13 → 1:09:02:16   (3.1 s)</summary>
+<div class="reason">3.8 s of silence</div><div class="flag">short sound at 1:09:02.9 (-47 dB) - listen<button class="jump" data-t="4141.90">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio34_spec.png" alt="spectrogram cut 34"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:08:39.5</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:09:22.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:08:56</span>մի խոսքով հետաքրքր գուշակություն է անում</div></div>
+</details>
+<details open class="cut" id="cut-35" data-w0="4164.6" data-w1="4207.12" data-s0="4184.6" data-e0="4187.12" data-pxw="3402">
+<summary>Cut 35   1:09:44:15 → 1:09:47:03   (2.5 s)</summary>
+<div class="reason">3.2 s of silence</div><div class="flag">short sound at 1:09:46.4 (-49 dB) - listen<button class="jump" data-t="4185.40">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio35_spec.png" alt="spectrogram cut 35"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:09:24.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:10:07.1</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:09:39</span>կիրառելու ոչ մի բան չփոխի էլի հաջորդ</div><div class=""><span class="t">1:09:42</span>հաջորդ նախորդ շերտի արդյունքը մեզ հետ տա</div><div class=""><span class="t">1:09:49</span>աշխատացնել մի հատ նախ ուղղակի բան անենք</div></div>
+</details>
+<details open class="cut" id="cut-36" data-w0="4270.76" data-w1="4313.48" data-s0="4290.76" data-e0="4293.48" data-pxw="3418">
+<summary>Cut 36   1:11:30:19 → 1:11:33:12   (2.7 s)</summary>
+<div class="reason">3.4 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio36_spec.png" alt="spectrogram cut 36"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:11:10.8</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:11:53.5</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:11:27</span>դեր է խաղում, արդեն սարերձորեր է դառնում</div><div class=""><span class="t">1:11:29</span>այստեղ ամեն ինչ:</div><div class=""><span class="t">1:11:36</span>ֆիչերները կլիպից դուրս բերել</div></div>
+</details>
+<details open class="cut" id="cut-37" data-w0="4507.44" data-w1="4550.12" data-s0="4527.44" data-e0="4530.12" data-pxw="3414">
+<summary>Cut 37   1:15:27:11 → 1:15:30:03   (2.7 s)</summary>
+<div class="reason">3.4 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio37_spec.png" alt="spectrogram cut 37"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:15:07.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:15:50.1</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:15:23</span>իսկ հիմա շատ ավելի վատ իրավիճակ ա մեր</div><div class=""><span class="t">1:15:34</span>տվյալ տվյալների իրական կյանքի հետ</div></div>
+</details>
+<details open class="cut" id="cut-38" data-w0="4562.48" data-w1="4619.88" data-s0="4582.48" data-e0="4599.88" data-pxw="4592">
+<summary>Cut 38   1:16:22:12 → 1:16:39:22   (17.4 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;But up to here, any [questions]?&#x27; + 15 s silence, up to the snake game code</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio38_spec.png" alt="spectrogram cut 38"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:16:02.5</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:16:59.9</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:16:20</span>աշխատացնել: Հեսա դա կփորձենք,</div><div class="in"><span class="t">1:16:23</span>բայց մինչև այստեղ ինչ-որ ցանկացած</div><div class=""><span class="t">1:16:42</span>վերջ մեր զմեկային</div></div>
+</details>
+<details open class="cut" id="cut-39" data-w0="4693.76" data-w1="4736.8" data-s0="4713.76" data-e0="4716.8" data-pxw="3443">
+<summary>Cut 39   1:18:33:19 → 1:18:36:20   (3.0 s)</summary>
+<div class="reason">3.8 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio39_spec.png" alt="spectrogram cut 39"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:18:13.8</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:18:56.8</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:18:29</span>p մի քիչ դանդաղ կարող է անի, բայց</div><div class=""><span class="t">1:18:39</span>ըհ մեծ CNN ու ոգմենտացիա</div></div>
+</details>
+<details open class="cut" id="cut-40" data-w0="4803.08" data-w1="4889.16" data-s0="4823.08" data-e0="4869.16" data-pxw="6886">
+<summary>Cut 40   1:20:23:02 → 1:21:09:04   (46.1 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> End of the demo: &#x27;ah no, OK&#x27;, &#x27;until you ask questions I&#x27;ll just play&#x27;, &#x27;think well, CNNs are done&#x27; + silences, up to the student&#x27;s question about the game</div><div class="flag">short sound at 1:21:07.0 (-36 dB) - listen<button class="jump" data-t="4866.00">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio40_spec.png" alt="spectrogram cut 40"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:20:03.1</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:21:29.2</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:20:18</span>բայց հա էս էլ ասում ա ինչ արագությամբ ա</div><div class=""><span class="t">1:20:20</span>աշխատում իսկ մի վայրկյանում քանի հատ ֆլե</div><div class=""><span class="t">1:20:22</span>ա վերցնում ու կարանք տեսնենք ա չէ լավ</div><div class="in"><span class="t">1:20:27</span>բայց հա Հա դե ժողովուրդ ես, ըհը</div><div class="in"><span class="t">1:20:32</span>ըհը հեռավ</div><div>...</div><div class="in"><span class="t">1:20:59</span>մտածեք CNN-ները պրծել, CNN-ն չենք</div><div class="in"><span class="t">1:21:01</span>տեսնելու մոտական ժամանակը նենց որ մի հատ</div><div class="in"><span class="t">1:21:03</span>ընդհանուր մտածեք</div><div class=""><span class="t">1:21:13</span>իմ վալիդեationը շատ լավ բարձր էր լինում,</div></div>
+</details>
+<details open class="cut" id="cut-41" data-w0="4955.2" data-w1="4997.68" data-s0="4975.2" data-e0="4977.68" data-pxw="3398">
+<summary>Cut 41   1:22:55:05 → 1:22:57:17   (2.5 s)</summary>
+<div class="reason">3.2 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio41_spec.png" alt="spectrogram cut 41"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:22:35.2</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:23:17.7</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:22:51</span>ամենայն հավանականությամբ</div><div class=""><span class="t">1:22:53</span>Ո սրան անջատենք</div><div class=""><span class="t">1:23:00</span>վրա էր ֆոկուս եղել քրոդիան</div></div>
+</details>
+<details open class="cut" id="cut-42" data-w0="5125.68" data-w1="5220.2" data-s0="5145.68" data-e0="5200.2" data-pxw="7562">
+<summary>Cut 42   1:25:45:17 → 1:26:40:05   (54.5 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> Tech fiddling: &#x27;what was the file name&#x27;, 30 s silence, &#x27;the slash wasn&#x27;t needed&#x27;, &#x27;one more try&#x27;, up to &#x27;now when I press right, let it start&#x27;</div><div class="flag">short sound at 1:26:16.3 (-47 dB) - listen<button class="jump" data-t="5175.30">play here</button></div><div class="flag">short sound at 1:26:37.7 (-48 dB) - listen<button class="jump" data-t="5196.70">play here</button></div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio42_spec.png" alt="spectrogram cut 42"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:25:25.7</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:27:00.2</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:25:40</span>արագ ա փոխվում այսինքն եթե օրինակ բանը</div><div class=""><span class="t">1:25:44</span>մի հատ աշխատացնեմ</div><div class="in"><span class="t">1:25:46</span>ըմ էդ էսքեպր անելու դատասեթetը</div><div class="in"><span class="t">1:25:50</span>Ոնց էր ֆայլի անունը</div><div class="in"><span class="t">1:26:19</span>ա վայ վայ վայ վայ ուղղակի այ սպսլաշ-ը</div><div>...</div><div class="in"><span class="t">1:26:27</span>ու այ սպս</div><div class="in"><span class="t">1:26:30</span>ըհը հեսա կբացի</div><div class="in"><span class="t">1:26:40</span>այստեղ օրինակի համար էր: Հիմա, որ</div><div class=""><span class="t">1:26:42</span>սեղմում եմ աջը, թող սկսի</div></div>
+</details>
+<details open class="cut" id="cut-43" data-w0="5196.44" data-w1="5250.32" data-s0="5216.44" data-e0="5230.32" data-pxw="4310">
+<summary>Cut 43   1:26:56:11 → 1:27:10:08   (13.9 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Looking for the frames in the data folder (&#x27;where is it... gesture data, no, hayk 2... what did I press?&#x27;), up to &#x27;let&#x27;s say this one and this one&#x27;</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio43_spec.png" alt="spectrogram cut 43"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:26:36.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:27:30.3</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:26:51</span>այլն: Ես իրոք երկու ֆրեյմի մակարդակով</div><div class=""><span class="t">1:26:54</span>շատ չեմ կարող իրեն տեղափոխեմ մատս:</div><div class="in"><span class="t">1:26:57</span>Ու՞ր է: Հեսա մի հատ դատայի մեջ էլ</div><div class="in"><span class="t">1:27:01</span>Այստեղ gesture դատա չէ, հայկ երկու</div><div class="in"><span class="t">1:27:06</span>ի՞նչ էի սեղմել, վերև էի չէ՞ սեղմել հեսա:</div><div class="in"><span class="t">1:27:10</span>Ասենք ասենք այ սա ու այ սա</div></div>
+</details>
+<details open class="cut" id="cut-44" data-w0="5579.64" data-w1="5623.08" data-s0="5599.64" data-e0="5603.08" data-pxw="3475">
+<summary>Cut 44   1:33:19:16 → 1:33:23:02   (3.4 s)</summary>
+<div class="reason">4.2 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio44_spec.png" alt="spectrogram cut 44"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:32:59.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:33:43.1</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:33:16</span>էլ ավելի բան անհանգստանալու թազա բան</div><div class=""><span class="t">1:33:25</span>ասեմ, էս այ էս ձևով պրոյեկտ անելը ինձ</div></div>
+</details>
+<details open class="cut" id="cut-45" data-w0="5647.8" data-w1="5705.08" data-s0="5667.8" data-e0="5685.08" data-pxw="4582">
+<summary>Cut 45   1:34:27:20 → 1:34:45:02   (17.3 s)</summary>
+<div class="reason"><span class="badge judgment">your call</span> Feedback/thanks exchange (&#x27;it was good, lots to learn&#x27; / &#x27;glad to hear&#x27; / &#x27;great&#x27;), up to the student&#x27;s ResNet question</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio45_spec.png" alt="spectrogram cut 45"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:34:07.8</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:35:05.1</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class="in"><span class="t">1:34:34</span>լավն էր, շատ-շատ բան կար սովորելու էլի</div><div class="in"><span class="t">1:34:38</span>հաու ու ուրախ եմ լսել</div><div class="in"><span class="t">1:34:42</span>հա շատ ընտիր</div><div class="in"><span class="t">1:34:45</span>ես մի հատ ուզում էի բանը այդ ռեզոնենտի</div></div>
+</details>
+<details open class="cut" id="cut-46" data-w0="5744.36" data-w1="5786.88" data-s0="5764.36" data-e0="5766.88" data-pxw="3402">
+<summary>Cut 46   1:36:04:09 → 1:36:06:22   (2.5 s)</summary>
+<div class="reason">3.2 s of silence</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio46_spec.png" alt="spectrogram cut 46"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:35:44.4</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:36:26.9</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:36:01</span>դա էլ վարժությունիկ որպես կարա հետաքրքիր</div><div class=""><span class="t">1:36:09</span>ձևը մի հատ հասկանայի՝ ոնց են ընդհանրապես</div></div>
+</details>
+<details open class="cut" id="cut-47" data-w0="5795.48" data-w1="5881.68" data-s0="5815.48" data-e0="5861.68" data-pxw="6896">
+<summary>Cut 47   1:36:55:12 → 1:37:41:17   (46.2 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> &#x27;Anything you want to discuss or try?&#x27; + silence + scheduling Sunday&#x27;s class</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio47_spec.png" alt="spectrogram cut 47"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:36:35.5</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:38:01.7</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:36:51</span>է դրա հաշվին ես հիմնականում պրինցիպով եմ</div><div class=""><span class="t">1:36:54</span>բան անում</div><div class="in"><span class="t">1:37:05</span>ցանկացած բան որ կուզեք քննարկենք</div><div class="in"><span class="t">1:37:09</span>կամ փորձենք կամ մի խոսքով ցանկացած բան</div><div class="in"><span class="t">1:37:25</span>մի հատ այս կիրակի առն</div><div>...</div><div class="in"><span class="t">1:37:37</span>մի հատ ամեն դեպքում բան մի հատ պահ</div><div class="in"><span class="t">1:37:39</span>հասկանամ ընդեղ</div><div class=""><span class="t">1:37:42</span>ու դրանից հետո բան արդեն դե</div><div class=""><span class="t">1:37:44</span>տրանսֆորմերներ կամ նուտ ընդեղ հլը</div></div>
+</details>
+<details open class="cut" id="cut-48" data-w0="5884.6" data-w1="5939.58" data-s0="5904.6" data-e0="5939.6" data-pxw="4398">
+<summary>Cut 48   1:38:24:15 → 1:38:59:15   (35.0 s)</summary>
+<div class="reason"><span class="badge safe">safe</span> Outro: &#x27;That&#x27;s all&#x27;, countdown, &#x27;thanks for staying 1h40 without a break&#x27;, goodbyes</div>
+<div class="ctl"><button class="play">Play</button><span class="now"></span>
+  <label><input type="checkbox" class="skip"> skip the cuts (hear the result)</label>
+  <span class="zoom">zoom <button class="zout">-</button><span class="zl">1&times;</span><button class="zin">+</button></span><span class="err"></span></div>
+<div class="specscroll"><div class="specwrap"><img loading="lazy" src="media/studio48_spec.png" alt="spectrogram cut 48"><div class="shades"></div><div class="bar"></div></div></div>
+<div class="axis"><span class="a0">1:38:04.6</span><span>0-5 kHz. Red: this cut, orange: cuts you added, grey: neighbouring cuts. Drag an edge to move it, anywhere else to move the bar. Ctrl+wheel zooms, Shift+wheel scrolls</span><span class="a1">1:38:59.6</span></div>
+<div class="edit"><span class="times"></span><button class="set-s">Start = bar</button><button class="set-e">End = bar</button>
+  <button class="reset">Reset</button><button class="rm">Remove cut</button><button class="add">Add a cut at the bar</button><span class="was"></span><span class="warn"></span><span class="msg"></span></div>
+<div class="added-cuts"></div>
+<div class="tx"><div class=""><span class="t">1:38:20</span>էլի, ինչ-որ էլի մի հատ նոր բլոկի սկիզ</div><div class=""><span class="t">1:38:23</span>սկիզբը, այսպես ասած։</div><div class="in"><span class="t">1:38:26</span>Հա, բայց հա, ժողովուրդ։ Այսքանը։</div><div class="in"><span class="t">1:38:31</span>Դե լավ, հինգ, չորս, երեք, երկու, մեկ։</div><div class="in"><span class="t">1:38:39</span>Դե բարի։ Է ապրեք, որ միացաք ու առանց</div><div class="in"><span class="t">1:38:43</span>դասամիջոցի ժամ 40 րոպե մնացիք։</div><div class="in"><span class="t">1:38:47</span>Չէի մտածել, որ ժամ 40 րոպե կլինի։</div><div class="in"><span class="t">1:38:50</span>Ու հա, դե ձեզ լավ օրվա ավարտ</div><div class="in"><span class="t">1:38:54</span>ու առայժմ</div><div class="in"><span class="t">1:38:56</span>հաջողություն ձեզ էլ, ձեզ էլ հաջողություն</div></div>
+</details>
+<details open id="export-list"><summary>Cut list with your changes (last first)</summary>
+<p class="note">The same format as <code>studio_cuts.txt</code>, renumbered in Studio's order. Changed cuts say what they
+were, added ones say NEW, removed ones are listed at the end as REMOVED. Changes stay in this browser for this cut list only; enter them in Studio yourself, or paste
+this list to Claude.</p>
+<p><button id="copy">Copy list</button> <span id="copied"></span> <button id="reset-all">Put all cuts back</button></p>
+<textarea id="export" readonly></textarea>
+</details>
+</main>
+<script>
+const A = document.getElementById('media');                  // the 360p video preview, or the WAV
+const FPS = +document.body.dataset.fps, CTX = +document.body.dataset.ctx;
+const NEW_LEN = 1.0;                                          // a cut added at the bar starts 1 s long
+const KEY = 'studio-edits-' + document.body.dataset.list;   // a new cut list starts with no edits
+const OVERLAP = ' - Studio would join them, adjust one of the two';
+const cards = [...document.querySelectorAll('details.cut')];
+let cur = null, raf = null, focusEl = null, uid = 0;
+function tc(t) { const f = Math.floor(t * FPS + 1e-6), s = Math.floor(f / FPS);
+  return Math.floor(s / 3600) + ':' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' +
+         String(s % 60).padStart(2, '0') + ':' + String(f % FPS).padStart(2, '0'); }
+const num = (el, k) => parseFloat(el.dataset[k]);
+const snap = t => Math.round(t * FPS) / FPS;   // Studio works in whole frames
+// Every cut on the page: each card's planned cut, plus the cuts added on this page (host = the card).
+const plan = cards.map(el => ({ host: el, s: num(el, 's0'), e: num(el, 'e0'), s0: num(el, 's0'), e0: num(el, 'e0'), added: false, removed: false }));
+cards.forEach((el, i) => { el.plan = plan[i]; });
+let added = [];
+const all = () => plan.filter(c => !c.removed).concat(added);   // a removed cut is out of the list and the numbering
+const own = el => [el.plan, ...added.filter(c => c.host === el)];
+const changed = c => !c.added && (Math.abs(c.s - c.s0) > 1e-6 || Math.abs(c.e - c.e0) > 1e-6);
+function storageError(what, err) {
+  document.getElementById('storage').textContent = `Edits can't be ${what} in this browser (${err.message}) - copy the list below before closing the tab.`;
+}
+function save() {
+  const edits = {};
+  plan.forEach(c => { if (changed(c)) edits[c.host.id] = [c.s, c.e]; });
+  try { localStorage.setItem(KEY, JSON.stringify({ edits, added: added.map(c => ({ host: c.host.id, s: c.s, e: c.e })),
+                                                   removed: plan.filter(c => c.removed).map(c => c.host.id) })); }
+  catch (err) { storageError('saved', err); }
+}
+function load() {
+  let o;
+  try { o = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (err) { storageError('loaded', err); return; }
+  const edits = 'edits' in o ? o.edits : o;    // the first version stored only {cardId: [s, e]}
+  plan.forEach(c => { if (edits[c.host.id]) [c.s, c.e] = edits[c.host.id]; });
+  (o.added || []).forEach(a => { const h = document.getElementById(a.host);
+    if (h) added.push({ id: ++uid, host: h, s: a.s, e: a.e, added: true }); });
+  (o.removed || []).forEach(id => { const c = plan.find(p => p.host.id === id); if (c) c.removed = true; });
+}
+function show(el, t) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1');
+  t = Math.min(w1, Math.max(w0, t));
+  el.querySelector('.bar').style.left = (100 * (t - w0) / (w1 - w0)) + '%';
+  el.querySelector('.now').textContent = tc(t);
+  el.dataset.pos = t;
+  return t;
+}
+const ZOOMS = [1, 2, 4, 8, 16, 32, 64];
+const parts = el => ({ sc: el.querySelector('.specscroll'), wrap: el.querySelector('.specwrap'), w0: num(el, 'w0'), w1: num(el, 'w1') });
+function axis(el) {        // the times at the visible edges of the spectrogram
+  const { sc, wrap, w0, w1 } = parts(el), W = wrap.offsetWidth;
+  el.querySelector('.a0').textContent = tc(W ? w0 + sc.scrollLeft / W * (w1 - w0) : w0);
+  el.querySelector('.a1').textContent = tc(W ? Math.min(w1, w0 + (sc.scrollLeft + sc.clientWidth) / W * (w1 - w0)) : w1);
+}
+function zoomTo(el, z, t, x) {   // zoom level z, keeping time t at x px from the visible left edge
+  const { sc, wrap, w0, w1 } = parts(el);
+  el.dataset.zoom = z;
+  wrap.style.width = (100 * z) + '%';
+  sc.scrollLeft = (t - w0) / (w1 - w0) * wrap.offsetWidth - x;
+  el.querySelector('.zl').textContent = z + '\u00d7';
+  axis(el);
+}
+function zoomStep(el, dir, t, x) {   // one level in (+1) or out (-1), up to 4 screen px per image px
+  const zs = ZOOMS.filter(z => z === 1 || z * parts(el).sc.clientWidth <= 4 * num(el, 'pxw'));
+  let i = zs.indexOf(num(el, 'zoom'));
+  if (i < 0) i = zs.length - 1;                                 // the window got narrower since
+  zoomTo(el, zs[Math.max(0, Math.min(zs.length - 1, i + dir))], t, x);
+}
+function follow(el, t) {   // zoomed in: page the view along so the bar stays visible
+  const { sc, wrap, w0, w1 } = parts(el);
+  if (num(el, 'zoom') === 1) return;
+  const x = (t - w0) / (w1 - w0) * wrap.offsetWidth;
+  if (x < sc.scrollLeft || x > sc.scrollLeft + sc.clientWidth - 2) sc.scrollLeft = x - sc.clientWidth * 0.1;
+}
+const span = c => `${tc(c.s)} \u2192 ${tc(c.e)}   (${(c.e - c.s).toFixed(1)} s)`;
+function renderCard(el) {
+  const w0 = num(el, 'w0'), w1 = num(el, 'w1'), p = el.plan, mine = own(el);
+  const box = el.querySelector('.shades');
+  box.textContent = '';
+  all().forEach(c => {
+    if (c.e <= w0 || c.s >= w1) return;
+    const d = document.createElement('div'), a = Math.max(c.s, w0), b = Math.min(c.e, w1);
+    d.className = 'shade' + (c.host !== el ? ' other' : c.added ? ' added' : '');
+    d.style.left = (100 * (a - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (b - a) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  });
+  if (p.removed) {                                              // where the removed cut was: a dashed outline
+    const d = document.createElement('div');
+    d.className = 'shade gone';
+    d.style.left = (100 * (p.s - w0) / (w1 - w0)) + '%';
+    d.style.width = (100 * (p.e - p.s) / (w1 - w0)) + '%';
+    box.appendChild(d);
+  }
+  el.querySelector('.times').textContent = p.removed ? `removed on this page (planned ${tc(p.s0)} - ${tc(p.e0)})`
+    : `start ${tc(p.s)}  end ${tc(p.e)}  (${(p.e - p.s).toFixed(2)} s)`;
+  el.querySelector('.was').textContent = changed(p) && !p.removed ? `was ${tc(p.s0)} - ${tc(p.e0)}` : '';
+  el.querySelector('.warn').textContent = p.warn.length ? p.warn.join(', ') + OVERLAP : '';
+  el.querySelector('.rm').textContent = p.removed ? 'Restore cut' : 'Remove cut';
+  ['.set-s', '.set-e', '.reset'].forEach(k => { el.querySelector(k).disabled = p.removed; });
+  el.querySelector('.added-cuts').innerHTML = mine.slice(1).map(c =>
+    `<div class="added-row"><span class="tag">New Cut ${c.n}</span><span class="times">start ${tc(c.s)}  end ${tc(c.e)}  (${(c.e - c.s).toFixed(2)} s)</span>` +
+    `<button data-id="${c.id}" data-do="s">Start = bar</button><button data-id="${c.id}" data-do="e">End = bar</button>` +
+    `<button data-id="${c.id}" data-do="x">Remove</button><span class="warn">${c.warn.length ? c.warn.join(', ') + OVERLAP : ''}</span></div>`).join('');
+  const extra = mine.length > 1 ? `   + new ${mine.slice(1).map(c => 'Cut ' + c.n).join(', ')}` : '';
+  const title = (p.removed ? `Removed   ${tc(p.s0)} \u2192 ${tc(p.e0)}` : `Cut ${p.n}   ${span(p)}` + (changed(p) ? '   changed' : '')) + extra;
+  el.classList.toggle('changed', (changed(p) && !p.removed) || mine.length > 1);
+  el.classList.toggle('removed', p.removed);
+  el.querySelector('summary').textContent = title;
+  document.querySelector(`nav a[href="#${el.id}"]`).textContent = title;
+}
+function renderAll() {
+  const sorted = all().sort((a, b) => a.s - b.s || a.e - b.e);   // Studio numbers its list by start time
+  plan.forEach(c => { c.n = null; c.warn = []; });              // removed cuts get no number and no warnings
+  sorted.forEach((c, i) => { c.n = i + 1; c.warn = []; });
+  for (let i = 1; i < sorted.length; i++) if (sorted[i].s < sorted[i - 1].e) {
+    sorted[i].warn.push(`overlaps Cut ${sorted[i - 1].n}`); sorted[i - 1].warn.push(`overlaps Cut ${sorted[i].n}`); }
+  cards.forEach(renderCard);
+  const gone = plan.filter(c => c.removed);
+  const nChanged = plan.filter(c => changed(c) && !c.removed).length, nNew = added.length, nRemoved = gone.length;
+  let removed = 0, end = -1;                                    // union, so overlaps count once
+  sorted.forEach(c => { removed += Math.max(0, c.e - Math.max(c.s, end)); end = Math.max(end, c.e); });
+  const dur = +document.body.dataset.duration;
+  const hms = t => { t = Math.round(t); return Math.floor(t / 3600) + ':' + String(Math.floor(t % 3600 / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+  document.getElementById('nchanged').textContent = nChanged || nNew || nRemoved
+    ? ` \u00b7 on this page: ${nChanged} changed, ${nNew} new, ${nRemoved} removed` : '';
+  document.getElementById('removed').textContent = `${hms(removed)}: ${hms(dur)} \u2192 ${hms(dur - removed)}`;
+  document.getElementById('export').value =
+    `# ${sorted.length} cuts (${nChanged} changed, ${nNew} new, ${nRemoved} removed on studio.html), numbered as in Studio, listed last first for entry\n` +
+    sorted.slice().reverse().map(c =>
+      `Cut ${String(c.n).padStart(2)}   ${tc(c.s)}  ->  ${tc(c.e)}   (${(c.e - c.s).toFixed(2)} s)` +
+      (c.added ? '   NEW' : changed(c) ? `   CHANGED, was ${tc(c.s0)} -> ${tc(c.e0)}` : '')).join('\n') +
+    gone.map(c => `\n# REMOVED, was ${tc(c.s0)} -> ${tc(c.e0)}`).join('');      // planned cuts dropped on the page
+}
+function setEdge(c, k, t, fromButton = false) {
+  const el = c.host;
+  t = snap(Math.min(num(el, 'w1'), Math.max(num(el, 'w0'), t)));
+  const s = k === 's' ? t : c.s, e = k === 'e' ? t : c.e;
+  if (e - s < 1 / FPS - 1e-6) {
+    if (fromButton) el.querySelector('.msg').textContent = `Cut ${c.n}: the start has to stay before the end - move the bar first.`;
+    return;
+  }
+  el.querySelector('.msg').textContent = '';
+  c[k] = t;
+  renderAll();
+  if (fromButton) save();
+}
+function addCut(el) {
+  const w1 = num(el, 'w1');
+  let s = snap(num(el, 'pos')), e = snap(Math.min(w1, s + NEW_LEN));
+  if (e - s < NEW_LEN / 2) s = snap(e - NEW_LEN);                 // bar at the window's end: grow to the left
+  added.push({ id: ++uid, host: el, s, e, added: true });
+  renderAll(); save();
+}
+function tick() {
+  if (!cur) return;
+  let t = A.currentTime;
+  if (cur.querySelector('.skip').checked) {                      // jump over every cut, added ones too
+    const c = all().find(c => t >= c.s && t < c.e);
+    if (c) { A.currentTime = c.e; t = c.e; }
+  }
+  if (t >= num(cur, 'w1')) A.pause();                            // the end of the spectrogram
+  show(cur, t);
+  follow(cur, t);
+  if (!A.paused) raf = requestAnimationFrame(tick);
+}
+function label(el, playing) { el.querySelector('.play').textContent = playing ? 'Pause' : 'Play'; }
+function play(el) {
+  if (cur && cur !== el) { A.pause(); label(cur, false); }
+  cur = focusEl = el;
+  const nowcut = document.getElementById('nowcut');
+  if (nowcut) nowcut.textContent = el.plan.removed ? 'Playing a removed cut' : `Playing Cut ${el.plan.n}`;
+  let t = num(el, 'pos');
+  if (t >= num(el, 'w1') - 0.05) t = show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  follow(el, t);
+  A.currentTime = t;
+  A.play().then(() => { label(el, true); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); })
+          .catch(err => { if (err.name !== 'AbortError') el.querySelector('.err').textContent = 'Could not play: ' + err.message; });  // AbortError = paused before playback began
+}
+A.addEventListener('pause', () => { if (cur) label(cur, false); cancelAnimationFrame(raf); });
+A.addEventListener('error', () => document.querySelectorAll('.err').forEach(e => e.textContent = 'Media failed to load: ' + A.src));
+const player = document.getElementById('player');
+if (player) {                                                   // video preview: hide/show, remembered per browser
+  const btn = document.getElementById('vtoggle');
+  const setHidden = h => { player.classList.toggle('hidden', h); btn.textContent = h ? 'Show video' : 'Hide video'; };
+  try { setHidden(localStorage.getItem('studio-video-hidden') === '1'); } catch (err) { storageError('loaded', err); }
+  btn.addEventListener('click', () => {
+    const h = !player.classList.contains('hidden');
+    setHidden(h); btn.blur();
+    try { localStorage.setItem('studio-video-hidden', h ? '1' : '0'); } catch (err) { storageError('saved', err); }
+  });
+}
+load();
+cards.forEach(el => {
+  el.dataset.zoom = 1;
+  show(el, Math.max(num(el, 'w0'), el.plan.s - CTX));
+  el.querySelector('.play').addEventListener('click', () => (cur === el && !A.paused) ? A.pause() : play(el));
+  const wrap = el.querySelector('.specwrap');
+  const tAt = ev => { const r = wrap.getBoundingClientRect();
+    return num(el, 'w0') + Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * (num(el, 'w1') - num(el, 'w0')); };
+  const px = t => { const r = wrap.getBoundingClientRect(); return r.left + (t - num(el, 'w0')) / (num(el, 'w1') - num(el, 'w0')) * r.width; };
+  const edgeAt = ev => {   // within 8 px of an edge of this card's cuts: drag that edge instead of the bar
+    let best = null, bd = 8;
+    own(el).filter(c => !c.removed).forEach(c => ['s', 'e'].forEach(k => { const d = Math.abs(ev.clientX - px(c[k])); if (d <= bd) { bd = d; best = { c, k }; } }));
+    return best; };
+  const sc = el.querySelector('.specscroll');
+  const barX = () => { const x = px(num(el, 'pos')) - sc.getBoundingClientRect().left;   // bar off screen: centre it
+    return x >= 0 && x <= sc.clientWidth ? x : sc.clientWidth / 2; };
+  ['zin', 'zout'].forEach((k, i) => el.querySelector('.' + k).addEventListener('click', ev => {
+    focusEl = el; ev.currentTarget.blur();                      // so the space bar plays again, not zooms again
+    zoomStep(el, i ? -1 : 1, num(el, 'pos'), barX()); }));
+  let wheel = 0;
+  sc.addEventListener('wheel', ev => {   // Ctrl+wheel zooms around the pointer (a trackpad pinch sends the same)
+    if (!ev.ctrlKey) return;
+    ev.preventDefault();
+    wheel += ev.deltaMode === 1 ? ev.deltaY * 33 : ev.deltaY;   // deltaMode 1: lines, not pixels
+    if (Math.abs(wheel) < 50) return;
+    const dir = wheel < 0 ? 1 : -1;
+    wheel = 0;
+    focusEl = el;
+    zoomStep(el, dir, tAt(ev), ev.clientX - sc.getBoundingClientRect().left); }, { passive: false });
+  sc.addEventListener('scroll', () => axis(el));
+  let drag = null;
+  const move = ev => {
+    if (drag === 'bar') { const t = show(el, tAt(ev)); if (cur === el && !A.paused) A.currentTime = t; }
+    else setEdge(drag.c, drag.k, tAt(ev)); };
+  wrap.addEventListener('pointerdown', ev => { focusEl = el; drag = edgeAt(ev) || 'bar'; wrap.setPointerCapture(ev.pointerId); move(ev); });
+  wrap.addEventListener('pointermove', ev => { if (drag) move(ev); else wrap.style.cursor = edgeAt(ev) ? 'col-resize' : 'ew-resize'; });
+  wrap.addEventListener('pointerup', () => { if (drag && drag !== 'bar') save(); drag = null; });
+  el.querySelector('.set-s').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 's', num(el, 'pos'), true); });
+  el.querySelector('.set-e').addEventListener('click', () => { focusEl = el; setEdge(el.plan, 'e', num(el, 'pos'), true); });
+  el.querySelector('.reset').addEventListener('click', () => { el.plan.s = el.plan.s0; el.plan.e = el.plan.e0; renderAll(); save(); });
+  el.querySelector('.rm').addEventListener('click', ev => { focusEl = el; ev.currentTarget.blur();
+    el.plan.removed = !el.plan.removed; renderAll(); save(); });
+  el.querySelector('.add').addEventListener('click', () => { focusEl = el; addCut(el); });
+  el.querySelector('.added-cuts').addEventListener('click', ev => {   // buttons of the added cuts, rebuilt on every render
+    const b = ev.target.closest('button');
+    if (!b) return;
+    focusEl = el;
+    const c = added.find(x => x.id === +b.dataset.id);
+    if (b.dataset.do === 'x') { added = added.filter(x => x !== c); renderAll(); save(); }
+    else setEdge(c, b.dataset.do, num(el, 'pos'), true); });
+  el.querySelectorAll('.jump').forEach(b => b.addEventListener('click', () => { show(el, parseFloat(b.dataset.t)); play(el); }));
+});
+renderAll();
+cards.forEach(axis);
+window.addEventListener('resize', () => cards.forEach(axis));
+document.getElementById('copy').addEventListener('click', () =>
+  navigator.clipboard.writeText(document.getElementById('export').value)
+    .then(() => document.getElementById('copied').textContent = 'copied')
+    .catch(err => document.getElementById('copied').textContent = 'Copy failed: ' + err.message + ' - select the text and copy it by hand'));
+document.getElementById('reset-all').addEventListener('click', () => {
+  if (!confirm('Put every cut back to the planned times, restore the removed ones and drop the cuts you added?')) return;
+  plan.forEach(c => { c.s = c.s0; c.e = c.e0; c.removed = false; }); added = []; renderAll(); save(); });
+document.addEventListener('keydown', ev => {
+  const tag = document.activeElement.tagName;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  if (ev.code === 'Space' && cur && tag !== 'BUTTON') { ev.preventDefault(); A.paused ? play(cur) : A.pause(); }
+  if ((ev.code === 'ArrowLeft' || ev.code === 'ArrowRight') && focusEl) {   // move the bar 0.2 s, Shift: 1 s
+    ev.preventDefault();
+    const t = show(focusEl, num(focusEl, 'pos') + (ev.code === 'ArrowLeft' ? -1 : 1) * (ev.shiftKey ? 1 : 0.2));
+    follow(focusEl, t);
+    if (cur === focusEl && !A.paused) A.currentTime = t; } });
+</script>
+</body></html>

@@ -1,0 +1,13 @@
+{
+ "playlist": "Մաթեմատիկա մեքենայական ուսուցման (ML-ի) համար (PLfLD2TpGxVUxc1HLKBVe7KOS4CjU29pgR)",
+ "rule": "Subscribe + Video + Playlist (this playlist), last 10 s. Video: the next one in course order (lectures and practicals by publish date, lectures in number order); Դաս 52 -> Best for viewer.",
+ "verified": "2026-10-27, read-only, make_endscreen_verify.py, after the 4 add batches: 40 of 78 match. 38 made today (all match) + 2 that already matched (pos 01, 04). The 38 that differ all had an end screen before today and were skipped by the batches.",
+ "differ_before_fixes": {
+  "A_two_videos_no_playlist": {"pos": [0, 2, 3, 5, 6, 8, 9, 10], "decision": "Q15: rebuild to the standard (delete and add)"},
+  "B_points_back_to_Դաս_9": {"pos": [16, 18, 21], "decision": "Q14: video element -> next in course order"},
+  "C_best_for_viewer": {"pos": [7, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 39, 45, 56, 57, 58, 60, 61, 62, 63, 64, 65, 69, 70], "decision": "Q13: video element -> next in course order"},
+  "D_extra_video": {"pos": [48], "has": "Subscribe + Best for viewer + Playlist + Video 'Երեք հոգանոց դուել'", "decision": "Q16: leave"}
+ },
+ "pos_note": "pos = course-order index used in the job file names endscreen_m4ml_NN_<id>.js",
+ "after_fixes": "2026-10-27, read-only, make_endscreen_verify.py over all 78: 77 match. The one that does not is pos 48 (Գործնական 17, group D, left as decided in Q16). Group C (26) and B (3) were changed by endscreen_edit_template.js batches (times kept); group A (8) was rebuilt by hand through Playwright (delete the 3 old elements, apply the template, set the last 10 s), each confirmed after a reload."
+}

@@ -194,9 +194,31 @@ These uploads are only a caption source. Each piece is cut and its sound fixed l
   newest-first view was an auto sort over the stored order; youtube.com playlist page, each item More actions > Move to
   bottom in target order, a reload after each (the page does not redraw after a move), 97 moves in 891 s; the API reads
   0 moves left. **Overall review** (Q125): `scripts/non_essential/vahagn_overall_review.py` ->
-  `output/vahagn_linalg_overview/overall_review.html`, 25/25 as drafted, playlist #73-97. Studio shows all 25 as
-  **Draft** (upload dialog never finished): publishing means finishing each draft. Open: publishing (the user's word),
-  deletions of the replaced uploads (Q84). **Saved ~12:55** (the user: "pls u save all"); Studio's
+  `output/vahagn_linalg_overview/overall_review.html`, 25/25 as drafted, playlist #73-97. **Drafts finished
+  2026-10-28 ~00:15-00:25** (the user: "finish the drafts in pw, dont turn public yet"): Edit draft > Next x3 >
+  Unlisted > Save, 21.1 by hand then `.playwright-mcp/vahagn_finish_drafts.js`; Studio: no draft banner, Unlisted on
+  all 25; API: 25 unlisted, 0 differ. **Thumbnails fixed 2026-10-28 (Q129):** 6 had text not from their title (21.2,
+  24.2.a, 24.2.b, 28.1.b, 28.2.b, 28.3.b; e.g. 28.3.b «Պտույտներ և ձգումներ» under «...երկրաչափական իմաստը»); their
+  `thumb` in pieces.json is now the title's own words, rebuilt, uploaded (300 units), Studio shows them. No build check
+  added (the user, Q130: "just fix these 6"). **Plan for 2026-10-28 morning (the user: "we make public and email
+  tmrw morning"):** (1) the 25 unlisted -> public (drafts already finished, so a status update: back up the status,
+  `videos.update(part=status)` with each video's own writable fields, read back; the Tserunyan pattern in
+  `scripts/archive/tserunyan_2026-10/make_public.py`, ~25 x 50 units); (2) the closing email in his thread,
+  text in `email_closing_draft.md` (Gmail connector was out of quota the night before). Then: deletions (Q84).
+  **Public 2026-10-28 14:26-14:27** (the user: "pls also set vahagn course public"): the 25 sections 21.1-28.4
+  unlisted -> public with `scripts/archive/vahagn_2026-10/make_public.py --apply` (1,250 units; status backup
+  `status_before_public_2026-10-28.json`); read back 25/25 public, no other status field changed. The course is 97/97
+  public. **Closing email:** Gmail draft created 14:28 in his thread (reply to his 6 Nov 2025 message), not sent.
+  **Deletions done 2026-10-28 14:01-14:02 (Q37/Q38):** 44 uploads deleted with
+  `scripts/archive/vahagn_2026-10/delete_replaced_uploads.py --apply` (2,200 units): the 18 replaced 22.1-28.4 uploads
+  (`uploads_replaced.json`), the 25 raw caption uploads (`uploads.json`, incl. nrKtWsRzEHA; transcripts kept in
+  `output/2026-10-25_VidSection-*`) and brEvgF3isUE. Before: none public, none in a playlist, no description on the
+  channel links them; metadata in `deleted_backup_2026-10-28.json`, list in `deletion_candidates_2026-10-28.json`.
+  Read back: none returned, the 97 playlist videos all there. **Kept (the user's choice):** 24 private uploads dated
+  2025-10-25 ("VidSection 20 3" ... "VidSection 28 3 a", "Գծային հանրահաշիվ դասախոսություն 09"), in no record of ours;
+  group D in the candidates file. Ashot's 3 private caption uploads (also named in Q84 on 2026-10-25) were not part
+  of this run.
+  **Saved ~12:55** (the user: "pls u save all"); Studio's
   confirm dialog showed the predicted lengths (20:38, 25:09, 18:28, 16:40, 10:19, 27:23, 18:05; it drops the fraction).
   Next for these 7, once Studio has processed them: chapters on the edited timeline (`--chapters edited
   --description-only --apply <section>`).

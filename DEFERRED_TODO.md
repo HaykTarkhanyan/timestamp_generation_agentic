@@ -2,6 +2,20 @@
 
 Topics cut from current work so they don't get lost. Newest at the top.
 
+- **2026-10-28 - End screens for umath (user: "next well need to do the same for umath, but not now, just plan it").**
+  Plan, inventory (674 videos in 30 playlists, three tiers), differences from the Metric run and open questions
+  Q20-Q24: `_knowledge/umath_endscreens_plan.md`. Includes the parked Arnak end screens below.
+  Done 2026-10-28: Ashot 9, Sevak 25, Papikian 21, Tserunyan 25, Arnak 14 (DECISIONS #52), Vahagn 97 (DECISIONS #53):
+  Tier 1 191/191. **Finished 2026-10-28:** Tier 2 all 199 of ours, Tier 3 our 44 surveyed (3 seminars added, 6
+  ultra-wide short lessons cannot have one, 2 unlisted thesis days skipped). Nothing left; details in the plan.
+
+- **2026-10-27 - End screens for the rest of Metric Academy.** Done: "Python - Դասեր", "Մեքենայական ուսուցում",
+  "Մաթեմատիկա ML-ի համար" (DECISIONS #51). Not touched: Python Profound solutions (35) and its section playlists
+  (11/10/5), [2023] Python (30), Python Libraries (20, but its videos are in "Python - Դասեր" and done), Projects,
+  short lessons, Workshops, unedited recordings. Upkeep: each new ML / Math lesson needs an end screen, and the
+  previous newest one moves from Best for viewer to it (`make_endscreen_jobs_*.py` + `endscreen_edit_template.js`).
+  2026-10-29: dropped for the ML lectures (the user: "no endscreen needed for mls other lectures", DECISIONS #56).
+
 - **2026-10-22 - Sevak Mkrtchyan's YouTube channel, Honors Linear Algebra (user: "pls also store
   this for future").** https://www.youtube.com/@sevakmkrtchyan-u1h - 10 lectures so far (16 Sep -
   14 Oct 2026), ongoing, no descriptions or chapters. Details in `_knowledge/umath_todo.md`,
@@ -16,7 +30,8 @@ Topics cut from current work so they don't get lost. Newest at the top.
   in each video's last 10 s, Subscribe + the playlist + the next video. Agreed: 1-11 -> the next
   lesson, 12 -> 13, 12 (2025) -> 13, 13 -> "Best for viewer"; Claude saves each (user's OK). Done:
   **lesson 1** (7j53RC1y6i8), by hand through Playwright, saved, elements 1:07:16:00-1:07:26:00
-  (Subscribe, Video: Դաս 2, Playlist). Left: 2-13 and the 2025 recording. Ready, not yet run:
+  (Subscribe, Video: Դաս 2, Playlist). **Done 2026-10-28, 14/14** (umath plan; portrait lessons 2-6 and
+  9-12 have Video + Playlist only, DECISIONS #52). Was left then: 2-13 and the 2025 recording. Ready, not yet run:
   `scripts/non_essential/endscreen_template.js` + `make_endscreen_jobs.py` (README there). Studio
   facts: the End screen "+" menu has "Apply template"; the template card's aria-label is
   "1 video, 1 playlist, 1 subscribe"; template elements default to the last 20 s, each with
@@ -83,5 +98,9 @@ Topics cut from current work so they don't get lost. Newest at the top.
 - **2026-09-26 - Thumbnail style and font for future lectures.** Candidates kept: bignumber,
   notebook, highlighter (`scripts/non_essential/thumbnail_style_options.py`) and the font sheet
   (`thumbnail_font_options.py`). The user hasn't picked yet; lectures still use the original style.
+  2026-10-28: the new LLM series got its own template (DECISIONS #55); the ML series question stays open.
+- **2026-10-28 - LLM thumbnail generator.** `thumbnails/LLM01.png` comes from the options script
+  (`llm_thumbnail_options.py 4`, r4_a). When LLM 02 needs a thumbnail, move the template (cream, green card,
+  `badge()`, `token_row`, `_taped_card`) into a load-bearing generator with one config per lesson.
 - **2026-09-26 - Note in `scripts/YT_PUBLISH_SETUP.md` that the curl/wget deny rule also blocks
   harmless downloads** (the user runs those with `!`). Offered, not answered.

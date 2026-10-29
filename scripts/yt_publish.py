@@ -13,6 +13,10 @@ By design this tool exposes ONLY these write operations (never destructive):
                     publish date, oldest first, or with --by lesson by the "Դաս N"
                     number that starts each title. Dry run unless --apply; ~1 s and
                     50 quota units per moved video.
+  - create-playlist (playlists.insert) - a new playlist; refuses a title the channel
+                    already has, so a rerun can't make a duplicate. 50 units.
+  - rename-playlist (playlists.update) - a new title, the description kept. 50 units.
+  - add-to-playlist (playlistItems.insert) - append a video; refuses one already in it. 50 units.
 plus one read-only helper:
   - recent          (list the channel's newest uploads, so you can grab a video id)
 
@@ -35,6 +39,9 @@ Usage:
   python scripts/yt_publish.py add-comment     <VIDEO_ID> output/<dir>/correction_comment.txt
   python scripts/yt_publish.py update-comment  <COMMENT_ID> output/<dir>/correction_comment.txt
   python scripts/yt_publish.py sort-playlist   <PLAYLIST_ID> [--by published|lesson] [--apply]
+  python scripts/yt_publish.py create-playlist "<TITLE>" [--description-file F] [--privacy public|unlisted|private]
+  python scripts/yt_publish.py rename-playlist <PLAYLIST_ID> "<TITLE>"
+  python scripts/yt_publish.py add-to-playlist <PLAYLIST_ID> <VIDEO_ID>
 
 set-description uploads the description WITHOUT its leading title header. The
 local final/ML*.txt files open with "🎬 Վերնագիր՝ <title>", a blank line, a
@@ -398,6 +405,46 @@ def sort_playlist(playlist_id: str, apply: bool, by: str = "published") -> None:
              + " | ".join(it["snippet"]["title"].split(" | ")[0] for it in after))
 
 
+def create_playlist(title: str, privacy: str, desc_file: str | None) -> None:
+    """Create a playlist on the channel and log its id and link."""
+    yt = get_service()
+    existing = yt.playlists().list(part="snippet", mine=True, maxResults=50).execute().get("items", [])
+    same = [p["id"] for p in existing if p["snippet"]["title"] == title]
+    if same:
+        raise ValueError(f"The channel already has a playlist titled {title!r}: {same}")
+    description = Path(desc_file).read_text(encoding="utf-8").strip() if desc_file else ""
+    if "<" in description or ">" in description:
+        raise ValueError("YouTube rejects '<' and '>' in a playlist description")
+    body = {"snippet": {"title": title, "description": description}, "status": {"privacyStatus": privacy}}
+    resp = yt.playlists().insert(part="snippet,status", body=body).execute()
+    log.info(f"Created {privacy} playlist {resp['id']} {title!r}: "
+             f"https://www.youtube.com/playlist?list={resp['id']}")
+
+
+def rename_playlist(playlist_id: str, title: str) -> None:
+    """Change a playlist's title, keeping its description."""
+    yt = get_service()
+    items = yt.playlists().list(part="snippet", id=playlist_id).execute().get("items", [])
+    if not items:
+        raise ValueError(f"Playlist {playlist_id!r} not found")
+    snippet = items[0]["snippet"]
+    old = snippet["title"]
+    body = {"id": playlist_id, "snippet": {"title": title, "description": snippet.get("description", "")}}
+    yt.playlists().update(part="snippet", body=body).execute()
+    log.info(f"Renamed playlist {playlist_id}: {old!r} -> {title!r}")
+
+
+def add_to_playlist(playlist_id: str, video_id: str) -> None:
+    """Append a video to a playlist, unless it is already there."""
+    yt = get_service()
+    if any(it["contentDetails"]["videoId"] == video_id for it in _playlist_items(yt, playlist_id)):
+        raise ValueError(f"{video_id} is already in playlist {playlist_id}")
+    body = {"snippet": {"playlistId": playlist_id, "resourceId": {"kind": "youtube#video", "videoId": video_id}}}
+    yt.playlistItems().insert(part="snippet", body=body).execute()
+    count = len(_playlist_items(yt, playlist_id))
+    log.info(f"Added {video_id} to playlist {playlist_id} ({count} videos now)")
+
+
 def list_recent(n: int) -> None:
     """List the channel's n most recent uploads (read-only) as: id  url  [published]  title."""
     yt = get_service()
@@ -457,6 +504,19 @@ def main() -> None:
                         help="publish date (default) or the 'Դաս N' number at the start of each title")
     p_sort.add_argument("--apply", action="store_true", help="Make the moves (default: dry run)")
 
+    p_newpl = sub.add_parser("create-playlist", help="Create a playlist on the channel")
+    p_newpl.add_argument("title")
+    p_newpl.add_argument("--description-file", help="UTF-8 file with the playlist description")
+    p_newpl.add_argument("--privacy", choices=["public", "unlisted", "private"], default="public")
+
+    p_renpl = sub.add_parser("rename-playlist", help="Change a playlist's title (keeps its description)")
+    p_renpl.add_argument("playlist_id")
+    p_renpl.add_argument("title")
+
+    p_addpl = sub.add_parser("add-to-playlist", help="Append a video to a playlist")
+    p_addpl.add_argument("playlist_id")
+    p_addpl.add_argument("video_id")
+
     args = parser.parse_args()
     global TOKEN_FILE
     TOKEN_FILE = TOKEN_FILES[args.channel]
@@ -489,6 +549,12 @@ def main() -> None:
         update_comment(args.comment_id, args.comment_file)
     elif args.command == "sort-playlist":
         sort_playlist(args.playlist_id, args.apply, args.by)
+    elif args.command == "create-playlist":
+        create_playlist(args.title, args.privacy, args.description_file)
+    elif args.command == "rename-playlist":
+        rename_playlist(args.playlist_id, args.title)
+    elif args.command == "add-to-playlist":
+        add_to_playlist(args.playlist_id, args.video_id)
 
 
 if __name__ == "__main__":

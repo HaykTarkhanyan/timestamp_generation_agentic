@@ -5,8 +5,8 @@ whether the live title and description are exactly the local drafts (edited chap
     python scripts/non_essential/vahagn_overall_review.py        # ~10 s, ~3 quota units
     -> output/vahagn_linalg_overview/overall_review.html (standalone: thumbnails embedded)
 
-Studio shows the re-uploads as "Draft" (the upload dialog was never finished); the API cannot see that, so the page
-says it once at the top. Read-only.
+The API cannot see Studio's draft state; the drafts were finished as Unlisted on 2026-10-28
+(.playwright-mcp/vahagn_finish_drafts.js). Read-only.
 """
 import base64
 import html
@@ -112,9 +112,9 @@ col.c1{{width:70px}} col.c3{{width:70px}} col.c4{{width:80px}} col.c5{{width:70p
 pre{{white-space:pre-wrap;background:#f6f6f6;padding:10px;font-size:.85em}} .note{{background:#fff7e0;border-left:4px solid #F2A800;padding:8px 12px}}
 </style></head><body>
 <h1>Գծային հանրահաշիվ 21.1-28.4: overall review before publishing</h1>
-<p class="note">Read live from YouTube {time.strftime('%Y-%m-%d %H:%M')}. All 25 are unlisted, and Studio shows them as
-<b>Draft</b> (the upload dialog was never finished): publishing will mean finishing each draft. Pieces whose title,
-description, length or playlist entry differ from the local drafts: <b>{n_bad}</b>.</p>
+<p class="note">Read live from YouTube {time.strftime('%Y-%m-%d %H:%M')}. Visibility as listed per piece. The Studio
+drafts were finished as Unlisted on 2026-10-28 (the API cannot see draft state). Pieces whose title, description,
+length or playlist entry differ from the local drafts: <b>{n_bad}</b>.</p>
 <nav><b>Contents</b><ul><li><a href="#sum">All 25 at a glance</a></li><li><a href="#pieces">Each piece</a></li></ul></nav>
 <details open id="sum"><summary>All 25 at a glance</summary><table><colgroup><col class="c1"><col><col class="c3"><col class="c4">
 <col class="c5"><col class="c6"></colgroup><tr><th>Piece</th><th>Topic</th><th class="num">Length</th><th>Visibility</th>

@@ -1,0 +1,69 @@
+title = "umath end screens: plan, Ashot and Sevak done, Papikian half, headless tested"
+date = "2026-10-28"
+time = "00:00"
+areas = ["scripts/non_essential", "_knowledge", "output/endscreens", ".playwright-mcp (gitignored job files)"]
+
+done = [
+  "Plan for umath end screens: _knowledge/umath_endscreens_plan.md (674 videos in 30 playlists, three tiers, open questions Q20-Q24).",
+  "Ashot, Ինֆորմացիայի տեսություն: 9/9 (Դաս 0-2 already matched, 3-8 added).",
+  "Sevak, Կոմպլեքս անալիզ: 25/25 added in one clean batch.",
+  "Papikian, Հանրահաշիվ և թվերի տեսություն: Դաս 15-23 (8) added; Դաս 1-14 found with Video + Playlist and no Subscribe.",
+  "Tserunyan surveyed (headless): 1-2..13 Video + Playlist without Subscribe, 14-27 none.",
+  "Tserunyan, Տոպոլոգիա: 25/25 (01:46-02:09). 14-27 added (14, clean, 11.3 min); 1-2 rebuilt as the rebuild mode's first script run (52 s, rechecked after a reload: exactly Subscribe + playlist + Դաս 3); 3-13 rebuilt (10, clean, 9.0 min).",
+  "Papikian, Հանրահաշիվ և թվերի տեսություն: 21/21. Դաս 1-14 (13) rebuilt in one clean batch (02:10-02:22, 11.9 min, 54-55 s each).",
+  "Arnak, Բազմաչափ վիճակագրություն: 6/14. Added to make_endscreen_jobs_umath.py (full-title matching; 'extra' rule for 'Դաս 12 (2025)' -> Դաս 13). Դաս 1 matched, Դաս 2 had Video + Playlist; Դաս 3 failed 3x: portrait video (1760x1920), Studio offers no 3-element template. yt-dlp sizes: 9 lessons portrait/square, 5 landscape. Landscape 7, 8, 12 (2025), 13 added (clean, 3.3 min). Q31 = Video + Playlist for portrait (DECISIONS #52); endscreen_template.js got JOB.layout 'video+playlist' (not run yet).",
+  "Arnak finished 10:17-10:28 (after the night's pause): generator 'video_playlist' list [2-6, 9-12] writes layout into those jobs; verifier knows the 2-element shape; Դաս 3 test 50 s + recheck; 4-12 (7) batch, MCP call returned early on a 'leave page?' prompt at Դաս 10, watched to the end, rechecked 7/7. Arnak 14/14.",
+  "Vahagn started 10:30 (Q22 = link the unlisted 21.1-28.4 now, DECISIONS #53; course order from 1.1 as the user asked). Probe: playlist sorted 1.1-28.4, 25-26 never recorded, all 97 landscape (API fileDetails for our 25, yt-dlp for the 72). Studio's picker offers unlisted videos. Generator: vahagn 'order: playlist' with a sorted-titles check. Batch 1 stopped at 4.2 (10:01 long): start '9:50:14' never matched Studio's '09:..'; fix padded minutes, then 6.1 (7:46) failed the other way ('7:45:18'): minutes now take the end time's width. 1.1-4.1 and 5.1-5.2 rechecked after lost results (11/11, 2/2). 6.2-13.1-ա batch clean (25, 21.4 min). 13.1-բ-17.3-ա clean (20, 16.8 min). 17.3-ա-23.2 batch stopped at 21.2: 'two cards start with Դաս 22.1 ...' (11 playlist videos, 22.1-28.4, share their title with an old replaced upload still on the channel: 4w73Zzmn5YU etc., Q84 deletions). Template now matches the card by id (thumbnail vi_webp/<id>/) and checks the preview element's id before Save; generator writes next.id. 61-73 rechecked 13/13 (no twins among their targets). 21.2-28.4 batch clean (24, 19.2 min, by id). Vahagn 97/97 at 12:21; umath Tier 1 191/191.",
+  "Tier 2 started 14:08 (Q20, the user: 'first mat analysis ones', two professors' separate courses; 'some of them already have endscreen', existing ones are skipped and listed, not changed). Probe of the 6 Մաթ. անալիզ playlists: all public videos, lesson order, no repeats; ma3k (ԿՎՏԳ 3) has no Դաս 4: lecture dates 3 = 10 Sept 2024, 5 = 17 Sept, the user knows 4 is missing (3 -> 5). ma4's playlist is unlisted: waiting (Q41). Generator: ma1, ma2, ma3k, ma4k, ma3, ma4 in COURSES. ma1 batch stopped at Դաս 10 (14:16) when the user said the videos end in YSU's ~7 s outro: measured white from 5.4-5.6 s before the end on 6 videos of both professors -> 5 s end screens (DECISIONS #54). Template: JOB.seconds, retime mode (only our 10 s ones rebuilt); batch records skip reasons. ma1 Դաս 1 already had a standard end screen at 5 s from before (left alone). Sizes: 100 landscape.",
+  "Tier 2 Մաթ. անալիզ results (14:20-14:58): ma1 retime pass 2-10 (6, 8, 9 ours -> 5 s; 1-4 pre-existing standard at 5 s; 5, 7 pre-existing with Best for viewer; 10 none) and add 10-22 (13, clean, 13.2 min). ma2 20/20, ma3k 22/22, ma4k 20/20, ma3 16/16 already had end screens: all skipped, nothing changed. 84 pre-existing in all; read-only times survey (make_endscreen_verify.py --times, 15:00-15:21): 81 standard Subscribe + next + playlist (last lessons Best for viewer), 70 at 5 s, 12 at 6 s (all in the other professor's ma3), ma3k Դաս 23 at 20 s, ma1 Դաս 5 and 7 Best for viewer at 5 s. Record: output/endscreens/umath_tier2_matan_2026-10-28.json. Q42a/b/c asked.",
+  "'do more stuff' (15:24): Q42a done (ma1 Դաս 5 -> 6, 7 -> 8, times kept); Q42b done (ma3k Դաս 23 20 s -> 5 s, by hand after the template's exact 5 s was refused: 'Element must be visible for at least 5 seconds'; template now starts 5 s end screens one frame earlier). The playlist picker lists only 20 playlists: template searches 'Any playlist on YouTube' by URL (real typing needed). Q42c left (12 at 6 s).",
+  "More Tier 2: Մաթֆիզ 12 (11 pre-existing, Դաս 12 added at 5 s), Պատահական պրոցեսներ 14, Խմբերի տեսություն 10, Ֆունկցիոնալ անալիզ 23: all pre-existing, nothing changed. Endings measured: mf, pp white YSU outro (5 s), gt 7.0 s dark logo outro (6 s), fa Դաս 8-25 white outro, 3-7 none. Last batch (ՍԴՀ 16 incl. an unnumbered extra -> Best for viewer, Թվերի տեսություն 10 by playlist order, Հավանականություն 2, Գծ. հանրահ. հիմունքներ 2) running at 16:10; Wi-Fi dropped once. Result: ՍԴՀ 1-15 pre-existing, the unnumbered extra added (Best for viewer); Թվերի տեսություն 9 added (lecture order, 10.03 լեկցիա 4 pre-existing); Հավանականություն Դաս 4 pre-existing, 5 added; Գծ. հանրահ. հիմունքներ: both videos belong to '3blue1brown հայերեն' (UCe1MaPoPz8Yx5fljOTRornQ), Studio 'Oops, something went wrong', not editable from umath. Survey of the 75 pre-existing in mf/pp/gt/fa/ode/nt/prob running.",
+  "Tier 1 ending sample (the you-should-know note): Ashot, Sevak, Papikian, Tserunyan, Arnak end in a ~6-8 s end card ('Հաջորդ դասը' / 'Բոլոր դասերը', with drawn boxes on most); our 10 s end screens start 2-4 s before it. Vahagn: no card, PDF to the end. Q43 for the user (retime 191 to the card, and whether to place elements on the boxes).",
+  "Vahagn 21.1-28.4 made public 14:26-14:27 (the user's ask; make_public.py, read back 25/25, nothing else changed); course 97/97 public. Closing email created as a Gmail draft in his thread (not sent).",
+  "Q35/Q37/Q38: 44 Vahagn uploads deleted 14:01-14:02 (18 replaced, 25 raw caption, old 21.2) after checks (not public, not in a playlist, no description links, metadata backup); read back 0 returned, playlist 97/97. 24 private 2025-10-25 uploads kept (not in our records). Note: unlisted twins were never visible to the public; only Studio and the end-screen picker showed them.",
+  "Thumbnail check (the user remembered 'Դաս 22.2' vs a 'Դաս 22-բ' form): all 97 current YouTube thumbnail labels match their titles (contact sheets of crops), 0 'N.b'-style references in titles/descriptions; old and new use N.M (+ -ա/բ/գ for parts of one section). Only difference: the old 72 have a wider gap after ԴԱՍ (~31 vs ~19 px). No change made.",
+  "Check policy (user OK): no final recheck after a clean batch; recheck only lost, retried or failed videos; survey first.",
+  "Parallel test: a second tab is throttled (clicks do not land); a separate headless Chrome reads Studio fine with a normal user agent but cannot save ('Verify it's you').",
+  "make_endscreen_jobs_umath.py: per-course config, 'Դաս N-M' combined lessons, known missing lessons, rebuild jobs. run_endscreen_headless.js for headless read-only runs. make_endscreen_verify.py no longer stops on a page that does not open.",
+  "Evening (16:57-19:48): Q44 a/b/d done (Մաթֆիզ 11 -> 12, Հավանականություն 4 -> 5, Թվերի տեսություն 06 rebuilt at 5 s, Խմբերի տեսություն 1-10 rebuilt at 6 s). Two template fixes from Հավանականություն Դաս 4: open the end screen by its 'End screen Edit' link (Info cards add a second Edit button), and click an element at a point the overlay receives (the player's rewind icon covered a centered Subscribe). Rebuild now also handles the 2-element layout (not run).",
+  "Q43-Q47, Q50: Tier 1 endings sampled 3 per course; Sevak/Papikian/Tserunyan hand-drawn cards start ~7-8 s before the end, Studio's template does not line up with their boxes; the user kept all at 10 s and dropped the layout idea. Drag test (discarded): moves are exact, Studio refuses overlapping or too-close elements.",
+  "Tier 3 (Q49, Q51, Q52): 282 videos, 238 on other channels; our 44 surveyed: 33 had end screens (left), 3 seminars added at 10 s, 6 ultra-wide short lessons cannot have one ('unsupported aspect ratio'), 2 unlisted thesis days skipped. umath end screens finished. Playwright closed; timestamps_MA messaged to start (the user's ask).",
+]
+
+pending = [
+  "Learnings Q32/Q34 (portrait has no 3-element template, minutes width, same-title twins, 5 s frame margin, playlist picker limited to 20) plus today's: Info cards second Edit button, rewind icon over a centered element, overlap/too-close Save block, ultra-wide videos refuse end screens.",
+  "scripts/.secrets/studio_storage_state.json holds Google session cookies (gitignored): delete when headless is no longer used (Q30).",
+  "Q19 (commit) still open.",
+]
+
+next = [
+  "Commit (Q19), switch Studio back to Metric (Q29; told timestamps_MA that Studio is on umath).",
+]
+
+files = [
+  "_knowledge/umath_endscreens_plan.md",
+  "output/endscreens/umath_playlists_2026-10-28.json",
+  "output/endscreens/umath_ashot_verify.json",
+  "output/endscreens/umath_progress_2026-10-28.json",
+  "output/endscreens/umath_tier3_survey_2026-10-28.json",
+  "scripts/non_essential/endscreen_template.js",
+  "scripts/non_essential/endscreen_edit_template.js",
+  "scripts/non_essential/make_endscreen_jobs_umath.py",
+  "scripts/non_essential/run_endscreen_headless.js",
+  "scripts/non_essential/make_endscreen_verify.py",
+  "scripts/non_essential/README.md",
+  "DEFERRED_TODO.md",
+  "_learnings/2026-10-28-0112_end-screen-elements-hidden-until-the-playhead-reaches-them.md",
+  "_learnings/2026-10-28-0112_end-screen-playlist-link-opens-at-the-playlists-top-video.md",
+  "_learnings/2026-10-28-0112_studio-video-search-box-ignores-typing.md",
+  "_learnings/2026-10-28-0112_mcp-run-code-returns-early-on-leave-page-prompt.md",
+  "_learnings/2026-10-28-0112_headless-studio-reads-but-cannot-save.md",
+  "_learnings/2026-10-28-0112_studio-end-screen-editor-is-slow-poll-dont-sleep.md",
+]
+
+commits = []
+
+notes = [
+  "Times: ~50 s per add in the visible browser, ~12.7 s per surveyed video (visible or headless).",
+  "A short network or YouTube blip made both browsers time out on page.goto at the same minute (00:29-00:30); the verifier now records that per video.",
+]

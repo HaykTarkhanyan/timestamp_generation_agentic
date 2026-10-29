@@ -20,6 +20,7 @@ Required system font: Segoe Script (Windows)
 
 Output: output/thumbnails/final/ML0N_final.png
 """
+import json
 import logging
 import sys
 from pathlib import Path
@@ -27,7 +28,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import font_manager
-from matplotlib.patches import Rectangle, Circle
+from matplotlib.patches import Rectangle, Circle, Polygon
 from PIL import Image, ImageDraw, ImageFont
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registers 3d projection)
 
@@ -1678,6 +1679,87 @@ def draw_ml51_task_zoo(fig, bbox):
         _place_asset(fig, name, xc + (w_col - ww) / 2, yy, h_small, tag=cap_text)
 
 
+def draw_ml52_gesture_snake(fig, bbox):
+    """ML 52 (Gesture Snake practical): the practical's loop, left to right - one of the
+    instructor's real "left" crops -> the CNN -> the exported model's real probabilities on that
+    crop -> the game's own board, the snake turning left. Assets and numbers come from
+    thumbnails/src/ml52_assets.py (ml52_meta.json); nothing here is typed in by hand."""
+    x0, y0, w, h = bbox
+    k = 7.2 / 12.8
+    meta = json.loads((OUT_DIR / "assets" / "ml52_meta.json").read_text(encoding="utf-8"))
+    classes, probs = meta["classes"], meta["probs"]
+    top = int(np.argmax(probs))
+    # the board, full band height, on the right
+    bw = h * k
+    bx = x0 + w - bw
+    ax_b = fig.add_axes([bx, y0, bw, h])
+    ax_b.imshow(plt.imread(str(OUT_DIR / "assets" / "ml52_board.png")))
+    ax_b.axis("off")
+    cell = meta["board"]["cell"]
+    (hr, hc), (_, fc) = meta["board"]["head"], meta["board"]["food"]
+    yy = hr * cell + cell / 2
+    ax_b.annotate("", xy=((fc + 1) * cell + 4, yy), xytext=(hc * cell - 4, yy),
+                  arrowprops=dict(arrowstyle="-|>,head_width=0.6,head_length=0.9", color=BAR, lw=6))
+    # the crop, on the left
+    ch = 0.54
+    cw = ch * k
+    _place_asset(fig, "ml52_thumb_left.png", x0, y0 + (h - ch) / 2, ch, tag="webcam")
+    # CNN and bars between them (axes fractions; tuned so "nothing" clears the arrow and the
+    # top bar's value clears the board)
+    mx = x0 + cw
+    ax = fig.add_axes([mx, y0, bx - mx, h])
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
+    arrow = dict(arrowstyle="-|>,head_width=0.5,head_length=0.7", color=TITLE_COLOR, lw=3)
+    ax.annotate("", xy=(0.08, 0.5), xytext=(0.0, 0.5), arrowprops=arrow)
+    d = 0.03
+    for i, (sh, sx) in enumerate([(0.64, 0.12), (0.50, 0.165), (0.36, 0.21)]):   # conv slabs
+        yb = 0.5 - sh / 2
+        ax.add_patch(Polygon([(sx, yb), (sx + d, yb + d * 1.6), (sx + d, yb + sh + d * 1.6), (sx, yb + sh)],
+                             closed=True, fc="#9fb3dd", ec=POINT_COLOR, lw=1.6, zorder=3 + i))
+        ax.add_patch(Rectangle((sx - 0.02, yb), 0.02, sh, fc="#cfdaf0", ec=POINT_COLOR, lw=1.6, zorder=3 + i))
+    ax.text(0.165, 0.09, "CNN", ha="center", va="center", fontsize=24, fontweight="bold",
+            color=POINT_COLOR, family="DejaVu Sans")
+    ax.annotate("", xy=(0.33, 0.5), xytext=(0.26, 0.5), arrowprops=arrow)
+    lx, bx0, blen, row = 0.56, 0.575, 0.20, 0.165
+    for i, (c, p) in enumerate(zip(classes, probs)):
+        y = 0.5 + (2 - i) * row
+        hot = i == top
+        ax.text(lx, y, c, ha="right", va="center", fontsize=19 if hot else 15,
+                fontweight="bold" if hot else "normal", color=LINE_COLOR if hot else TITLE_COLOR,
+                family="DejaVu Sans")
+        ax.add_patch(Rectangle((bx0, y - row * 0.32), blen * max(p, 0.004), row * 0.64,
+                               fc=LINE_COLOR if hot else "#9aa6c4", ec="none"))
+        ax.text(bx0 + blen * p + 0.015, y, f"{p:.2f}", ha="left", va="center",
+                fontsize=16 if hot else 12, fontweight="bold" if hot else "normal",
+                color=LINE_COLOR if hot else "#5a6478", family="DejaVu Sans")
+
+
+def draw_ml53_unrolled(fig, bbox):
+    """ML 53: the RNN folded (one cell, a loop) = unrolled in time (one copy per word, the same
+    W, V, U). fig/folded_unrolled.pdf with its two caption lines cropped
+    (pdf_to_asset.py --crop-bottom 0.09): the user wanted no text beyond the title."""
+    _draw_image_row(fig, bbox, ["ml53_unrolled.png"], max_h=bbox[3], center=True)
+
+
+def draw_ml54_kargin_lstm(fig, bbox):
+    """ML 54: the user's idea - Kargin Haghordum (ep. 24) forgetting his line, and the LSTM cell as
+    the fix for his forgetting. The still is the deck's outline-frame image
+    (fig/kargin_forgot_line.jpg) cropped to the man with the book (x 90-600: no statue, no channel
+    logo); the cell is fig/lstm_anatomy.pdf. An orange arrow between them, no other text."""
+    x0, y0, w, h = bbox
+    k = 7.2 / 12.8
+    gap = 0.07
+    kw = _aspect("ml54_kargin.png") * h * k
+    lw = w - kw - gap
+    lh = min(h, lw / (_aspect("ml54_lstm_anatomy.png") * k))
+    _place_asset(fig, "ml54_kargin.png", x0, y0, h)
+    _place_asset(fig, "ml54_lstm_anatomy.png", x0 + kw + gap, y0 + (h - lh) / 2, lh)
+    ax = fig.add_axes([x0 + kw, y0, gap, h])
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
+    ax.annotate("", xy=(0.88, 0.5), xytext=(0.12, 0.5),
+                arrowprops=dict(arrowstyle="-|>", color=BAR, lw=5, mutation_scale=34))
+
+
 LESSONS = [
     {
         "tag":        "ML 01",
@@ -2077,6 +2159,30 @@ LESSONS = [
         "draw": draw_ml51_task_zoo,
         "bar_color": DL_BAR,
         "chart_bbox": (0.05, 0.02, 0.92, 0.66), "out": "ML51.png",
+    },
+    # ML 52 - Gesture Snake (practical): a webcam thumb -> CNN -> direction -> the snake turns.
+    {
+        "tag": "ML 52", "title": "CNN: Playing Zmeyka",
+        "title_size": 44, "title_max": 80, "title_latin": True,
+        "draw": draw_ml52_gesture_snake, "practical": True,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.02, 0.92, 0.66), "out": "ML52.png",
+    },
+    # ML 53 - RNN foundations (lecture): the folded cell = the unrolled chain.
+    {
+        "tag": "ML 53", "title": "Recurrent Neural Networks",
+        "title_size": 44, "title_max": 80, "title_latin": True,
+        "draw": draw_ml53_unrolled,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.02, 0.92, 0.66), "out": "ML53.png",
+    },
+    # ML 54 - LSTM and the road to attention (lecture): Kargin forgets his line, the LSTM remembers.
+    {
+        "tag": "ML 54", "title": "RNN: Long Short-Term Memory",
+        "title_size": 44, "title_max": 80, "title_latin": True,
+        "draw": draw_ml54_kargin_lstm,
+        "bar_color": DL_BAR,
+        "chart_bbox": (0.05, 0.02, 0.92, 0.66), "out": "ML54.png",
     },
 ]
 

@@ -18,6 +18,36 @@ fetch captions -> silence pass (audio) -> content cuts (LLM) -> review pages -> 
 (what the user changed in my ML48 cuts - the rules below come from it) and
 DECISIONS.md #2, #3 and #6.
 
+## Stage 0 (on request): from Zoom to YouTube
+
+When the user asks for it (first time: ML55, 2026-10-28), Claude takes the Zoom cloud recording to
+YouTube with Playwright: wait for Zoom to finish processing (us06web.zoom.us, the profile keeps the
+login), download the 1920x1080 MP4 to `C:\Users\hayk_\Downloads\` under Zoom's own name (the exact
+path is then known, no listing), upload it in Studio with a placeholder title like
+`[55] x | Մեքենայական ուսուցում`. **Upload as Unlisted. Claude never makes a Metric Academy video
+public, by API or by hand: "in ma im always the one making them public, no automation".**
+
+What worked on ML55 (2026-10-28; Zoom processing took ~1 h for a 1:56 lecture):
+- **Zoom:** `https://us06web.zoom.us/recording` lists the cloud recordings; a card's text reads
+  "Processing..." until it's done. The numbers on the page come *before* each card's title, so read
+  the duration from the card's `listitem` label, not from the line after it (I first quoted the
+  neighbour's 55:42). Open the card's `/recording/detail?meeting_id=...` link.
+- **Download:** the detail page lives in an iframe. Click "Download Recording 1" in that frame, then
+  the "Download" button of the "Download recording files" dialog, catch `page.waitForEvent('download')`
+  and `saveAs` into the scratchpad (`require('fs')` is not available inside `browser_run_code_unsafe`,
+  so the existence check happens in Bash), then `mv -n` to `Downloads/<suggestedFilename>`. 148 MB in
+  118 s. The MCP also drops its own copy in `.playwright-mcp/` (gitignored): delete that named file.
+- **Studio:** open the Metric channel by URL first (`studio.youtube.com/channel/UC5BavugdnUkti3Es7-deZDg`;
+  another session may have left Studio on umath). Create -> "Upload videos" -> `setInputFiles` on the
+  dialog's `input[type=file]`; title `#title-textarea #textbox` (Ctrl+A, type); radio "No, it's not
+  made for kids"; `#next-button` x3; radio "Unlisted".
+- **Saving before the checks finish** brings "We're still checking your content" with "Publish
+  anyway" / "Go back". Go back; the video is "Saved as private" meanwhile. ~10 min after the upload
+  the footer read "Checks complete. No issues found." and Save went through without the warning.
+- A Google survey iframe (`#google-hats-survey`) can cover Save: click its "No thanks".
+- Studio then says "Video published" even for Unlisted: verify with
+  `yt-dlp --print "%(availability)s"` (ML55: `unlisted`).
+
 ## Stage 1: captions
 
 ```bash

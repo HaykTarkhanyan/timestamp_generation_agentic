@@ -4,34 +4,48 @@ One list across the umath channel's courses. Newest state first in each course; 
 they get done. Private source links (Zoom shares, the Drive access key) are in the git-ignored
 `scripts/.secrets/umath_source_links.md`, not here: this repo is public.
 
-Last updated: 2026-10-25 21:05 (Tserunyan section).
+Last updated: 2026-10-29 (nesting push started; Arnak, Ashot, Vahagn sections brought up to date).
+
+## Both channels: nested chapters everywhere (DECISIONS #46, 2026-10-26)
+
+- [x] Snapshot of every video on Metric, umath, Ուղեղամպրոպ (727 videos, title + description + status):
+      `snapshots/channels_2026-10-26/` (git-ignored; `scripts/non_essential/snapshot_channels.py`)
+- [x] All 489 flat chapter lists read by hand (the user's Q78) and planned: `snapshots/nest_plans/plan_*.json`
+      (14 files, `"4-7"` = line 4 parent, 5-7 children), built by `build_nest.py` there with proof that only indent
+      and format change; videos over an hour get H:MM:SS (Q79). 451 descriptions change, 3,097 of 6,167 chapters
+      nested. Previews: `snapshots/nest_preview/index.html`
+- [x] Fixed by hand on 2026-10-27 (the user: "lets fix those as well"; `snapshots/nest_plans/fix_special.py`,
+      record `fixes_special.json`): 5 umath practicals with range-format chapters (k1VWUN2dSgI, ymZ9DpOsC7A,
+      VrqiYwPn5Ps, u6hqL_my9ks, 3HJZQtbHj3M) become start times; Metric zlOpn8L0ucs's first chapter 00:17 -> 00:00
+      (YouTube had been adding its own 0:00 chapter); LaTeX o_ldYAd8c70's second 58:07 ("Գծապատկերներ (tikz)") -> 59:26
+      from the captions (YouTube had silently dropped one of the two). Coverage 489 of 489
+- [ ] **Push started 2026-10-29 01:10** (the user: "doing the nested chapters task. use todays quota already
+      pls"): 111 of 457 updated (all Metric, read back OK, 0 skipped) before quotaExceeded at #112. Continue with
+      `python snapshots/nest_plans/push_nest.py` (API, Q82 "over ~3 days": 457 descriptions, 23,764 units; ~190 a
+      day; resumable, skips any video edited since the snapshot, stops cleanly on quotaExceeded). Rerun after each
+      quota reset until every video is "already done" or SKIPPED; then re-plan the SKIPPED ones from their live text.
+      Log `snapshots/nest_plans/push_nest_log.jsonl`. ML [54]'s file carries 3 boundary fixes (8:12, 28:35, 30:13)
+      from the 2026-10-29 caption check
 
 ## Both channels: description audit (2026-10-22)
 
 All 614 public/unlisted descriptions read line by line; details and findings #1-#61 in
 `_knowledge/description_audit_2026-10-22.md`.
 
-- [ ] Push the 60 remaining batch-2 fixes after the API quota reset (09:00 Munich): scratchpad
-      `audit_fix_batch2.py push`, then `check`; planned texts also in
-      `_knowledge/description_audit_2026-10-22_batch2_pending.json`
-- [ ] Rerun `scripts/non_essential/glossary_scan_channels.py` after that push (expect 0 DENY)
+- [x] Push the 60 remaining batch-2 fixes: done 2026-10-23 12:01, all 80 of the batch read back matching
+      (planned texts in `_knowledge/description_audit_2026-10-22_batch2_pending.json`)
+- [x] Rerun `scripts/non_essential/glossary_scan_channels.py` after that push: 2026-10-23 13:32, 664 items, 0 DENY,
+      40 NEAR, 383 ENG
 - [ ] User decisions: the "user" and "verify" rows of the findings table
 - [x] Dropped (the user, 2026-10-23: "why would we need that?"; every push script reads the live text first). Local copies older than live (ML 2-10, 18-20, ML-math 51-52, Complex 20-25; Papikian not yet compared):
       sync from live? Rerun the comparison after the quota reset (audit file, "Local vs live")
 
 ## Arnak Dalalyan - Բազմաչափ վիճակագրություն
 
-Status (user, 2026-10-20): only editing and thumbnails remain; the professor has not been messaged.
-Details in `_knowledge/arnak_multivariate/status.md`.
-
-- [ ] Review the cut plans (`studio.html` in each output folder) for lesson 10 part 2, 11, 12, 13
-      and the 2025 file, then apply them in Studio's Trim & cut
-- [ ] After the cuts are saved: recheck chapters, then push the descriptions of 10-13
-- [ ] 2025 recording: private frames until its cuts 2-3 are saved; students' names in the Zoom
-      strip need a blur
-- [ ] Thumbnails: `status.md` says 6-13 were pushed on 2026-10-20 22:02-22:07, so check which
-      ones still remain (the 2025 file?)
-- [ ] Message the professor (promised on 25 Apr: chapters fixed, title and thumbnail, then public)
+**DONE 2026-10-21** (commit `3aa7ccb`): all 13 lectures and the 2025 recording ("Դաս 12 (2025)") edited,
+chaptered, described and public; playlist sorted; PDF folder linked. End screens 14/14 on 2026-10-28 (DECISIONS #52).
+Details in `_knowledge/arnak_multivariate/status.md`. The open items below were from 2026-10-20 and are all done or
+dropped (the lecturer is not emailed, the user 2026-10-20).
 
 ## Ashot Harutyunyan - Ինֆորմացիայի տեսություն
 
@@ -40,6 +54,9 @@ Recording timeline in `_knowledge/info_theory/recording_timeline.md`; lessons 4 
 2026-10-24: Դաս 6-8 rendered, uploaded and finished; all 9 descriptions carry the slides block (Drive folder, page
 ranges) and nested chapters; playlist sorted 0-8. **Waiting on Ashot's OK**, then Դաս 4-8 public.
 All 9 at a glance: `_knowledge/info_theory/videos_overview.html`.
+**DONE:** his OK came 2026-10-25, all 9 public; end screens 9/9 on 2026-10-28. The user, 2026-10-29: "with ashot
+everything is settled", so the open items in `_knowledge/info_theory/todo.md` (15 May, Դաս 5 speed, the 3 private
+caption uploads) are closed as they are.
 
 ## Sevak - Կոմպլեքս անալիզ
 
@@ -321,10 +338,15 @@ into Դաս 16.2-գ to 19.2 (10 pieces), Part 7's 20.1-20.3 and 21.2.
 
 - [x] Missing pieces downloaded 2026-10-24 via Playwright (Drive opens only for the user's personal
       account, `drive/u/1`): Part 7 21.1, 22.1, 22.2, 22.3; Part 8 23.1.a-24.4 (11); Part 9 27.1-28.4 (9)
-- [ ] Upload, edit (the published pieces had ~15% cut), chapters, titles, descriptions, thumbnails
-- [ ] Դաս 21.2 is titled "Todo": give it a real title (and chapters)
+- [x] Upload, edit, chapters, titles, descriptions, thumbnails: all 25 (21.1-28.4, incl. a new 21.2) done and public
+      2026-10-28 14:26 (buzz removed, DECISIONS #48; titles DECISIONS #50); course 97/97 public
+- [x] Դաս 21.2 "Todo": replaced by the new upload; the old one deleted with the 43 other replaced/raw uploads 2026-10-28
 - [x] Intro/outro: none (published 20.3 starts on the raw file's first frame)
-- [ ] Sort the playlist into lesson order (dry run: 67 of 73 move)
+- [x] Sort the playlist into lesson order: 2026-10-27, 1.1-28.4 (97 moves in the browser)
+- [x] End screens 97/97 (2026-10-28, DECISIONS #53)
+- [ ] Closing email: Gmail draft in his thread (2026-10-28 14:28), the user sends it
+- Older pieces' date slips (16.2-գ and 17.1-19.2 say 2020; 20.3 says 27 Apr, file 29 Apr) and the 11.1 / 11.2-բ
+  chapter slips: left as they are (the user, 2026-10-29: "i dont care")
 - [ ] Not on YouTube at all, decide later: practical-session recordings, consultations
 - Sections 25 and 26 are not in the folder (probably never recorded)
 

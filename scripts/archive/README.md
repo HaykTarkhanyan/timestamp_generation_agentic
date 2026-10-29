@@ -59,6 +59,8 @@ Added 2026-10-26, the end of the course (copied from the session scratchpad):
 
 | script | what it did | when you would look at it again |
 | --- | --- | --- |
+| `make_public.py` | 2026-10-28 (the user: "pls also set vahagn course public"): the 25 unlisted sections 21.1-28.4 -> public with videos.update(part=status), each video's own writable status fields sent back; requires exactly those 25; status backup first, read back after (25/25 public, nothing else changed). Dry run unless `--apply`; 1,250 units, ~30 s. | Making the next course public. |
+| `delete_replaced_uploads.py` | 2026-10-28 (Q37, groups A+B+C): deletes the 44 uploads the course no longer uses (18 replaced 22.1-28.4 uploads, 25 raw caption uploads, the March "Դաս 21.2 \| Todo"); ids from `deletion_candidates_2026-10-28.json`, metadata backup `deleted_backup_2026-10-28.json`; checks each is not public, not in the playlist, title unchanged; reads back. Dry run unless `--apply`; 2,200 units. | The record of what was deleted and why; the pattern for the next cleanup. |
 | `make_prompts.py` | One Codex review prompt per piece: series rules, title candidates, raw-timeline chapters, full transcript, all inline. Run with `codex exec -s read-only --skip-git-repo-check --ephemeral -C <dir> -o review_<s>.md - < prompt_<s>.md` (~50-75 s each). | The next Codex chapter review of a umath course. |
 | `apply_review.py`, `verdicts_b1..b6.json` | Merged the checked Codex verdicts (take / partial / reject, with reasons) into `_knowledge/vahagn_linalg/codex_review.json` and title changes into `pieces.json`. | Same, as the bookkeeping pattern. |
 | `lint_raw_chapters.py` | Lint of every `timestamps_raw.txt`: 00:00 start, increasing, 30 s gaps, a parent needs 2+ children, nothing too close to the end, no ASCII `<` `>`. | Before assembling drafts of nested chapter lists. |
@@ -69,3 +71,9 @@ Added 2026-10-26, the end of the course (copied from the session scratchpad):
 | `buzz_band.py`, `f0_fit.py` | 2026-10-27: the detector that works (150-600 Hz in the quietest 10% of 128 ms frames vs speech, `buzz_band.json`) and the fit of the hum ladder on the user's noise mark (48.39 Hz + a 90 / 113.8 / 138.3 Hz source). | Finding mains buzz in another series. |
 | `dehum_samples.py`, `dehum_measure.py` | 2026-10-27: the A/B page of fixes on the user's mark (`output/vahagn_linalg_overview/audio/dehum_samples.html`; the user picked notches + the learning denoise, DECISIONS #48) and the residual measure of the variants (peak height over the neighbouring spectrum). | Choosing a dehum setting for another recording. |
 | `dehum_all_page.py` | 2026-10-27: all 18 dehum files on one page, under each other: the video from disk, the whole piece's spectrogram after and before (log frequency), the buzz per minute from `dehum_check.json` (`output/vahagn_linalg_overview/audio/dehum_all.html`, ~5 min). | Checking a re-render before uploading. |
+
+## umath_2026-10/ (umath channel-wide one-offs)
+
+| script | what it did | when you would look at it again |
+| --- | --- | --- |
+| `make_playlist_public.py` | 2026-10-28 (Q41): the unlisted playlist "Մաթեմատիկական անալիզ 4" -> public so end screens can link it; playlists.update needs part=snippet,status (status alone: "unexpectedPart"), the snippet is sent back unchanged; backup `output/endscreens/playlist_ma4_before_public_2026-10-28.json`; read back after a few seconds (an immediate read still said unlisted). Dry run unless `--apply`; 50 units. | Making another playlist public. |

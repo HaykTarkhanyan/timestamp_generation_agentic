@@ -125,6 +125,61 @@ pairs touched or overlapped by a frame. Files: `output/2026-10-16_52-Meqenayakan
   and say both back before entering. Studio's End trim marker matched the list this time
   (1:38:59:15).
 
+## ML53 (2026-10-21): a lecture reviewed on the timeline - the yellow 2 s pauses go
+
+From my 28 cuts (13.1 min) to the user's 52 (14 changed, 24 new), 50 after merging two overlaps:
+15.7 min removed, 1:17:42 -> 1:02:01. Files: `output/2026-10-21_53-rnn-Meqenayakan-usucum_p0EVWRZLtMI/`
+`studio_cuts_edited.txt` (their paste) and `studio_cuts_to_enter.txt` (entered, diff identical).
+
+- **Pauses under 3 s, where the timeline shows them in yellow (2 s+), mostly go.** Of the silences
+  no planned cut touched (end-logistics block excluded):
+
+  | silence | uncovered | cut by the user |
+  |---|---|---|
+  | 1.0-1.5 s | 111 | 8 (7%) |
+  | 1.5-2.0 s | 44 | 7 (16%) |
+  | 2.0-2.5 s | 16 | 10 (62%) |
+  | 2.5-3.0 s | 3 | 1 (33%) |
+
+  On ML48 (cards only, no timeline) the user kept the 3 s minimum. Open question for the user, not
+  a rule yet: pre-tick 2-3 s pauses on lectures (`--min-silence 2`), or leave them to the review.
+- **The end block went further than planned:** the unticked course-plan answer to a new student
+  (1:10:12-1:12:31: fast lectures, then projects, portfolio, jobs) was cut too, so the whole
+  1:08:24-1:14:45 stretch is one cut. Unlike ML52's closing course plan, this one answered a
+  student's schedule question. The unticked homework suggestion stayed, and its start moved 25 s
+  earlier to "homework-wise, Friday..." (1:14:45).
+- **Kept on a lecture, against rule 5:** the homonym hunt at 44:34 ("which homonym can I give... I
+  forgot all the Armenian ones at once"); only the "vay" and the pause after it went (44:44-44:50).
+  A short, self-aware fumble that leads into the example can stay even on a lecture.
+- **"That's all in principle" before a questions prompt goes with it** (1:06:05, cut 5 s earlier).
+- Small edges again moved outward (34:31 cut +2.8 s over a garbled "yes, big").
+- **The user asked me to press Save** ("once your done also quickly double check press save and
+  acknowledge, i will be away"): `cut_list.py diff` identical, Studio's dialog said "Adjust video to
+  new length: 1:02:01" (the prediction), tick "I acknowledge that these changes are permanent",
+  "Confirm changes". Entry: dry run + 4 batches, 97/96/110/79 s.
+
+## ML54 (2026-10-24): same direction, the unticked wrap-up goes too
+
+From my 22 cuts (15.2 min) to the user's 33 (15 changed, 11 new), 31 after merging three
+overlapping end cuts: 16.4 min removed, 55:43 -> 39:19.56. Files:
+`output/2026-10-24_5x-x-Meqenayakan-usucum_m88ZdQhxHp8/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **The unticked closing wrap-up was cut again** ("congrats, another model family covered, LLMs
+  slowly", 50:20): the video ends on the last plan item that matters to a viewer (the notebook
+  that replaces the practical). Two lectures in a row now: an end-of-lecture course-plan or wrap-up
+  block is better pre-ticked as a `judgment` cut.
+- **The lead-in "Դե լավ, ժողովուրդ" before the first content sentence goes** (cut 1 +2.3 s).
+- **A student's "I didn't picture this well" and my "let me try to explain better" went** (24:17-24:33):
+  the re-explanation starts directly.
+- **"I translated that badly" stayed** (46:53); only "but... yes" after it went. Same as ML51: a
+  short candid remark stays, the filler around it goes.
+- **All pre-ticked fumbles stayed cut**, including the 20 s Optimus Prime name hunt and the dropped
+  example; the gate-sum thinking aloud (13:05) was widened by 1 s.
+- 11 new cuts of 2-5 s, as on ML53 (the 3 s default stays, the user's choice on 2026-10-24).
+- **Save dialog:** "Adjust video to new length: 39:19". `cut_list.py` had said 39:20 because it starts
+  from YouTube's rounded 3343 s; from the frames (end marker 55:42:18 minus 24579 cut frames) it is
+  39:19.56, and Studio truncates.
+
 ## Arnak Dalalyan, lesson 10 (2026-10-20): silent writing goes, questions and one-word narration stay
 
 Another channel (Համալսարանական մաթեմատիկա), another lecturer, but the same reading of what a

@@ -18,7 +18,7 @@ for v in vids:
 nxt = {str(n): str(n + 1) for n in range(1, 12)} | {"12": "13", "12y": "13", "13": None}
 for i, label in enumerate(["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "12y", "13"], start=2):
     me, to = by_label[label], nxt[label] and by_label[nxt[label]]
-    job = {"id": me["id"], "lesson": label, "playlist": PL,
+    job = {"id": me["id"], "lesson": label, "playlist": PL, "channel": "UCMFONp28jEDHXDBWJyRVYcA",  # umath
            "next": {"prefix": f"Դաս {to['n']} |", "query": to["topic"]} if to else None}
     out = REPO / ".playwright-mcp" / f"endscreen_{i:02d}_{label}_{me['id']}.js"
     out.write_text(tpl.replace("__JOB__", json.dumps(job, ensure_ascii=False)), encoding="utf-8")

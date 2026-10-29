@@ -11,8 +11,15 @@ So the whole section shares one materials page (lessons 11-16 all map to
 Given a lesson number NN, find the `ml/<folder>/` that contains `<NN>_*.tex`, take
 that folder's chapter `.qmd` (stem == folder name), and build the URL.
 
+The Large Language Models series (from 2026-10-28) numbers its own lessons from [01] and lives
+in the repo's top-level `llms/`, one folder per deck (`llms/01_tokenization/tokenization.qmd`).
+`--series llm` maps lesson NN to the one `llms/NN_*` folder and its one `.qmd`, with no
+nearest-lower fallback: without it, the ML path sent the first LLM lesson (uploaded as [55]) to
+the RNN page. `--fill` picks the series from the title: "| Large Language Models" means llm.
+
 Usage:
   python .../resolve_materials_url.py --lesson 17          # print the URL
+  python .../resolve_materials_url.py --lesson 1 --series llm
   python .../resolve_materials_url.py --fill output/<dir>  # replace the TODO line in that description.txt
   python .../resolve_materials_url.py --all                # backfill every output/*/description.txt
 
@@ -51,8 +58,24 @@ def setup_logging():
     )
 
 
-def resolve(lesson: int, repo: Path = DEFAULT_REPO) -> str:
+def resolve_llm(lesson: int, repo: Path = DEFAULT_REPO) -> str:
+    """Materials URL for lesson NN of the Large Language Models series, or raise loudly."""
+    llms = repo / "llms"
+    if not llms.is_dir():
+        raise FileNotFoundError(f"No llms/ directory in course repo: {llms}")
+    folders = [p for p in sorted(llms.iterdir()) if p.is_dir() and p.name.startswith(f"{lesson:02d}_")]
+    if len(folders) != 1:
+        raise ValueError(f"LLM lesson {lesson}: expected one llms/{lesson:02d}_* folder, found {[f.name for f in folders]}")
+    qmds = list(folders[0].glob("*.qmd"))
+    if len(qmds) != 1:
+        raise ValueError(f"Cannot pick a page .qmd in {folders[0]} (found {[q.name for q in qmds]})")
+    return f"{BASE_URL}/llms/{folders[0].name}/{qmds[0].stem}.html"
+
+
+def resolve(lesson: int, repo: Path = DEFAULT_REPO, series: str = "ml") -> str:
     """Return the materials URL for lesson NN, or raise loudly if not found."""
+    if series == "llm":
+        return resolve_llm(lesson, repo)
     ml = repo / "ml"
     if not ml.is_dir():
         raise FileNotFoundError(f"No ml/ directory in course repo: {ml}")
@@ -109,7 +132,8 @@ def fill(output_dir: Path, repo: Path = DEFAULT_REPO) -> str | None:
     m = NUM_RE.search(first_line)
     if not m:
         raise ValueError(f"No [NN] lesson number in first line of {desc}: {first_line!r}")
-    url = resolve(int(m.group(1)), repo)
+    series = "llm" if "Large Language Models" in first_line else "ml"
+    url = resolve(int(m.group(1)), repo, series)
     desc.write_text(text.replace(TODO_LINE, url), encoding="utf-8")
     log.info(f"{desc}: materials URL -> {url}")
     return url
@@ -125,11 +149,13 @@ def main():
                    help="Backfill every output/*/description.txt")
     ap.add_argument("--course-repo", default=str(DEFAULT_REPO),
                     help="Path to the course repo (default: the Desktop clone)")
+    ap.add_argument("--series", choices=["ml", "llm"], default="ml",
+                    help="With --lesson: the ML series (ml/, default) or Large Language Models (llms/)")
     args = ap.parse_args()
     repo = Path(args.course_repo)
 
     if args.lesson is not None:
-        print(resolve(args.lesson, repo))
+        print(resolve(args.lesson, repo, args.series))
     elif args.fill:
         fill(Path(args.fill), repo)
     else:

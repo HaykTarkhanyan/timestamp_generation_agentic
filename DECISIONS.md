@@ -2,6 +2,117 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 56. New ML lectures get no end screens; #51's upkeep is dropped
+
+- **Decision:** ML lectures after [54], starting with "[01] Tokenization | Large Language Models" (`bhuxuKVhdSA`),
+  get no end screen. [54] keeps "Best for viewer" and is not repointed. The #51 end screens already in place stay.
+- **Date / status:** 2026-10-29, active (the user: "no endscreen needed for mls other lectures").
+- **Why:** the user's call. The new lectures start a new series and playlist ("Large Language Models"), so `[N]` ->
+  `[N+1]` inside "Մեքենայական ուսուցում" no longer covers them.
+- **Alternatives rejected:** #51's upkeep rule (end screen on each new lesson, previous newest repointed to it);
+  repointing [54] to LLM [01] across the two series.
+- **What would change this:** the user asking for end screens on the LLM series, or the LLM playlist growing to a
+  course where next-lesson links would help.
+
+## 55. The Large Language Models series gets its own thumbnail template
+
+- **Decision:** LLM-series thumbnails use a new template, not the ML one:
+  - a cream background (`#FFF7EC`) with no side bar;
+  - the title top left in Comic Sans MS Bold;
+  - a green "LLM NN" card top right (`#1E8449`), with the text centred on its ink;
+  - the lesson's hook drawn by hand below;
+  - images from the web (memes) are allowed.
+
+  Red only marks what is wrong. [01] Tokenization shows the GPT-4o token row with " strawberry" circled, then
+  🙋 "how many r's?", 🤖 "2" and the Picard facepalm meme (`thumbnails/assets/llm01_picard_facepalm.jpg`, from
+  knowyourmeme.com).
+- **Date / status:** 2026-10-28, active (the user: "first one is wonderful", option r4_a, after 4 rounds).
+- **Why:** the user's picks, round by round (`scripts/non_essential/llm_thumbnail_options.py` 1-4):
+  - R1: the notebook scribble with a facepalm ("face palm is genius"). Disliked: the graph paper, the Segoe Script
+    tag, the small image area.
+  - R2: the big facepalm on white.
+  - R3: the card top right, "no need to the vertical line", red not required; cream picked of 6 backgrounds.
+  - R4: emojis instead of "Q:"/"model:", the card text centred, green instead of blue, "change the face palm with
+    the meme".
+- **Alternatives rejected:** the ML template (orange bar, handwritten tag, band; the user asked for a new, "more fun"
+  one); the sky, blobs, ID-texture, white and dark backgrounds; the 🤦 emoji (the meme replaced it); 🧑 and 🤓 as
+  the asker.
+- **What would change this:** a later lesson's hook that does not fit a title + drawing + image layout, or the user
+  moving the ML series to this template too (`DEFERRED_TODO.md`, 2026-09-26). No production generator yet:
+  `thumbnails/LLM01.png` is a copy of `thumbnails/llm_options/r4_a_raised_hand_picard.png`.
+
+## 54. Մաթ. անալիզ end screens sit in the last 5 s, inside YSU's outro
+
+- **Decision:** The six Մաթ. անալիզ courses (four "(տվյալագետների համար)" and two plain ones, two professors) get the #52
+  end screen in the last **5 s** instead of 10 s; end screens our first ma1 batch had already put at 10 s are rebuilt
+  at 5 s; end screens that were there before today are left alone and listed for the user.
+- **Date / status:** 2026-10-28, active (the user: "those vids have an outro ... pls put them for that direction
+  otherwise they block the blackboard").
+- **Why:** measured on 6 videos across the 5 playlists of both professors (mean luma at 10 fps over the last 12 s):
+  the white YSU outro starts fading in 5.4-5.6 s before the end and is full at 4.8-4.9 s; before that the blackboard
+  is on screen. 5 s is also Studio's minimum ("Element must be visible for at least 5 seconds").
+- **Alternatives rejected:** 7 s (the user's estimate of the outro; would cover ~1.5 s of blackboard); 10 s (the
+  #51/#52 default; ~4.5 s of blackboard); measuring each video separately (all 6 samples within 0.2 s).
+- **What would change this:** a video whose outro is shorter or missing (then 5 s covers blackboard; nothing shorter is
+  allowed), or Studio lowering its 5 s minimum.
+- **Extended 2026-10-28 to the rest of Tier 2** (each course's ending measured first): Մաթֆիզ, Պատահական պրոցեսներ,
+  Ֆունկցիոնալ անալիզ (white YSU outro; Դաս 3-7 of the last have none), ՍԴՀ, Թվերի տեսություն, Հավանականություն,
+  Գծ. հանրահաշվի հիմունքներ: 5 s; Խմբերի տեսություն (7.0 s dark logo outro): 6 s. 5 s end screens start one frame earlier
+  (an exact 5 s was refused once, "Element must be visible for at least 5 seconds"). Most of these videos already had
+  end screens and were left as they were.
+
+## 53. Vahagn's end screens follow the playlist order and link the unlisted 21.1-28.4 right away
+
+- **Decision:** In Գծային հանրահաշիվ every video's end screen (#52 layout) points at the next playlist item, which is
+  lesson order (sorted 2026-10-27, checked by the generator before it writes a job). The still unlisted 21.1-28.4 get
+  theirs now and are linked like the rest, so the public 20.3 points at the unlisted 21.1. 24.4 -> 27.1 (sections 25
+  and 26 were never recorded); 28.4 Best for viewer.
+- **Date / status:** 2026-10-28, active (the user's Q22: "All 97, link now").
+- **Why:** Studio's video picker offers unlisted videos (probe on 21.1: searching 21.2 found it at once), so the chain
+  can be built in one pass; no later edit of 20.3 when the 25 go public. Titles "Դաս N.M" / "Դաս N.M-ա" have too many
+  shapes for an N+1 rule, and the playlist was already sorted.
+- **Alternatives rejected:** 20.3 -> Best for viewer until publication (no link to unpublished lessons, but one more
+  edit later); end screens on the 72 public videos only (the 25 later, ~25 min then).
+- **What would change this:** a re-upload of any of the 25 (new id: redo it and its predecessor); the playlist being
+  re-sorted (rerun the generator, it refuses an unsorted playlist).
+
+## 52. umath end screens follow #51; portrait or square lessons get Video + Playlist without Subscribe
+
+- **Decision:** umath course videos get the #51 end screen (Subscribe + next lesson + course playlist, last 10 s, the
+  last lesson Best for viewer). Older Video + Playlist end screens (Papikian 1-14, Tserunyan 1-2..13) were rebuilt to
+  it. Arnak's portrait or square lessons (Դաս 2-6, 9-12: 1440x1662, 1760x1920, 1832x1920, 1920x1920) get
+  "1 video, 1 playlist" instead: next lesson + course playlist, no Subscribe. Arnak's "Դաս 12 (2025)" points where
+  Դաս 12 points (Դաս 13); nothing points at it.
+- **Date / status:** 2026-10-28, active (the user's Q21-Q27 and Q31; plan `_knowledge/umath_endscreens_plan.md`).
+- **Why:** Studio offers no 3-element template for a portrait or square video: on Arnak Դաս 3 (1760x1920) the list
+  was only "1 video, 1 subscribe" (twice), "1 playlist, 1 subscribe" and "1 video, 1 playlist", and the batch timed out
+  3 times waiting for the 3-element card. Դաս 2 (portrait) already had Video: Դաս 3 + the playlist, so the course
+  stays one shape. Landscape lessons (Դաս 1, 7, 8, 12 (2025), 13: 1920x1080 to 3414x1920) took the standard one.
+- **Alternatives rejected:** Video + Subscribe (loses the course playlist link, and Դաս 2 would differ); adding a
+  third element by hand with "+ Element" (not tried: may not fit the narrow frame, ~5 min probe); leaving the
+  portrait lessons without end screens.
+- **What would change this:** Studio offering 3 elements on portrait videos, or a probe showing "+ Element" fits a
+  Subscribe element on them; a re-upload of those lessons in 16:9.
+
+## 51. Metric Academy end screens: Subscribe + the next video + the course playlist, last 10 s
+
+- **Decision:** Every video in "Python - Դասեր", "Մեքենայական ուսուցում" and "Մաթեմատիկա ML-ի համար" gets the
+  "1 video, 1 playlist, 1 subscribe" end screen in its last 10 s, the video element being the next video of the course
+  and the newest one "Best for viewer". Next = playlist order minus two extras (Python); `[N]` -> `[N+1]` (ML, its
+  workshop and Q&A get Best for viewer); lectures and practicals by publish date with lectures in number order (Math,
+  so Դաս 30 comes before Դաս 31). Older end screens were brought to the same shape, keeping their times; Math
+  Գործնական 17 (it also links "Երեք հոգանոց դուել") was left as it is.
+- **Date / status:** 2026-10-27, active; its upkeep for new ML lessons dropped 2026-10-29 (#56) (the user's Q4-Q16; rules in each `scripts/non_essential/make_endscreen_jobs_*.py`).
+- **Why:** the user wanted next video + playlist + Subscribe "for the last few seconds" (Q4: 10 s). Verified read-only
+  after the work: Python 46/46, ML 56/56, Math 77/78 (`output/endscreens/`).
+- **Alternatives rejected:** playlist order for "next" in ML and Math (both are newest first, so it would run
+  backward); 20 s (Studio's template default, covers more of the outro); one playlist for all Python videos (the
+  Libraries ones already linked "Python Libraries", Q6 reopened); sorting ML and Math playlists oldest first (Q11: the
+  user kept newest first, although the end-screen playlist link opens a playlist at its top video, checked on
+  BaQ0-hrcRtI).
+- **What would change this:** a new lesson (give it an end screen, repoint the previous newest one from Best for
+  viewer); a playlist reordered to oldest first (then "next" could follow the playlist); Studio dropping the template.
+
 ## 50. Vahagn's titles, chapters and thumbnails use only his words, or the glossary's where he has none; his word wins
 
 - **Decision:** Every Armenian word in a Vahagn title, chapter or thumbnail is one he says (his captions, any piece) or,
@@ -22,6 +133,9 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   pronunciation); keeping «h(T)» alone.
 - **What would change this:** a published Armenian textbook or his own book's spelling of Schmidt; a term he says only
   in a garbled form the captions cannot confirm (then the glossary, and say so).
+- **Confirmed 2026-10-28 (Q128):** the user asked whether diagonalization should be the glossary's «անկյունագծայնացում»;
+  kept «դիագոնալիզացիա»: he says դիագոնալիզացիա / դիագոնալիզացվող ~50 times in 7 pieces and «անկյունագծայնացում» never
+  («անկյունագծային» only as the adjective, and as a synonym in his definition, 24.2.a 01:23).
 
 ## 49. An English term with no Armenian equivalent gets an Armenian description, not the English word in Armenian letters
 
@@ -91,6 +205,43 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   min 9 -60.9, 23.3.b min 0-1 -65.2/-63.4, 28.1.b min 5 -64.6, 28.2.a min 6 -65.6) passed the user's ear: "all are
   good" (`output/vahagn_linalg_overview/audio/dehum_check.html`). So about -61 dB vs speech in the quietest frames is
   inaudible here; -57 was "some, but not much".
+
+## 47. Ուղեղամպրոպ webinars take their reference from the ughegh_amprop repo and their captions from the API
+
+- **Decision:** The Ուղեղամպրոպ channel (`--channel brainstorm`) uses `Desktop\ughegh_amprop` as its reference
+  (slides, speaker notes, chapter texts), and its private uploads get captions and metadata through
+  `scripts/fetch_captions_api.py` instead of yt-dlp. Details: `_knowledge/ughegh_amprop/README.md`.
+- **Date / status:** 2026-10-24, active. The reference repo is the user's choice; the API route was forced by the data.
+- **Why:** yt-dlp on the first webinar (`vkrjiV7SZ08`) failed with "Private video". The channel owner's token reads
+  the auto-captions (captions.list + captions.download, 250 units) with the same per-word `<c>` timing, and
+  `fileDetails` gives the frame rate (25 fps) that `find_edit_points.py` otherwise asks yt-dlp for. The metadata
+  carries it into `edit_points.json`.
+- **Alternatives rejected:** *Set each upload to unlisted first* - changes who can see the video, which is the
+  user's call, for a step that needs no visibility. *yt-dlp `--cookies-from-browser`* - not tried; it would tie the
+  pipeline to a browser profile.
+- **What would change this:** the user uploading this channel's videos unlisted (then `fetch_subtitles.py` works as
+  for the other channels), or a different reference repo for a later series.
+
+## 46. Every chapter list on Metric and umath gets one level of nesting; videos over an hour get H:MM:SS
+
+- **Decision:** Nest the flat chapter lists of every video on both channels (489 descriptions, 6,210 chapters on
+  2026-10-26), one level, a parent has 2+ children, a theorem with a single proof stays flat, the rules of #34, #36
+  and #39; Claude reads every list and picks the groups by hand. Videos over an hour get H:MM:SS throughout; shorter
+  ones keep MM:SS. Labels and times unchanged. A short video whose list stays flat is not touched.
+- **Date / status:** 2026-10-26, active (the user: "I want to make all channel descriptions with hierarchy"; Q78 "I
+  read every list by hand", Q79 "H:MM:SS for videos over an hour").
+- **Why:** one reading aid across both channels instead of nested lists in some courses (Ashot, Tserunyan, Vahagn's
+  new pieces, part of the ML course) and flat ones elsewhere. Snapshot of every video before the change:
+  `snapshots/channels_2026-10-26/` (git-ignored, `scripts/non_essential/snapshot_channels.py`).
+- **Supersedes:** #36's "renesting the 72 published pieces (not asked)": now asked.
+- **Hand fixes (2026-10-27, the user: "lets fix those as well"):** the 5 umath practicals written as time ranges
+  ("00:55 - 09:45 - label") become start times, the end time dropped (YouTube ends a chapter at the next start);
+  a list starting at 00:17 starts at 0:00; a duplicate 58:07 moves to 59:26 where the captions show the turn. These
+  change the line text, unlike the nesting; labels stay word for word (`snapshots/nest_plans/fix_special.py`).
+- **Alternatives rejected:** a rule-based first pass (indent proof / example / step lines under the line before;
+  offered, the user chose reading by hand); rules only (wrong or missed groups).
+- **What would change this:** YouTube no longer parsing indented chapters, or the user preferring flat lists after
+  seeing a course nested.
 
 ## 45. While the lecturer's webcam is on screen, cuts are only suggestions
 
@@ -280,7 +431,7 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
 
 - **Decision:** Chapters for 21.1-28.4 nest one level where a topic has 2+ sub-chapters (4 spaces before the time,
   as DECISIONS #34 for Ashot); a parent never has a single child, and short theorem-then-proof pairs stay flat.
-- **Date / status:** 2026-10-25, active (the user: "for the timestamps pls use 1 level hierarchy whenever its useful").
+- **Date / status:** 2026-10-25, active; revisited 2026-10-26 by #46 (the published 1.1-20.3 get nested too) (the user: "for the timestamps pls use 1 level hierarchy whenever its useful").
 - **Why:** the user's request; the pieces are 5-30 min of tightly linked definition / theorem / proof / example runs,
   where a parent label reads faster than a flat list.
 - **Alternatives rejected:** flat lists matching 1.1-20.3 (consistent with the published pieces, but not what the
