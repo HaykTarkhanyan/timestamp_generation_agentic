@@ -19,8 +19,10 @@ Last updated: 2026-10-29 (nesting push started; Arnak, Ashot, Vahagn sections br
       VrqiYwPn5Ps, u6hqL_my9ks, 3HJZQtbHj3M) become start times; Metric zlOpn8L0ucs's first chapter 00:17 -> 00:00
       (YouTube had been adding its own 0:00 chapter); LaTeX o_ldYAd8c70's second 58:07 ("Գծապատկերներ (tikz)") -> 59:26
       from the captions (YouTube had silently dropped one of the two). Coverage 489 of 489
-- [ ] **Push started 2026-10-29 01:10** (the user: "doing the nested chapters task. use todays quota already
-      pls"): 111 of 457 updated (all Metric, read back OK, 0 skipped) before quotaExceeded at #112. Continue with
+- [x] **Done 2026-11-03 11:25**: 456 of 457 nested and read back; `RtcShFCGIIs` (a Vahagn upload deleted 2026-10-28)
+      skipped. **Push started 2026-10-29 01:10** (the user: "doing the nested chapters task. use todays quota already
+      pls"): 111 of 457 updated (all Metric, read back OK, 0 skipped) before quotaExceeded at #112; 185 more on
+      2026-10-29 13:30-13:44 (26 Metric, 159 umath, 0 skipped), stopped at #297. 161 left (umath). Continue with
       `python snapshots/nest_plans/push_nest.py` (API, Q82 "over ~3 days": 457 descriptions, 23,764 units; ~190 a
       day; resumable, skips any video edited since the snapshot, stops cleanly on quotaExceeded). Rerun after each
       quota reset until every video is "already done" or SKIPPED; then re-plan the SKIPPED ones from their live text.

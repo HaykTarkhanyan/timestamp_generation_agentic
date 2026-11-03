@@ -7,14 +7,14 @@ go to `DEFERRED_TODO.md`, decisions to `DECISIONS.md`, per-course detail to `_kn
 **Status:** `DONE` · `RUNNING` (in progress now) · `WAIT-YT` (YouTube is processing) ·
 `YOU` (waits on you) · `DECIDE` (your decision needed) · `TODO` (Claude, can start) · `LATER`
 
-Last update: 2026-10-29 01:30 (Munich). Rows checked against `_work_sessions/` up to 2026-10-28; two sessions edit
+Last update: 2026-11-03 11:25 (Munich). Rows checked against `_work_sessions/` up to 2026-10-28; two sessions edit
 this file, so update your own rows AND look over the others before saving.
 
 ## Now
 
 | What | Status | Next step |
 |---|---|---|
-| Nested chapters on Metric + umath (DECISIONS #46, Q81/Q82) | `TODO` | **111 of 457 done** 2026-10-29 01:10-01:20 on the user's go ("use todays quota"): all Metric, all read back OK, 0 skipped; stopped on quotaExceeded at #112 (the rest of 28 Oct Pacific's quota). Left: 346, ~2 days at ~190 a day: rerun `python snapshots/nest_plans/push_nest.py` after each quota reset (08:00 Munich until 1 Nov, then 09:00) until it reports all done. It skips anything edited since the 2026-10-26 snapshot; those need a fresh plan. Log: `snapshots/nest_plans/push_nest_log.jsonl` |
+| Nested chapters on Metric + umath (DECISIONS #46, Q81/Q82) | `DONE` 2026-11-03 | 456 of 457 updated and read back identical over 4 runs (29 Oct: 111 + 185, 3 Nov: 80 + 80); 0 changed since the 2026-10-26 snapshot. 1 skipped: `RtcShFCGIIs`, a Vahagn upload deleted 2026-10-28 (the first 3 Nov run crashed on it; `push_nest.py` now logs a missing video as SKIPPED). Vahagn's 25 new pieces were drafted nested already. Log: `snapshots/nest_plans/push_nest_log.jsonl` |
 | ML [54] chapters on YouTube's captions | `DONE` | 2026-10-29: 26 boundaries audited, 3 moved back 1 s (8:12, 28:35, 30:13), pushed with the nested version, read back |
 | End-screen learnings from 2026-10-28 | `DONE` | 9 files `_learnings/2026-10-29-0120_*` |
 | Commit | `DONE` | See the 2026-10-29 session log |
