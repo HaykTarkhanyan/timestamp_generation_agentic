@@ -208,7 +208,7 @@ These uploads are only a caption source. Each piece is cut and its sound fixed l
   **Public 2026-10-28 14:26-14:27** (the user: "pls also set vahagn course public"): the 25 sections 21.1-28.4
   unlisted -> public with `scripts/archive/vahagn_2026-10/make_public.py --apply` (1,250 units; status backup
   `status_before_public_2026-10-28.json`); read back 25/25 public, no other status field changed. The course is 97/97
-  public. **Closing email:** Gmail draft created 14:28 in his thread (reply to his 6 Nov 2025 message), not sent.
+  public. **Closing email:** Gmail draft created 14:28 in his thread (reply to his 6 Nov 2025 message); sent by the user (said 2026-11-03).
   **Deletions done 2026-10-28 14:01-14:02 (Q37/Q38):** 44 uploads deleted with
   `scripts/archive/vahagn_2026-10/delete_replaced_uploads.py --apply` (2,200 units): the 18 replaced 22.1-28.4 uploads
   (`uploads_replaced.json`), the 25 raw caption uploads (`uploads.json`, incl. nrKtWsRzEHA; transcripts kept in

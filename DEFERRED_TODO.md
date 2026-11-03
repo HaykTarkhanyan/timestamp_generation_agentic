@@ -15,6 +15,7 @@ Topics cut from current work so they don't get lost. Newest at the top.
   short lessons, Workshops, unedited recordings. Upkeep: each new ML / Math lesson needs an end screen, and the
   previous newest one moves from Best for viewer to it (`make_endscreen_jobs_*.py` + `endscreen_edit_template.js`).
   2026-10-29: dropped for the ML lectures (the user: "no endscreen needed for mls other lectures", DECISIONS #56).
+  **Closed 2026-11-03:** the untouched playlists above get none either (the user: "p16 - no need").
 
 - **2026-10-22 - Sevak Mkrtchyan's YouTube channel, Honors Linear Algebra (user: "pls also store
   this for future").** https://www.youtube.com/@sevakmkrtchyan-u1h - 10 lectures so far (16 Sep -

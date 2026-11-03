@@ -346,7 +346,7 @@ into Դաս 16.2-գ to 19.2 (10 pieces), Part 7's 20.1-20.3 and 21.2.
 - [x] Intro/outro: none (published 20.3 starts on the raw file's first frame)
 - [x] Sort the playlist into lesson order: 2026-10-27, 1.1-28.4 (97 moves in the browser)
 - [x] End screens 97/97 (2026-10-28, DECISIONS #53)
-- [ ] Closing email: Gmail draft in his thread (2026-10-28 14:28), the user sends it
+- [x] Closing email: sent by the user (draft 2026-10-28 14:28; the user said so on 2026-11-03)
 - Older pieces' date slips (16.2-գ and 17.1-19.2 say 2020; 20.3 says 27 Apr, file 29 Apr) and the 11.1 / 11.2-բ
   chapter slips: left as they are (the user, 2026-10-29: "i dont care")
 - [ ] Not on YouTube at all, decide later: practical-session recordings, consultations

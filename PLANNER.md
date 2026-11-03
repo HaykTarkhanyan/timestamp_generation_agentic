@@ -26,10 +26,11 @@ this file, so update your own rows AND look over the others before saving.
 | [52] CNN: Playing Zmeyka `q8JM6nR03-Q` | `DONE` 2026-10-17 | - |
 | [53] RNN `p0EVWRZLtMI` | `DONE` 2026-10-21, rechecked on YouTube's captions 2026-10-24 | - |
 | [54] LSTM `m88ZdQhxHp8` | `DONE` 2026-10-24, rechecked 2026-10-29 | - |
-| LLM [01] Tokenization `bhuxuKVhdSA` (recorded 2026-10-28) | `YOU` | All done and read back (53 cuts, 43 chapters, title, thumbnail DECISIONS #55, playlist "Large Language Models", Telegram line). Making it public is yours; the materials link (`llms/` page) is a 404 until the site rebuild (yours). No end screen (DECISIONS #56) |
+| LLM [01] Tokenization `bhuxuKVhdSA` (recorded 2026-10-28) | `DONE` | 53 cuts, 43 chapters, title, thumbnail (DECISIONS #55), playlist "Large Language Models", Telegram line. Visibility and the materials page: fine (the user, 2026-11-03). No end screen (DECISIONS #56) |
 
-ML48, ML49 and the Claude Code workshop have uncommitted edits to `corrections.txt` / `description.txt`
-from another session; whether those are live has not been checked. Left out of commits.
+ML48, ML49 and the Claude Code workshop: the other session's local `corrections.txt` / `description.txt` edits were
+checked against live on 2026-11-03 (leading spaces and the title header ignored). ML49 and the workshop matched;
+ML48 matched except "Ֆուրիե" -> "Ֆուրյե" (the 2026-10-23 glossary fix, live only), now applied locally. Committed.
 
 ## umath courses
 
@@ -40,7 +41,7 @@ from another session; whether those are live has not been checked. Left out of c
 | Arnak, Բազմաչափ վիճակագրություն 1 | `DONE` 2026-10-21 | End screens done 2026-10-28 (14/14, DECISIONS #52) |
 | Ashot, Information Theory | `DONE` 2026-10-25 | All 9 public. Everything else settled (the user, 2026-10-29) |
 | Sevak, Complex Analysis | `DONE` | His Honors Linear Algebra channel: chapters posted as comments (`LATER`: what else to do with it) |
-| Vahagn Mikaelian, Linear Algebra | `DONE` 2026-10-28 | 97/97 public, playlist sorted 1.1-28.4, 44 replaced/raw uploads deleted, end screens 97/97. Closing email: Gmail draft in his thread (2026-10-28 14:28), sending is yours. Older pieces' date slips (16.2-գ, 17.1-19.2 say 2020; 20.3 27 vs 29 Apr) and two chapter slips in 11.1 / 11.2-բ: left as they are (the user, 2026-10-29: "i dont care") |
+| Vahagn Mikaelian, Linear Algebra | `DONE` 2026-10-28 | 97/97 public, playlist sorted 1.1-28.4, 44 replaced/raw uploads deleted, end screens 97/97. Closing email sent by the user (said 2026-11-03). Older pieces' date slips (16.2-գ, 17.1-19.2 say 2020; 20.3 27 vs 29 Apr) and two chapter slips in 11.1 / 11.2-բ: left as they are (the user, 2026-10-29: "i dont care") |
 | umath end screens, all tiers | `DONE` 2026-10-28 | `_knowledge/umath_endscreens_plan.md` |
 | Vahagn Mikaelian, Groups | `LATER` | Not checked |
 | Papikian, Galois Theory (ARCS-ai 2025) | `LATER` | Publish or not |
