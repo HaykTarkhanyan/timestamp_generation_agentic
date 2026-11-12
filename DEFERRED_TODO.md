@@ -103,5 +103,7 @@ Topics cut from current work so they don't get lost. Newest at the top.
 - **2026-10-28 - LLM thumbnail generator.** `thumbnails/LLM01.png` comes from the options script
   (`llm_thumbnail_options.py 4`, r4_a). When LLM 02 needs a thumbnail, move the template (cream, green card,
   `badge()`, `token_row`, `_taped_card`) into a load-bearing generator with one config per lesson.
+  **Done 2026-11-09:** `scripts/make_llm_thumbnails.py` (LLM01 redrawn pixel for pixel; options for LLM02 and
+  LLM03 via `--options`). `llm_thumbnail_options.py` moved to `scripts/archive/` 2026-11-10 (Q38).
 - **2026-09-26 - Note in `scripts/YT_PUBLISH_SETUP.md` that the curl/wget deny rule also blocks
   harmless downloads** (the user runs those with `!`). Offered, not answered.

@@ -1,0 +1,77 @@
+title = "LLM [04] LLM APIs practical: Zoom to YouTube, cut, saved, titled, thumbnailed, chaptered, in the playlist; API notebook renamed"
+date = "2026-11-11"
+time = "18:00"
+end = "2026-11-12 00:45"
+areas = ["output/2026-11-11_04-x-Large-Language-Models_xdiq1N3KBPg", "scripts", "thumbnails", "final", ".claude/skills", "_learnings", "../01_python_math_ml_course/llms/02_decoding"]
+
+done = [
+  # Getting the recording onto YouTube
+  "Zoom recording of 2026-11-11 (56:47, 2560x1440, 25 fps) ready at 18:34 after ~37 min of processing; downloaded via Playwright in 93 s (370 MB) to Downloads/GMT20261111-160039_Recording_2560x1440.mp4",
+  "Uploaded in Studio as '[04] x | Large Language Models', Unlisted; checks took ~25 min ('taking longer than usual'), saved after 'Checks complete. No issues found.'; yt-dlp: unlisted, 3408 s, Metric",
+  "No secret on screen (frames at the .env remark, the OpenRouter pages, Wikipedia); the key is read with load_dotenv",
+
+  # Plan and the user's review
+  "My plan: 27 cuts, 14.4 min (56:48 -> 42:26) plus 2 unticked suggestions (19:09 seconds-field fumble, 55:15 project idea)",
+  "The user's 60 cuts -> 58 (31+32, 48+49 merged), entered in 2 batches (98 + 83 s), diff identical, saved by Claude under DECISIONS #58 (dialog 41:11 = end marker 85,197 - 23,398 frames); processed 2472 s by 00:30",
+
+  # Metadata
+  "Title '[04] LLM APIs | Large Language Models' (the user: 'title is fine'), read back",
+  "Thumbnail: three meme drafts (a-c) rejected ('were overdoing the fun, lets not force it'); two plain ones; the user picked d (request JSON with the knobs highlighted + the first call's usage). scripts/make_llm_thumbnails.py LESSONS LLM04, set and confirmed",
+  "Chapters: 34 nested, drafted on the predicted timeline, 17 moved back 1 s after YouTube's regenerated captions; description pushed (2597 chars), all 34 chapters parsed by YouTube; copy final/LLM04.txt",
+  "Playlist PLYwuWfnw6epU (the full id is that short): read back [01]-[04] in order",
+  "Correctness review (edited_predicted/review.md): the minute-39 self-correction is wrong (110 completion tokens - 64 reasoning = 46, prompt not included); Stripe-OpenRouter checked (agreed Aug 2026); the minute-40 'two cents' vs $0.00294 on screen is maybe ASR",
+
+  # Course repo
+  "llms/02_decoding/xx_llm_api_solution.ipynb/.html -> 04_llm_api.ipynb/.html (git mv), builder OUT, README, LLM_CHAPTER_PLAN, DEFERRED_TODO, DECISIONS #111 status; not committed",
+
+  # Docs
+  "DECISIONS #55 revisited (memes allowed, not expected); lecture-thumbnails skill updated with the user's words",
+  "lecture-edit-points skill: Stage 0 notes for [04] (Zoom ~37 min, #upload-icon, the 'You're all set' popup, checks ~25 min, account-menu channel switch)",
+  "Learnings: [04] section in the edit-preferences file; the channel-switch finding added to 2026-10-27-0359",
+]
+
+pending = [
+  "Telegram line given, not posted (the user posts it)",
+  "Making [04] public: the user's",
+  "Nothing committed in this repo (the course repo got e3fa3ee)",
+  "resolve_materials_url.py --series llm still maps by folder number (lesson 04 -> 04_attention); DECISIONS #57",
+]
+
+answers = [
+  "Q6 'Both': corrections block pushed (minute 2 Stripe/OpenRouter, minute 39 reasoning tokens); 3005 chars, 34 chapters parsed",
+  "Q7 'Not sure, skip it': the minute-40 cost line stays out",
+  "Q8 'Commit + push rename': course repo e3fa3ee, built from a temporary index (HEAD + the 8 rename files only) because the real index held another session's 16 staged mech-interp renames and DECISIONS/DEFERRED_TODO held its unstaged edits; pushed 8a08b66..e3fa3ee; GitHub has the file; [04] materials line = the GitHub notebook URL",
+  "Q1 'Rename': results/xx_api_ledger.json -> 04_api_ledger.json (git mv; notebook cells 0 and 2, html, builder; notebook validated with nbformat)",
+  "Q2 'link it ill work on website next': [03] materials line = llms/02_decoding/decoding.html (page live, '03 Decoding'); local copy matched live before the push; 2726 chars, 33 chapters parsed",
+  "Q3 'Already handled': xx_llm_api_solution.ipynb not recreated on disk",
+]
+
+next = "Commit this repo's session work on the user's word."
+
+files = [
+  "output/2026-11-11_04-x-Large-Language-Models_xdiq1N3KBPg/ (content_cuts.json, studio_cuts_edited.txt, studio_cuts_to_enter.txt, edited/, edited_predicted/)",
+  "scripts/make_llm_thumbnails.py", "thumbnails/LLM04.png", "thumbnails/llm_options/llm04_*.png, overview_llm04*.png",
+  "final/LLM04.txt", "PLANNER.md", "DECISIONS.md",
+  ".claude/skills/lecture-edit-points/SKILL.md", ".claude/skills/lecture-thumbnails/SKILL.md",
+  "_learnings/2026-10-03-1548_edit-point-preferences-from-ml48-studio.md", "_learnings/2026-10-27-0359_studio-session-channel-can-differ-from-the-video.md",
+]
+
+commits = ["course repo e3fa3ee llms(02): API notebook renamed (pushed)", "course repo 8358158 site: video links, banners, API practical, math lists (pushed)", "course repo 6a6e1a5 site: exact titles ML 01-04, notebook lists (pushed)"]
+
+notes = """
+The speech map's 0.1 s characters are coarser than find_edit_points' 10 ms test: an edge on a '_' next to a '.' or
+'#' can still raise. I also misread one line by a segment; a throwaway parser
+(scratchpad parse_speech_map.py) listing the speech runs avoided that for the rest.
+The upload is Private until the upload dialog's Save, so yt-dlp can't fetch metadata before the checks finish.
+The 'you should know' plugin flagged the open VS Code tab of the renamed notebook; the disk copy was last saved at
+17:18, so the in-class outputs after that live only in that tab (Q3).
+"""
+
+website_check = [
+  "The user (2026-11-12 ~01:00): 'pls check the website if you find staff you can fix yourself pls do, if not gather somethwere in list ... work on your own'",
+  "Checks: check_links.py source + --live (102 pages, 18 broken, 89 unverified bot walls), YouTube link text vs real title for 394 videos (oEmbed, retries), Metric channel public list vs pages, stale banners, lists Pandoc renders as text",
+  "course repo 8358158 (pushed, deploy success, live-checked): links for [22]-[28], [38]-[47], [53], [54], LLM [01]-[03]; stale banners; [52] link text; API practical on the decoding page; 22 math lists",
+  "course repo 6a6e1a5 (pushed): exact titles on ML 01-04 (16 links); 62 notebook lists in 21 notebooks (byte-exact JSON round-trip, only \n entries added)",
+  "All commits built from a temporary index (HEAD + my files), then the real index reset for those files: another session's 16 staged mech-interp renames and its DECISIONS/DEFERRED_TODO edits stayed out",
+  "List for the user: course repo _knowledge/website_check_2026-11-12.md (dead links, the 161 generic-label links vs the exact-title rule, attention page in the ML menu, Claude-draft warnings on 07 and 13, ToDo practicals, python_libs/10 lists, other sessions' in-flight work)",
+]

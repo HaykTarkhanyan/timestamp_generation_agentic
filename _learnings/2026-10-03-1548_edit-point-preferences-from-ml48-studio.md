@@ -180,6 +180,80 @@ overlapping end cuts: 16.4 min removed, 55:43 -> 39:19.56. Files:
   from YouTube's rounded 3343 s; from the frames (end marker 55:42:18 minus 24579 cut frames) it is
   39:19.56, and Studio truncates.
 
+## LLM [01] Tokenization, uploaded as [55] (2026-10-28): the wrap-up stays this time
+
+From my 28 cuts (27.1 min, incl. the 12.5-min break) to the user's 54 (14 changed, 30 new, 4 removed), 53
+after merging: 27.5 min removed, 1:56:28 -> 1:28:57 (Studio's dialog). Files:
+`output/2026-10-28_55-x-Meqenayakan-usucum_bhuxuKVhdSA/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **The closing "welcome to the LLM world" stayed**, unlike ML54's wrap-up: it opens a new block of
+  the course, so it is content for a viewer, not logistics. Keep a first-lesson-of-a-block welcome;
+  still pre-tick a routine end-of-lecture wrap-up.
+- **The "Claude forgot the link" bit stayed**: a short, candid aside (ML51, ML54 again).
+- **Two pauses waiting for students' answers in the BPE board example stayed**: the viewer gets the
+  same moment to think. Don't pre-tick a pause that follows a question to the class when an answer
+  comes after it.
+- **The break cut was widened** to 1:02:17-1:14:57: the chatter on both sides of the silence goes.
+- **30 new short cuts**, the same 2-5 s pauses as ML53/ML54.
+- The unticked Llama aside stayed.
+
+## LLM [02] tokenization practical (2026-11-09): the unanswered "think about it" pauses go
+
+From my 20 cuts (97.5 min, the decoding half included) to the user's 51 (18 changed, 31 new), 50 after merging
+cuts 2+3: 100.0 min removed, 2:15:39 -> 0:35:39. Files:
+`output/2026-11-09_02-x-Large-Language-Models_hmE4QH_dSXI/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **The three pauses I kept with `kind: keep` were cut** (0:24:38, 0:24:51, 0:25:06; 5-12 s each): the class was
+  asked why "է" is no token, nobody answered, and I answered myself after a hint. So [01]'s rule is narrower than I
+  wrote it: keep a waiting pause only when a student's answer follows it; when the lecturer answers himself,
+  the silence goes (the question and the hint stay).
+- **The unticked plan note was ticked** ("after this a break, then decoding, the other tail of LLMs", 0:08:58):
+  in a video that holds one of two lessons, the remark about the other lesson goes.
+- **Fumbles went even in a practical:** "oh, it's open in the wrong place, it won't work, so let me think it
+  through" (0:27:14, 15 s) and "I wanted to show something here, no, these don't matter" (0:46:40, 12 s). The
+  3-min wait for the live run stayed cut. ML52's "on-screen fumbles stay in a practical" holds for searching
+  that the viewer watches, not for a run that fails or an idea dropped.
+- **The lead-in "Դե բարի, ժողովուրդ" went** (cut 1 +4 s, as ML54) and **the last line "for us that's plenty
+  today" went** (the end cut 3.5 s earlier).
+- 31 new cuts of 1.2-4 s, as on ML53-55.
+
+## LLM [03] decoding (2026-11-10): the waits go even when a student answers
+
+From my 26 cuts (77.6 min, the practical half included) to the user's 63 (16 changed, 37 new), 60 after merging
+1+2, 27+28, 31+32: 80.0 min removed, 2:15:39 -> 0:55:40. Files:
+`output/2026-11-09_03-x-Large-Language-Models_MF_jn0GXPWA/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **The two kept waits were cut too** (1:13:05, 12 s; 1:13:25, 7 s), although students did answer after them;
+  the question and the answers stayed. With [02], that is five of five `keep` pauses cut: a long wait for the
+  class goes, whoever answers. [01]'s two kept pauses are the exception, not the rule. Stop pre-unticking them.
+- **The "we changed the order" remark went** (cut 1 joined the pen-trouble cut): the video starts at the recap,
+  "previous stage tokenization, now decoding". With [02]'s plan note: remarks about the other lesson or the
+  course order go from a single-lesson video.
+- **The unticked closing plan stayed** ("lectures and projects in parallel"), only its "but yes" lead-in went.
+- **"OK, everything?" went with its silence** (1:45:01), and so did "there was a slide I flipped about it, but"
+  (1:53:56), where the answer to the student continues right after.
+- 37 new cuts of 1.2-6 s.
+
+## LLM [04] LLM APIs practical (2026-11-11): a wrong self-correction stays, the project note stays
+
+From my 27 cuts (14.4 min) plus 2 unticked suggestions to the user's 60 (22 changed, 33 new, 0 removed), 58 after
+merging 31+32 and 48+49 (4-frame overlaps): 15.6 min removed, 56:48 -> 41:11 (Studio's dialog). Files:
+`output/2026-11-11_04-x-Large-Language-Models_xdiq1N3KBPg/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **My unticked "which field is the seconds?" fumble was ticked** (19:08-19:27, 18.6 s: "not sure which one this is,
+  honestly... should be seconds"). With [02]: in a practical, doubting what the screen shows goes; only a search the
+  viewer watches stays. Pre-tick this kind next time.
+- **My pre-ticked cut of a wrong self-correction was cut down to its pauses** (52:52-53:26: "the total includes the
+  prompt tokens too... 44... I said it wrong", which is itself wrong). The user keeps a correction on camera; the fix
+  goes into the description's corrections instead. Offer such a stretch unticked, and draft the correction.
+- **The unticked project idea stayed** (55:15-55:55, list.am job postings or your own project), and the outro cut
+  moved 6 s later so "send me the GitHub repo, I'll give feedback" stays too. Third practical/lecture in a row where
+  the closing plan for viewers stays ([03], [04]; ML52).
+- **"But OK, it wasn't important" after the children's-song answer stayed**; only the pause before "temperature"
+  went. A short aside that closes an anecdote stays (ML51, ML54 again).
+- The start stayed at "it won't be long or heavy this time" (+0.3 s), and every questions prompt went as planned.
+- 33 new cuts of 0.8-7 s; three pause cuts widened by 1-2 s (50:34, 51:07, 37:56).
+
 ## Arnak Dalalyan, lesson 10 (2026-10-20): silent writing goes, questions and one-word narration stay
 
 Another channel (Համալսարանական մաթեմատիկա), another lecturer, but the same reading of what a

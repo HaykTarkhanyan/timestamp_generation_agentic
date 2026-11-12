@@ -48,6 +48,40 @@ What worked on ML55 (2026-10-28; Zoom processing took ~1 h for a 1:56 lecture):
 - Studio then says "Video published" even for Unlisted: verify with
   `yt-dlp --print "%(availability)s"` (ML55: `unlisted`).
 
+What changed on LLM [02]/[03] (2026-11-09, one recording holding two lessons, uploaded twice):
+- **Zoom's detail page is no longer an iframe.** The "Download Recording 1" button sits on the page itself;
+  its dialog says "Each file will be downloaded separately" and its Download button fetches the chat `.txt`
+  and the MP4. The MCP saves each into `.playwright-mcp/` with `_` turned into `-`
+  (`GMT20261109-160102-Recording-2560x1440.mp4`). Don't list that folder (it hangs): wait for that exact
+  name in a background loop (exists, then size stable), then `mv -n` it to `Downloads/` under Zoom's
+  own name. 489 MB in 81 s. The recording was 2560x1440 this time, not 1920x1080.
+- **A lesson pair goes up as two uploads of the same file**, in two Studio tabs at once (Create ->
+  Upload in each). Checks finished ~15 min after the upload; save each tab when its own footer says
+  "Checks complete. No issues found."
+- **Add the uploads to a public playlist only after their cuts are saved.** An unlisted video in a public
+  playlist plays for anyone who opens the playlist, and the raw upload holds the pre-lecture chat and the
+  break. [01] went in after its Save; do the same.
+- **The break shows in one ffmpeg pass**, before any captions: `ffmpeg -i <mp4> -vn -af
+  silencedetect=noise=-50dB:d=20 -f null -` (16 s for 2:15). [02]/[03]: one 994 s silence at 0:53:09,
+  between the practical and the lecture.
+
+What changed on LLM [04] (2026-11-11, 56:47 practical, the whole drill in one session):
+- **Zoom took ~37 min** (class ended ~17:57 Munich, the card read 00:56:47 at 18:34). Poll with a background
+  `sleep 600` and a page reload; the card shows "Processing..." first and its duration only when done. Only the
+  MP4 came down this time (no chat `.txt`): catch `page.on('download')` for its `suggestedFilename()`, then the
+  background wait-and-`mv -n` loop. 370 MB in 93 s.
+- **The dashboard's "Create" button no longer matched `#create-icon`**; the dashboard has its own
+  `#upload-icon` ("Upload videos"), which opens the dialog. A "You're all set / You already have access to this
+  feature" popup covered it once ("Got it"); then `setInputFiles` on `ytcp-uploads-file-picker input[type=file]`.
+- **Checks took ~25 min** and said "Checks are taking longer than usual to complete but are still running" for
+  ~10 of them; waiting it out gave "Checks complete. No issues found." The upload stays Private (yt-dlp: "Private
+  video") until that Save, so captions and metadata wait for it. Captions were there right after the Save.
+- **The session channel had to be switched through the account menu** before the editor: a `/channel/<id>` URL
+  does not do it (learning `2026-10-27-0359_studio-session-channel-can-differ-from-the-video.md`).
+- Entry: dry run + 2 batches (98 + 83 s for 58 cuts), diff identical, dialog 41:11 as computed from the end marker
+  (85,197 - 23,398 frames = 41:11.96, truncated). Processing was done ~10 min after Confirm, and the regenerated
+  captions were already up then.
+
 ## Stage 1: captions
 
 ```bash
@@ -127,7 +161,11 @@ Read `transcript.txt` in full, then write `<output_dir>/content_cuts.json`:
 ```
 
 `kind` is `safe` (dead air, logistics) or `judgment` (the user's call). `default` sets
-whether the cut is pre-ticked. `"end": "end"` means up to the end of the video. Write
+whether the cut is pre-ticked. `kind: "keep"` (start, end, reason; no `default`) is not a cut: it
+unticks every silence cut it overlaps and raises if it overlaps none. Added 2026-11-09 for the waits
+after a question to the class, **but don't use it for those by default**: the user cut all five I had kept on
+LLM [02] and [03], including two that a student's answer followed (only LLM [01] kept two). Keep the
+question and the answer, cut the wait. `"end": "end"` means up to the end of the video. Write
 `reason` in English; the user reads it on the review page. After writing the file,
 rerun the full Stage 2 command (see "Order of runs").
 
@@ -363,7 +401,8 @@ going from 3 s to 2 s added 44 edits to save another 1.2 min).
 - the exact list;
 - they keep the original recording (Studio edits can't be undone after Save);
 - they sign in themselves in the Playwright window (never handle their password);
-- **you stop before Save.**
+- Save follows the standing rule below (DECISIONS.md #58): once the user has given the cut list, Claude
+  saves without asking if every check passes and the recording is on disk.
 
 If the Playwright tools are missing, tell the user to run `/mcp`; don't work around it.
 
@@ -391,7 +430,8 @@ python scripts/cut_list.py entry-js --output-dir <output_dir>    # -> .playwrigh
    - Per cut still grows with the cuts already in Studio (Դաս 17: 3.5, 6.6, 17.1 s for 0-41, 41-82,
      82-122): Studio answers every event more slowly as cuts pile up. A click that times out at 30 s has
      usually taken effect: read the markers, then rerun the batch.
-4. Read the markers back and run `cut_list.py diff` (below). Never Save.
+4. Read the markers back and run `cut_list.py diff` (below). Then Save under the standing rule below
+   (DECISIONS.md #58), or stop and report if any check fails.
 
 **If batch 1 fails on cut 1 with "not in Studio after Cut" and the markers show that cut one frame
 later at both ends,** the upload is one where Studio stores cuts a frame late (Papikian Դաս 20 and 22,
@@ -472,21 +512,25 @@ How Studio's editor behaves (measured on ML48, 2026-10-03):
   - `--check-studio` compares Studio with the **plan**. When the user edited the list on
     studio.html (ML50-ML52 all did), compare with what was entered instead:
     `python scripts/cut_list.py diff --output-dir <output_dir> --markers .playwright-mcp/<name>.json`.
-- **Never press Save, and never navigate the Studio tab away** (it holds unsaved
-  edits). Open anything else in a new tab. "Discard changes" drops everything.
-  - **Standing rule (2026-10-23, DECISIONS.md #27): when the user gives the cut list themselves and asks
-    for Playwright entry ("pw"), Claude also saves**, with no separate ask, if every check passes: the
-    `cut_list.py diff` is identical frame for frame, the Save dialog's new length is the predicted one, and
-    the original recording is on disk (Save can't be undone; the local file is the backup). If the local
-    file is missing, stop before Save and tell the user. Same Save steps as below.
-  - **Exception: the user asks for Save for this video** (ML53, 2026-10-21: "double check press
-    save and acknowledge, i will be away"). Save only if `cut_list.py diff` says identical frame for
-    frame. The dialog that follows says "Adjust video to new length: H:MM:SS"; go on only if that is
+- **Never navigate the Studio tab away while it holds unsaved edits.** Open anything else in a new tab.
+  "Discard changes" drops everything.
+  - **Standing rule (2026-11-10, DECISIONS.md #58, widening #27): once the user has given the cut list
+    (their reviewed paste from studio.html), Claude enters it and presses Save without asking**, if every
+    check passes: `cut_list.py diff` identical frame for frame right before Save, the Save dialog's new
+    length equal to the prediction, and the original recording on disk (`audio/<id>_16k.source.txt` names it;
+    `ls` that exact file). Save can't be undone; the local file is the backup. The user: "update the skill to
+    not ask, if nothing looks off and we have the vid locally just save by urself". If anything looks off
+    (a diff, another length, the file missing), don't save: stop and tell the user. Claude's own plan, not
+    yet reviewed by the user, is never saved.
+  - **How to save** (ML53 2026-10-21, LLM [02]/[03] 2026-11-10). The dialog that follows Save says
+    "Adjust video to new length: H:MM:SS" (MM:SS under an hour); go on only if that is
     the predicted length (Studio truncates the seconds, and `cut_list.py` starts from YouTube's
     rounded duration: on ML54 it said 39:20, the dialog 39:19, the frames 39:19.56, so compute it
     from the end marker minus the cut frames when they differ by a second), then tick "I acknowledge that these changes are permanent" and press
     "Confirm changes". The page then reads "Video editing is in progress...". On any mismatch,
-    don't save; leave it for the user.
+    don't save; leave it for the user. The checkbox's `#checkbox-container` takes the click; clicking the
+    `role=checkbox` element itself timed out ("intercepts pointer events", 2026-11-10). LLM [02] (50 cuts, 2:15)
+    had finished processing within ~10 min of Confirm.
 - **Don't call `setViewportSize` on the user's Studio tab.** On ML51 it shrank the page the
   user was watching ("why did u minimize yt studio? it was full just now"). Inside the page the
   screen size is emulated too, so the real window size can't be read back. A later "restore"
@@ -505,7 +549,8 @@ After the user adjusts cuts by hand, **only read** the page.
 2. Diff them against `edit_points.json` `studio_cuts`.
 3. Add any new pattern to the preferences learning.
 
-Remind the user that nothing is saved until they press Save.
+Remind the user that nothing is saved until they press Save (when they edited in Studio by hand, the
+standing rule above doesn't apply: there is no list of theirs to diff against).
 
 ## After Save: chapters - start at once, don't wait for YouTube (DECISIONS.md #10)
 

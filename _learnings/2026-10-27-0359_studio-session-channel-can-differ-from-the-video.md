@@ -21,3 +21,10 @@ first pass on the umath session took 140 s), `cut_list.py diff` identical, Save:
   first, not before Save.
 - The same video showed "This video is in a draft state" (the upload dialog was not finished). The editor and Save
   worked anyway; the draft has to be completed in the upload dialog before it can be published.
+
+**Opening the channel's dashboard by URL does not switch the session** (LLM [04] `xdiq1N3KBPg`, 2026-11-12): the
+editor tab read `ytcfg.get('CHANNEL_ID')` = `UCMFONp28jEDHXDBWJyRVYcA` (umath). `studio.youtube.com/channel/UC5Bavu...`
+then showed Metric in the header and its own `ytcfg` said Metric, but reopening the editor read umath again. Only
+the account menu worked: account button > Switch account > "Metric ... @MetricAcademy You're a manager" (the list
+also has a second Metric row, "1,140 subscribers", under another login: pick the `@MetricAcademy` one), which lands
+on `/channel/UC5Bavu...?c=UC5Bavu...`; the editor then read Metric, and the 58 cuts went in and saved (dialog 41:11).

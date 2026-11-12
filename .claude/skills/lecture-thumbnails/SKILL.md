@@ -7,6 +7,18 @@ description: Generate a YouTube thumbnail (1280x720) for an ML lecture in the ch
 
 Produce a 1280x720 thumbnail for a lecture video in the channel's **locked design**, then (after the user confirms) push it live. The generator is `scripts/make_thumbnails_final.py`: each lesson is a config dict + a `draw(fig, bbox)` function that fills the bottom illustration band.
 
+**The Large Language Models series has its own template (DECISIONS #55) and generator:
+`scripts/make_llm_thumbnails.py`.** Cream page, title top left, green "LLM NN" card top right, the lesson's
+hook drawn by hand. **A meme or a joke caption only where it fits naturally; don't force one** (the user,
+2026-11-12, on LLM [04]'s three meme drafts: "i think were overdoing the fun, lets not force it just do when it
+feets nicely"). The default is the lesson's point drawn plainly from its real outputs; offer a fun variant only
+when the material itself is funny. Earlier: "a bit of fun here and there won't hurt", "we don't get to just
+become clowns". Not two slide figures side by side either, so for an LLM
+lesson the slide-figure rule below is a source of facts and numbers, not of the picture. Draft 2-3 hooks as
+`OPTIONS[...]` and render them with `--options LLMNN` (contact sheet in `thumbnails/llm_options/`). Memes
+come from knowyourmeme.com via Playwright (`thumbnails/assets/meme_*.jpg`). Handwriting (Segoe Script) has no
+Armenian glyphs: put Armenian in DejaVu Sans Mono token boxes.
+
 ## THE RULE (why this skill exists)
 
 **Before drawing ANYTHING synthetic, check the reference course repo's `fig/` folder for a REAL slide figure that already shows the lesson's idea.** The course ships polished vector figures (PDF) for almost every concept - a decision tree, a PDP, an ROC curve, a calibration plot. Embedding the authentic figure (as ML06-17, ML20 do) is almost always better than a hand-drawn stand-in: it matches what students saw, it's correct, and it's on-brand. Reach for a synthetic redraw (ML18/19/21-style primitives) ONLY when no real figure fits the point you want to make.

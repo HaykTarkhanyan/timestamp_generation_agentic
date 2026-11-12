@@ -1856,13 +1856,25 @@ def analyse(out_dir: Path, min_silence: float, pad: float, source: Path | None =
     cuts = silence_cuts(db, sound, thr, min_silence, pad)
     log.info(f"{len(cuts)} silences >= {min_silence:g} s ({sum(c['run_len'] for c in cuts) / 60:.1f} min raw)")
     cc_path = out_dir / "content_cuts.json"
+    keeps = []
     if cc_path.exists():
         spec = json.loads(cc_path.read_text(encoding="utf-8"))
-        content = [snap_content(c, sound, duration, pad) for c in spec["cuts"]]
-        log.info(f"{len(content)} content cuts from {cc_path.name}")
+        # "kind": "keep" is not a cut: it unticks the silence cuts it overlaps, e.g. a pause where the class is
+        # asked a question and an answer follows (the user kept those on LLM [01]); they stay on the page.
+        keeps = [c for c in spec["cuts"] if c["kind"] == "keep"]
+        content = [snap_content(c, sound, duration, pad) for c in spec["cuts"] if c["kind"] != "keep"]
+        log.info(f"{len(content)} content cuts and {len(keeps)} keep spans from {cc_path.name}")
     else:
         log.warning(f"No {cc_path} - silence cuts only. Write it in the LLM stage for content cuts.")
         content = []
+    for k in keeps:
+        a, b = parse_t(k["start"]), parse_t(k["end"])
+        hit = [c for c in cuts if c["start"] < b and c["end"] > a]
+        if not hit:
+            raise ValueError(f"keep span {k['start']}-{k['end']} overlaps no silence cut: drop it or fix the times")
+        for c in hit:
+            c["default"], c["kind"] = False, "judgment"
+            c["reason"] += f" - kept: {k['reason']}"
     for k, c in enumerate(content, 1):
         c["id"] = f"C{k:02d}"
     for k, c in enumerate(sorted(cuts, key=lambda c: c["start"]), 1):

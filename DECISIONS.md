@@ -2,6 +2,45 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 58. Claude saves the Studio cuts on its own once the user has given the cut list and every check passes
+
+- **Decision:** After the user hands over their reviewed cut list, Claude enters it and presses Save without
+  asking, if `cut_list.py diff` is identical frame for frame right before Save, the Save dialog's new length
+  equals the prediction, and the original recording is on disk. Any mismatch or a missing file: no Save, tell
+  the user. Claude's own unreviewed plan is never saved.
+- **Date / status:** 2026-11-10, active (the user, Q40 on LLM [03]: "update the skill to not ask, if nothing
+  looks off and we have the vid locally just save by urself"). Widens #27, which needed a "pw" request.
+- **Why:** the checks have held on every save so far (ML53, ML54, LLM [01], Tserunyan 15-27, LLM [02], [03]:
+  diff identical, dialog length as predicted), and asking only added a round trip; the local recording and
+  Google Takeout make a bad save recoverable.
+- **Alternatives rejected:** asking per video (the old default, a round trip each time); saving Claude's own
+  plan without review (the user reviews every list first, Q30).
+- **What would change this:** a save whose result differs from the checked list or length, or a recording
+  that turns out to be missing after a save.
+
+## 57. LLM videos are numbered in teaching order, not by the course repo's deck folders
+
+- **Decision:** The Large Language Models series numbers videos in the order they are taught, practicals
+  included: [02] is the tokenization practical (`llms/01_tokenization/02_armenian_tokens_solution.ipynb`) and [03]
+  the decoding lecture (`llms/06_decoding/`). A recording that holds two lessons is uploaded twice and each
+  upload keeps its own half. The raw uploads join the public playlist only after their cuts are saved.
+- **Date / status:** 2026-11-09, active (the user's Q29 "[02] practical, [03] decoding"; Q31 "practical:
+  tokenization page, decoding: TODO"; the split: "create a copy of the file, upload both"); revisited 2026-11-12:
+  the course repo renumbered decoding to `llms/02_decoding/`, so [03] now links its page
+  (`llms/02_decoding/decoding.html`, live; the user: "link it ill work on website next"), and [04], the API
+  practical, links its notebook on GitHub (`llms/02_decoding/04_llm_api.ipynb`, no site page). The resolver is
+  still wrong for both: lesson 04 would give `04_attention`.
+- **Why:** decoding was moved up ad hoc (course repo DECISIONS #109), so folder numbers and video numbers part
+  ways; the user will restructure the repo. An unlisted video in a public playlist plays for anyone who opens
+  the playlist, and the raw uploads hold the pre-lecture chat and the break.
+- **Consequence:** `resolve_materials_url.py --series llm` maps lesson NN to the `llms/NN_*` folder, which is
+  now wrong ([02] would give `02_embeddings_position`). [02] links the tokenization page by hand; [03] keeps
+  the TODO line until `06_decoding` has a page.
+- **Alternatives rejected:** numbering by the deck folder ([06] for decoding: gaps on the channel); no number
+  for practicals (the ML series numbers them too).
+- **What would change this:** the repo restructure. When folders follow teaching order again, the resolver
+  works as is; otherwise it needs a lesson-to-folder table.
+
 ## 56. New ML lectures get no end screens; #51's upkeep is dropped
 
 - **Decision:** ML lectures after [54], starting with "[01] Tokenization | Large Language Models" (`bhuxuKVhdSA`),
@@ -26,7 +65,10 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
   Red only marks what is wrong. [01] Tokenization shows the GPT-4o token row with " strawberry" circled, then
   🙋 "how many r's?", 🤖 "2" and the Picard facepalm meme (`thumbnails/assets/llm01_picard_facepalm.jpg`, from
   knowyourmeme.com).
-- **Date / status:** 2026-10-28, active (the user: "first one is wonderful", option r4_a, after 4 rounds).
+- **Date / status:** 2026-10-28, active (the user: "first one is wonderful", option r4_a, after 4 rounds);
+  revisited 2026-11-12: memes are allowed, not expected. On LLM [04] the user saw three meme drafts and said
+  "i think were overdoing the fun, lets not force it just do when it feets nicely", so the default is a plain
+  hook from the lesson's real outputs, and a meme only where the material is funny by itself.
 - **Why:** the user's picks, round by round (`scripts/non_essential/llm_thumbnail_options.py` 1-4):
   - R1: the notebook scribble with a facepalm ("face palm is genius"). Disliked: the graph paper, the Segoe Script
     tag, the small image area.
@@ -583,7 +625,7 @@ Numbered, newest at the top. Superseded entries stay, marked as such.
 - **Decision:** When the user hands over their own cut list and asks for Playwright entry, Claude enters
   it and presses Save in Studio without asking again, if `cut_list.py diff` is identical frame for frame,
   the Save dialog's new length matches the prediction, and the original recording is on disk.
-- **Date / status:** 2026-10-23, active (the user, during Tserunyan Դաս 15: "if i give you cut list myself
+- **Date / status:** 2026-10-23, revisited 2026-11-10 (widened by #58: no "pw" request needed) (the user, during Tserunyan Դաս 15: "if i give you cut list myself
   and say will pw then you can also save it as well if your checks pass, unless local file is unavailable").
 - **Why:** The list is already the user's reviewed decision, and the checks catch entry errors; asking
   again before Save only adds a round trip. Save can't be undone in Studio, so the local original is the

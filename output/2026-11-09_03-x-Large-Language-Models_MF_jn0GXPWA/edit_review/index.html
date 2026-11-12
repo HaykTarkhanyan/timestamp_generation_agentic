@@ -1,0 +1,1666 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit points MF_jn0GXPWA</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --card:#ffffff; --line:#e3e1dc;
+        --red:#D90012; --blue:#0033A0; --orange:#F2A800; --absorbed:#f0efe9; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#17171a; --fg:#ececef; --muted:#9a9aa2; --card:#202024; --line:#34343a; --absorbed:#26262b; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+nav ol { margin: 6px 0 16px; padding-left: 22px; }
+nav a { color: var(--blue); }
+details { background: var(--card); border:1px solid var(--line); border-radius:10px; margin: 12px 0; padding: 4px 14px 12px; }
+summary { cursor: pointer; font-weight: 650; font-size: 17px; padding: 8px 0; }
+.stats { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 2px solid var(--red);
+         padding: 8px 0; display:flex; flex-wrap:wrap; gap: 6px 18px; align-items:center; }
+.stats b { font-variant-numeric: tabular-nums; }
+.card { border-top: 1px solid var(--line); padding: 12px 0; }
+.card.off { opacity: .45; }
+.card.absorbed { background: var(--absorbed); opacity:.55; }
+.head { display:flex; flex-wrap:wrap; gap: 4px 12px; align-items: baseline; }
+.head label { font-weight: 650; font-variant-numeric: tabular-nums; cursor:pointer; }
+.badge { font-size: 12px; padding: 1px 7px; border-radius: 9px; color:#fff; }
+.safe { background: var(--blue); } .judgment { background: var(--orange); color:#1d1d1f; }
+.reason { flex-basis: 100%; }
+.flag { color: var(--red); font-size: 13px; }
+.note { color: var(--muted); font-size: 13px; }
+img.spec { width: 100%; height: auto; border-radius: 6px; margin: 6px 0 2px; display:block; }
+.players { display:flex; flex-wrap:wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.players audio { height: 32px; width: 290px; max-width: 100%; vertical-align: middle; }
+.tx { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.tx .t { font-variant-numeric: tabular-nums; margin-right: 8px; }
+.tx .in { color: var(--fg); }
+textarea { width: 100%; min-height: 260px; font: 13px/1.4 Consolas, monospace; background: var(--card);
+           color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+button, select { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+                 background: var(--card); color: var(--fg); cursor: pointer; }
+ul.how li { margin: 4px 0; }
+</style></head>
+<body><main>
+<h1>Edit points: [03] x | Large Language Models</h1>
+<p class="sub">2:15:39 raw recording, https://youtu.be/MF_jn0GXPWA</p>
+<div class="stats">
+  <span>Studio cuts <b id="n-cuts"></b></span>
+  <span>removed <b id="t-removed"></b></span>
+  <span>new length <b id="t-new"></b></span>
+  <span>min silence <select id="minsil"><option value="3" selected>3 s</option><option value="4">4 s</option><option value="5">5 s</option><option value="8">8 s</option></select></span>
+</div>
+<nav><ol><li><a href="#how">How to apply this in YouTube Studio</a></li><li><a href="#content">Content cuts (12)</a></li><li><a href="#sil-long">Silence cuts, 5 s and longer (48)</a></li><li><a href="#sil-short">Silence cuts, under 5 s (43)</a></li><li><a href="#export">Final cut list for Studio (last first)</a></li></ol></nav>
+<details open id="how"><summary>How to apply this in YouTube Studio</summary>
+<ul class="how">
+  <li>Listen to <b>after the cut</b> first: it is 4 s before the cut joined to 4 s after, so you hear exactly how the edit will sound. <b>What gets removed</b> is the cut part itself, boosted so faint sounds are audible.</li>
+  <li>Untick anything you want to keep. Ticks are remembered in this browser. The minimum-silence menu at the top hides the shorter silence cuts.</li>
+  <li>In Studio: Editor &rarr; Trim &amp; cut &rarr; New Cut for each line of the list in the last section. It uses Studio's own numbering (Cut 1..N by start time) and its <code>H:MM:SS:FF</code> frame times, the same as <code>studio.html</code>, listed last first. Studio keeps the original timeline while you edit, so the times stay valid.</li>
+  <li>Times are rounded inward to whole frames, so a cut never eats into speech.</li>
+  <li>Studio edits can't be undone after saving. Keep your original recording.</li>
+  <li>Chapters come after the edit: every cut shifts the times after it.</li>
+</ul>
+<p class="note">Silence = speech-band level below -74 dB (noise floor -94 dB + 20) for at least 3 s; clicks under 0.2 s count as silence. Each silence cut leaves 0.35 s of pause on both sides. Content cuts come from the transcript, with edges snapped to the speech edge.</p></details><details open id="content"><summary>Content cuts (12)</summary>
+<div class="card" id="card-C01">
+  <div class="head">
+    <label><input type="checkbox" data-id="C01"> C01 &nbsp; 0:00:00.0 &rarr; 1:10:59.3</label>
+    <span>4259.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">Everything before the decoding lecture: the pre-lecture chat, the whole tokenization practical (that is [02]), the 16-min break, &#x27;let&#x27;s continue, glad we didn&#x27;t shrink&#x27;, &#x27;questions before we start?&#x27;, the pen - up to &#x27;դե ոնց նկատեցիք, մի քիչ հերթականությունը փոխեցինք...&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C01_spec.png" alt="spectrogram C01">
+  <div class="note">spectrogram 0-5 kHz, 0:00:00 to 1:11:02, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C01_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C01_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">0:01:11</span>Բարև ձեզ</div><div class="in"><span class="t">0:01:29</span>Եթե ինչ-որ ցանկացած հարց քննարկելու բան</div><div class="in"><span class="t">0:01:31</span>կամ մի խոսքով ցանկացած բան կա, համեցեք,</div><div class="in"><span class="t">0:01:36</span>եթե չէ մի քիչ սպասենք:</div><div class="in"><span class="t">0:02:26</span>Hm.</div><div>...</div><div class="in"><span class="t">1:10:50</span>Ըհը</div><div class="in"><span class="t">1:10:58</span>ահա դե ոնց նկատեցիք մի քիչ</div><div class=""><span class="t">1:11:01</span>հերթականությունը փոխեցինք մեր ձախից աջ</div><div class=""><span class="t">1:11:03</span>գալու փոխարեն հիմա ամենաձախի կտոր հետո</div></div>
+</div>
+<div class="card" id="card-C02">
+  <div class="head">
+    <label><input type="checkbox" data-id="C02"> C02 &nbsp; 1:11:09.1 &rarr; 1:11:50.1</label>
+    <span>41.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">Pen tablet trouble: &#x27;the pen doesn&#x27;t work, the finger doesn&#x27;t work, sorry, I should have done this before class&#x27;, &#x27;I&#x27;ll be in bad shape today&#x27; - up to &#x27;Ն ժողովուրդ, նախորդ փուլում...&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C02_spec.png" alt="spectrogram C02">
+  <div class="note">spectrogram 0-5 kHz, 1:11:06 to 1:11:53, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C02_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C02_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:11:07</span>ամենաի կտոր գրիչ միացիայ կներեք չեմ</div><div class="in"><span class="t">1:11:12</span>հասկանում չի աշխատում</div><div class="in"><span class="t">1:11:15</span>մատն էլ չի աշխատում</div><div class="in"><span class="t">1:11:19</span>Ահա, մի վայրկյան ժողովուրդ, կներեք, սա</div><div class="in"><span class="t">1:11:22</span>պիտի դասիչացին անեի, զուտ չմտածեցի, որ</div><div>...</div><div class="in"><span class="t">1:11:42</span>այսօր վատ ձագով կլինեմ ահավոր որ</div><div class="in"><span class="t">1:11:46</span>ըհը</div><div class="in"><span class="t">1:11:50</span>ն ժողովուրդ նախորդ փուլում արեցինք էն</div><div class=""><span class="t">1:11:54</span>տոկենիզացիայի կտորը որտեղ մեր մոտ սպս</div></div>
+</div>
+<div class="card" id="card-C03">
+  <div class="head">
+    <label><input type="checkbox" data-id="C03"> C03 &nbsp; 1:21:16.2 &rarr; 1:21:33.9</label>
+    <span>17.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;Until here, any questions, people?&#x27; + 13 s silence + &#x27;Բարի&#x27; - up to &#x27;դե այն մոտեցումը, որ վերցնում ենք ամենահավանականը&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C03_spec.png" alt="spectrogram C03">
+  <div class="note">spectrogram 0-5 kHz, 1:21:13 to 1:21:37, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C03_after.wav"></audio></span>
+    <span>what gets removed (boosted +5 dB) <audio controls preload="none" src="media/C03_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:21:11</span>ընդհանուր մեր գեներացիայի պրոցեսը</div><div class=""><span class="t">1:21:13</span>տոկեն-տոկեն ոնց ենք առաջ հաշում մինչև</div><div class="in"><span class="t">1:21:16</span>այստեղ ինչ-որ ցանկացած հարց ժողովուրդ</div><div class="in"><span class="t">1:21:32</span>Բարի:</div><div class=""><span class="t">1:21:34</span>Դե այն մոտեցումը, որ վերցնում ենք այն</div><div class=""><span class="t">1:21:37</span>ամենահավանականը,</div></div>
+</div>
+<div class="card" id="card-C04">
+  <div class="head">
+    <label><input type="checkbox" data-id="C04"> C04 &nbsp; 1:27:03.9 &rarr; 1:27:11.3</label>
+    <span>7.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;OK, people?&#x27; + silence - up to the student&#x27;s question</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C04_spec.png" alt="spectrogram C04">
+  <div class="note">spectrogram 0-5 kHz, 1:27:01 to 1:27:14, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C04_after.wav"></audio></span>
+    <span>what gets removed (boosted +1 dB) <audio controls preload="none" src="media/C04_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:27:00</span>ամենաբանը որոնք են ու գնանք առաջ</div><div class="in"><span class="t">1:27:06</span>օքե ժողովուրդ</div><div class=""><span class="t">1:27:12</span>Դա գնում ենք այնքան, որ վերջացնենք մեր</div><div class=""><span class="t">1:27:14</span>բան գեներացնելը:</div></div>
+</div>
+<div class="card" id="card-C05">
+  <div class="head">
+    <label><input type="checkbox" data-id="C05"> C05 &nbsp; 1:29:09.2 &rarr; 1:29:28.1</label>
+    <span>18.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;Was the question answered?&#x27; / &#x27;yes, thanks&#x27; / &#x27;thank you; more questions, people?&#x27; + 8 s silence - up to &#x27;Հա։ Դե ժողովուրդ, ոնց որ էս beam search-ով...&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C05_spec.png" alt="spectrogram C05">
+  <div class="note">spectrogram 0-5 kHz, 1:29:06 to 1:29:31, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C05_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) <audio controls preload="none" src="media/C05_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:29:05</span>նայելով ոնց որ արդյունքների գալու ա էլի</div><div class="in"><span class="t">1:29:11</span>նորմալ էր հարցի պահովել ոքեր</div><div class="in"><span class="t">1:29:16</span>ըհը մերսի</div><div class="in"><span class="t">1:29:17</span>Ըհը Ձեզ մերսի Ձեզ մերսի Էլի հարցեր</div><div class="in"><span class="t">1:29:19</span>ժողովու՛րդ</div><div class="in"><span class="t">1:29:28</span>հա դե ժողովուրդ ոնց որ այս bam search-ով</div><div class=""><span class="t">1:29:31</span>կարանք ի վերջո ստանանք ավելի հավանական</div></div>
+</div>
+<div class="card" id="card-C06">
+  <div class="head">
+    <label><input type="checkbox" data-id="C06"> C06 &nbsp; 1:50:05.9 &rarr; 1:50:13.8</label>
+    <span>7.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;Was this constraint part OK, people?&#x27; + silence - up to the student&#x27;s question</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C06_spec.png" alt="spectrogram C06">
+  <div class="note">spectrogram 0-5 kHz, 1:50:03 to 1:50:17, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C06_after.wav"></audio></span>
+    <span>what gets removed (boosted +1 dB) <audio controls preload="none" src="media/C06_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:50:01</span>այս մեկը ոնց որ հանգստություն ա տալիս,</div><div class=""><span class="t">1:50:03</span>գիտենք հստակ ֆիքսած մոտեցումը։</div><div class="in"><span class="t">1:50:08</span>Օքեյ էր սա ժողովուրդ էս conրին պահը։</div><div class=""><span class="t">1:50:14</span>Մի հատ բան հարցնեմ էլի</div><div class=""><span class="t">1:50:16</span>Ըհը։</div><div class=""><span class="t">1:50:16</span>որ ասում ենք տալիս ենք իրեն էդ ֆորմատը,</div></div>
+</div>
+<div class="card" id="card-C07">
+  <div class="head">
+    <label><input type="checkbox" data-id="C07"> C07 &nbsp; 1:52:07.2 &rarr; 1:52:11.3</label>
+    <span>4.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;OK?&#x27; + silence - up to the student&#x27;s follow-up</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C07_spec.png" alt="spectrogram C07">
+  <div class="note">spectrogram 0-5 kHz, 1:52:04 to 1:52:14, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C07_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) <audio controls preload="none" src="media/C07_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:52:03</span>դ-ն տպի մեզ արդեն ռեդը վերջնական կտա հետ</div><div class="in"><span class="t">1:52:08</span>օքեյ էր</div><div class=""><span class="t">1:52:13</span>միջանկյալ բանը չեմ պատկերացնում որովհետև</div></div>
+</div>
+<div class="card" id="card-C08">
+  <div class="head">
+    <label><input type="checkbox" data-id="C08"> C08 &nbsp; 1:54:01.0 &rarr; 1:54:10.1</label>
+    <span>9.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;Anything else, people?&#x27; + silence - up to the student&#x27;s question</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C08_spec.png" alt="spectrogram C08">
+  <div class="note">spectrogram 0-5 kHz, 1:53:58 to 1:54:13, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C08_after.wav"></audio></span>
+    <span>what gets removed (boosted +4 dB) <audio controls preload="none" src="media/C08_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:53:56</span>հետ կապված,</div><div class=""><span class="t">1:53:58</span>բայց իդեան դա է, հա, ոնց որ</div><div class="in"><span class="t">1:54:04</span>էլի ինչ էր ցանկացած, ժողովուրդ,</div><div class=""><span class="t">1:54:11</span>իսկ չենք կարա՞ օգտագործենք մեր հենց</div><div class=""><span class="t">1:54:13</span>էլm-ի համար, այսինքն եթե մեկը ինչ-որ</div></div>
+</div>
+<div class="card" id="card-C09">
+  <div class="head">
+    <label><input type="checkbox" data-id="C09"> C09 &nbsp; 1:57:37.8 &rarr; 1:57:54.4</label>
+    <span>16.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">&#x27;Any question, people?&#x27; + 7 s silence + &#x27;Բարի&#x27; - up to &#x27;մի քիչ իրական սիստեմների մասին խոսելով&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C09_spec.png" alt="spectrogram C09">
+  <div class="note">spectrogram 0-5 kHz, 1:57:35 to 1:57:57, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C09_after.wav"></audio></span>
+    <span>what gets removed <audio controls preload="none" src="media/C09_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:57:32</span>աս նախադասությունը ասեմ բայց կարոենք</div><div class=""><span class="t">1:57:34</span>հանգիստ սպց մտածենք էլի մի քիչ կթեթևացնի</div><div class="in"><span class="t">1:57:37</span>գործը</div><div class="in"><span class="t">1:57:43</span>հա</div><div class="in"><span class="t">1:57:45</span>ինչ էր ցանկցած հարց ժողովուրդ</div><div class="in"><span class="t">1:57:53</span>Բարի մի քիչ իրական սիստեմների մասին</div><div class=""><span class="t">1:57:56</span>խոսելով օրինակի համար, որ ասում ենք</div></div>
+</div>
+<div class="card" id="card-C10">
+  <div class="head">
+    <label><input type="checkbox" data-id="C10"> C10 &nbsp; 2:11:21.8 &rarr; 2:14:00.8</label>
+    <span>159.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">After the last slide (watermarking): &#x27;questions from here?&#x27;, &#x27;that&#x27;s all for the slides, further reading here&#x27;, the API notebook we skip (&#x27;40% left the call&#x27;), the vote on when to look at it, &#x27;next time we&#x27;ll look at the file or start with the practical, I need to think about Wednesday&#x27;</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C10_spec.png" alt="spectrogram C10">
+  <div class="note">spectrogram 0-5 kHz, 2:11:19 to 2:14:04, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C10_after.wav"></audio></span>
+    <span>what gets removed (boosted +2 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/C10_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:11:17</span>կապված անձամբ մեզ առանձնապես բան չի,</div><div class=""><span class="t">2:11:20</span>առաջնային չի,</div><div class="in"><span class="t">2:11:24</span>բայց հա ստեղից ինչ-որ հարցեր ժողովուրդ</div><div class="in"><span class="t">2:11:35</span>Ու իրականում ոնց որ սլայդերի</div><div class="in"><span class="t">2:11:37</span>տեսանկյունից այսքանն էր այստեղ շատ լիքը</div><div>...</div><div class="in"><span class="t">2:13:55</span>պետք ա նայենք մի հատ պետք ա մի քիչ</div><div class="in"><span class="t">2:13:57</span>մտածեմ չորրորդ շաբթի հետ կապված</div><div class=""><span class="t">2:14:01</span>բայց հա էս լեկցիայի կարևոր կտորը էն էր</div><div class=""><span class="t">2:14:04</span>որ ինքը մեզ արդեն դուռ ա բացում դեպի բան</div></div>
+</div>
+<div class="card" id="card-C11">
+  <div class="head">
+    <label><input type="checkbox" data-id="C11"> C11 &nbsp; 2:14:00.0 &rarr; 2:14:35.6</label>
+    <span>35.7 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">Course plan: &#x27;this lecture opens the door to the applied parts: at first magic, send a request, get an answer; we go two ways in parallel, lectures and projects, projects, projects&#x27; - kept by default, the video ends on it</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C11_spec.png" alt="spectrogram C11">
+  <div class="note">spectrogram 0-5 kHz, 2:13:57 to 2:14:39, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C11_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C11_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:13:55</span>պետք ա նայենք մի հատ պետք ա մի քիչ</div><div class=""><span class="t">2:13:57</span>մտածեմ չորրորդ շաբթի հետ կապված</div><div class="in"><span class="t">2:14:01</span>բայց հա էս լեկցիայի կարևոր կտորը էն էր</div><div class="in"><span class="t">2:14:04</span>որ ինքը մեզ արդեն դուռ ա բացում դեպի բան</div><div class="in"><span class="t">2:14:07</span>շատ ավելի կիրառական կտորներ</div><div>...</div><div class="in"><span class="t">2:14:26</span>արդեն էլի, մի մասում լցիայով կգնանք</div><div class="in"><span class="t">2:14:29</span>առաջ, նոր բաներ սովորենք, մյուս մասում</div><div class="in"><span class="t">2:14:32</span>պրոեկտներ, պրոեկտներ, պրոեկտներ</div><div class="in"><span class="t">2:14:35</span>ու հա</div></div>
+</div>
+<div class="card" id="card-C12">
+  <div class="head">
+    <label><input type="checkbox" data-id="C12"> C12 &nbsp; 2:14:35.0 &rarr; 2:15:39.2</label>
+    <span>64.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">Counting down, &#x27;thanks for staying so long, see you Wednesday&#x27;, New Year break, &#x27;I&#x27;ll put both videos on YouTube today&#x27;, goodbyes</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/C12_spec.png" alt="spectrogram C12">
+  <div class="note">spectrogram 0-5 kHz, 2:14:32 to 2:15:39, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/C12_after.wav"></audio></span>
+    <span>what gets removed - first 15 s + last 15 s <audio controls preload="none" src="media/C12_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:14:29</span>առաջ, նոր բաներ սովորենք, մյուս մասում</div><div class=""><span class="t">2:14:32</span>պրոեկտներ, պրոեկտներ, պրոեկտներ</div><div class="in"><span class="t">2:14:35</span>ու հա</div><div class="in"><span class="t">2:14:40</span>դե մեկ, երկու երեք չոր չորս, հինգ</div><div class="in"><span class="t">2:14:45</span>ըհ, գնաց։ Տակ,</div><div>...</div><div class="in"><span class="t">2:15:31</span>ջնի</div><div class="in"><span class="t">2:15:34</span>հաջողություն ձեզ էլ ձեզ էլ հաջողություն</div><div class="in"><span class="t">2:15:36</span>հաջողություն</div><div class="in"><span class="t">2:15:37</span>հաջողություն ջան</div></div>
+</div></details><details open id="sil-long"><summary>Silence cuts, 5 s and longer (48)</summary>
+<div class="card" id="card-S001">
+  <div class="head">
+    <label><input type="checkbox" data-id="S001"> S001 &nbsp; 0:00:00.0 &rarr; 0:01:11.3</label>
+    <span>71.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">71.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S001_spec.png" alt="spectrogram S001">
+  <div class="note">spectrogram 0-5 kHz, 0:00:00 to 0:01:14, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S001_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/S001_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">0:01:11</span>Բարև ձեզ</div></div>
+</div>
+<div class="card" id="card-S003">
+  <div class="head">
+    <label><input type="checkbox" data-id="S003"> S003 &nbsp; 0:01:17.6 &rarr; 0:01:28.9</label>
+    <span>11.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">12.0 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:01:17.5 (-23 dB) - listen</div><div class="flag">short sound at 0:01:29.0 (-39 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S003_spec.png" alt="spectrogram S003">
+  <div class="note">spectrogram 0-5 kHz, 0:01:15 to 0:01:32, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S003_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S003_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:01:29</span>Եթե ինչ-որ ցանկացած հարց քննարկելու բան</div><div class=""><span class="t">0:01:31</span>կամ մի խոսքով ցանկացած բան կա, համեցեք,</div></div>
+</div>
+<div class="card" id="card-S004">
+  <div class="head">
+    <label><input type="checkbox" data-id="S004"> S004 &nbsp; 0:01:38.5 &rarr; 0:02:26.2</label>
+    <span>47.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">48.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S004_spec.png" alt="spectrogram S004">
+  <div class="note">spectrogram 0-5 kHz, 0:01:35 to 0:02:29, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S004_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/S004_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:01:36</span>եթե չէ մի քիչ սպասենք:</div><div class="in"><span class="t">0:02:26</span>Hm.</div></div>
+</div>
+<div class="card" id="card-S005">
+  <div class="head">
+    <label><input type="checkbox" data-id="S005"> S005 &nbsp; 0:02:29.1 &rarr; 0:02:43.1</label>
+    <span>14.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">14.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S005_spec.png" alt="spectrogram S005">
+  <div class="note">spectrogram 0-5 kHz, 0:02:26 to 0:02:46, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S005_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S005_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:02:26</span>Hm.</div><div class="in"><span class="t">0:02:43</span>րոպու րոպե ֆիքսենք երկու րոպե կսկսենք</div></div>
+</div>
+<div class="card" id="card-S006">
+  <div class="head">
+    <label><input type="checkbox" data-id="S006"> S006 &nbsp; 0:02:47.4 &rarr; 0:03:57.0</label>
+    <span>69.7 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">70.4 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:03:56.8 (-40 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S006_spec.png" alt="spectrogram S006">
+  <div class="note">spectrogram 0-5 kHz, 0:02:44 to 0:04:00, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S006_after.wav"></audio></span>
+    <span>what gets removed (boosted +28 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/S006_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:02:43</span>րոպու րոպե ֆիքսենք երկու րոպե կսկսենք</div><div class="in"><span class="t">0:03:57</span>Բարև ձեզ:</div><div class=""><span class="t">0:04:00</span>Ողջույններ:</div></div>
+</div>
+<div class="card" id="card-S007">
+  <div class="head">
+    <label><input type="checkbox" data-id="S007"> S007 &nbsp; 0:04:01.7 &rarr; 0:04:06.2</label>
+    <span>4.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">5.2 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S007_spec.png" alt="spectrogram S007">
+  <div class="note">spectrogram 0-5 kHz, 0:03:59 to 0:04:09, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S007_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S007_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:03:57</span>Բարև ձեզ:</div><div class=""><span class="t">0:04:00</span>Ողջույններ:</div><div class="in"><span class="t">0:04:06</span>Վայ, ձայնը անջատած էր իմ մոտ էսքան</div><div class=""><span class="t">0:04:08</span>ժամանակ նոր հասկացա: Եթե ինչ-որ մեկը</div><div class=""><span class="t">0:04:10</span>հանկարծ ինչ-որ բան ա ասել ու չեմ նկատել,</div></div>
+</div>
+<div class="card" id="card-S009">
+  <div class="head">
+    <label><input type="checkbox" data-id="S009"> S009 &nbsp; 0:04:21.5 &rarr; 0:04:29.1</label>
+    <span>7.6 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">8.3 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:04:22.8 (-45 dB) - listen</div><div class="flag">short sound at 0:04:27.5 (-49 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S009_spec.png" alt="spectrogram S009">
+  <div class="note">spectrogram 0-5 kHz, 0:04:18 to 0:04:32, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S009_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S009_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:04:20</span>Սա չէի նկատել։</div><div class="in"><span class="t">0:04:29</span>Դե լավ ժողովուրդ, անցը եկավ մեր, եկեք</div><div class=""><span class="t">0:04:31</span>էկրանը կիսեմ։</div></div>
+</div>
+<div class="card" id="card-S011">
+  <div class="head">
+    <label><input type="checkbox" data-id="S011"> S011 &nbsp; 0:06:40.1 &rarr; 0:06:48.3</label>
+    <span>8.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">8.9 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S011_spec.png" alt="spectrogram S011">
+  <div class="note">spectrogram 0-5 kHz, 0:06:37 to 0:06:51, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S011_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S011_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:06:38</span>էլ ինչ էր ցանկցած բան ժողովուրդ</div><div class=""><span class="t">0:06:49</span>Դե բարի դե լավ ժողովուրդ նախորդ լցային</div></div>
+</div>
+<div class="card" id="card-S012">
+  <div class="head">
+    <label><input type="checkbox" data-id="S012"> S012 &nbsp; 0:09:25.1 &rarr; 0:09:31.0</label>
+    <span>5.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S012_spec.png" alt="spectrogram S012">
+  <div class="note">spectrogram 0-5 kHz, 0:09:22 to 0:09:34, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S012_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S012_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:09:22</span>Ցանկացած հարց, նշում, ինչ-որ բան</div><div class=""><span class="t">0:09:24</span>ժողովուրդ:</div><div class="in"><span class="t">0:09:31</span>Օքեյ, դե եկեք իջնենք կոդի վրայով գնանք:</div><div class=""><span class="t">0:09:34</span>Այստեղ ինչ-որ ստանդարտ գրադարաններ ենք</div></div>
+</div>
+<div class="card" id="card-S013">
+  <div class="head">
+    <label><input type="checkbox" data-id="S013"> S013 &nbsp; 0:14:34.7 &rarr; 0:14:39.5</label>
+    <span>4.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">5.5 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:14:34.4 (-31 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S013_spec.png" alt="spectrogram S013">
+  <div class="note">spectrogram 0-5 kHz, 0:14:32 to 0:14:43, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S013_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S013_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:14:29</span>զրո</div><div class=""><span class="t">0:14:30</span>դրա համար ամեն մի տառը մոտ երկու նիշ է</div><div class=""><span class="t">0:14:33</span>մեր վրա նստում</div><div class="in"><span class="t">0:14:39</span>Հա</div><div class=""><span class="t">0:14:41</span>ժողովուրդ մի քիչ երկար խոսացի ինչ-որ</div><div class=""><span class="t">0:14:43</span>հարցեր կա մինչև այստեղ</div></div>
+</div>
+<div class="card" id="card-S014">
+  <div class="head">
+    <label><input type="checkbox" data-id="S014"> S014 &nbsp; 0:14:45.0 &rarr; 0:14:53.1</label>
+    <span>8.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">8.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S014_spec.png" alt="spectrogram S014">
+  <div class="note">spectrogram 0-5 kHz, 0:14:42 to 0:14:56, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S014_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S014_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:14:39</span>Հա</div><div class=""><span class="t">0:14:41</span>ժողովուրդ մի քիչ երկար խոսացի ինչ-որ</div><div class=""><span class="t">0:14:43</span>հարցեր կա մինչև այստեղ</div><div class="in"><span class="t">0:14:53</span>օքե</div><div class=""><span class="t">0:14:55</span>դավա ժիմադե նեղանանք GPT4ի վրա որ մի</div></div>
+</div>
+<div class="card" id="card-S017">
+  <div class="head">
+    <label><input type="checkbox" data-id="S017"> S017 &nbsp; 0:23:43.5 &rarr; 0:23:53.4</label>
+    <span>9.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">10.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S017_spec.png" alt="spectrogram S017">
+  <div class="note">spectrogram 0-5 kHz, 0:23:40 to 0:23:56, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S017_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S017_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:23:39</span>Հա, Ձեզ մերսի։</div><div class=""><span class="t">0:23:41</span>Այլ ինչ որ ցանկացա՞ր, ժողովուրդ։</div><div class=""><span class="t">0:23:54</span>Օքեյ։</div><div class=""><span class="t">0:23:57</span>Հա։ Ու եթե նայենք այբուբենը ընդհանրապես</div></div>
+</div>
+<div class="card" id="card-S018">
+  <div class="head">
+    <label><input type="checkbox" data-id="S018"> S018 &nbsp; 0:24:37.8 &rarr; 0:24:43.3</label>
+    <span>5.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.2 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S018_spec.png" alt="spectrogram S018">
+  <div class="note">spectrogram 0-5 kHz, 0:24:35 to 0:24:46, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S018_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S018_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:24:33</span>Ի՞նչ վարկած ունեք ժողովուրդ, ինչի՞ n չկա</div><div class=""><span class="t">0:24:36</span>այստեղ որպես տոկեն մեր մոտ</div><div class="in"><span class="t">0:24:43</span>շուտ-շուտ հանդիպող է չէ սոտիկի հաստատ</div><div class=""><span class="t">0:24:46</span>բանից ավելի շուտ-շուտ է հանդիպում ձ-ից</div></div>
+</div>
+<div class="card" id="card-S019">
+  <div class="head">
+    <label><input type="checkbox" data-id="S019"> S019 &nbsp; 0:24:50.8 &rarr; 0:25:00.5</label>
+    <span>9.7 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">10.4 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S019_spec.png" alt="spectrogram S019">
+  <div class="note">spectrogram 0-5 kHz, 0:24:48 to 0:25:04, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S019_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S019_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:24:46</span>բանից ավելի շուտ-շուտ է հանդիպում ձ-ից</div><div class=""><span class="t">0:24:49</span>կամ ժ-ից ից</div><div class="in"><span class="t">0:25:00</span>մի հատ ինչ-որ նախադասություն փորձեք ասել</div><div class=""><span class="t">0:25:02</span>է-ով ամենաստանդարտը ձեր էսօր պատահական</div></div>
+</div>
+<div class="card" id="card-S020">
+  <div class="head">
+    <label><input type="checkbox" data-id="S020"> S020 &nbsp; 0:25:06.7 &rarr; 0:25:18.9</label>
+    <span>12.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">12.9 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S020_spec.png" alt="spectrogram S020">
+  <div class="note">spectrogram 0-5 kHz, 0:25:04 to 0:25:22, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S020_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S020_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:25:02</span>է-ով ամենաստանդարտը ձեր էսօր պատահական</div><div class=""><span class="t">0:25:05</span>հանդիպածը</div><div class=""><span class="t">0:25:19</span>այն հիմնական հիմնականում մեր մոտ որպես</div><div class=""><span class="t">0:25:20</span>ինչ-որ գնում էր, գալիս էր սա սրա նման է:</div></div>
+</div>
+<div class="card" id="card-S024">
+  <div class="head">
+    <label><input type="checkbox" data-id="S024"> S024 &nbsp; 0:28:16.8 &rarr; 0:28:22.2</label>
+    <span>5.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.1 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:28:22.4 (-45 dB) - listen</div><div class="flag">short sound at 0:28:22.5 (-42 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S024_spec.png" alt="spectrogram S024">
+  <div class="note">spectrogram 0-5 kHz, 0:28:14 to 0:28:25, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S024_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S024_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:28:11</span>Հա, բայց մի հատ որ փորձարկենք, ավելի լավ</div><div class=""><span class="t">0:28:13</span>կլինի:</div><div class=""><span class="t">0:28:14</span>Ըհը, ըհը Հեսա, հեսա դնեմ, թող լինի</div><div class="in"><span class="t">0:28:22</span>է լեզուն փոխվում, է լեզուն չի փոխվում,</div></div>
+</div>
+<div class="card" id="card-S025">
+  <div class="head">
+    <label><input type="checkbox" data-id="S025"> S025 &nbsp; 0:28:31.1 &rarr; 0:28:37.3</label>
+    <span>6.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.8 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:28:33.9 (-49 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S025_spec.png" alt="spectrogram S025">
+  <div class="note">spectrogram 0-5 kHz, 0:28:28 to 0:28:40, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S025_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S025_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:28:27</span>ահա փոխվեց հեսա հեսա պատասխանը ցույց տամ</div><div class="in"><span class="t">0:28:37</span>հա շատ տեղին հարց է իմիջիայլոց</div></div>
+</div>
+<div class="card" id="card-S026">
+  <div class="head">
+    <label><input type="checkbox" data-id="S026"> S026 &nbsp; 0:28:40.7 &rarr; 0:28:48.5</label>
+    <span>7.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">8.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S026_spec.png" alt="spectrogram S026">
+  <div class="note">spectrogram 0-5 kHz, 0:28:38 to 0:28:51, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S026_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S026_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:28:37</span>հա շատ տեղին հարց է իմիջիայլոց</div><div class="in"><span class="t">0:28:48</span>է դե բացի</div></div>
+</div>
+<div class="card" id="card-S027">
+  <div class="head">
+    <label><input type="checkbox" data-id="S027"> S027 &nbsp; 0:28:50.2 &rarr; 0:28:59.0</label>
+    <span>8.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">9.5 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:28:59.0 (-45 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S027_spec.png" alt="spectrogram S027">
+  <div class="note">spectrogram 0-5 kHz, 0:28:47 to 0:29:02, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S027_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S027_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:28:48</span>է դե բացի</div><div class="in"><span class="t">0:28:59</span>ինքը սպց ավելի շուտ կբռնի օգտագործի էլի</div><div class=""><span class="t">0:29:01</span>քանց ես անտեղ բանը միացնեմ ու ռաները</div><div class=""><span class="t">0:29:03</span>անցկացնեմ</div></div>
+</div>
+<div class="card" id="card-S028">
+  <div class="head">
+    <label><input type="checkbox" data-id="S028"> S028 &nbsp; 0:29:07.5 &rarr; 0:29:14.6</label>
+    <span>7.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">7.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S028_spec.png" alt="spectrogram S028">
+  <div class="note">spectrogram 0-5 kHz, 0:29:04 to 0:29:18, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S028_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S028_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:29:03</span>անցկացնեմ</div><div class=""><span class="t">0:29:05</span>բայց ինտերնետն է նեղանում ինչ-որ</div><div class="in"><span class="t">0:29:14</span>Դավայ</div></div>
+</div>
+<div class="card" id="card-S030">
+  <div class="head">
+    <label><input type="checkbox" data-id="S030"> S030 &nbsp; 0:29:38.8 &rarr; 0:29:55.6</label>
+    <span>16.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">17.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S030_spec.png" alt="spectrogram S030">
+  <div class="note">spectrogram 0-5 kHz, 0:29:36 to 0:29:59, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S030_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S030_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:29:33</span>առեր</div><div class=""><span class="t">0:29:36</span>Ըհը, սկսեց պրոցես պաշլ</div><div class=""><span class="t">0:29:56</span>ռամն է նեղվում, հասկացա,</div></div>
+</div>
+<div class="card" id="card-S032">
+  <div class="head">
+    <label><input type="checkbox" data-id="S032"> S032 &nbsp; 0:30:05.7 &rarr; 0:30:24.4</label>
+    <span>18.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">19.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S032_spec.png" alt="spectrogram S032">
+  <div class="note">spectrogram 0-5 kHz, 0:30:03 to 0:30:27, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S032_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S032_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:30:02</span>մի վայրկյան տեղ չկա Գնանք, հեսա, հեսա</div><div class=""><span class="t">0:30:04</span>բան կանի</div><div class=""><span class="t">0:30:25</span>ըհը, մեր ֆայլն է:</div></div>
+</div>
+<div class="card" id="card-S033">
+  <div class="head">
+    <label><input type="checkbox" data-id="S033"> S033 &nbsp; 0:30:27.4 &rarr; 0:30:34.2</label>
+    <span>6.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">7.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S033_spec.png" alt="spectrogram S033">
+  <div class="note">spectrogram 0-5 kHz, 0:30:24 to 0:30:37, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S033_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S033_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:30:25</span>ըհը, մեր ֆայլն է:</div><div class="in"><span class="t">0:30:34</span>Dav</div></div>
+</div>
+<div class="card" id="card-S034">
+  <div class="head">
+    <label><input type="checkbox" data-id="S034"> S034 &nbsp; 0:30:35.8 &rarr; 0:30:57.8</label>
+    <span>22.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">22.7 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:30:46.6 (-42 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S034_spec.png" alt="spectrogram S034">
+  <div class="note">spectrogram 0-5 kHz, 0:30:33 to 0:31:01, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S034_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S034_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:30:34</span>Dav</div><div class=""><span class="t">0:30:58</span>ինսվդ</div><div class=""><span class="t">0:31:01</span>ու</div></div>
+</div>
+<div class="card" id="card-S037">
+  <div class="head">
+    <label><input type="checkbox" data-id="S037"> S037 &nbsp; 0:35:00.9 &rarr; 0:35:07.4</label>
+    <span>6.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">7.2 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S037_spec.png" alt="spectrogram S037">
+  <div class="note">spectrogram 0-5 kHz, 0:34:58 to 0:35:10, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S037_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S037_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:34:56</span>տանջվում է դրա ձեռը</div><div class=""><span class="t">0:34:59</span>օքե էր:</div><div class="in"><span class="t">0:35:07</span>Հա։</div><div class=""><span class="t">0:35:10</span>Լիլիթ, մեկ էլ ձեր մոտ տեսնում եմ, որ</div><div class=""><span class="t">0:35:11</span>միկրոֆոնը բան ա, բայց ձայն չեմ լսում,</div></div>
+</div>
+<div class="card" id="card-S043">
+  <div class="head">
+    <label><input type="checkbox" data-id="S043"> S043 &nbsp; 0:42:12.8 &rarr; 0:42:22.6</label>
+    <span>9.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">10.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S043_spec.png" alt="spectrogram S043">
+  <div class="note">spectrogram 0-5 kHz, 0:42:10 to 0:42:26, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S043_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S043_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:42:09</span>Բայց հա, ժողովուրդ, էս ամեն ինչից ինչ-որ</div><div class=""><span class="t">0:42:11</span>հարցեր մինչև այստեղ։</div><div class=""><span class="t">0:42:23</span>Հա, արի։ Կարա հետաքրքիր լինի նաև, թե ոնց</div><div class=""><span class="t">0:42:26</span>որ ինչքան շուտ է հայերեն բանտ ստեղծվել</div></div>
+</div>
+<div class="card" id="card-S046">
+  <div class="head">
+    <label><input type="checkbox" data-id="S046"> S046 &nbsp; 0:43:49.3 &rarr; 0:44:05.6</label>
+    <span>16.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">16.9 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S046_spec.png" alt="spectrogram S046">
+  <div class="note">spectrogram 0-5 kHz, 0:43:46 to 0:44:09, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S046_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S046_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:43:47</span>հարցեր այստեղից, ժողովուրդ</div><div class=""><span class="t">0:44:06</span>Բարի</div><div class=""><span class="t">0:44:08</span>դե ժողովուրդ կարո ենք այ սպենս մի հատ</div></div>
+</div>
+<div class="card" id="card-S048">
+  <div class="head">
+    <label><input type="checkbox" data-id="S048"> S048 &nbsp; 0:49:30.5 &rarr; 0:49:35.8</label>
+    <span>5.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.0 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S048_spec.png" alt="spectrogram S048">
+  <div class="note">spectrogram 0-5 kHz, 0:49:27 to 0:49:39, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S048_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S048_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:49:27</span>ինձ տեղն էր դուր եկել ուր է</div><div class=""><span class="t">0:49:36</span>հաբր</div><div class=""><span class="t">0:49:39</span>կրկնել էինք ասում իրան</div></div>
+</div>
+<div class="card" id="card-S049">
+  <div class="head">
+    <label><input type="checkbox" data-id="S049"> S049 &nbsp; 0:51:00.5 &rarr; 0:51:19.6</label>
+    <span>19.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">19.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S049_spec.png" alt="spectrogram S049">
+  <div class="note">spectrogram 0-5 kHz, 0:50:58 to 0:51:23, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S049_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S049_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:50:55</span>Նենց որ ժողովուրդ ցանկացած հարց մեր</div><div class=""><span class="t">0:50:57</span>տոկենիզացիաբանմանից</div><div class=""><span class="t">0:50:59</span>մի հատ լավ մտածեք:</div><div class=""><span class="t">0:51:20</span>Եթե հարց չկա, ես կառաջարկեմ գնանք</div><div class=""><span class="t">0:51:22</span>դասամիջոց մի քիչ երկարոտ, հետո հետ գանք</div></div>
+</div>
+<div class="card" id="card-S050">
+  <div class="head">
+    <label><input type="checkbox" data-id="S050"> S050 &nbsp; 0:52:24.7 &rarr; 0:52:35.0</label>
+    <span>10.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">11.0 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S050_spec.png" alt="spectrogram S050">
+  <div class="note">spectrogram 0-5 kHz, 0:52:22 to 0:52:38, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S050_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S050_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:52:20</span>ուղղակի բան կգնանք դասամիջոց ու հետ</div><div class=""><span class="t">0:52:22</span>կգանք լեքցիա կշարունակենք</div><div class="in"><span class="t">0:52:35</span>Ես այստեղ կգամ</div><div class=""><span class="t">0:52:37</span>մեկ երկու երեք չորսհ լեզուն փոխած չէր</div></div>
+</div>
+<div class="card" id="card-S051">
+  <div class="head">
+    <label><input type="checkbox" data-id="S051"> S051 &nbsp; 0:52:42.0 &rarr; 0:52:48.3</label>
+    <span>6.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">7.0 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:52:41.8 (-32 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S051_spec.png" alt="spectrogram S051">
+  <div class="note">spectrogram 0-5 kHz, 0:52:39 to 0:52:51, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S051_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S051_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:52:37</span>մեկ երկու երեք չորսհ լեզուն փոխած չէր</div><div class=""><span class="t">0:52:41</span>բայց ոչինչ</div><div class="in"><span class="t">0:52:48</span>օքե դե ժ 53 է հիմա եկեք բան</div></div>
+</div>
+<div class="card" id="card-S052">
+  <div class="head">
+    <label><input type="checkbox" data-id="S052"> S052 &nbsp; 0:53:10.3 &rarr; 1:09:43.8</label>
+    <span>993.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">994.2 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S052_spec.png" alt="spectrogram S052">
+  <div class="note">spectrogram 0-5 kHz, 0:53:07 to 1:09:47, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S052_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) - first 15 s + last 15 s <audio controls preload="none" src="media/S052_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:53:06</span>ուշքի գալ</div><div class=""><span class="t">0:53:09</span>առայժմ</div><div class=""><span class="t">1:09:44</span>Ժողովուրդ շարունակենք</div><div class=""><span class="t">1:09:47</span>ուրախ եմ տեսնել որ չենք քչացել ես չգիտեմ</div></div>
+</div>
+<div class="card" id="card-S053">
+  <div class="head">
+    <label><input type="checkbox" data-id="S053"> S053 &nbsp; 1:10:01.4 &rarr; 1:10:10.9</label>
+    <span>9.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">10.2 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S053_spec.png" alt="spectrogram S053">
+  <div class="note">spectrogram 0-5 kHz, 1:09:58 to 1:10:14, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S053_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S053_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:09:56</span>ինչ-որ ցանկացած հարցմարց կո մտք անցավ որ</div><div class=""><span class="t">1:09:59</span>կուզեք նայենք մինչև սկսելը</div><div class=""><span class="t">1:10:11</span>Օքեյ,</div><div class=""><span class="t">1:10:13</span>դե բարի, օյ գրիչն եմ հա, ներողությունից</div></div>
+</div>
+<div class="card" id="card-S055">
+  <div class="head">
+    <label><input type="checkbox" data-id="S055"> S055 &nbsp; 1:10:22.4 &rarr; 1:10:37.2</label>
+    <span>14.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">15.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S055_spec.png" alt="spectrogram S055">
+  <div class="note">spectrogram 0-5 kHz, 1:10:19 to 1:10:40, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S055_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S055_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:10:20</span>տկ տկ տկ</div><div class="in"><span class="t">1:10:37</span>Մի վայրկյան հեսա կեսը</div></div>
+</div>
+<div class="card" id="card-S057">
+  <div class="head">
+    <label><input type="checkbox" data-id="S057"> S057 &nbsp; 1:10:51.3 &rarr; 1:10:57.9</label>
+    <span>6.6 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">7.3 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S057_spec.png" alt="spectrogram S057">
+  <div class="note">spectrogram 0-5 kHz, 1:10:48 to 1:11:01, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S057_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S057_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:10:46</span>սլայդերով ֆռանք մի քիչ</div><div class=""><span class="t">1:10:50</span>Ըհը</div><div class=""><span class="t">1:10:58</span>ահա դե ոնց նկատեցիք մի քիչ</div><div class=""><span class="t">1:11:01</span>հերթականությունը փոխեցինք մեր ձախից աջ</div></div>
+</div>
+<div class="card" id="card-S060">
+  <div class="head">
+    <label><input type="checkbox" data-id="S060"> S060 &nbsp; 1:13:05.6 &rarr; 1:13:16.7</label>
+    <span>11.1 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">11.8 s of silence - kept: the class is asked what kind of problem next-token prediction is; students answer (classification, then multiclass)</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S060_spec.png" alt="spectrogram S060">
+  <div class="note">spectrogram 0-5 kHz, 1:13:03 to 1:13:20, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S060_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S060_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:13:02</span>դասեր ունենք ի՞նչ տարբերակներ կան</div><div class=""><span class="t">1:13:04</span>ընդհանրապես պես</div><div class=""><span class="t">1:13:17</span>այդ կլասիֆիկացիան, բայց չէ</div></div>
+</div>
+<div class="card" id="card-S061">
+  <div class="head">
+    <label><input type="checkbox" data-id="S061"> S061 &nbsp; 1:13:26.0 &rarr; 1:13:33.2</label>
+    <span>7.2 s</span> <span class="badge judgment">your call</span> <span class="note absorbed-note"></span>
+    <div class="reason">7.9 s of silence - kept: the class is asked what kind of problem next-token prediction is; students answer (classification, then multiclass)</div>
+  </div>
+  <div class="flag">short sound at 1:13:27.5 (-45 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S061_spec.png" alt="spectrogram S061">
+  <div class="note">spectrogram 0-5 kHz, 1:13:23 to 1:13:36, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S061_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S061_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:13:21</span>ըհը կլասիֆիկացիան տարբերակ ա, իսկ ավելի</div><div class=""><span class="t">1:13:23</span>կոնկրետ ի՞նչ տեսակ կլասիֆիկացիա</div><div class="in"><span class="t">1:13:33</span>մեր ոնց որ կար մի հատ բինար կլասիֆիկացիա</div><div class=""><span class="t">1:13:35</span>չէ՞, մեկ</div><div class=""><span class="t">1:13:37</span>հա</div></div>
+</div>
+<div class="card" id="card-S065">
+  <div class="head">
+    <label><input type="checkbox" data-id="S065"> S065 &nbsp; 1:21:19.0 &rarr; 1:21:31.6</label>
+    <span>12.6 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">13.3 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S065_spec.png" alt="spectrogram S065">
+  <div class="note">spectrogram 0-5 kHz, 1:21:16 to 1:21:35, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S065_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S065_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:21:13</span>տոկեն-տոկեն ոնց ենք առաջ հաշում մինչև</div><div class=""><span class="t">1:21:16</span>այստեղ ինչ-որ ցանկացած հարց ժողովուրդ</div><div class=""><span class="t">1:21:32</span>Բարի:</div><div class=""><span class="t">1:21:34</span>Դե այն մոտեցումը, որ վերցնում ենք այն</div></div>
+</div>
+<div class="card" id="card-S069">
+  <div class="head">
+    <label><input type="checkbox" data-id="S069"> S069 &nbsp; 1:29:20.7 &rarr; 1:29:28.1</label>
+    <span>7.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">8.1 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S069_spec.png" alt="spectrogram S069">
+  <div class="note">spectrogram 0-5 kHz, 1:29:18 to 1:29:31, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S069_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S069_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:29:16</span>ըհը մերսի</div><div class=""><span class="t">1:29:17</span>Ըհը Ձեզ մերսի Ձեզ մերսի Էլի հարցեր</div><div class=""><span class="t">1:29:19</span>ժողովու՛րդ</div><div class="in"><span class="t">1:29:28</span>հա դե ժողովուրդ ոնց որ այս bam search-ով</div><div class=""><span class="t">1:29:31</span>կարանք ի վերջո ստանանք ավելի հավանական</div></div>
+</div>
+<div class="card" id="card-S070">
+  <div class="head">
+    <label><input type="checkbox" data-id="S070"> S070 &nbsp; 1:35:03.1 &rarr; 1:35:08.8</label>
+    <span>5.7 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.4 s of silence</div>
+  </div>
+  <div class="flag">short sound at 1:35:08.8 (-35 dB) - listen</div><div class="flag">short sound at 1:35:09.0 (-42 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S070_spec.png" alt="spectrogram S070">
+  <div class="note">spectrogram 0-5 kHz, 1:35:00 to 1:35:12, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S070_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S070_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:34:58</span>լավ զգանք:</div><div class=""><span class="t">1:35:01</span>Դավայ, մեզ թիվ չես դիմանոմպոնing</div><div class=""><span class="t">1:35:11</span>ու լավ մոտավոր այստեղ ոնց թե 25-ը չգիտեմ</div></div>
+</div>
+<div class="card" id="card-S073">
+  <div class="head">
+    <label><input type="checkbox" data-id="S073"> S073 &nbsp; 1:39:32.3 &rarr; 1:39:37.0</label>
+    <span>4.6 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">5.3 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S073_spec.png" alt="spectrogram S073">
+  <div class="note">spectrogram 0-5 kHz, 1:39:29 to 1:39:40, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S073_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S073_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:39:30</span>են, թե ինչի հետ կխաղանք</div><div class=""><span class="t">1:39:37</span>կարևոր է նշել, որ ոնց որ</div><div class=""><span class="t">1:39:39</span>հերթականությունը դեր ա խաղում, օրինակի</div></div>
+</div>
+<div class="card" id="card-S077">
+  <div class="head">
+    <label><input type="checkbox" data-id="S077"> S077 &nbsp; 1:45:03.8 &rarr; 1:45:11.9</label>
+    <span>8.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">8.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S077_spec.png" alt="spectrogram S077">
+  <div class="note">spectrogram 0-5 kHz, 1:45:01 to 1:45:15, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S077_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S077_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:44:59</span>ս հլը հեչ ստեղ օքե ամեն</div><div class=""><span class="t">1:45:12</span>Մարի այստեղ կա մի հատ աղյուսակով այն թե</div><div class=""><span class="t">1:45:15</span>ինչ պրոբլեմի դեպքում ինչը կարա պատճառ</div></div>
+</div>
+<div class="card" id="card-S083">
+  <div class="head">
+    <label><input type="checkbox" data-id="S083"> S083 &nbsp; 1:57:37.8 &rarr; 1:57:42.9</label>
+    <span>5.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">5.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S083_spec.png" alt="spectrogram S083">
+  <div class="note">spectrogram 0-5 kHz, 1:57:35 to 1:57:46, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S083_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S083_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:57:32</span>աս նախադասությունը ասեմ բայց կարոենք</div><div class=""><span class="t">1:57:34</span>հանգիստ սպց մտածենք էլի մի քիչ կթեթևացնի</div><div class="in"><span class="t">1:57:37</span>գործը</div><div class=""><span class="t">1:57:43</span>հա</div><div class=""><span class="t">1:57:45</span>ինչ էր ցանկցած հարց ժողովուրդ</div></div>
+</div>
+<div class="card" id="card-S084">
+  <div class="head">
+    <label><input type="checkbox" data-id="S084"> S084 &nbsp; 1:57:46.7 &rarr; 1:57:52.8</label>
+    <span>6.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S084_spec.png" alt="spectrogram S084">
+  <div class="note">spectrogram 0-5 kHz, 1:57:44 to 1:57:56, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S084_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S084_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:57:43</span>հա</div><div class=""><span class="t">1:57:45</span>ինչ էր ցանկցած հարց ժողովուրդ</div><div class=""><span class="t">1:57:53</span>Բարի մի քիչ իրական սիստեմների մասին</div><div class=""><span class="t">1:57:56</span>խոսելով օրինակի համար, որ ասում ենք</div></div>
+</div>
+<div class="card" id="card-S086">
+  <div class="head">
+    <label><input type="checkbox" data-id="S086"> S086 &nbsp; 2:11:26.9 &rarr; 2:11:35.4</label>
+    <span>8.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">9.2 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S086_spec.png" alt="spectrogram S086">
+  <div class="note">spectrogram 0-5 kHz, 2:11:24 to 2:11:38, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S086_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S086_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:11:24</span>բայց հա ստեղից ինչ-որ հարցեր ժողովուրդ</div><div class="in"><span class="t">2:11:35</span>Ու իրականում ոնց որ սլայդերի</div><div class=""><span class="t">2:11:37</span>տեսանկյունից այսքանն էր այստեղ շատ լիքը</div><div class=""><span class="t">2:11:39</span>լավ հետագա գրականություն կա դրած ես մեկ</div></div>
+</div>
+<div class="card" id="card-S087">
+  <div class="head">
+    <label><input type="checkbox" data-id="S087"> S087 &nbsp; 2:12:54.2 &rarr; 2:13:12.1</label>
+    <span>17.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">18.6 s of silence</div>
+  </div>
+  <div class="flag">short sound at 2:13:12.0 (-44 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S087_spec.png" alt="spectrogram S087">
+  <div class="note">spectrogram 0-5 kHz, 2:12:51 to 2:13:15, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S087_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S087_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:12:50</span>կասեք</div><div class=""><span class="t">2:12:52</span>նախ առաջինը հարցերը</div><div class="in"><span class="t">2:13:12</span>կոդի վրայով հիմա անցնելու հետ կապված,</div><div class=""><span class="t">2:13:14</span>իսկ ի՞նչ կասեք</div></div>
+</div>
+<div class="card" id="card-S088">
+  <div class="head">
+    <label><input type="checkbox" data-id="S088"> S088 &nbsp; 2:13:15.5 &rarr; 2:13:22.7</label>
+    <span>7.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">7.9 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S088_spec.png" alt="spectrogram S088">
+  <div class="note">spectrogram 0-5 kHz, 2:13:12 to 2:13:26, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S088_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S088_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:13:12</span>կոդի վրայով հիմա անցնելու հետ կապված,</div><div class=""><span class="t">2:13:14</span>իսկ ի՞նչ կասեք</div><div class=""><span class="t">2:13:23</span>Կողմ մյուս բանին կամ մենք նայենք</div></div>
+</div>
+<div class="card" id="card-S091">
+  <div class="head">
+    <label><input type="checkbox" data-id="S091"> S091 &nbsp; 2:14:49.3 &rarr; 2:14:54.6</label>
+    <span>5.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">6.0 s of silence</div>
+  </div>
+  <div class="flag">short sound at 2:14:49.0 (-50 dB) - listen</div><div class="flag">short sound at 2:14:50.4 (-34 dB) - listen</div><div class="flag">short sound at 2:14:51.9 (-34 dB) - listen</div><div class="flag">short sound at 2:14:52.1 (-47 dB) - listen</div><div class="flag">short sound at 2:14:53.6 (-33 dB) - listen</div><div class="flag">short sound at 2:14:53.8 (-43 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S091_spec.png" alt="spectrogram S091">
+  <div class="note">spectrogram 0-5 kHz, 2:14:46 to 2:14:58, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S091_after.wav"></audio></span>
+    <span>what gets removed (boosted +18 dB) <audio controls preload="none" src="media/S091_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:14:45</span>ըհ, գնաց։ Տակ,</div><div class=""><span class="t">2:14:48</span>տակ,</div><div class="in"><span class="t">2:14:53</span>տակ։ Դե լավ Լավ, ժողովուրդ, ապրեք, որ</div><div class=""><span class="t">2:14:56</span>միացեք ու էսքան երկար մնացիք։</div></div>
+</div></details><details open id="sil-short"><summary>Silence cuts, under 5 s (43)</summary>
+<div class="card" id="card-S002">
+  <div class="head">
+    <label><input type="checkbox" data-id="S002"> S002 &nbsp; 0:01:12.8 &rarr; 0:01:16.7</label>
+    <span>3.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S002_spec.png" alt="spectrogram S002">
+  <div class="note">spectrogram 0-5 kHz, 0:01:10 to 0:01:20, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S002_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S002_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:01:11</span>Բարև ձեզ</div></div>
+</div>
+<div class="card" id="card-S008">
+  <div class="head">
+    <label><input type="checkbox" data-id="S008"> S008 &nbsp; 0:04:16.8 &rarr; 0:04:19.9</label>
+    <span>3.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S008_spec.png" alt="spectrogram S008">
+  <div class="note">spectrogram 0-5 kHz, 0:04:14 to 0:04:23, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S008_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S008_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:04:13</span>կներեք ու կխնդրեմ կրկնեք:</div><div class=""><span class="t">0:04:20</span>Սա չէի նկատել։</div></div>
+</div>
+<div class="card" id="card-S010">
+  <div class="head">
+    <label><input type="checkbox" data-id="S010"> S010 &nbsp; 0:06:06.2 &rarr; 0:06:08.8</label>
+    <span>2.6 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.3 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S010_spec.png" alt="spectrogram S010">
+  <div class="note">spectrogram 0-5 kHz, 0:06:03 to 0:06:12, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S010_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S010_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:06:04</span>մի վայրկյան ոնց եմ արել</div><div class=""><span class="t">0:06:09</span>լավ</div><div class=""><span class="t">0:06:11</span>սկզբի բաները միշտ անկապ բաները</div></div>
+</div>
+<div class="card" id="card-S015">
+  <div class="head">
+    <label><input type="checkbox" data-id="S015"> S015 &nbsp; 0:21:08.5 &rarr; 0:21:12.4</label>
+    <span>3.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S015_spec.png" alt="spectrogram S015">
+  <div class="note">spectrogram 0-5 kHz, 0:21:05 to 0:21:15, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S015_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S015_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:21:04</span>ու տենց, մի խոսքով այս առաջին 15 հատ</div><div class=""><span class="t">0:21:07</span>mergin էր մեր մոտ։</div><div class="in"><span class="t">0:21:12</span>Ըհ, հարցեր ստեղից, ժողովուրդ։</div></div>
+</div>
+<div class="card" id="card-S016">
+  <div class="head">
+    <label><input type="checkbox" data-id="S016"> S016 &nbsp; 0:21:14.8 &rarr; 0:21:17.9</label>
+    <span>3.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S016_spec.png" alt="spectrogram S016">
+  <div class="note">spectrogram 0-5 kHz, 0:21:12 to 0:21:21, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S016_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S016_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:21:12</span>Ըհ, հարցեր ստեղից, ժողովուրդ։</div><div class=""><span class="t">0:21:18</span>Ըմ մի հատ բան հարցնեմ էլի։</div><div class=""><span class="t">0:21:20</span>Ըհը։</div><div class=""><span class="t">0:21:21</span>Ըըը էս, որ Ու-ի էդ երկու մասնիկները, որ</div></div>
+</div>
+<div class="card" id="card-S021">
+  <div class="head">
+    <label><input type="checkbox" data-id="S021"> S021 &nbsp; 0:27:55.3 &rarr; 0:27:57.6</label>
+    <span>2.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.0 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S021_spec.png" alt="spectrogram S021">
+  <div class="note">spectrogram 0-5 kHz, 0:27:52 to 0:28:01, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S021_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S021_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:27:52</span>Կարանք մի հատ զուգահեռ փորձեմ բան անել:</div><div class="in"><span class="t">0:27:57</span>Ներքևը դնեմ, թող աշխատի:</div></div>
+</div>
+<div class="card" id="card-S022">
+  <div class="head">
+    <label><input type="checkbox" data-id="S022"> S022 &nbsp; 0:28:00.0 &rarr; 0:28:04.2</label>
+    <span>4.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.9 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S022_spec.png" alt="spectrogram S022">
+  <div class="note">spectrogram 0-5 kHz, 0:27:57 to 0:28:07, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S022_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S022_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:27:57</span>Ներքևը դնեմ, թող աշխատի:</div><div class="in"><span class="t">0:28:04</span>Իսկ</div><div class=""><span class="t">0:28:07</span>Բայց միտքը պա՞րզ էր:</div></div>
+</div>
+<div class="card" id="card-S023">
+  <div class="head">
+    <label><input type="checkbox" data-id="S023"> S023 &nbsp; 0:28:08.9 &rarr; 0:28:11.3</label>
+    <span>2.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.1 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S023_spec.png" alt="spectrogram S023">
+  <div class="note">spectrogram 0-5 kHz, 0:28:06 to 0:28:14, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S023_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S023_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:28:04</span>Իսկ</div><div class=""><span class="t">0:28:07</span>Բայց միտքը պա՞րզ էր:</div><div class="in"><span class="t">0:28:11</span>Հա, բայց մի հատ որ փորձարկենք, ավելի լավ</div><div class=""><span class="t">0:28:13</span>կլինի:</div><div class=""><span class="t">0:28:14</span>Ըհը, ըհը Հեսա, հեսա դնեմ, թող լինի</div></div>
+</div>
+<div class="card" id="card-S029">
+  <div class="head">
+    <label><input type="checkbox" data-id="S029"> S029 &nbsp; 0:29:16.0 &rarr; 0:29:20.0</label>
+    <span>4.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.7 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S029_spec.png" alt="spectrogram S029">
+  <div class="note">spectrogram 0-5 kHz, 0:29:13 to 0:29:23, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S029_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S029_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:29:14</span>Դավայ</div><div class=""><span class="t">0:29:20</span>եկեք զուգահեռ այստեղից էլ դնեմ թռան լինի</div><div class=""><span class="t">0:29:23</span>ամեն դեպքում որը շուտ հասավ ստացավ</div></div>
+</div>
+<div class="card" id="card-S031">
+  <div class="head">
+    <label><input type="checkbox" data-id="S031"> S031 &nbsp; 0:29:58.6 &rarr; 0:30:01.9</label>
+    <span>3.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.0 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S031_spec.png" alt="spectrogram S031">
+  <div class="note">spectrogram 0-5 kHz, 0:29:56 to 0:30:05, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S031_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S031_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:29:56</span>ռամն է նեղվում, հասկացա,</div><div class=""><span class="t">0:30:02</span>մի վայրկյան տեղ չկա Գնանք, հեսա, հեսա</div><div class=""><span class="t">0:30:04</span>բան կանի</div></div>
+</div>
+<div class="card" id="card-S035">
+  <div class="head">
+    <label><input type="checkbox" data-id="S035"> S035 &nbsp; 0:31:18.4 &rarr; 0:31:22.4</label>
+    <span>4.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.7 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S035_spec.png" alt="spectrogram S035">
+  <div class="note">spectrogram 0-5 kHz, 0:31:15 to 0:31:25, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S035_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S035_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:31:16</span>Հա, հեսա հետ կգանք սրան։</div><div class="in"><span class="t">0:31:22</span>Ըհը, այստեղ ճզմելու տեսանկյունից որ</div><div class=""><span class="t">0:31:24</span>նայենք, ընդեղ էնտեղ թվերը բանով տեսանք,</div></div>
+</div>
+<div class="card" id="card-S036">
+  <div class="head">
+    <label><input type="checkbox" data-id="S036"> S036 &nbsp; 0:33:56.5 &rarr; 0:33:59.3</label>
+    <span>2.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S036_spec.png" alt="spectrogram S036">
+  <div class="note">spectrogram 0-5 kHz, 0:33:54 to 0:34:02, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S036_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S036_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:33:51</span>տողի նշան ու առանձին Հայաստանը, այսինքն</div><div class=""><span class="t">0:33:54</span>ինքը կոնկրետ իրան առանձնացրել է:</div><div class="in"><span class="t">0:33:59</span>Ու հետ գալով այ այս պահ բանին, էշ-ի</div><div class=""><span class="t">0:34:02</span>օրինակին</div></div>
+</div>
+<div class="card" id="card-S038">
+  <div class="head">
+    <label><input type="checkbox" data-id="S038"> S038 &nbsp; 0:35:24.4 &rarr; 0:35:27.5</label>
+    <span>3.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S038_spec.png" alt="spectrogram S038">
+  <div class="note">spectrogram 0-5 kHz, 0:35:21 to 0:35:30, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S038_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S038_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:35:20</span>ուղղակի գյուտություն զուտ։</div><div class=""><span class="t">0:35:23</span>Ըմ։</div><div class="in"><span class="t">0:35:27</span>Մեծ հա։</div><div class=""><span class="t">0:35:29</span>Համս</div></div>
+</div>
+<div class="card" id="card-S039">
+  <div class="head">
+    <label><input type="checkbox" data-id="S039"> S039 &nbsp; 0:38:49.7 &rarr; 0:38:52.3</label>
+    <span>2.6 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.3 s of silence</div>
+  </div>
+  <div class="flag">short sound at 0:38:51.9 (-30 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S039_spec.png" alt="spectrogram S039">
+  <div class="note">spectrogram 0-5 kHz, 0:38:47 to 0:38:55, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S039_after.wav"></audio></span>
+    <span>what gets removed (boosted +17 dB) <audio controls preload="none" src="media/S039_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:38:45</span>եք հետո եթե կուզեք դանդաղ նայեք բայց շատ</div><div class=""><span class="t">0:38:47</span>առանձնապես բան չեն առաջնային չեն</div><div class="in"><span class="t">0:38:52</span>ու այստեղ կուսումնասիրենք որն է եղել</div><div class=""><span class="t">0:38:55</span>առաջին հայերեն մոտ նորմեմը</div></div>
+</div>
+<div class="card" id="card-S040">
+  <div class="head">
+    <label><input type="checkbox" data-id="S040"> S040 &nbsp; 0:39:25.4 &rarr; 0:39:27.8</label>
+    <span>2.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.1 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S040_spec.png" alt="spectrogram S040">
+  <div class="note">spectrogram 0-5 kHz, 0:39:22 to 0:39:31, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S040_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S040_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:39:21</span>այ դա կնայենք հեսա գրաֆիկներով սիրուն</div><div class=""><span class="t">0:39:22</span>լինելու դրա համար եմ արագ թերթում էլի</div><div class=""><span class="t">0:39:28</span>Հա ու որ եթե նայենք այս XLMR-ի բառարանը</div><div class=""><span class="t">0:39:31</span>եղել է 250002 տոկեն GPT4-ին 200000 այս</div></div>
+</div>
+<div class="card" id="card-S041">
+  <div class="head">
+    <label><input type="checkbox" data-id="S041"> S041 &nbsp; 0:41:11.5 &rarr; 0:41:14.4</label>
+    <span>2.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S041_spec.png" alt="spectrogram S041">
+  <div class="note">spectrogram 0-5 kHz, 0:41:09 to 0:41:17, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S041_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S041_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:41:08</span>ավելի շատ էր լինում է սա էլ ավելի</div><div class=""><span class="t">0:41:10</span>խայտառակություն</div><div class="in"><span class="t">0:41:14</span>ու հա սրա հետաքրքիրը նաև իրականում է նա</div><div class=""><span class="t">0:41:17</span>ժողովուրդ օրինակի համար տեսնում եք մի</div></div>
+</div>
+<div class="card" id="card-S042">
+  <div class="head">
+    <label><input type="checkbox" data-id="S042"> S042 &nbsp; 0:41:48.0 &rarr; 0:41:51.8</label>
+    <span>3.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S042_spec.png" alt="spectrogram S042">
+  <div class="note">spectrogram 0-5 kHz, 0:41:45 to 0:41:55, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S042_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S042_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:41:43</span>այսինքն սա մի հատ հավելյալ շերտ ա որի</div><div class=""><span class="t">0:41:46</span>մասին պետք ա մտածել էլի</div><div class=""><span class="t">0:41:52</span>ու հա ու հա ոնց նշեցի մի քանի հատ</div><div class=""><span class="t">0:41:54</span>toոկենայer իրականում նույնն էին այսինքն</div><div class=""><span class="t">0:41:55</span>մոդելը նորն էր բայց tokenizerը տակի</div></div>
+</div>
+<div class="card" id="card-S044">
+  <div class="head">
+    <label><input type="checkbox" data-id="S044"> S044 &nbsp; 0:43:16.2 &rarr; 0:43:19.0</label>
+    <span>2.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S044_spec.png" alt="spectrogram S044">
+  <div class="note">spectrogram 0-5 kHz, 0:43:13 to 0:43:22, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S044_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S044_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:43:12</span>բան չէր էլ հասցնի ձևակերպվի ընդհանրապես</div><div class=""><span class="t">0:43:20</span>նու ստեղ էլի նույն բանով տոկոսը բառերի</div><div class=""><span class="t">0:43:23</span>որոնք որ ավելի շատ տոկեն ունեն քանց նիշ</div></div>
+</div>
+<div class="card" id="card-S045">
+  <div class="head">
+    <label><input type="checkbox" data-id="S045"> S045 &nbsp; 0:43:44.7 &rarr; 0:43:47.4</label>
+    <span>2.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S045_spec.png" alt="spectrogram S045">
+  <div class="note">spectrogram 0-5 kHz, 0:43:42 to 0:43:50, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S045_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S045_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:43:40</span>GPT2, GPT4-ը միշտ</div><div class=""><span class="t">0:43:43</span>իրենք փուֆ են</div><div class="in"><span class="t">0:43:47</span>հարցեր այստեղից, ժողովուրդ</div></div>
+</div>
+<div class="card" id="card-S047">
+  <div class="head">
+    <label><input type="checkbox" data-id="S047"> S047 &nbsp; 0:47:44.4 &rarr; 0:47:48.1</label>
+    <span>3.7 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.4 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S047_spec.png" alt="spectrogram S047">
+  <div class="note">spectrogram 0-5 kHz, 0:47:41 to 0:47:51, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S047_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S047_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">0:47:40</span>բան անի կրկնել ու կրկնել նիշով խնդիրների</div><div class=""><span class="t">0:47:43</span>վրա աշխատի</div><div class="in"><span class="t">0:47:48</span>Հա, ու այստեղ այստեղ է մի քիչ ավելի լավ</div><div class=""><span class="t">0:47:52</span>ձևով, չնայած ստուգած</div></div>
+</div>
+<div class="card" id="card-S054">
+  <div class="head">
+    <label><input type="checkbox" data-id="S054"> S054 &nbsp; 1:10:17.6 &rarr; 1:10:20.6</label>
+    <span>3.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.7 s of silence</div>
+  </div>
+  <div class="flag">short sound at 1:10:20.5 (-28 dB) - listen</div><div class="flag">short sound at 1:10:20.7 (-27 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S054_spec.png" alt="spectrogram S054">
+  <div class="note">spectrogram 0-5 kHz, 1:10:15 to 1:10:24, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S054_after.wav"></audio></span>
+    <span>what gets removed (boosted +13 dB) <audio controls preload="none" src="media/S054_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:10:13</span>դե բարի, օյ գրիչն եմ հա, ներողությունից</div><div class=""><span class="t">1:10:16</span>մոռացա</div><div class="in"><span class="t">1:10:20</span>տկ տկ տկ</div></div>
+</div>
+<div class="card" id="card-S056">
+  <div class="head">
+    <label><input type="checkbox" data-id="S056"> S056 &nbsp; 1:10:39.0 &rarr; 1:10:42.9</label>
+    <span>3.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S056_spec.png" alt="spectrogram S056">
+  <div class="note">spectrogram 0-5 kHz, 1:10:36 to 1:10:46, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S056_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S056_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:10:37</span>Մի վայրկյան հեսա կեսը</div><div class=""><span class="t">1:10:43</span>ըհ</div><div class=""><span class="t">1:10:45</span>ժողովուրդ անցնենք հիմա էլ լեկցիայի</div><div class=""><span class="t">1:10:46</span>սլայդերով ֆռանք մի քիչ</div></div>
+</div>
+<div class="card" id="card-S058">
+  <div class="head">
+    <label><input type="checkbox" data-id="S058"> S058 &nbsp; 1:11:30.1 &rarr; 1:11:34.2</label>
+    <span>4.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S058_spec.png" alt="spectrogram S058">
+  <div class="note">spectrogram 0-5 kHz, 1:11:27 to 1:11:37, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S058_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S058_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:11:25</span>չի աշխատի</div><div class=""><span class="t">1:11:27</span>այ հիմա պետք է չէ զատկանդ պրծնի անպայման</div><div class="in"><span class="t">1:11:34</span>է դավայ հու</div></div>
+</div>
+<div class="card" id="card-S059">
+  <div class="head">
+    <label><input type="checkbox" data-id="S059"> S059 &nbsp; 1:11:47.4 &rarr; 1:11:50.1</label>
+    <span>2.7 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.4 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S059_spec.png" alt="spectrogram S059">
+  <div class="note">spectrogram 0-5 kHz, 1:11:44 to 1:11:53, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S059_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S059_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:11:42</span>այսօր վատ ձագով կլինեմ ահավոր որ</div><div class=""><span class="t">1:11:46</span>ըհը</div><div class="in"><span class="t">1:11:50</span>ն ժողովուրդ նախորդ փուլում արեցինք էն</div><div class=""><span class="t">1:11:54</span>տոկենիզացիայի կտորը որտեղ մեր մոտ սպս</div></div>
+</div>
+<div class="card" id="card-S062">
+  <div class="head">
+    <label><input type="checkbox" data-id="S062"> S062 &nbsp; 1:14:13.1 &rarr; 1:14:15.9</label>
+    <span>2.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S062_spec.png" alt="spectrogram S062">
+  <div class="note">spectrogram 0-5 kHz, 1:14:10 to 1:14:19, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S062_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S062_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:14:08</span>բառը, ավելի ճիշտ, հաջորդ տոկենը</div><div class=""><span class="t">1:14:11</span>գուշակելն ա, չէ՞, ըստ էության։</div><div class=""><span class="t">1:14:16</span>Իսկ մեր ստանդարտ ձևով մենք ոնց որ</div><div class=""><span class="t">1:14:18</span>ստանում մի հատ ինչ-որ արժեքների վեկտոր</div></div>
+</div>
+<div class="card" id="card-S063">
+  <div class="head">
+    <label><input type="checkbox" data-id="S063"> S063 &nbsp; 1:14:48.6 &rarr; 1:14:51.1</label>
+    <span>2.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.2 s of silence</div>
+  </div>
+  <div class="flag">short sound at 1:14:48.3 (-48 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S063_spec.png" alt="spectrogram S063">
+  <div class="note">spectrogram 0-5 kHz, 1:14:46 to 1:14:54, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S063_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S063_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:14:44</span>որ ստանդարտ էն կլասիֆիկացիայից անցած էն</div><div class=""><span class="t">1:14:46</span>հին բաներից ա, չէ՞ մեր մոտ։</div><div class="in"><span class="t">1:14:51</span>Հիմա, օրինակ, եթե սենց անում ենք, հիմա</div><div class=""><span class="t">1:14:53</span>ո՞նց կարանք անենք, օրինակ decրացինք,</div></div>
+</div>
+<div class="card" id="card-S064">
+  <div class="head">
+    <label><input type="checkbox" data-id="S064"> S064 &nbsp; 1:21:06.9 &rarr; 1:21:09.3</label>
+    <span>2.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.1 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S064_spec.png" alt="spectrogram S064">
+  <div class="note">spectrogram 0-5 kHz, 1:21:04 to 1:21:12, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S064_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S064_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:21:02</span>սա էլ կարող է սցենար լինի, որտեղ որ</div><div class=""><span class="t">1:21:04</span>ստոպը լինում է ըստ նախադասության</div><div class="in"><span class="t">1:21:09</span>հա ու հիմա կոնկրետ խոսենք ոնց որ</div><div class=""><span class="t">1:21:11</span>ընդհանուր մեր գեներացիայի պրոցեսը</div><div class=""><span class="t">1:21:13</span>տոկեն-տոկեն ոնց ենք առաջ հաշում մինչև</div></div>
+</div>
+<div class="card" id="card-S066">
+  <div class="head">
+    <label><input type="checkbox" data-id="S066"> S066 &nbsp; 1:22:03.1 &rarr; 1:22:06.1</label>
+    <span>3.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.7 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S066_spec.png" alt="spectrogram S066">
+  <div class="note">spectrogram 0-5 kHz, 1:22:00 to 1:22:09, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S066_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S066_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:21:58</span>ալգորիթմ ա օպտիմիզացիայի որովհետև այդ</div><div class=""><span class="t">1:22:00</span>պահին ամենալավ գրադիենտն եմ վերցնում</div><div class="in"><span class="t">1:22:06</span>հա ու սրան նաև կարանք ասենք արգմա</div><div class=""><span class="t">1:22:09</span>վերցնել ոնց որ մաքսիմում ունեցող արժեքի</div></div>
+</div>
+<div class="card" id="card-S067">
+  <div class="head">
+    <label><input type="checkbox" data-id="S067"> S067 &nbsp; 1:27:03.9 &rarr; 1:27:06.3</label>
+    <span>2.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.1 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S067_spec.png" alt="spectrogram S067">
+  <div class="note">spectrogram 0-5 kHz, 1:27:01 to 1:27:09, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S067_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S067_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:27:00</span>ամենաբանը որոնք են ու գնանք առաջ</div><div class="in"><span class="t">1:27:06</span>օքե ժողովուրդ</div></div>
+</div>
+<div class="card" id="card-S068">
+  <div class="head">
+    <label><input type="checkbox" data-id="S068"> S068 &nbsp; 1:27:08.2 &rarr; 1:27:11.3</label>
+    <span>3.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.8 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S068_spec.png" alt="spectrogram S068">
+  <div class="note">spectrogram 0-5 kHz, 1:27:05 to 1:27:14, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S068_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S068_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:27:06</span>օքե ժողովուրդ</div><div class=""><span class="t">1:27:12</span>Դա գնում ենք այնքան, որ վերջացնենք մեր</div><div class=""><span class="t">1:27:14</span>բան գեներացնելը:</div></div>
+</div>
+<div class="card" id="card-S071">
+  <div class="head">
+    <label><input type="checkbox" data-id="S071"> S071 &nbsp; 1:38:49.5 &rarr; 1:38:51.9</label>
+    <span>2.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.1 s of silence</div>
+  </div>
+  <div class="flag">short sound at 1:38:49.2 (-45 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S071_spec.png" alt="spectrogram S071">
+  <div class="note">spectrogram 0-5 kHz, 1:38:46 to 1:38:55, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S071_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S071_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:38:46</span>հաջորդը ոնց որ մինչև 88% ամեն ինչին</div><div class=""><span class="t">1:38:48</span>կպահենք ենք</div><div class=""><span class="t">1:38:52</span>հա այս մին p-ի հետ կապված այս վերջերս</div><div class=""><span class="t">1:38:55</span>ավելի այդպենս հոդվածներ կա, որ ասում են</div></div>
+</div>
+<div class="card" id="card-S072">
+  <div class="head">
+    <label><input type="checkbox" data-id="S072"> S072 &nbsp; 1:39:16.4 &rarr; 1:39:19.7</label>
+    <span>3.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.1 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S072_spec.png" alt="spectrogram S072">
+  <div class="note">spectrogram 0-5 kHz, 1:39:13 to 1:39:23, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S072_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S072_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:39:14</span>տեղ օքե ժողովուրդ ընդհանուր</div><div class=""><span class="t">1:39:20</span>էլի ինչ-որ հետաքրքիր ոչ ստանդարտ բաներ</div><div class=""><span class="t">1:39:22</span>կա, ասենք զե բաշխում և այլն, բայց ոնց որ</div></div>
+</div>
+<div class="card" id="card-S074">
+  <div class="head">
+    <label><input type="checkbox" data-id="S074"> S074 &nbsp; 1:40:43.5 &rarr; 1:40:46.6</label>
+    <span>3.1 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.8 s of silence</div>
+  </div>
+  <div class="flag">short sound at 1:40:43.2 (-33 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S074_spec.png" alt="spectrogram S074">
+  <div class="note">spectrogram 0-5 kHz, 1:40:40 to 1:40:50, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S074_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S074_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:40:38</span>նորից հանդիպելս չի նշանակում էլ չի</div><div class=""><span class="t">1:40:40</span>հանդիպի, ուղղակի նշանակում է իրեն ավելի</div><div class=""><span class="t">1:40:42</span>դժվար կլինի, որ հանդիպի</div><div class="in"><span class="t">1:40:46</span>Հա, ու նաև հավես պահ, որ արդեն այս</div><div class=""><span class="t">1:40:50</span>մոտեցումը ջարդել են, բայց</div></div>
+</div>
+<div class="card" id="card-S075">
+  <div class="head">
+    <label><input type="checkbox" data-id="S075"> S075 &nbsp; 1:42:13.6 &rarr; 1:42:16.4</label>
+    <span>2.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S075_spec.png" alt="spectrogram S075">
+  <div class="note">spectrogram 0-5 kHz, 1:42:11 to 1:42:19, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S075_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S075_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:42:10</span>հետաքրքիր, առնվազն կողքից հետևելն է</div><div class=""><span class="t">1:42:12</span>հետաքրքիր</div><div class="in"><span class="t">1:42:16</span>ու հա ժողովուրդ ինչ-որ դեֆոլտ արժեքներ</div><div class=""><span class="t">1:42:19</span>կա, որոնք որ կարաք սկզբում ուղղակի</div><div class=""><span class="t">1:42:20</span>օգտագործեք չանհանգստանաք, հետո փոփոխեք</div></div>
+</div>
+<div class="card" id="card-S076">
+  <div class="head">
+    <label><input type="checkbox" data-id="S076"> S076 &nbsp; 1:42:47.1 &rarr; 1:42:50.4</label>
+    <span>3.3 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.0 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S076_spec.png" alt="spectrogram S076">
+  <div class="note">spectrogram 0-5 kHz, 1:42:44 to 1:42:53, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S076_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S076_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:42:44</span>բան չկա էլի, որ բոլորի համար լավագույնն</div><div class=""><span class="t">1:42:46</span>ա</div><div class="in"><span class="t">1:42:50</span>հա ու մի հատ էլ արագով ասեմ, որ մի հատը</div><div class=""><span class="t">1:42:52</span>տարբերակ կարա օգնող տարբերակ կարելի է</div></div>
+</div>
+<div class="card" id="card-S078">
+  <div class="head">
+    <label><input type="checkbox" data-id="S078"> S078 &nbsp; 1:50:11.3 &rarr; 1:50:13.8</label>
+    <span>2.4 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.1 s of silence</div>
+  </div>
+  <div class="flag">short sound at 1:50:13.7 (-49 dB) - listen</div>
+  <img class="spec" loading="lazy" src="media/S078_spec.png" alt="spectrogram S078">
+  <div class="note">spectrogram 0-5 kHz, 1:50:08 to 1:50:17, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S078_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S078_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:50:08</span>Օքեյ էր սա ժողովուրդ էս conրին պահը։</div><div class=""><span class="t">1:50:14</span>Մի հատ բան հարցնեմ էլի</div><div class=""><span class="t">1:50:16</span>Ըհը։</div><div class=""><span class="t">1:50:16</span>որ ասում ենք տալիս ենք իրեն էդ ֆորմատը,</div></div>
+</div>
+<div class="card" id="card-S079">
+  <div class="head">
+    <label><input type="checkbox" data-id="S079"> S079 &nbsp; 1:53:36.2 &rarr; 1:53:38.6</label>
+    <span>2.5 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.2 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S079_spec.png" alt="spectrogram S079">
+  <div class="note">spectrogram 0-5 kHz, 1:53:33 to 1:53:42, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S079_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S079_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:53:31</span>արժեքը։ Սրա կողքը մի քանի տող կոդ ա ու</div><div class=""><span class="t">1:53:35</span>զուտ էդ ա։</div><div class=""><span class="t">1:53:39</span>Նորմալ էր սենց։</div><div class=""><span class="t">1:53:41</span>ըհը</div></div>
+</div>
+<div class="card" id="card-S080">
+  <div class="head">
+    <label><input type="checkbox" data-id="S080"> S080 &nbsp; 1:54:01.0 &rarr; 1:54:03.9</label>
+    <span>2.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S080_spec.png" alt="spectrogram S080">
+  <div class="note">spectrogram 0-5 kHz, 1:53:58 to 1:54:07, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S080_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S080_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:53:56</span>հետ կապված,</div><div class=""><span class="t">1:53:58</span>բայց իդեան դա է, հա, ոնց որ</div><div class=""><span class="t">1:54:04</span>էլի ինչ էր ցանկացած, ժողովուրդ,</div></div>
+</div>
+<div class="card" id="card-S081">
+  <div class="head">
+    <label><input type="checkbox" data-id="S081"> S081 &nbsp; 1:54:05.9 &rarr; 1:54:10.1</label>
+    <span>4.2 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">4.9 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S081_spec.png" alt="spectrogram S081">
+  <div class="note">spectrogram 0-5 kHz, 1:54:03 to 1:54:13, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S081_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S081_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:54:04</span>էլի ինչ էր ցանկացած, ժողովուրդ,</div><div class=""><span class="t">1:54:11</span>իսկ չենք կարա՞ օգտագործենք մեր հենց</div><div class=""><span class="t">1:54:13</span>էլm-ի համար, այսինքն եթե մեկը ինչ-որ</div></div>
+</div>
+<div class="card" id="card-S082">
+  <div class="head">
+    <label><input type="checkbox" data-id="S082"> S082 &nbsp; 1:56:49.5 &rarr; 1:56:52.5</label>
+    <span>3.0 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.7 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S082_spec.png" alt="spectrogram S082">
+  <div class="note">spectrogram 0-5 kHz, 1:56:47 to 1:56:55, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S082_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S082_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">1:56:45</span>հաշվարկ է էլի սրանց համար</div><div class=""><span class="t">1:56:46</span>հավանականություն տալը, երբ որ գիտենք,</div><div class=""><span class="t">1:56:48</span>չենք օգտագործելու</div><div class=""><span class="t">1:56:53</span>Ըհը, մերսի</div><div class=""><span class="t">1:56:54</span>ըհը ձեզ մերսի, ձեզ մերսի ու ընդհանուր էլ</div></div>
+</div>
+<div class="card" id="card-S085">
+  <div class="head">
+    <label><input type="checkbox" data-id="S085"> S085 &nbsp; 2:06:17.7 &rarr; 2:06:20.5</label>
+    <span>2.8 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.5 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S085_spec.png" alt="spectrogram S085">
+  <div class="note">spectrogram 0-5 kHz, 2:06:15 to 2:06:23, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S085_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S085_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:06:13</span>մասի մասին խոսանք էդքան ավելի հասկանալի</div><div class=""><span class="t">2:06:16</span>կդառնան</div><div class="in"><span class="t">2:06:20</span>ու մի հատ էլ ոնց որ արագ էս թեմայով մի</div><div class=""><span class="t">2:06:23</span>հատ էլ պա որ պրակտիկ մակարդակով ենք</div></div>
+</div>
+<div class="card" id="card-S089">
+  <div class="head">
+    <label><input type="checkbox" data-id="S089"> S089 &nbsp; 2:13:38.2 &rarr; 2:13:41.1</label>
+    <span>2.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S089_spec.png" alt="spectrogram S089">
+  <div class="note">spectrogram 0-5 kHz, 2:13:35 to 2:13:44, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S089_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S089_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class="in"><span class="t">2:13:41</span>և երեք</div><div class=""><span class="t">2:13:43</span>1 0</div></div>
+</div>
+<div class="card" id="card-S090">
+  <div class="head">
+    <label><input type="checkbox" data-id="S090"> S090 &nbsp; 2:14:36.8 &rarr; 2:14:39.7</label>
+    <span>2.9 s</span> <span class="badge safe">safe</span> <span class="note absorbed-note"></span>
+    <div class="reason">3.6 s of silence</div>
+  </div>
+  
+  <img class="spec" loading="lazy" src="media/S090_spec.png" alt="spectrogram S090">
+  <div class="note">spectrogram 0-5 kHz, 2:14:34 to 2:14:43, cut part in red</div>
+  <div class="players">
+    <span>after the cut <audio controls preload="none" src="media/S090_after.wav"></audio></span>
+    <span>what gets removed (boosted +30 dB) <audio controls preload="none" src="media/S090_removed.wav"></audio></span>
+  </div>
+  <div class="tx"><div class=""><span class="t">2:14:32</span>պրոեկտներ, պրոեկտներ, պրոեկտներ</div><div class=""><span class="t">2:14:35</span>ու հա</div><div class=""><span class="t">2:14:40</span>դե մեկ, երկու երեք չոր չորս, հինգ</div></div>
+</div></details><details open id="export"><summary>Final cut list for Studio (last first)</summary>
+<p><button id="copy">Copy list</button> <button id="reset">Reset to my picks</button></p>
+<textarea id="export" readonly data-header="# index.html cut list | [03] x | Large Language Models | 2026-11-09_03-x-Large-Language-Models_MF_jn0GXPWA"></textarea></details>
+</main>
+<script id="data" type="application/json">{"video_id": "MF_jn0GXPWA", "title": "[03] x | Large Language Models", "duration": 8139.16, "params": {"min_silence": 3.0, "pad": 0.35, "floor_db": -94.2, "audio_source": "C:\\Users\\hayk_\\Downloads\\GMT20261109-160102_Recording_2560x1440.mp4", "threshold_db": -74.2, "blip_s": 0.2}, "cuts": [{"source": "content", "kind": "safe", "default": true, "start": 0.0, "end": 4259.33, "requested": ["0:00:00.0", "1:10:59.0"], "reason": "Everything before the decoding lecture: the pre-lecture chat, the whole tokenization practical (that is [02]), the 16-min break, 'let's continue, glad we didn't shrink', 'questions before we start?', the pen - up to 'դե ոնց նկատեցիք, մի քիչ հերթականությունը փոխեցինք...'", "flags": [], "id": "C01", "removed_gain_db": -0.5, "spec_window": [0.0, 4262.33], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 4269.1, "end": 4310.07, "requested": ["1:11:09.0", "1:11:49.0"], "reason": "Pen tablet trouble: 'the pen doesn't work, the finger doesn't work, sorry, I should have done this before class', 'I'll be in bad shape today' - up to 'Ն ժողովուրդ, նախորդ փուլում...'", "flags": [], "id": "C02", "removed_gain_db": -1.3, "spec_window": [4266.1, 4313.07], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 4876.15, "end": 4893.93, "requested": ["1:21:16.0", "1:21:33.2"], "reason": "'Until here, any questions, people?' + 13 s silence + 'Բարի' - up to 'դե այն մոտեցումը, որ վերցնում ենք ամենահավանականը'", "flags": [], "id": "C03", "removed_gain_db": 4.8, "spec_window": [4873.15, 4896.93], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 5223.9, "end": 5231.27, "requested": ["1:27:05.0", "1:27:11.0"], "reason": "'OK, people?' + silence - up to the student's question", "flags": [], "id": "C04", "removed_gain_db": 1.2, "spec_window": [5220.9, 5234.27], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 5349.16, "end": 5368.1, "requested": ["1:29:10.0", "1:29:27.0"], "reason": "'Was the question answered?' / 'yes, thanks' / 'thank you; more questions, people?' + 8 s silence - up to 'Հա։ Դե ժողովուրդ, ոնց որ էս beam search-ով...'", "flags": [], "id": "C05", "removed_gain_db": 1.6, "spec_window": [5346.16, 5371.1], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 6605.9, "end": 6613.78, "requested": ["1:50:06.5", "1:50:13.2"], "reason": "'Was this constraint part OK, people?' + silence - up to the student's question", "flags": [], "id": "C06", "removed_gain_db": 1.1, "spec_window": [6602.9, 6616.78], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 6727.15, "end": 6731.33, "requested": ["1:52:07.5", "1:52:11.0"], "reason": "'OK?' + silence - up to the student's follow-up", "flags": [], "id": "C07", "removed_gain_db": 2.2, "spec_window": [6724.15, 6734.33], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 6840.99, "end": 6850.14, "requested": ["1:54:02.5", "1:54:10.0"], "reason": "'Anything else, people?' + silence - up to the student's question", "flags": [], "id": "C08", "removed_gain_db": 3.9, "spec_window": [6837.99, 6853.14], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 7057.85, "end": 7074.4, "requested": ["1:57:41.0", "1:57:54.3"], "reason": "'Any question, people?' + 7 s silence + 'Բարի' - up to 'մի քիչ իրական սիստեմների մասին խոսելով'", "flags": [], "id": "C09", "removed_gain_db": 0.7, "spec_window": [7054.85, 7077.4], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 7881.76, "end": 8040.8, "requested": ["2:11:22.5", "2:14:00.5"], "reason": "After the last slide (watermarking): 'questions from here?', 'that's all for the slides, further reading here', the API notebook we skip ('40% left the call'), the vote on when to look at it, 'next time we'll look at the file or start with the practical, I need to think about Wednesday'", "flags": [], "id": "C10", "removed_gain_db": 2.2, "spec_window": [7878.76, 8043.8], "spec_px": 960}, {"source": "content", "kind": "judgment", "default": false, "start": 8039.97, "end": 8075.63, "requested": ["2:14:00.5", "2:14:35.0"], "reason": "Course plan: 'this lecture opens the door to the applied parts: at first magic, send a request, get an answer; we go two ways in parallel, lectures and projects, projects, projects' - kept by default, the video ends on it", "flags": [], "id": "C11", "removed_gain_db": -1.2, "spec_window": [8036.97, 8078.63], "spec_px": 960}, {"source": "content", "kind": "safe", "default": true, "start": 8074.96, "end": 8139.16, "requested": ["2:14:35.0", "end"], "reason": "Counting down, 'thanks for staying so long, see you Wednesday', New Year break, 'I'll put both videos on YouTube today', goodbyes", "flags": [], "id": "C12", "removed_gain_db": -0.1, "spec_window": [8071.96, 8139.16], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 0.0, "end": 71.29, "run_len": 71.64, "reason": "71.6 s of silence", "flags": [], "id": "S001", "removed_gain_db": 29.5, "spec_window": [0.0, 74.29], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 72.79, "end": 76.69, "run_len": 4.6, "reason": "4.6 s of silence", "flags": [], "id": "S002", "removed_gain_db": 29.5, "spec_window": [69.79, 79.69], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 77.63, "end": 88.91, "run_len": 11.98, "reason": "12.0 s of silence", "flags": ["short sound at 0:01:17.5 (-23 dB) - listen", "short sound at 0:01:29.0 (-39 dB) - listen"], "id": "S003", "removed_gain_db": 29.5, "spec_window": [74.63, 91.91], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 98.49, "end": 146.25, "run_len": 48.46, "reason": "48.5 s of silence", "flags": [], "id": "S004", "removed_gain_db": 29.5, "spec_window": [95.49, 149.25], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 149.06, "end": 163.11, "run_len": 14.75, "reason": "14.8 s of silence", "flags": [], "id": "S005", "removed_gain_db": 29.5, "spec_window": [146.06, 166.11], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 167.36, "end": 237.05, "run_len": 70.39, "reason": "70.4 s of silence", "flags": ["short sound at 0:03:56.8 (-40 dB) - listen"], "id": "S006", "removed_gain_db": 27.6, "spec_window": [164.36, 240.05], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 241.71, "end": 246.22, "run_len": 5.21, "reason": "5.2 s of silence", "flags": [], "id": "S007", "removed_gain_db": 29.5, "spec_window": [238.71, 249.22], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 256.75, "end": 259.87, "run_len": 3.82, "reason": "3.8 s of silence", "flags": [], "id": "S008", "removed_gain_db": 29.5, "spec_window": [253.75, 262.87], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 261.47, "end": 269.1, "run_len": 8.33, "reason": "8.3 s of silence", "flags": ["short sound at 0:04:22.8 (-45 dB) - listen", "short sound at 0:04:27.5 (-49 dB) - listen"], "id": "S009", "removed_gain_db": 29.5, "spec_window": [258.47, 272.1], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 366.17, "end": 368.81, "run_len": 3.34, "reason": "3.3 s of silence", "flags": [], "id": "S010", "removed_gain_db": 29.5, "spec_window": [363.17, 371.81], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 400.11, "end": 408.3, "run_len": 8.89, "reason": "8.9 s of silence", "flags": [], "id": "S011", "removed_gain_db": 29.5, "spec_window": [397.11, 411.3], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 565.11, "end": 571.05, "run_len": 6.64, "reason": "6.6 s of silence", "flags": [], "id": "S012", "removed_gain_db": 29.5, "spec_window": [562.11, 574.05], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 874.73, "end": 879.51, "run_len": 5.48, "reason": "5.5 s of silence", "flags": ["short sound at 0:14:34.4 (-31 dB) - listen"], "id": "S013", "removed_gain_db": 29.5, "spec_window": [871.73, 882.51], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 884.98, "end": 893.08, "run_len": 8.8, "reason": "8.8 s of silence", "flags": [], "id": "S014", "removed_gain_db": 29.5, "spec_window": [881.98, 896.08], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1268.46, "end": 1272.35, "run_len": 4.59, "reason": "4.6 s of silence", "flags": [], "id": "S015", "removed_gain_db": 29.5, "spec_window": [1265.46, 1275.35], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1274.81, "end": 1277.93, "run_len": 3.82, "reason": "3.8 s of silence", "flags": [], "id": "S016", "removed_gain_db": 29.5, "spec_window": [1271.81, 1280.93], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1423.5, "end": 1433.44, "run_len": 10.64, "reason": "10.6 s of silence", "flags": [], "id": "S017", "removed_gain_db": 29.5, "spec_window": [1420.5, 1436.44], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1477.81, "end": 1483.32, "run_len": 6.21, "reason": "6.2 s of silence", "flags": [], "id": "S018", "removed_gain_db": 29.5, "spec_window": [1474.81, 1486.32], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1490.76, "end": 1500.5, "run_len": 10.44, "reason": "10.4 s of silence", "flags": [], "id": "S019", "removed_gain_db": 29.5, "spec_window": [1487.76, 1503.5], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1506.72, "end": 1518.91, "run_len": 12.89, "reason": "12.9 s of silence", "flags": [], "id": "S020", "removed_gain_db": 29.5, "spec_window": [1503.72, 1521.91], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1675.27, "end": 1677.59, "run_len": 3.02, "reason": "3.0 s of silence", "flags": [], "id": "S021", "removed_gain_db": 29.5, "spec_window": [1672.27, 1680.59], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1680.01, "end": 1684.22, "run_len": 4.91, "reason": "4.9 s of silence", "flags": [], "id": "S022", "removed_gain_db": 29.5, "spec_window": [1677.01, 1687.22], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1688.89, "end": 1691.26, "run_len": 3.07, "reason": "3.1 s of silence", "flags": [], "id": "S023", "removed_gain_db": 29.5, "spec_window": [1685.89, 1694.26], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1696.77, "end": 1702.2, "run_len": 6.13, "reason": "6.1 s of silence", "flags": ["short sound at 0:28:22.4 (-45 dB) - listen", "short sound at 0:28:22.5 (-42 dB) - listen"], "id": "S024", "removed_gain_db": 29.5, "spec_window": [1693.77, 1705.2], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1711.14, "end": 1717.28, "run_len": 6.84, "reason": "6.8 s of silence", "flags": ["short sound at 0:28:33.9 (-49 dB) - listen"], "id": "S025", "removed_gain_db": 29.5, "spec_window": [1708.14, 1720.28], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1720.72, "end": 1728.48, "run_len": 8.46, "reason": "8.5 s of silence", "flags": [], "id": "S026", "removed_gain_db": 29.5, "spec_window": [1717.72, 1731.48], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1730.23, "end": 1739.0, "run_len": 9.47, "reason": "9.5 s of silence", "flags": ["short sound at 0:28:59.0 (-45 dB) - listen"], "id": "S027", "removed_gain_db": 29.5, "spec_window": [1727.23, 1742.0], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1747.46, "end": 1754.55, "run_len": 7.79, "reason": "7.8 s of silence", "flags": [], "id": "S028", "removed_gain_db": 29.5, "spec_window": [1744.46, 1757.55], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1755.95, "end": 1759.96, "run_len": 4.71, "reason": "4.7 s of silence", "flags": [], "id": "S029", "removed_gain_db": 29.5, "spec_window": [1752.95, 1762.96], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1778.82, "end": 1795.6, "run_len": 17.48, "reason": "17.5 s of silence", "flags": [], "id": "S030", "removed_gain_db": 29.5, "spec_window": [1775.82, 1798.6], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1798.57, "end": 1801.87, "run_len": 4.0, "reason": "4.0 s of silence", "flags": [], "id": "S031", "removed_gain_db": 29.5, "spec_window": [1795.57, 1804.87], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1805.66, "end": 1824.45, "run_len": 19.49, "reason": "19.5 s of silence", "flags": [], "id": "S032", "removed_gain_db": 29.5, "spec_window": [1802.66, 1827.45], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1827.35, "end": 1834.15, "run_len": 7.5, "reason": "7.5 s of silence", "flags": [], "id": "S033", "removed_gain_db": 29.5, "spec_window": [1824.35, 1837.15], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1835.83, "end": 1857.84, "run_len": 22.71, "reason": "22.7 s of silence", "flags": ["short sound at 0:30:46.6 (-42 dB) - listen"], "id": "S034", "removed_gain_db": 29.5, "spec_window": [1832.83, 1860.84], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 1878.4, "end": 1882.39, "run_len": 4.69, "reason": "4.7 s of silence", "flags": [], "id": "S035", "removed_gain_db": 29.5, "spec_window": [1875.4, 1885.39], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2036.5, "end": 2039.32, "run_len": 3.52, "reason": "3.5 s of silence", "flags": [], "id": "S036", "removed_gain_db": 29.5, "spec_window": [2033.5, 2042.32], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2100.86, "end": 2107.4, "run_len": 7.24, "reason": "7.2 s of silence", "flags": [], "id": "S037", "removed_gain_db": 29.5, "spec_window": [2097.86, 2110.4], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2124.42, "end": 2127.47, "run_len": 3.75, "reason": "3.8 s of silence", "flags": [], "id": "S038", "removed_gain_db": 29.5, "spec_window": [2121.42, 2130.47], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2329.68, "end": 2332.29, "run_len": 3.31, "reason": "3.3 s of silence", "flags": ["short sound at 0:38:51.9 (-30 dB) - listen"], "id": "S039", "removed_gain_db": 17.4, "spec_window": [2326.68, 2335.29], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2365.41, "end": 2367.78, "run_len": 3.07, "reason": "3.1 s of silence", "flags": [], "id": "S040", "removed_gain_db": 29.5, "spec_window": [2362.41, 2370.78], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2471.51, "end": 2474.43, "run_len": 3.62, "reason": "3.6 s of silence", "flags": [], "id": "S041", "removed_gain_db": 29.5, "spec_window": [2468.51, 2477.43], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2508.02, "end": 2511.8, "run_len": 4.48, "reason": "4.5 s of silence", "flags": [], "id": "S042", "removed_gain_db": 29.5, "spec_window": [2505.02, 2514.8], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2532.8, "end": 2542.65, "run_len": 10.55, "reason": "10.6 s of silence", "flags": [], "id": "S043", "removed_gain_db": 29.5, "spec_window": [2529.8, 2545.65], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2596.18, "end": 2599.05, "run_len": 3.57, "reason": "3.6 s of silence", "flags": [], "id": "S044", "removed_gain_db": 29.5, "spec_window": [2593.18, 2602.05], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2624.68, "end": 2627.45, "run_len": 3.47, "reason": "3.5 s of silence", "flags": [], "id": "S045", "removed_gain_db": 29.5, "spec_window": [2621.68, 2630.45], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2629.34, "end": 2645.56, "run_len": 16.92, "reason": "16.9 s of silence", "flags": [], "id": "S046", "removed_gain_db": 29.5, "spec_window": [2626.34, 2648.56], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2864.41, "end": 2868.09, "run_len": 4.38, "reason": "4.4 s of silence", "flags": [], "id": "S047", "removed_gain_db": 29.5, "spec_window": [2861.41, 2871.09], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 2970.49, "end": 2975.83, "run_len": 6.04, "reason": "6.0 s of silence", "flags": [], "id": "S048", "removed_gain_db": 29.5, "spec_window": [2967.49, 2978.83], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 3060.54, "end": 3079.61, "run_len": 19.77, "reason": "19.8 s of silence", "flags": [], "id": "S049", "removed_gain_db": 29.5, "spec_window": [3057.54, 3082.61], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 3144.72, "end": 3155.0, "run_len": 10.98, "reason": "11.0 s of silence", "flags": [], "id": "S050", "removed_gain_db": 29.5, "spec_window": [3141.72, 3158.0], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 3162.03, "end": 3168.31, "run_len": 6.98, "reason": "7.0 s of silence", "flags": ["short sound at 0:52:41.8 (-32 dB) - listen"], "id": "S051", "removed_gain_db": 29.5, "spec_window": [3159.03, 3171.31], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 3190.34, "end": 4183.85, "run_len": 994.21, "reason": "994.2 s of silence", "flags": [], "id": "S052", "removed_gain_db": 29.5, "spec_window": [3187.34, 4186.85], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4201.37, "end": 4210.87, "run_len": 10.2, "reason": "10.2 s of silence", "flags": [], "id": "S053", "removed_gain_db": 29.5, "spec_window": [4198.37, 4213.87], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4217.65, "end": 4220.63, "run_len": 3.68, "reason": "3.7 s of silence", "flags": ["short sound at 1:10:20.5 (-28 dB) - listen", "short sound at 1:10:20.7 (-27 dB) - listen"], "id": "S054", "removed_gain_db": 13.4, "spec_window": [4214.65, 4223.63], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4222.4, "end": 4237.23, "run_len": 15.53, "reason": "15.5 s of silence", "flags": [], "id": "S055", "removed_gain_db": 29.5, "spec_window": [4219.4, 4240.23], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4239.04, "end": 4242.9, "run_len": 4.56, "reason": "4.6 s of silence", "flags": [], "id": "S056", "removed_gain_db": 29.5, "spec_window": [4236.04, 4245.9], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4251.3, "end": 4257.87, "run_len": 7.27, "reason": "7.3 s of silence", "flags": [], "id": "S057", "removed_gain_db": 29.5, "spec_window": [4248.3, 4260.87], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4290.11, "end": 4294.17, "run_len": 4.76, "reason": "4.8 s of silence", "flags": [], "id": "S058", "removed_gain_db": 29.5, "spec_window": [4287.11, 4297.17], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4307.37, "end": 4310.07, "run_len": 3.4, "reason": "3.4 s of silence", "flags": [], "id": "S059", "removed_gain_db": 29.5, "spec_window": [4304.37, 4313.07], "spec_px": 960}, {"source": "silence", "kind": "judgment", "default": false, "start": 4385.61, "end": 4396.73, "run_len": 11.82, "reason": "11.8 s of silence - kept: the class is asked what kind of problem next-token prediction is; students answer (classification, then multiclass)", "flags": [], "id": "S060", "removed_gain_db": 29.5, "spec_window": [4382.61, 4399.73], "spec_px": 960}, {"source": "silence", "kind": "judgment", "default": false, "start": 4406.0, "end": 4413.22, "run_len": 7.92, "reason": "7.9 s of silence - kept: the class is asked what kind of problem next-token prediction is; students answer (classification, then multiclass)", "flags": ["short sound at 1:13:27.5 (-45 dB) - listen"], "id": "S061", "removed_gain_db": 29.5, "spec_window": [4403.0, 4416.22], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4453.11, "end": 4455.93, "run_len": 3.52, "reason": "3.5 s of silence", "flags": [], "id": "S062", "removed_gain_db": 29.5, "spec_window": [4450.11, 4458.93], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4488.65, "end": 4491.14, "run_len": 3.19, "reason": "3.2 s of silence", "flags": ["short sound at 1:14:48.3 (-48 dB) - listen"], "id": "S063", "removed_gain_db": 29.5, "spec_window": [4485.65, 4494.14], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4866.87, "end": 4869.29, "run_len": 3.12, "reason": "3.1 s of silence", "flags": [], "id": "S064", "removed_gain_db": 29.5, "spec_window": [4863.87, 4872.29], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4878.95, "end": 4891.59, "run_len": 13.34, "reason": "13.3 s of silence", "flags": [], "id": "S065", "removed_gain_db": 29.5, "spec_window": [4875.95, 4894.59], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 4923.1, "end": 4926.09, "run_len": 3.69, "reason": "3.7 s of silence", "flags": [], "id": "S066", "removed_gain_db": 29.5, "spec_window": [4920.1, 4929.09], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 5223.9, "end": 5226.3, "run_len": 3.1, "reason": "3.1 s of silence", "flags": [], "id": "S067", "removed_gain_db": 29.5, "spec_window": [5220.9, 5229.3], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 5228.21, "end": 5231.27, "run_len": 3.76, "reason": "3.8 s of silence", "flags": [], "id": "S068", "removed_gain_db": 29.5, "spec_window": [5225.21, 5234.27], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 5360.66, "end": 5368.1, "run_len": 8.14, "reason": "8.1 s of silence", "flags": [], "id": "S069", "removed_gain_db": 29.5, "spec_window": [5357.66, 5371.1], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 5703.1, "end": 5708.78, "run_len": 6.38, "reason": "6.4 s of silence", "flags": ["short sound at 1:35:08.8 (-35 dB) - listen", "short sound at 1:35:09.0 (-42 dB) - listen"], "id": "S070", "removed_gain_db": 29.5, "spec_window": [5700.1, 5711.78], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 5929.49, "end": 5931.86, "run_len": 3.07, "reason": "3.1 s of silence", "flags": ["short sound at 1:38:49.2 (-45 dB) - listen"], "id": "S071", "removed_gain_db": 29.5, "spec_window": [5926.49, 5934.86], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 5956.37, "end": 5959.73, "run_len": 4.06, "reason": "4.1 s of silence", "flags": [], "id": "S072", "removed_gain_db": 29.5, "spec_window": [5953.37, 5962.73], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 5972.32, "end": 5976.95, "run_len": 5.33, "reason": "5.3 s of silence", "flags": [], "id": "S073", "removed_gain_db": 29.5, "spec_window": [5969.32, 5979.95], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6043.47, "end": 6046.56, "run_len": 3.79, "reason": "3.8 s of silence", "flags": ["short sound at 1:40:43.2 (-33 dB) - listen"], "id": "S074", "removed_gain_db": 29.5, "spec_window": [6040.47, 6049.56], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6133.61, "end": 6136.37, "run_len": 3.46, "reason": "3.5 s of silence", "flags": [], "id": "S075", "removed_gain_db": 29.5, "spec_window": [6130.61, 6139.37], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6167.06, "end": 6170.36, "run_len": 4.0, "reason": "4.0 s of silence", "flags": [], "id": "S076", "removed_gain_db": 29.5, "spec_window": [6164.06, 6173.36], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6303.81, "end": 6311.91, "run_len": 8.8, "reason": "8.8 s of silence", "flags": [], "id": "S077", "removed_gain_db": 29.5, "spec_window": [6300.81, 6314.91], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6611.34, "end": 6613.78, "run_len": 3.14, "reason": "3.1 s of silence", "flags": ["short sound at 1:50:13.7 (-49 dB) - listen"], "id": "S078", "removed_gain_db": 29.5, "spec_window": [6608.34, 6616.78], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6816.16, "end": 6818.63, "run_len": 3.17, "reason": "3.2 s of silence", "flags": [], "id": "S079", "removed_gain_db": 29.5, "spec_window": [6813.16, 6821.63], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6840.99, "end": 6843.9, "run_len": 3.61, "reason": "3.6 s of silence", "flags": [], "id": "S080", "removed_gain_db": 29.5, "spec_window": [6837.99, 6846.9], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 6845.92, "end": 6850.14, "run_len": 4.92, "reason": "4.9 s of silence", "flags": [], "id": "S081", "removed_gain_db": 29.5, "spec_window": [6842.92, 6853.14], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 7009.51, "end": 7012.48, "run_len": 3.67, "reason": "3.7 s of silence", "flags": [], "id": "S082", "removed_gain_db": 29.5, "spec_window": [7006.51, 7015.48], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 7057.85, "end": 7062.92, "run_len": 5.77, "reason": "5.8 s of silence", "flags": [], "id": "S083", "removed_gain_db": 29.5, "spec_window": [7054.85, 7065.92], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 7066.69, "end": 7072.79, "run_len": 6.8, "reason": "6.8 s of silence", "flags": [], "id": "S084", "removed_gain_db": 29.5, "spec_window": [7063.69, 7075.79], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 7577.67, "end": 7580.48, "run_len": 3.51, "reason": "3.5 s of silence", "flags": [], "id": "S085", "removed_gain_db": 29.5, "spec_window": [7574.67, 7583.48], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 7886.91, "end": 7895.4, "run_len": 9.19, "reason": "9.2 s of silence", "flags": [], "id": "S086", "removed_gain_db": 29.5, "spec_window": [7883.91, 7898.4], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 7974.2, "end": 7992.1, "run_len": 18.6, "reason": "18.6 s of silence", "flags": ["short sound at 2:13:12.0 (-44 dB) - listen"], "id": "S087", "removed_gain_db": 29.5, "spec_window": [7971.2, 7995.1], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 7995.47, "end": 8002.69, "run_len": 7.92, "reason": "7.9 s of silence", "flags": [], "id": "S088", "removed_gain_db": 29.5, "spec_window": [7992.47, 8005.69], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 8018.19, "end": 8021.07, "run_len": 3.58, "reason": "3.6 s of silence", "flags": [], "id": "S089", "removed_gain_db": 29.5, "spec_window": [8015.19, 8024.07], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 8076.85, "end": 8079.73, "run_len": 3.58, "reason": "3.6 s of silence", "flags": [], "id": "S090", "removed_gain_db": 29.5, "spec_window": [8073.85, 8082.73], "spec_px": 960}, {"source": "silence", "kind": "safe", "default": true, "start": 8089.3, "end": 8094.59, "run_len": 5.99, "reason": "6.0 s of silence", "flags": ["short sound at 2:14:49.0 (-50 dB) - listen", "short sound at 2:14:50.4 (-34 dB) - listen", "short sound at 2:14:51.9 (-34 dB) - listen", "short sound at 2:14:52.1 (-47 dB) - listen", "short sound at 2:14:53.6 (-33 dB) - listen", "short sound at 2:14:53.8 (-43 dB) - listen"], "id": "S091", "removed_gain_db": 17.5, "spec_window": [8086.3, 8097.59], "spec_px": 960}], "fps": 25.0, "studio_cuts": [{"id": "studio01", "n": 1, "start": 0.0, "end": 4259.32, "start_tc": "0:00:00:00", "end_tc": "1:10:59:08", "sources": ["C01", "S001", "S002", "S003", "S004", "S005", "S006", "S007", "S008", "S009", "S010", "S011", "S012", "S013", "S014", "S015", "S016", "S017", "S018", "S019", "S020", "S021", "S022", "S023", "S024", "S025", "S026", "S027", "S028", "S029", "S030", "S031", "S032", "S033", "S034", "S035", "S036", "S037", "S038", "S039", "S040", "S041", "S042", "S043", "S044", "S045", "S046", "S047", "S048", "S049", "S050", "S051", "S052", "S053", "S054", "S055", "S056", "S057"], "spec_window": [0.0, 4279.32], "spec_px": 16000}, {"id": "studio02", "n": 2, "start": 4269.12, "end": 4310.04, "start_tc": "1:11:09:03", "end_tc": "1:11:50:01", "sources": ["C02", "S058", "S059"], "spec_window": [4249.12, 4330.04], "spec_px": 6474}, {"id": "studio03", "n": 3, "start": 4453.12, "end": 4455.92, "start_tc": "1:14:13:03", "end_tc": "1:14:15:23", "sources": ["S062"], "spec_window": [4433.12, 4475.92], "spec_px": 3424}, {"id": "studio04", "n": 4, "start": 4488.68, "end": 4491.12, "start_tc": "1:14:48:17", "end_tc": "1:14:51:03", "sources": ["S063"], "spec_window": [4468.68, 4511.12], "spec_px": 3395}, {"id": "studio05", "n": 5, "start": 4866.88, "end": 4869.28, "start_tc": "1:21:06:22", "end_tc": "1:21:09:07", "sources": ["S064"], "spec_window": [4846.88, 4889.28], "spec_px": 3392}, {"id": "studio06", "n": 6, "start": 4876.16, "end": 4893.92, "start_tc": "1:21:16:04", "end_tc": "1:21:33:23", "sources": ["C03", "S065"], "spec_window": [4856.16, 4913.92], "spec_px": 4621}, {"id": "studio07", "n": 7, "start": 4923.12, "end": 4926.08, "start_tc": "1:22:03:03", "end_tc": "1:22:06:02", "sources": ["S066"], "spec_window": [4903.12, 4946.08], "spec_px": 3437}, {"id": "studio08", "n": 8, "start": 5223.92, "end": 5231.24, "start_tc": "1:27:03:23", "end_tc": "1:27:11:06", "sources": ["C04", "S067", "S068"], "spec_window": [5203.92, 5251.24], "spec_px": 3786}, {"id": "studio09", "n": 9, "start": 5349.16, "end": 5368.08, "start_tc": "1:29:09:04", "end_tc": "1:29:28:02", "sources": ["C05", "S069"], "spec_window": [5329.16, 5388.08], "spec_px": 4714}, {"id": "studio10", "n": 10, "start": 5703.12, "end": 5708.76, "start_tc": "1:35:03:03", "end_tc": "1:35:08:19", "sources": ["S070"], "spec_window": [5683.12, 5728.76], "spec_px": 3651}, {"id": "studio11", "n": 11, "start": 5929.52, "end": 5931.84, "start_tc": "1:38:49:13", "end_tc": "1:38:51:21", "sources": ["S071"], "spec_window": [5909.52, 5951.84], "spec_px": 3386}, {"id": "studio12", "n": 12, "start": 5956.4, "end": 5959.72, "start_tc": "1:39:16:10", "end_tc": "1:39:19:18", "sources": ["S072"], "spec_window": [5936.4, 5979.72], "spec_px": 3466}, {"id": "studio13", "n": 13, "start": 5972.32, "end": 5976.92, "start_tc": "1:39:32:08", "end_tc": "1:39:36:23", "sources": ["S073"], "spec_window": [5952.32, 5996.92], "spec_px": 3568}, {"id": "studio14", "n": 14, "start": 6043.48, "end": 6046.56, "start_tc": "1:40:43:12", "end_tc": "1:40:46:14", "sources": ["S074"], "spec_window": [6023.48, 6066.56], "spec_px": 3446}, {"id": "studio15", "n": 15, "start": 6133.64, "end": 6136.36, "start_tc": "1:42:13:16", "end_tc": "1:42:16:09", "sources": ["S075"], "spec_window": [6113.64, 6156.36], "spec_px": 3418}, {"id": "studio16", "n": 16, "start": 6167.08, "end": 6170.36, "start_tc": "1:42:47:02", "end_tc": "1:42:50:09", "sources": ["S076"], "spec_window": [6147.08, 6190.36], "spec_px": 3462}, {"id": "studio17", "n": 17, "start": 6303.84, "end": 6311.88, "start_tc": "1:45:03:21", "end_tc": "1:45:11:22", "sources": ["S077"], "spec_window": [6283.84, 6331.88], "spec_px": 3843}, {"id": "studio18", "n": 18, "start": 6605.92, "end": 6613.76, "start_tc": "1:50:05:23", "end_tc": "1:50:13:19", "sources": ["C06", "S078"], "spec_window": [6585.92, 6633.76], "spec_px": 3827}, {"id": "studio19", "n": 19, "start": 6727.16, "end": 6731.32, "start_tc": "1:52:07:04", "end_tc": "1:52:11:08", "sources": ["C07"], "spec_window": [6707.16, 6751.32], "spec_px": 3533}, {"id": "studio20", "n": 20, "start": 6816.16, "end": 6818.6, "start_tc": "1:53:36:04", "end_tc": "1:53:38:15", "sources": ["S079"], "spec_window": [6796.16, 6838.6], "spec_px": 3395}, {"id": "studio21", "n": 21, "start": 6841.0, "end": 6850.12, "start_tc": "1:54:01:00", "end_tc": "1:54:10:03", "sources": ["C08", "S080", "S081"], "spec_window": [6821.0, 6870.12], "spec_px": 3930}, {"id": "studio22", "n": 22, "start": 7009.52, "end": 7012.48, "start_tc": "1:56:49:13", "end_tc": "1:56:52:12", "sources": ["S082"], "spec_window": [6989.52, 7032.48], "spec_px": 3437}, {"id": "studio23", "n": 23, "start": 7057.88, "end": 7074.4, "start_tc": "1:57:37:22", "end_tc": "1:57:54:10", "sources": ["C09", "S083", "S084"], "spec_window": [7037.88, 7094.4], "spec_px": 4522}, {"id": "studio24", "n": 24, "start": 7577.68, "end": 7580.48, "start_tc": "2:06:17:17", "end_tc": "2:06:20:12", "sources": ["S085"], "spec_window": [7557.68, 7600.48], "spec_px": 3424}, {"id": "studio25", "n": 25, "start": 7881.76, "end": 8040.8, "start_tc": "2:11:21:19", "end_tc": "2:14:00:20", "sources": ["C10", "S086", "S087", "S088", "S089"], "spec_window": [7861.76, 8060.8], "spec_px": 15923}, {"id": "studio26", "n": 26, "start": 8074.96, "end": 8139.16, "start_tc": "2:14:34:24", "end_tc": "2:15:39:04", "sources": ["C12", "S090", "S091"], "spec_window": [8054.96, 8139.16], "spec_px": 6736}], "signature": "c5f50bdba74e"}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const KEY = 'edit-points-' + DATA.video_id + '-' + DATA.signature;   // a changed cut list starts from the defaults
+const byId = Object.fromEntries(DATA.cuts.map(c => [c.id, c]));
+let ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id));
+try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) ticked = new Set(saved); } catch (e) {}
+const minSel = document.getElementById('minsil');
+function fmt(sec, d=1) { sec = Math.round(sec * 10**d) / 10**d; const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60;
+  return h + ':' + String(m).padStart(2,'0') + ':' + s.toFixed(d).padStart(d ? 3+d : 2, '0'); }
+function active(c) { return ticked.has(c.id) && (c.source !== 'silence' || c.run_len >= +minSel.value); }
+function union(iv) { const out=[]; iv.sort((a,b)=>a[0]-b[0]);
+  for (const [s,e] of iv) { if (out.length && s <= out[out.length-1][1]+0.05) out[out.length-1][1]=Math.max(out[out.length-1][1],e); else out.push([s,e]); }
+  return out; }
+function tc(f) { const F = DATA.fps, s = Math.floor(f / F);
+  return Math.floor(s/3600) + ':' + String(Math.floor(s%3600/60)).padStart(2,'0') + ':' +
+         String(s%60).padStart(2,'0') + ':' + String(f%F).padStart(2,'0'); }
+function studio(iv) {   // Studio's Cut 1..N (by start), whole frames rounded inward, listed last first
+  const F = DATA.fps;
+  const rows = iv.map(([s,e], i) => [i+1, Math.ceil(s*F - 1e-6), Math.floor(e*F + 1e-6)]);
+  return rows.reverse().map(([n,fs,fe]) => 'Cut ' + String(n).padStart(2) + '   ' + tc(fs) + '  ->  ' + tc(fe) +
+                                         '   (' + ((fe-fs)/F).toFixed(2) + ' s)'); }
+function refresh() {
+  const on = DATA.cuts.filter(active);
+  const content = on.filter(c => c.source === 'content');
+  for (const c of DATA.cuts) {
+    const el = document.getElementById('card-' + c.id); if (!el) continue;
+    const hidden = c.source === 'silence' && c.run_len < +minSel.value;
+    el.style.display = hidden ? 'none' : '';
+    el.classList.toggle('off', !ticked.has(c.id));
+    const host = c.source === 'silence' && content.find(k => k.start <= c.start && k.end >= c.end);
+    el.classList.toggle('absorbed', !!host);
+    const n = el.querySelector('.absorbed-note'); if (n) n.textContent = host ? 'inside ' + host.id + ', which is ticked' : '';
+    el.querySelector('input').checked = ticked.has(c.id);
+  }
+  const iv = union(on.map(c => [c.start, c.end]));
+  const removed = iv.reduce((a,[s,e]) => a + e - s, 0);
+  document.getElementById('n-cuts').textContent = iv.length;
+  document.getElementById('t-removed').textContent = fmt(removed, 0);
+  document.getElementById('t-new').textContent = fmt(DATA.duration - removed, 0);
+  document.getElementById('export').value = [document.getElementById('export').dataset.header, ...studio(iv)].join('\n');
+  try { localStorage.setItem(KEY, JSON.stringify([...ticked])); } catch (e) {}
+}
+document.querySelectorAll('.card input').forEach(cb => cb.addEventListener('change', e => {
+  const id = e.target.dataset.id; if (e.target.checked) ticked.add(id); else ticked.delete(id); refresh(); }));
+minSel.addEventListener('change', refresh);
+document.getElementById('reset').addEventListener('click', () => {
+  ticked = new Set(DATA.cuts.filter(c => c.default).map(c => c.id)); refresh(); });
+document.getElementById('copy').addEventListener('click', async () => {
+  const ta = document.getElementById('export');
+  try { await navigator.clipboard.writeText(ta.value); } catch (e) { ta.select(); document.execCommand('copy'); }
+  document.getElementById('copy').textContent = 'Copied'; setTimeout(() => document.getElementById('copy').textContent = 'Copy list', 1500); });
+refresh();
+</script>
+</body></html>

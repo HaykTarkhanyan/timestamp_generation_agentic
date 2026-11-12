@@ -77,3 +77,9 @@ Added 2026-10-26, the end of the course (copied from the session scratchpad):
 | script | what it did | when you would look at it again |
 | --- | --- | --- |
 | `make_playlist_public.py` | 2026-10-28 (Q41): the unlisted playlist "Մաթեմատիկական անալիզ 4" -> public so end screens can link it; playlists.update needs part=snippet,status (status alone: "unexpectedPart"), the snippet is sent back unchanged; backup `output/endscreens/playlist_ma4_before_public_2026-10-28.json`; read back after a few seconds (an immediate read still said unlisted). Dry run unless `--apply`; 50 units. | Making another playlist public. |
+
+## llm_thumbnails_2026-10/ (Large Language Models series; moved 2026-11-10 from `non_essential/`)
+
+| script | what it did | when you would look at it again |
+| --- | --- | --- |
+| `llm_thumbnail_options.py` | The four option rounds (arg `1`-`4`) that led to the LLM thumbnail template (DECISIONS #55): the strawberry hook in five styles, then cream + green card + Picard meme (round 4's `r4_a`, the first `thumbnails/LLM01.png`). Imports `non_essential/thumbnail_style_options.py`, so it no longer runs from here. | Replaced by `scripts/make_llm_thumbnails.py`, which redraws LLM01 pixel for pixel (moved 2026-11-10 at the user's OK, Q38). Only to see how a rejected round looked. |

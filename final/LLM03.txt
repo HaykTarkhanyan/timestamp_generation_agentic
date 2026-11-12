@@ -1,0 +1,52 @@
+🎬 Վերնագիր՝ [03] Decoding | Large Language Models
+
+──────────────────────────────
+
+🔗 Դասընթացին միանալու հղումը՝
+https://t.me/metric_academy
+
+📚 Նյութը՝
+https://hayktarkhanyan.github.io/python_math_ml_course/llms/02_decoding/decoding.html
+
+⚠️ Ուղղումներ՝ (Opus 5.5)
+- 26-րդ րոպեին - temperature-ը և top-k-ը ցանկացած հերթականությամբ նույն արդյունքն են տալիս. temperature-ը չի փոխում տոկենների դասավորությունը, դրա համար k ամենահավանականը նույնն են մնում։ Հերթականությունը կարևոր է top-p-ի և min-p-ի համար՝ temperature-ը փոխում է հավանականությունները, ու դրանից փոխվում է, թե որ տոկեններն են մտնում p-ի մեջ։ Ու ճիշտ բառը «կոմուտատիվ» է (գործողությունների հերթականությունը), ոչ թե «ասոցիատիվ»։
+
+⏳ Թեմաներ՝ (Opus 5.5)
+0:00 Ներածություն՝ տոկենիզացիայից դեկոդինգ
+0:48 Հաջորդ տոկենը որպես multiclass կլասիֆիկացիա
+3:22 GPT-2-ի «I'm sorry» ցիկլը
+5:20 Ավտոռեգրեսիվ ցիկլը և հավանականությունների բաշխումը
+6:48 Ե՞րբ կանգնել՝ EOS, max tokens, stop string
+8:50 Տարբերակ 1՝ greedy (argmax)
+    9:39 Ինչու log-probability
+    11:35 Greedy-ն կարճատես է՝ 0.15 vs 0.36
+    12:32 Beam search
+    14:09 Հարց՝ մինչև ե՞րբ, և երկարությամբ նորմավորում
+    16:05 Ավելի հավանականը ավելի լա՞վն է
+18:01 Տարբերակ 2՝ sampling, զառ ենք գցում
+    19:32 Temperature
+    20:49 Temperature-ի դեմո
+    22:02 Top-k
+    23:24 Top-p (nucleus sampling)
+    24:26 Min-p
+    25:33 Կարգը կարևոր է, repetition penalty
+    26:33 «poem poem poem»՝ ուսուցման տվյալների արտահոսք
+    27:57 Դեֆոլտ արժեքներ՝ llama.cpp
+    28:28 Մեծամասնության քվե և test-time scaling
+30:48 Տարբերակ 3՝ constrained decoding, JSON սխեմա
+    35:16 Հարց՝ մոդելի՞ մեջ, թե սերվիսում
+    38:47 Հարց՝ հաշվել միայն թույլատրելի տոկենները
+    41:24 LLM-ը որպես սառեցված տուփ
+42:08 Իրական սիստեմներ՝ temperature 0-ն դետերմինիստիկ չէ
+    44:48 Իմ փորձը՝ նույն մոդելը, տարբեր սերվերներ
+    45:42 Ինչու է դեկոդինգը դանդաղ
+    46:38 Speculative decoding
+    48:14 Draft գլուխներ՝ Medusa
+    50:18 Prompt caching
+    53:24 Watermarking՝ SynthID
+55:06 Հաջորդը՝ լեկցիաներ և պրոյեկտներ զուգահեռ
+
+📌 Նկարագիր (Opus 5.5)
+Մոդելը ամեն քայլին հավանականություն է տալիս ամեն տոկենի համար. ո՞նց դրանից տեքստ ստանալ։ Սկսում ենք GPT-2-ից, որը միշտ ամենահավանական տոկենը վերցնելով անվերջ կրկնում է «I'm sorry», ու անցնում greedy-ով, log-probability-ներով ու beam search-ով, ու տեսնում, որ ավելի հավանականը միշտ չէ, որ ավելի լավն է։ Հետո sampling-ն է՝ temperature, top-k, top-p, min-p, repetition penalty, ու «poem poem poem» հարձակումը, որ ChatGPT-ից դուրս էր բերում ուսուցման տվյալները։ Constrained decoding-ով երաշխավորում ենք JSON ֆորմատը, իսկ վերջում իրական սիստեմներն են՝ ինչու temperature 0-ն դետերմինիստիկ չէ, speculative decoding, prompt caching ու watermarking։
+
+#Decoding #LLM #BeamSearch #Temperature #TopP #Sampling #SpeculativeDecoding #GPT2 #MachineLearning #Մեքենայականուսուցում #Լեզվականմոդելներ

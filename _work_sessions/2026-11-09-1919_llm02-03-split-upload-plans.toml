@@ -1,0 +1,78 @@
+title = "LLM [02] tokenization practical + [03] decoding: one Zoom recording uploaded twice, cut, saved, titled, thumbnailed, described, in the playlist; [01] rechecked and nested"
+date = "2026-11-09"
+time = "19:19"
+end = "2026-11-10 01:40"
+areas = ["output/2026-11-09_02-x-Large-Language-Models_hmE4QH_dSXI", "output/2026-11-09_03-x-Large-Language-Models_MF_jn0GXPWA", "output/2026-10-28_55-x-Meqenayakan-usucum_bhuxuKVhdSA", "scripts", "scripts/archive", "scripts/non_essential", "thumbnails", "final", ".claude/skills", "_learnings"]
+
+done = [
+  # Getting the recording onto YouTube
+  "Zoom recording of 2026-11-09 (2:15:39, 489 MB, 2560x1440) downloaded via Playwright in 81 s to Downloads/GMT20261109-160102_Recording_2560x1440.mp4",
+  "Uploaded twice in two Studio tabs, saved Unlisted after 'Checks complete', read back: [02] hmE4QH_dSXI, [03] MF_jn0GXPWA (8139 s each, channel UC5BavugdnUkti3Es7-deZDg)",
+  "Split found with one ffmpeg silencedetect pass (16 s): the break is a 994 s silence at 0:53:09; practical 0:06:49-0:50:54, decoding 1:10:58-2:14:35",
+
+  # Plans and the user's review
+  "My plans: [02] 11 content cuts + 1 keep span -> 20 Studio cuts (0:38:09); [03] 12 content cuts + 1 keep span -> 26 cuts (0:58:02); both studio.html pages built",
+  "[02]: the user's 51 cuts -> 50 (2+3 merged), 2:15:39 -> 0:35:39; entered in 2 batches (139 + 56 s), diff identical; saved at the user's word (dialog 35:39); processed 2140 s",
+  "[03]: the user's 63 cuts -> 60 (1+2, 27+28, 31+32 merged), 2:15:39 -> 0:55:40; entered in 2 batches (137 + 105 s), diff identical; saved by Claude under the new standing rule (dialog 55:40); processed 3340 s (predicted 3340.16)",
+
+  # Metadata
+  "Titles: '[02] Armenian Through a Tokenizer's Eyes | Large Language Models', '[03] Decoding | Large Language Models' (Q36), read back",
+  "Thumbnails: LLM02 (gpt-oss spelling ' վերաբերյ': 'The word is \"բրյ\"?? ... I'm confused.' + surprised Pikachu), LLM03 (temperature ladder, 'quantum potato Ponchik 509', This is fine); set and read back",
+  "Chapters remapped to the user's cuts: [02] 20 nested (6 moved back 1 s after checking the regenerated captions), [03] 33 nested",
+  "Corrections approved (Q35 'both yes'): [02] C1 bits vs bytes (from minute 5), [03] C1 temperature/top-k order, the word is commutative (minute 26)",
+  "Descriptions pushed and read back identical: [02] 2151 chars, [03] 2671 chars; copies final/LLM02.txt, final/LLM03.txt",
+  "[03] chapters checked on its regenerated captions (01:45, 5 min after the save processed): 10 moved back 1 s, re-pushed, read back",
+  "Both added to playlist PLYwuWfnw6epU, read back in order [01], [02], [03]",
+  "Telegram lines given: 'Practical [02] Armenian Through a Tokenizer's Eyes (36 min)', 'Lecture [03] Decoding (56 min)'",
+
+  # [01]
+  "Q28: [01] bhuxuKVhdSA chapters checked on YouTube's regenerated captions: 20 moved back 1-2 s, pushed, read back",
+  "Q37: [01] chapters nested (25 of 43 indented, labels and times unchanged), pushed, read back identical; final/LLM01.txt updated",
+
+  # Tools, docs, decisions
+  "scripts/make_llm_thumbnails.py: load-bearing LLM thumbnail generator (LESSONS LLM01-03, OPTIONS for candidates); LLM01 redrawn pixel for pixel",
+  "scripts/archive/llm_thumbnail_options.py: moved from non_essential (Q38), both READMEs updated",
+  "find_edit_points.py: content_cuts.json 'kind: keep' (unticks overlapping silence cuts); skill now says don't use it for class waits by default",
+  "Memes in thumbnails/assets/: blinking guy, surprised Pikachu, this is fine (knowyourmeme.com via Playwright)",
+  "DECISIONS #57 (LLM numbering in teaching order, materials links, playlist after Save), #58 (save without asking once the user gave the cut list and every check passes; widens #27)",
+  "Skills: lecture-edit-points (Stage 0 Zoom/Studio changes, keep kind, standing Save rule, checkbox-container click), lecture-thumbnails (LLM template section)",
+  "Learnings (edit preferences): LLM [01] section; [02] (unanswered waits go, fumbles go even in a practical, remarks about the other lesson go); [03] (waits go even when students answer)",
+]
+
+pending = [
+  "[02] browser tab titles at raw 0:11:40-0:11:51 (research tabs) are still in the edit: the user blurs them if wanted",
+  "Q42: 'Practical' or 'Project' in [02]'s Telegram line",
+  "[03] materials line is still 'TODO: paste materials URL here' (no page for llms/06_decoding yet, Q31)",
+  "Materials resolver: needs a lesson-to-folder table if the repo keeps deck numbers != video numbers (DECISIONS #57)",
+  "Making [02] and [03] public: the user's (never automated)",
+  "Nothing committed this session",
+]
+
+next = "Commit on the user's word. Q42 (Practical vs Project) if they care."
+
+files = [
+  "scripts/make_llm_thumbnails.py", "scripts/find_edit_points.py",
+  "scripts/archive/llm_thumbnail_options.py", "scripts/archive/README.md", "scripts/non_essential/README.md",
+  "DECISIONS.md", "PLANNER.md", "DEFERRED_TODO.md",
+  ".claude/skills/lecture-edit-points/SKILL.md", ".claude/skills/lecture-thumbnails/SKILL.md",
+  "_learnings/2026-10-03-1548_edit-point-preferences-from-ml48-studio.md",
+  "final/LLM01.txt", "final/LLM02.txt", "final/LLM03.txt",
+  "thumbnails/LLM01.png", "thumbnails/LLM02.png", "thumbnails/LLM03.png",
+  "thumbnails/assets/meme_blinking_guy.jpg", "thumbnails/assets/meme_surprised_pikachu.jpg", "thumbnails/assets/meme_this_is_fine.jpg",
+  "output/2026-11-09_02-x-Large-Language-Models_hmE4QH_dSXI/", "output/2026-11-09_03-x-Large-Language-Models_MF_jn0GXPWA/",
+  "output/2026-10-28_55-x-Meqenayakan-usucum_bhuxuKVhdSA/edited/ (regenerated captions), edited_predicted/ (nested description)",
+]
+
+commits = []
+
+notes = """
+Telegram was on screen in the raw uploads at ~0:05:50-0:06:30 (a student pointed it out); it was inside both
+opening cuts, so it is gone from both saved videos.
+[03]'s own captions are a separate ASR run (3426 diff lines vs [02]'s); its edges were checked on its own WAV.
+Zoom's detail page is no longer an iframe; the MCP saves downloads into .playwright-mcp/ with '_' -> '-'.
+Studio's header showed the umath channel name after another session switched it, but both videos are on Metric
+(checked with yt-dlp channel_id) and the editor URL works per video regardless.
+The thinking text in the [02] thumbnail is from the saved probe run the class saw (results/02_probe_ledger.json,
+shown at 0:50:14 of the recording): the token is "բրյ", not "bre" as remembered.
+The user cut 5 of 5 waits I had kept with 'kind: keep' ([02] 3, [03] 2): don't pre-untick them.
+"""
