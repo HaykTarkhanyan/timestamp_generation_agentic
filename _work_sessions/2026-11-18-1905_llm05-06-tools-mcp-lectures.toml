@@ -1,0 +1,66 @@
+title = "LLM [05] tool calling + [06] MCP, skills, orchestration: one Zoom recording uploaded twice, cut, saved, titled, thumbnailed, chaptered; [05] in the playlist"
+date = "2026-11-18"
+time = "19:05"
+end = "2026-11-18 23:35"
+areas = ["output/2026-11-18_05-x-Large-Language-Models_7FhEiQBUgK0", "output/2026-11-18_06-x-Large-Language-Models_C4Zcf1K51FI", "scripts", "thumbnails", "final", ".claude/skills/lecture-edit-points", "_learnings"]
+
+done = [
+  # Getting the recording onto YouTube
+  "Zoom recording of 2026-11-18 (2:02:31, 2560x1440, 25 fps) ready at ~20:00 after ~1 h of processing; downloaded via Playwright (473 MB, 164 s) to Downloads/GMT20261118-160036_Recording_2560x1440.mp4",
+  "Two uploads: the same file in a second Studio tab joined the first upload (same link 7FhEiQBUgK0, the second title overwrote the first); a renamed copy from the scratchpad gave C4Zcf1K51FI; title fixed back, both read back via the API. Learning 2026-11-18-2203, skill Stage 0 updated",
+  "Checks took ~35 min ('taking longer than usual'); saved Unlisted 20:40, yt-dlp: unlisted, 7352 s, Metric; captions ~20 min after Save",
+  "Break found with silencedetect: 0:59:32-1:15:33 (960 s)",
+
+  # Plans and private spot
+  "Frame sweep every 90 s: no keys on screen; private spot in [06]: the Claude Code calendar answer (a third person's name, another organisation and its course) at raw 1:18:52-1:19:22 and 1:20:04-1:20:50, plus your own 'Claude, delete or blur this' remark",
+  "Plans: [05] 29 cuts (46:54), [06] 28 cuts (39:13 after Q1 'blur it, keep demos' ticked the 3 small cuts in the spot)",
+  "The whole-recording speech map ran out of memory (float64 copy of 2 h); printed in 25-min windows instead",
+
+  # Cuts entered and saved
+  "[05]: your 94 cuts -> 88 (5 merges, 4 tiny cuts kept: Q6 'Enter them too' -> new cut_list.py to-enter --min-cut), dry run + 3 batches (116/224/58 s), diff identical, dialog 45:08 = frames, saved 22:07 under DECISIONS #58, processed ~22:23 (2708 s)",
+  "[06]: your 100 cuts -> 96 (4 merges, the 0.44 s cut kept with --min-cut 0.2; my Skills-doubt cut removed by you), 3 batches (120/232/127 s), diff identical, dialog 37:12 (cut_list said 37:13 from the rounded duration), saved 22:50, processed (2233 s)",
+
+  # Metadata
+  "Titles (Q4): '[05] Tool Calling & Agents | Large Language Models', '[06] MCP, Skills & Orchestration | Large Language Models', read back",
+  "Thumbnails (Q2, Q3): the plain drafts over the funny ones: LLM05 Ararat question + get_weather, LLM06 /mcp list + skills tree; scripts/make_llm_thumbnails.py LESSONS LLM05/LLM06 + OPTIONS; set via API",
+  "Chapters: 38 + 38 drafted on the planned timelines, remapped to the entered lists, checked on YouTube's regenerated captions ([05] 21 moved back 1 s, one 3 s; [06] 23 moved back 1-4 s), pushed, all 38 parsed on each; copies final/LLM05.txt, final/LLM06.txt",
+  "Corrections: [05] 'three cents' vs the saved run's 0.34 cents (Q8 add, Q9 keep after the caveat that the run file predates class); [06] none; the on-camera Skills question answered in the abstract (Anthropic, Oct 2025; open standard 18 Dec 2025)",
+  "Playlist PLYwuWfnw6epU: [05] added after processing, read back [01]-[05]",
+
+  # Docs
+  "Learnings: edit preferences [05] and [06] sections; two-tab upload; skill: --min-cut, renamed-copy upload, student 'let me ask' preface goes",
+
+  # After the user's 'enter the blurs' (23:10)
+  "[06] blur: 3 fixed custom blurs entered via Playwright (2:34:13-2:52:12 at 51-75%; 3:25:13-3:55:05 at 51-75%; 3:51:00-4:11:13 at 31-64%, overlapping through the terminal scroll), checked at 16 playhead positions; Save left to the user, who saved ~23:25. Learning 2026-11-18-2335",
+  "LLM06 thumbnail redone: 'course-faq/' -> 'cheese-making/' (the user's cheese/509 Easter egg, now in the lecture-thumbnails skill) and two equal 568 px boxes with equal margins (symmetry, also in the skill); set via API",
+  "[06] added to the playlist at the user's word without waiting for the blur processing ('I don't care about a few minutes'); read back [01]-[06]",
+]
+
+pending = [
+  "Materials links for both: TODO until llm_1_2 (idle Claude session from the lecture) commits its uncommitted llms/tools_agents edits; then git mv xx_tools_1/2 -> 05_/06_ (Q5) and fill both descriptions (Q7)",
+  "Telegram lines given (the user posts them)",
+  "Making [05] and [06] public: yours",
+  "Nothing committed in this repo",
+]
+
+next = "After llm_1_2's commit: rename to 05_/06_ in the course repo, push, fill the materials lines, re-push both descriptions. Commit this repo on your word."
+
+files = [
+  "output/2026-11-18_05-x-Large-Language-Models_7FhEiQBUgK0/ (content_cuts.json, studio_cuts_edited.txt, studio_cuts_to_enter.txt, edited/, edited_predicted/ incl. review.md, titles.txt)",
+  "output/2026-11-18_06-x-Large-Language-Models_C4Zcf1K51FI/ (same)",
+  "scripts/cut_list.py (--min-cut)", "scripts/make_llm_thumbnails.py", "thumbnails/LLM05.png", "thumbnails/LLM06.png",
+  "thumbnails/llm_options/llm05_*.png, llm06_*.png, overview_llm05*.png, overview_llm06.png",
+  "final/LLM05.txt", "final/LLM06.txt", "PLANNER.md",
+  ".claude/skills/lecture-edit-points/SKILL.md",
+  "_learnings/2026-10-03-1548_edit-point-preferences-from-ml48-studio.md", "_learnings/2026-11-18-2203_two-studio-tabs-same-file-share-one-upload.md",
+]
+
+commits = []
+
+notes = """
+The thumbnail drafts I liked best (Llama e-mailing '17 times 23 is 391' to assistant@assistant.com; the poisoned
+convert_amd docstring) lost to the plain ones: fun still isn't the default, even when the material is funny.
+The Save dialog length is computed from frames (end marker - cut frames); cut_list's figure from YouTube's
+rounded duration was 1 s off on [06] (37:13 vs 37:12), as on ML54.
+The OpenRouter activity page needs the user's login; Claude didn't sign in.
+"""

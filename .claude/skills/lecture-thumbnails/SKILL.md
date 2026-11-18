@@ -19,6 +19,16 @@ lesson the slide-figure rule below is a source of facts and numbers, not of the 
 come from knowyourmeme.com via Playwright (`thumbnails/assets/meme_*.jpg`). Handwriting (Segoe Script) has no
 Armenian glyphs: put Armenian in DejaVu Sans Mono token boxes.
 
+**Small Easter eggs: cheese or 509.** The user likes a harmless callback here and there: something cheese-related
+or the number 509 (LLM03: "quantum potato Ponchik 509"; LLM06: the skill folder `course-faq/` became
+`cheese-making/`). The user: "not forced, not pushed... a harmless callback Easter egg". At most one small touch,
+where a name or number is arbitrary anyway (a folder, a seed, an example value); never the main joke, never instead
+of the lesson's real content, and fine to leave out.
+
+**Keep the layout symmetric.** Two side-by-side panels get equal widths and equal outer margins (LLM06, 2026-11-18:
+"the white box on the right has a lot more empty space from the right, so it's not symmetric"). `code_box(...,
+width=)` takes a fixed width for that.
+
 ## THE RULE (why this skill exists)
 
 **Before drawing ANYTHING synthetic, check the reference course repo's `fig/` folder for a REAL slide figure that already shows the lesson's idea.** The course ships polished vector figures (PDF) for almost every concept - a decision tree, a PDP, an ROC curve, a calibration plot. Embedding the authentic figure (as ML06-17, ML20 do) is almost always better than a hand-drawn stand-in: it matches what students saw, it's correct, and it's on-brand. Reach for a synthetic redraw (ML18/19/21-style primitives) ONLY when no real figure fits the point you want to make.

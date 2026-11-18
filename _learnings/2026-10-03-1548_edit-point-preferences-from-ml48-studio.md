@@ -254,6 +254,48 @@ merging 31+32 and 48+49 (4-frame overlaps): 15.6 min removed, 56:48 -> 41:11 (St
 - The start stayed at "it won't be long or heavy this time" (+0.3 s), and every questions prompt went as planned.
 - 33 new cuts of 0.8-7 s; three pause cuts widened by 1-2 s (50:34, 51:07, 37:56).
 
+## LLM [05] tool calling (2026-11-18): the same-day plan stays, micro-pauses go, tiny cuts are on purpose
+
+From my 29 cuts (75.6 min, the [06] half included) to the user's 94 (25 changed, 65 new, 0 removed), 88 after merging
+5 overlapping pairs: 77.4 min removed, 2:02:32 -> 45:08 (Studio's dialog). Files:
+`output/2026-11-18_05-x-Large-Language-Models_7FhEiQBUgK0/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **The remark about the other lesson stayed this time**: "next lecture, or maybe today, we'll also look at MCP and
+  skills" (7:46-8:07). Only the "this is our plan, questions?" prompt after it went. In [02]/[03] such remarks went;
+  the difference may be that this one names what the series covers next, not the break or the order. Don't
+  pre-tick it as a judgment cut next time. Offer it unticked.
+- **The whole dropped demo went**: my cut kept the lead-in "or let me show quickly... no, I deleted it" because the
+  pause before it was too short for an edge; the user started the cut at 20:43.8, right on "կամ".
+- **The student's "let me ask something" lead-in went** (cut end 18:37.8 -> 18:40.8); the question itself stayed.
+- **A mumbled stretch while drawing went** (6:52-7:03, garbled captions): the 4 s pause cut grew to 10.8 s. Garbled
+  captions next to a pause are usually non-content (ML50 again).
+- **The unticked summary-slides pointer stayed** (56:09-56:15, "here are slides that sum up the results"); the
+  end cut starts right after it.
+- **65 new cuts of 0.28-3.7 s**, among them three of 0.28-0.40 s on micro-pauses between words (6:06, 6:14, 6:28).
+  They were on purpose (Q6: "Enter them too"): `cut_list.py to-enter --min-cut 0.2` keeps them. The 0.5 s drop rule
+  dates from before the Remove button, when shrinking was the only way to delete a cut.
+- Entry: dry run + 3 batches (116 + 224 + 58 s for 88 cuts), diff identical, dialog 45:08 = end marker 183,790 -
+  116,089 frames; saved by Claude under DECISIONS #58.
+
+## LLM [06] MCP, skills, orchestration (2026-11-18): the on-camera "Claude, check this" stays
+
+From my 28 cuts (83.3 min, the [05] half included) to the user's 100 (25 changed, 73 new, 1 removed), 96 after merging
+4 overlapping pairs: 85.3 min removed, 2:02:32 -> 37:12 (Studio's dialog; `cut_list.py` said 37:13 from YouTube's
+rounded duration, the frames said 37:12.8). Files: `output/2026-11-18_06-x-Large-Language-Models_C4Zcf1K51FI/`
+`studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **My one removed cut**: the Skills doubt and the request to me ("someone before Anthropic? Not sure. Claude,
+  brother, put the right fact in the description", 1:27:56-1:28:11). As on [04], a candid on-camera doubt or
+  correction stays and the fact goes into the description. Offer such a cut unticked.
+- **The student's "let me ask something" lead-in went again** (cut end 1:51:21.7 -> 1:51:24.7), the second time today
+  after [05]: end such a cut at the question itself, not at the student's first word.
+- **A mumbled transition went** ("ու հա, տարբերությունները... միտքը երևի պարզ", 1:22:28-1:22:35: two cuts widened
+  and merged), and the typing pause before the opera question grew (1:42:36).
+- **The unticked closing plan stayed** (industry projects, then RAG), as in [03] and [04].
+- **The three small cuts inside the private spot** (ticked after Q1) stayed, with the edges moved by a few frames.
+- 73 new cuts of 0.44-5 s; the 0.44 s one went in with `--min-cut 0.2` (Q6's answer applied).
+- Entry: dry run + 3 batches (120 + 232 + 127 s for 96 cuts), diff identical; saved by Claude under DECISIONS #58.
+
 ## Arnak Dalalyan, lesson 10 (2026-10-20): silent writing goes, questions and one-word narration stay
 
 Another channel (Համալսարանական մաթեմատիկա), another lecturer, but the same reading of what a

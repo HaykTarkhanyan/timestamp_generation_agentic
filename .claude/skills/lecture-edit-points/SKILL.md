@@ -55,9 +55,14 @@ What changed on LLM [02]/[03] (2026-11-09, one recording holding two lessons, up
   (`GMT20261109-160102-Recording-2560x1440.mp4`). Don't list that folder (it hangs): wait for that exact
   name in a background loop (exists, then size stable), then `mv -n` it to `Downloads/` under Zoom's
   own name. 489 MB in 81 s. The recording was 2560x1440 this time, not 1920x1080.
-- **A lesson pair goes up as two uploads of the same file**, in two Studio tabs at once (Create ->
+- **A lesson pair goes up as two uploads of the same recording**, in two Studio tabs at once (Create ->
   Upload in each). Checks finished ~15 min after the upload; save each tab when its own footer says
   "Checks complete. No issues found."
+  - **Upload a renamed copy for the second video** (LLM [05]/[06], 2026-11-18): the same file in a second
+    tab joined the first tab's upload. Both tabs showed one video link, and the second title overwrote the first.
+    `cp` it into the scratchpad under a new name and upload that; check the two tabs show different links
+    before typing titles (`_learnings/2026-11-18-2203_two-studio-tabs-same-file-share-one-upload.md`).
+    `--audio` still takes the original.
 - **Add the uploads to a public playlist only after their cuts are saved.** An unlisted video in a public
   playlist plays for anyone who opens the playlist, and the raw upload holds the pre-lecture chat and the
   break. [01] went in after its Save; do the same.
@@ -176,8 +181,9 @@ rerun the full Stage 2 command (see "Order of runs").
 2. **End:** everything after the last content sentence, including "that's all for
    today", scheduling the next class, feedback questions and goodbyes.
 3. **"Questions?" / "OK so far, people?" prompts:** cut the phrase together with the
-   silence after it. If a student does ask, end the cut right before the student's first word
-   and keep the question and the answer.
+   silence after it. If a student does ask, end the cut right before the question itself
+   and keep the question and the answer. A preface like "let me ask something" ("մի հատ բան հարցնեմ")
+   goes with the cut (the user, LLM [05] and [06], 2026-11-18).
 4. **Logistics mid-lecture:** negotiating a break, "can you hear me", tech fiddling.
 5. **Thinking aloud while answering** ("wait, let me think so I don't say something
    wrong", mumbling): cut it in full, up to where the clean explanation restarts. Pre-tick it.
@@ -331,10 +337,13 @@ powershell -NoProfile -Command "Start-Process '<output_dir>\edit_review\studio.h
     - **A pasted list goes through `scripts/cut_list.py`** (save it as `studio_cuts_edited.txt` first):
       ```bash
       python scripts/cut_list.py check    --output-dir <output_dir>   # vs the plan: every planned cut once, numbering, gaps, tiny cuts
-      python scripts/cut_list.py to-enter --output-dir <output_dir> [--studio-end H:MM:SS:FF]
+      python scripts/cut_list.py to-enter --output-dir <output_dir> [--studio-end H:MM:SS:FF] [--min-cut 0.2]
       #   -> studio_cuts_to_enter.txt: drops cuts < 0.5 s, merges touching pairs, verifies frame by frame,
       #      prints the ascending [n, start, end] array for the Playwright loop
       ```
+      **Tiny NEW cuts are usually on purpose now** (LLM [05], 2026-11-18: three 0.28-0.40 s cuts on micro-pauses,
+      the user: "Enter them too"). The 0.5 s drop dates from before the Remove button. When `check` lists tiny
+      cuts, ask before dropping them, and pass `--min-cut 0.2` to keep them; Studio took 7-frame cuts without trouble.
       `check` fails on a list made on an older tab (ML51: the "was" times matched the 21-cut plan,
       not the rebuilt one). Pass `--studio-end` when Studio's End trim marker differs from the
       list's last frame (ML51: `:07` against `:06`). `--check-studio` compares Studio with

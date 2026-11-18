@@ -153,11 +153,11 @@ def check(d: Path) -> int:
     return 1 if problems else 0
 
 
-def to_enter(d: Path, studio_end: str | None) -> int:
+def to_enter(d: Path, studio_end: str | None, min_cut: float = MIN_CUT_S) -> int:
     data, fr = load(d)
     paste = read_cuts(d / EDITED, fr)
-    keep = sorted((s, e, [n]) for n, s, e, _ in paste if (e - s) / fr.fps >= MIN_CUT_S)
-    dropped = [(n, (e - s) / fr.fps) for n, s, e, _ in paste if (e - s) / fr.fps < MIN_CUT_S]
+    keep = sorted((s, e, [n]) for n, s, e, _ in paste if (e - s) / fr.fps >= min_cut)
+    dropped = [(n, (e - s) / fr.fps) for n, s, e, _ in paste if (e - s) / fr.fps < min_cut]
     merged = []
     for s, e, ns in keep:
         if merged and s - merged[-1][1] <= 1:
@@ -178,7 +178,7 @@ def to_enter(d: Path, studio_end: str | None) -> int:
     if not merged:
         header.append("# 0 cuts to enter")   # tells the chapter scripts the empty list is meant
     if dropped:
-        header.append(f"# dropped (under {MIN_CUT_S} s): " + ", ".join(f"Cut {n} ({t:.2f} s)" for n, t in dropped))
+        header.append(f"# dropped (under {min_cut} s): " + ", ".join(f"Cut {n} ({t:.2f} s)" for n, t in dropped))
     if any(len(ns) > 1 for _, _, ns in merged):
         header.append("# merged (overlapping or <= 1 frame apart): " + ", ".join("+".join(map(str, ns)) for _, _, ns in merged if len(ns) > 1))
     if studio_end:
@@ -191,7 +191,7 @@ def to_enter(d: Path, studio_end: str | None) -> int:
     frames = lambda cuts: set().union(*(range(s, e) for s, e in cuts))
     f_paste = frames((s, e) for _, s, e, _ in paste)
     f_enter = frames((s, e) for s, e, _ in merged)
-    f_tiny = frames((s, e) for n, s, e, _ in paste if (e - s) / fr.fps < MIN_CUT_S)
+    f_tiny = frames((s, e) for n, s, e, _ in paste if (e - s) / fr.fps < min_cut)
     only_paste, only_enter = f_paste - f_enter, sorted(f_enter - f_paste)
     edges = {s for _, s, _, _ in paste} | {e for _, _, e, _ in paste} | ({fr(studio_end)} if studio_end else set())
     problems = []
@@ -272,6 +272,9 @@ def main() -> None:
         p.add_argument("--output-dir", type=Path, required=True)
         if name == "to-enter":
             p.add_argument("--studio-end", help="Studio's End trim marker, if the last cut must end on it")
+            p.add_argument("--min-cut", type=float, default=MIN_CUT_S,
+                           help=f"drop pasted cuts shorter than this, s (default {MIN_CUT_S}: a cut shrunk to nothing); "
+                                "0.2 keeps deliberate micro-pause cuts (LLM [05], 2026-11-18)")
         if name == "entry-js":
             p.add_argument("--batch-size", type=int, default=40, help="cuts per batch (3.5-17 s each, slower as cuts pile up; a long call just moves to the background)")
             p.add_argument("--type-shift", type=int, default=0,
@@ -284,7 +287,7 @@ def main() -> None:
     a = ap.parse_args()
     t0 = time.time()
     code = (check(a.output_dir) if a.cmd == "check" else
-            to_enter(a.output_dir, a.studio_end) if a.cmd == "to-enter" else
+            to_enter(a.output_dir, a.studio_end, a.min_cut) if a.cmd == "to-enter" else
             entry_js(a.output_dir, a.batch_size, a.type_shift, a.video) if a.cmd == "entry-js" else diff(a.output_dir, a.markers))
     log.info(f"done in {time.time() - t0:.1f} s")
     sys.exit(code)
