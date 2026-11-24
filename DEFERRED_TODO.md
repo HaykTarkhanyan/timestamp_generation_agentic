@@ -2,6 +2,14 @@
 
 Topics cut from current work so they don't get lost. Newest at the top.
 
+- **2026-11-24 - umath transcript gaps (user, Q8: "we handle later").** `transcripts/umath/` has 308 usable of 496;
+  188 have none usable: 59 where YouTube ran its speech recognition as Romanian/English/Turkish (`usable: false`;
+  39 have audio language en-US, 13 unset, 6 hy) and 129 with no auto-caption track at all. Lists in
+  `transcripts/umath/index.json` (`unusable`, `missing`). Options: (a) set one wrong-language video's audio
+  language to hy and see whether YouTube makes a new Armenian track (untested; a channel change, ask first);
+  (b) transcribe the gaps ourselves (e.g. Whisper on Colab; check Armenian quality on 2-3 videos first). Rerun
+  `fetch_channel_transcripts.py` afterwards: it only fetches what is missing. DECISIONS #59.
+
 - **2026-10-28 - End screens for umath (user: "next well need to do the same for umath, but not now, just plan it").**
   Plan, inventory (674 videos in 30 playlists, three tiers), differences from the Metric run and open questions
   Q20-Q24: `_knowledge/umath_endscreens_plan.md`. Includes the parked Arnak end screens below.
