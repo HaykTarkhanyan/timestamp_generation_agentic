@@ -2,6 +2,30 @@
 
 Numbered, newest at the top. Superseded entries stay, marked as such.
 
+## 59. Channel transcripts: yt-dlp for public and unlisted, the API for private and as fallback; noise kept but flagged
+
+- **Decision:** `scripts/non_essential/fetch_channel_transcripts.py` takes each video's original auto-caption
+  track (`<lang>-orig`) through yt-dlp, and through the API only for private videos and when yt-dlp errors
+  (not when it found no track). Segments come from `fetch_subtitles.vtt_cues`, the same cleaner as
+  `transcript.txt`. A transcript is `usable` if at least half its letters are Armenian script; unusable ones keep
+  their text with `usable: false` and the reason. Output goes to git-ignored
+  `transcripts/<channel>/`, one JSON per playlist; a video in two playlists is in both files. For umath the
+  Armenian Public TV playlist (235 videos, not ours) is skipped.
+- **Date / status:** 2026-11-24, active (the user: "ALL transcripts from this channel, in a json format playlist
+  by playlist"; Q2-Q4 format, folder, overlap; Q5 "skip the playlist"; Q6 "keep text + flag").
+- **Why:** the user said to use the API for public videos too, but at 250 units a video (captions.list 50 +
+  download 200) the default 10,000 a day covers ~40 videos, so umath's ~500 would take ~12 days; yt-dlp has no
+  quota. The pilot measured both on VQKqS7JvWmM: 483 of 483 segments identical, text and timings. The usable
+  rule: on all 367 umath transcripts every track YouTube recognized as Romanian, English or Turkish has an
+  Armenian letter share of 0.0, every real one 0.65-1.0, so 0.5 sits in an empty gap. The TV playlist: 0 of 6
+  sampled usable (4 no track, 2 English gibberish).
+- **Alternatives rejected:** the API for everything (quota, above); Playwright timedtext capture (learning
+  2026-10-22; only needed when yt-dlp is bot-blocked, and slower); dropping unusable text (the user kept it);
+  the pilot's first rule, track label `hy` plus >= 150 chars/min (flagged kAhHrwS_-Kk, labelled "de" but 99%
+  Armenian, and a quiet real video at 110 chars/min; density alone passes the TV gibberish at 713 chars/min).
+- **What would change this:** yt-dlp getting bot-blocked again (switch to the Playwright route); a raised API
+  quota; YouTube regenerating Armenian tracks for the wrong-language videos, or us transcribing them ourselves.
+
 ## 58. Claude saves the Studio cuts on its own once the user has given the cut list and every check passes
 
 - **Decision:** After the user hands over their reviewed cut list, Claude enters it and presses Save without

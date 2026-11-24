@@ -1,0 +1,38 @@
+title = "umath: every transcript as JSON, one file per playlist"
+date = "2026-11-24"
+time = "15:28"
+end = "2026-11-24 16:05"
+areas = ["scripts/non_essential", ".claude/skills/youtube-timestamps/scripts", "transcripts (git-ignored)", "_learnings"]
+
+done = [
+  "Asked (Q1-Q4): umath; segments + full text; git-ignored transcripts/; a video in two playlists is in both files, loose uploads in _no_playlist.json",
+  "The user wanted the API for public videos too; told them 250 units a video = ~40 a day on the default quota, so yt-dlp for public/unlisted, the API for private and as fallback (DECISIONS #59)",
+  "fetch_subtitles.py: parse_vtt split into vtt_cues() (float start/end) + the old formatter; parse_vtt output byte-identical on all 164 VTTs in output/",
+  "New scripts/non_essential/fetch_channel_transcripts.py (README row added)",
+  "Pilot (14 videos): yt-dlp vs API on VQKqS7JvWmM = 483 of 483 identical segments; wrong-language ASR found (ro/en/tr on Armenian speech); 4 of 6 Armenian Public TV lessons have no track, 2 English gibberish",
+  "Q5 skip the TV playlist (235 videos), Q6 keep unusable text with a flag, Q7 run now",
+  "Full run: 496 videos in 741 s (3 workers); usable rule changed after it to Armenian letter share >= 0.5 (0.0 on every wrong-language track, 0.65-1.0 on real ones); rebuilt in 173 s",
+  "Result: 308 usable, 59 wrong-language (flagged), 129 with no auto-caption track at all; 29 playlist files + _no_playlist (57 videos), 47 MB",
+]
+
+pending = [
+  "59 wrong-language videos (39 with audio language en-US, 13 unset, 6 hy): untested whether setting the audio language to hy makes YouTube regenerate an Armenian track (videos.update, changes the channel; ask first)",
+  "129 videos with no track (incl. whole playlists: Պատահական պրոցեսներ 0/14, Մաթ. անալիզ 3/4 old recordings, Ֆունկցիոնալ անալիզ 0/23 usable): only own ASR (e.g. Whisper on Colab) would fill them",
+]
+
+next = "Ask the user whether to try the audio-language fix on one wrong-language video, or transcribe the gaps ourselves."
+
+files = [
+  "scripts/non_essential/fetch_channel_transcripts.py", "scripts/non_essential/README.md",
+  ".claude/skills/youtube-timestamps/scripts/fetch_subtitles.py", ".gitignore", "DECISIONS.md",
+  "_learnings/2026-11-24-1545_auto-captions-in-the-wrong-language-are-gibberish.md",
+  "transcripts/umath/ (git-ignored: playlists/*.json, index.json, _vtt/)",
+  "transcripts/umath_pilot/, transcripts/umath_pilot_api/ (git-ignored pilot outputs)",
+]
+
+commits = []
+
+notes = """
+API units today from this work: ~8,300 (pilot 850, full run 7,350, rebuild 100) plus ~10 per listing.
+umath now has 462 uploads (479 on 26 Oct); 29 own videos are in playlists but not returned by the uploads list.
+"""

@@ -142,13 +142,17 @@ def fetch_subtitles(
 
 
 TS_RE = re.compile(
-    r"(\d{2}):(\d{2}):(\d{2})\.\d+\s*-->\s*(\d{2}):(\d{2}):(\d{2})\.\d+"
+    r"(\d{2}):(\d{2}):(\d{2})\.(\d+)\s*-->\s*(\d{2}):(\d{2}):(\d{2})\.(\d+)"
 )
 TAG_RE = re.compile(r"<[^>]+>")
 
 
-def parse_vtt(vtt_path: Path) -> str:
-    """Parse VTT into 'MM:SS  text' lines, deduplicating YouTube's rolling captions.
+def _vtt_seconds(h: str, m: str, s: str, frac: str) -> float:
+    return int(h) * 3600 + int(m) * 60 + int(s) + int(frac) / 10 ** len(frac)
+
+
+def vtt_cues(vtt_path: Path) -> list[tuple[float, float, str]]:
+    """Parse VTT into (start, end, text) cues in seconds, deduplicating YouTube's rolling captions.
 
     YouTube auto-generated VTT uses a two-line scrolling window:
         Cue A (with <c> per-word timing): top = previous settled line, bottom = new line
@@ -163,14 +167,15 @@ def parse_vtt(vtt_path: Path) -> str:
     lines = content.splitlines()
     is_auto = "<c>" in content
 
-    cues: list[tuple[int, str]] = []
+    cues: list[tuple[float, float, str]] = []
     i = 0
     while i < len(lines):
         m = TS_RE.match(lines[i].strip())
         if not m:
             i += 1
             continue
-        start = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))
+        start = _vtt_seconds(*m.group(1, 2, 3, 4))
+        end = _vtt_seconds(*m.group(5, 6, 7, 8))
         i += 1
         block: list[str] = []
         while i < len(lines) and lines[i] != "":  # a " " top line (after a pause) is cue text, not the cue end
@@ -186,30 +191,36 @@ def parse_vtt(vtt_path: Path) -> str:
             new_line = TAG_RE.sub("", block[-1]).strip()
             new_line = re.sub(r"\s+", " ", new_line)
             if new_line:
-                cues.append((start, new_line))
+                cues.append((start, end, new_line))
         else:
             text = " ".join(TAG_RE.sub("", line).strip() for line in block).strip()
             text = re.sub(r"\s+", " ", text)
             if text:
-                cues.append((start, text))
+                cues.append((start, end, text))
 
     if not is_auto:
         # Older incremental-growth pattern: drop cues that are prefixes of the next.
-        filtered: list[tuple[int, str]] = []
-        for idx, (ts, text) in enumerate(cues):
+        filtered: list[tuple[float, float, str]] = []
+        for idx, (ts, te, text) in enumerate(cues):
             if idx + 1 < len(cues):
-                nxt = cues[idx + 1][1]
+                nxt = cues[idx + 1][2]
                 if nxt.startswith(text) and nxt != text:
                     continue
-            filtered.append((ts, text))
+            filtered.append((ts, te, text))
         cues = filtered
 
-    settled: list[tuple[int, str]] = []
-    for ts, text in cues:
-        if settled and settled[-1][1] == text:
+    settled: list[tuple[float, float, str]] = []
+    for ts, te, text in cues:
+        if settled and settled[-1][2] == text:
+            settled[-1] = (settled[-1][0], max(settled[-1][1], te), text)  # a repeat extends the line
             continue
-        settled.append((ts, text))
+        settled.append((ts, te, text))
+    return settled
 
+
+def parse_vtt(vtt_path: Path) -> str:
+    """Parse VTT into 'MM:SS  text' lines (whole seconds, truncated), from vtt_cues."""
+    settled = [(int(ts), text) for ts, _, text in vtt_cues(vtt_path)]
     has_hours = bool(settled) and settled[-1][0] >= 3600
     out_lines: list[str] = []
     for ts, text in settled:
