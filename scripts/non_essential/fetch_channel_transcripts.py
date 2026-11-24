@@ -30,6 +30,7 @@ ETA after every video. From the repo root:
     pilot: ... --videos ID ID ... --out transcripts/umath_pilot [--api ID ...]
 """
 import argparse
+import html
 import json
 import logging
 import re
@@ -74,6 +75,27 @@ class NoTrack(RuntimeError):
 # language label is no test: kAhHrwS_-Kk is labelled "de" (the video's metadata language) and is 99% Armenian.
 # Neither is density: the gibberish runs to 713 chars/min, a real but quiet solution video has 110.
 MIN_ARMENIAN_SHARE = 0.5
+
+
+# YouTube's Armenian ASR cannot output the question mark ՞ and writes an unknown-token marker where it belongs, cut
+# into pieces by the word timing and HTML-escaped in the VTT: "ի&lt;un&gt;նչ" = ի՞նչ, "հա&lt;un" = հա՞. In 279 of
+# 308 usable umath transcripts, ~4,700 words (2026-11-24). Where the marker also took the next letter, the only
+# possible word is restored (ի<unչ = ի՞նչ, the most common case). YouTube's ">>" speaker-change marks are dropped.
+_MARK = r"<(?:unk|un|k)?>?"  # <unk> <unk <un> <un <k> <k <> <
+_SWALLOWED_N = re.compile(rf"([իԻոՈ]){_MARK}([չց])")
+_MARK_RE = re.compile(_MARK)
+_CLOSER_RE = re.compile(r"(?:unk|nk|un|k)?>")  # the rest of a marker cut at a cue boundary
+_TRUNCATED = {"կարո՞": "կարո՞ղ", "ինչպե՞": "ինչպե՞ս", "Ինչպե՞": "Ինչպե՞ս", "ինչո՞": "ինչո՞ւ", "Ինչո՞": "Ինչո՞ւ",
+              "ո՞ն": "ո՞նց", "Ո՞ն": "Ո՞նց"}
+_TRUNCATED_RE = re.compile(r"(?<!\S)(" + "|".join(map(re.escape, _TRUNCATED)) + r")(?=[\s,.:։]|$)")
+
+
+def clean_caption_text(t: str) -> str:
+    t = html.unescape(t).replace(">>", " ")
+    t = _SWALLOWED_N.sub(r"\1՞ն\2", t)
+    t = _CLOSER_RE.sub("", _MARK_RE.sub("՞", t))
+    t = _TRUNCATED_RE.sub(lambda m: _TRUNCATED[m.group(1)], re.sub("՞+", "՞", t))
+    return re.sub(r"\s+", " ", t).strip()
 
 
 def armenian_share(text: str) -> float:
@@ -190,7 +212,8 @@ def transcript_from(vtt: Path, duration_s: int) -> dict:
     parts = vtt.name.split(".")  # <id>.<lang>-orig.vtt | <id>.<lang>[.standard].api.vtt
     source = "api" if parts[-2] == "api" else "yt-dlp"
     lang = parts[1].removesuffix("-orig")
-    segments = [{"start": round(s, 3), "end": round(e, 3), "text": t} for s, e, t in vtt_cues(vtt)]
+    segments = [{"start": round(s, 3), "end": round(e, 3), "text": c} for s, e, t in vtt_cues(vtt)
+                if (c := clean_caption_text(t))]
     if not segments:
         raise RuntimeError(f"{vtt.name}: no cues parsed")
     text = " ".join(s["text"] for s in segments)

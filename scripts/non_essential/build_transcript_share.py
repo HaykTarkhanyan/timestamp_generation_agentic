@@ -47,6 +47,8 @@ JSON. Fetched on {date}.
 - **What was on the board is missing.** Only speech is transcribed. When the lecturer says "this one" or "here",
   the thing they point at is not in the text.
 - The speaker is mostly the lecturer; student questions appear without any marker.
+- **Question marks (՞) were restored.** YouTube's recognizer cannot write ՞ and leaves an "unknown" token in its
+  place; those tokens were turned back into ՞ (ի՞նչ, հա՞, չէ՞, ո՞նց). A few may sit in the wrong word.
 
 ## What is not included
 
