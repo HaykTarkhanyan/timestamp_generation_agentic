@@ -9,6 +9,15 @@ Topics cut from current work so they don't get lost. Newest at the top.
   language to hy and see whether YouTube makes a new Armenian track (untested; a channel change, ask first);
   (b) transcribe the gaps ourselves (e.g. Whisper on Colab; check Armenian quality on 2-3 videos first). Rerun
   `fetch_channel_transcripts.py` afterwards: it only fetches what is missing. DECISIONS #59.
+  **Tests started 2026-11-24 (user Q9 "test both"):**
+  - Language change: BfuZCh83Sp4 (Ֆունկցիոնալ անալիզ Դաս 12) audio language en-US -> hy at 16:40 via API
+    (other snippet fields checked unchanged; to undo, set it back to en-US). After 1 h still only `ro-orig`.
+    **Next: check `yt-dlp --list-subs` for `hy-orig` on 2026-11-25; the user waits for this before choosing (Q12).**
+  - Private re-upload: audio + black 1 fps picture of ChmN3qZWzRA (no track) uploaded through Studio as private
+    `mCAyZA311r0`, "ASR test ChmN3qZWzRA (temporary, delete)", 16:43. **Worked:** a `hy` asr track after ~60 min,
+    23,738 chars, 98% Armenian. Delete the copy once its track is used (ask first).
+  - Q12 options if the language change fails: unlisted copies via Studio + yt-dlp (no quota), or private copies
+    + API download (250 units each, ~35 a day).
 
 - **2026-10-28 - End screens for umath (user: "next well need to do the same for umath, but not now, just plan it").**
   Plan, inventory (674 videos in 30 playlists, three tiers), differences from the Metric run and open questions

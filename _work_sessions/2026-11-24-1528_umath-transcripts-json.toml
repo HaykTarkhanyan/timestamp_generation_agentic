@@ -13,6 +13,10 @@ done = [
   "Q5 skip the TV playlist (235 videos), Q6 keep unusable text with a flag, Q7 run now",
   "Full run: 496 videos in 741 s (3 workers); usable rule changed after it to Armenian letter share >= 0.5 (0.0 on every wrong-language track, 0.65-1.0 on real ones); rebuilt in 173 s",
   "Result: 308 usable, 59 wrong-language (flagged), 129 with no auto-caption track at all; 29 playlist files + _no_playlist (57 videos), 47 MB",
+  "Gap analysis: 0 usable transcripts on uploads before 2025; all 321 usable entries are 2025-26 uploads, so YouTube seems to make the track once at processing",
+  "Tests (Q9): BfuZCh83Sp4 audio language en-US -> hy (no new track after 1 h); private audio-only re-upload of ChmN3qZWzRA as mCAyZA311r0 got a 98% Armenian track after ~60 min",
+  "Share copy (Q10 public only, Q11 usable only): build_transcript_share.py -> transcripts/share/umath_transcripts_2026-11-24/ + zip (277 videos, 7.5 MB, README for an LLM user); sent to Telegram Saved Messages",
+  "Found after sending: YouTube's ASR writes an escaped <unk> where ՞ belongs (~4,700 words like 'ի&lt;unչ'); clean_caption_text restores ՞, 0 leftovers; fixed zip sent (message 877570), old one (877566) for the user to delete",
 ]
 
 pending = [
@@ -20,7 +24,7 @@ pending = [
   "129 videos with no track (incl. whole playlists: Պատահական պրոցեսներ 0/14, Մաթ. անալիզ 3/4 old recordings, Ֆունկցիոնալ անալիզ 0/23 usable): only own ASR (e.g. Whisper on Colab) would fill them",
 ]
 
-next = "Ask the user whether to try the audio-language fix on one wrong-language video, or transcribe the gaps ourselves."
+next = "2026-11-25: check BfuZCh83Sp4 for an hy-orig track (yt-dlp --list-subs); then the user picks the rollout (Q12, see DEFERRED_TODO). Delete the test copy mCAyZA311r0 after asking."
 
 files = [
   "scripts/non_essential/fetch_channel_transcripts.py", "scripts/non_essential/README.md",
