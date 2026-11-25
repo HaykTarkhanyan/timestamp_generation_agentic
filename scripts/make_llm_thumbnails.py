@@ -519,8 +519,9 @@ def llm06_servers(ax):
 
 # Video 07, the Kargin sketch agent (recording of 2026-11-25; course repo llms/04_kargin_agent/): cell 39 of
 # 07_kargin_agent_solution.ipynb, the minibus question, solved in 3 tool calls (0, then 13 matches, then sketch 198 =
-# "Kargin Haghordum sketch 535"); the model's summary: "When asked why she has no belly, she replies, 'After two
-# hours, what belly?'".
+# "Kargin Haghordum sketch 535"). Cell 43: one step, two tools in parallel, run_sql (483 sketches) and web_search
+# ("Hayk Marutyan actor mayor of Yerevan 2018 2021", 3 pages) -> "483, Mayor of Yerevan". The sketch's own punchline
+# in the minibus summary was rejected (the user, 2026-11-25: "not the best for this course").
 MINIBUS_Q = "the one where a lady lies to get a seat on the minibus?"
 MINIBUS_TRACE = ['search_dialogue("մարշրուտ|երթուղային")  -> 0 matches',
                  'search_dialogue("հղի|տեղ տվ|նստեմ")  -> 13 matches',
@@ -539,16 +540,18 @@ def llm07_trace(ax):
             **HAND)
 
 
-def llm07_belly(ax):
-    """The sketch's own punchline, as the agent summarised it; the trace stays small."""
+def llm07_mayor(ax):
+    """The web-search example: the database gives the count, the web gives what Hayko did after the show."""
     put_image(ax, emoji("\U0001F64B", 300), 88, 512, 74)            # raising hand
-    ax.text(140, 492, MINIBUS_Q, fontsize=25, color=GREEN, **HAND)
-    code_box(ax, 48, 400, MINIBUS_TRACE[1:], size=21, step=44)
-    put_image(ax, emoji("\U0001F916", 300), 88, 215, 80)            # robot
-    ax.text(150, 240, "Sketch 535. Why no belly?", fontsize=30, color=CHARCOAL, va="center", family="Segoe UI")
-    ax.text(150, 165, "\"After two hours, what belly?\"", fontsize=48, color=RED, va="center", **HAND)
-    ax.text(48, 55, "an agent over 654 Kargin sketches", fontsize=34, color=CHARCOAL, va="center", **HAND)
-    put_image(ax, emoji("\U0001F68C", 300), 1150, 330, 150)         # bus
+    ax.text(140, 492, "How many sketches is Hayko in, and what did he do next?", fontsize=25, color=GREEN, **HAND)
+    code_box(ax, 48, 400, ['run_sql("SELECT COUNT(DISTINCT sketch_id) ...")  -> 483',
+                           'web_search("Hayk Marutyan actor mayor of Yerevan 2018 2021")'], size=21, step=46)
+    put_image(ax, emoji("\U0001F916", 300), 88, 205, 80)            # robot
+    ax.text(150, 245, "\"483 sketches.", fontsize=42, color=GREEN, va="center", **HAND)
+    ax.text(150, 170, "Then Mayor of Yerevan.\"", fontsize=42, color=GREEN, va="center", **HAND)
+    ax.text(48, 55, "SQL for the database, web search for the rest", fontsize=34, color=CHARCOAL, va="center",
+            **HAND)
+    put_image(ax, emoji("\U0001F3DB", 300), 1130, 200, 150)         # classical building
 
 
 LESSONS = [
@@ -571,7 +574,7 @@ LESSONS = [
 
 OPTIONS = {
     "LLM07": [("llm07_a_trace", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_trace}),
-              ("llm07_b_belly", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_belly})],
+              ("llm07_c_mayor", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_mayor})],
     # 2026-11-18: "if there is a genuine opportunity for a creative thumbnail, do it. If not, don't force it."
     "LLM05": [("llm05_a_email", {"tag": "LLM 05", "title": "Tool Calling", "draw": llm05_email}),
               ("llm05_b_ararat", {"tag": "LLM 05", "title": "Tool Calling", "draw": llm05_ararat})],
