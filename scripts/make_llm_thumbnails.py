@@ -571,6 +571,8 @@ LESSONS = [
     # ones, b and b.
     {"tag": "LLM 05", "title": "Tool Calling", "draw": llm05_ararat, "out": "LLM05.png"},
     {"tag": "LLM 06", "title": "MCP & Skills", "draw": llm06_servers, "out": "LLM06.png"},
+    # The user, 2026-11-25 (Q16): d, the fishing trip, after rejecting the minibus punchline and the mayor example.
+    {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_fishing, "out": "LLM07.png"},
 ]
 
 OPTIONS = {
