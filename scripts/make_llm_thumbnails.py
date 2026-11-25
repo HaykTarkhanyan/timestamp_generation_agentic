@@ -519,9 +519,10 @@ def llm06_servers(ax):
 
 # Video 07, the Kargin sketch agent (recording of 2026-11-25; course repo llms/04_kargin_agent/): cell 39 of
 # 07_kargin_agent_solution.ipynb, the minibus question, solved in 3 tool calls (0, then 13 matches, then sketch 198 =
-# "Kargin Haghordum sketch 535"). Cell 43: one step, two tools in parallel, run_sql (483 sketches) and web_search
-# ("Hayk Marutyan actor mayor of Yerevan 2018 2021", 3 pages) -> "483, Mayor of Yerevan". The sketch's own punchline
-# in the minibus summary was rejected (the user, 2026-11-25: "not the best for this course").
+# "Kargin Haghordum sketch 535"). Cell 66, the command line: "the one where a father and son go fishing and catch
+# nothing" -> 4 steps, 5 tool calls, $0.0130, 9 s, "Kargin Haghordum sketch 498. The father tries to use their packed
+# lunch as bait, but Hakobik has eaten everything". Rejected on 2026-11-25: the minibus summary's own punchline
+# ("not the best for this course") and the Hayko -> Mayor of Yerevan web search ("I don't want political example").
 MINIBUS_Q = "the one where a lady lies to get a seat on the minibus?"
 MINIBUS_TRACE = ['search_dialogue("մարշրուտ|երթուղային")  -> 0 matches',
                  'search_dialogue("հղի|տեղ տվ|նստեմ")  -> 13 matches',
@@ -540,18 +541,18 @@ def llm07_trace(ax):
             **HAND)
 
 
-def llm07_mayor(ax):
-    """The web-search example: the database gives the count, the web gives what Hayko did after the show."""
+def llm07_fishing(ax):
+    """The command-line run: a hazy memory in, the sketch and why they caught nothing out."""
     put_image(ax, emoji("\U0001F64B", 300), 88, 512, 74)            # raising hand
-    ax.text(140, 492, "How many sketches is Hayko in, and what did he do next?", fontsize=25, color=GREEN, **HAND)
-    code_box(ax, 48, 400, ['run_sql("SELECT COUNT(DISTINCT sketch_id) ...")  -> 483',
-                           'web_search("Hayk Marutyan actor mayor of Yerevan 2018 2021")'], size=21, step=46)
-    put_image(ax, emoji("\U0001F916", 300), 88, 205, 80)            # robot
-    ax.text(150, 245, "\"483 sketches.", fontsize=42, color=GREEN, va="center", **HAND)
-    ax.text(150, 170, "Then Mayor of Yerevan.\"", fontsize=42, color=GREEN, va="center", **HAND)
-    ax.text(48, 55, "SQL for the database, web search for the rest", fontsize=34, color=CHARCOAL, va="center",
+    ax.text(140, 492, "the one where a father and son go fishing and catch nothing?", fontsize=23, color=GREEN,
             **HAND)
-    put_image(ax, emoji("\U0001F3DB", 300), 1130, 200, 150)         # classical building
+    code_box(ax, 48, 400, ['$ sketch-finder ask "...go fishing and catch nothing"',
+                           '4 steps, 5 tool calls, $0.013, 9 s'], size=22, step=46)
+    put_image(ax, emoji("\U0001F916", 300), 88, 205, 80)            # robot
+    ax.text(150, 245, "\"Sketch 498. The lunch was the bait,", fontsize=38, color=GREEN, va="center", **HAND)
+    ax.text(150, 170, "but Hakobik ate it all.\"", fontsize=38, color=GREEN, va="center", **HAND)
+    ax.text(48, 55, "an agent over 654 Kargin sketches", fontsize=34, color=CHARCOAL, va="center", **HAND)
+    put_image(ax, emoji("\U0001F3A3", 300), 1165, 105, 140)         # fishing pole
 
 
 LESSONS = [
@@ -574,7 +575,7 @@ LESSONS = [
 
 OPTIONS = {
     "LLM07": [("llm07_a_trace", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_trace}),
-              ("llm07_c_mayor", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_mayor})],
+              ("llm07_d_fishing", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_fishing})],
     # 2026-11-18: "if there is a genuine opportunity for a creative thumbnail, do it. If not, don't force it."
     "LLM05": [("llm05_a_email", {"tag": "LLM 05", "title": "Tool Calling", "draw": llm05_email}),
               ("llm05_b_ararat", {"tag": "LLM 05", "title": "Tool Calling", "draw": llm05_ararat})],
