@@ -517,6 +517,40 @@ def llm06_servers(ax):
             color=CHARCOAL, va="center", **HAND)
 
 
+# Video 07, the Kargin sketch agent (recording of 2026-11-25; course repo llms/04_kargin_agent/): cell 39 of
+# 07_kargin_agent_solution.ipynb, the minibus question, solved in 3 tool calls (0, then 13 matches, then sketch 198 =
+# "Kargin Haghordum sketch 535"); the model's summary: "When asked why she has no belly, she replies, 'After two
+# hours, what belly?'".
+MINIBUS_Q = "the one where a lady lies to get a seat on the minibus?"
+MINIBUS_TRACE = ['search_dialogue("մարշրուտ|երթուղային")  -> 0 matches',
+                 'search_dialogue("հղի|տեղ տվ|նստեմ")  -> 13 matches',
+                 'read_sketch(198)  -> "Kargin Haghordum sketch 535"']
+
+
+def llm07_trace(ax):
+    """Plain: the hazy question, the agent's three tool calls, the answer."""
+    put_image(ax, emoji("\U0001F64B", 300), 88, 512, 74)            # raising hand
+    ax.text(140, 492, MINIBUS_Q, fontsize=25, color=GREEN, **HAND)
+    code_box(ax, 48, 395, MINIBUS_TRACE, size=23, step=50, marks=(0,))
+    put_image(ax, emoji("\U0001F916", 300), 88, 160, 80)            # robot
+    ax.text(150, 160, "\"Sketch 535: she says she's pregnant to get a seat.\"", fontsize=30, color=GREEN,
+            va="center", family="Segoe UI")
+    ax.text(48, 55, "the model picks the words, your code searches", fontsize=34, color=CHARCOAL, va="center",
+            **HAND)
+
+
+def llm07_belly(ax):
+    """The sketch's own punchline, as the agent summarised it; the trace stays small."""
+    put_image(ax, emoji("\U0001F64B", 300), 88, 512, 74)            # raising hand
+    ax.text(140, 492, MINIBUS_Q, fontsize=25, color=GREEN, **HAND)
+    code_box(ax, 48, 400, MINIBUS_TRACE[1:], size=21, step=44)
+    put_image(ax, emoji("\U0001F916", 300), 88, 215, 80)            # robot
+    ax.text(150, 240, "Sketch 535. Why no belly?", fontsize=30, color=CHARCOAL, va="center", family="Segoe UI")
+    ax.text(150, 165, "\"After two hours, what belly?\"", fontsize=48, color=RED, va="center", **HAND)
+    ax.text(48, 55, "an agent over 654 Kargin sketches", fontsize=34, color=CHARCOAL, va="center", **HAND)
+    put_image(ax, emoji("\U0001F68C", 300), 1150, 330, 150)         # bus
+
+
 LESSONS = [
     {"tag": "LLM 01", "title": "Tokenization", "draw": draw_llm01, "out": "LLM01.png"},
     # The user, 2026-11-10: "for thumbnails i like pikachu but pls notice that the ?? are out of the dialog box".
@@ -536,6 +570,8 @@ LESSONS = [
 ]
 
 OPTIONS = {
+    "LLM07": [("llm07_a_trace", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_trace}),
+              ("llm07_b_belly", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_belly})],
     # 2026-11-18: "if there is a genuine opportunity for a creative thumbnail, do it. If not, don't force it."
     "LLM05": [("llm05_a_email", {"tag": "LLM 05", "title": "Tool Calling", "draw": llm05_email}),
               ("llm05_b_ararat", {"tag": "LLM 05", "title": "Tool Calling", "draw": llm05_ararat})],
