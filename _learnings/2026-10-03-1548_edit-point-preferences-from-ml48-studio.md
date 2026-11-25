@@ -296,6 +296,26 @@ rounded duration, the frames said 37:12.8). Files: `output/2026-11-18_06-x-Large
 - 73 new cuts of 0.44-5 s; the 0.44 s one went in with `--min-cut 0.2` (Q6's answer applied).
 - Entry: dry run + 3 batches (120 + 232 + 127 s for 96 cuts), diff identical; saved by Claude under DECISIONS #58.
 
+## LLM [07] Kargin sketch agent, a project walkthrough (2026-11-25): three of my cuts kept, the old-site demo cut
+
+From my 41 cuts (19.7 min) plus 2 unticked suggestions to the user's 65 (27 changed, 27 new, 3 removed), 62 after merging
+4+5+6 and 50+51: 20.5 min removed, 1:11:52 -> 51:19 (Studio's dialog = end marker 107,807 - 30,809 frames). Files:
+`output/2026-11-25_07-x-Large-Language-Models_X_Yzd3Z5jvw/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **Three of my pre-ticked cuts were removed (kept in the video):**
+  - the student's "let me ask a couple of questions to picture it" + "դավայ" (0:39:42). Unlike [05]/[06], it came
+    after the question had started ("I don't picture the flow well"), so it is part of the question, not a lead-in;
+  - the old ArmBench page, "look how old, Gemini 3", switching to the new link (0:53:05, 20 s): a short candid aside,
+    as on ML51/ML54/LLM [01];
+  - "so we can wrap up, think whether you have questions... I forgot, I wanted to motivate" (0:58:09, 10 s).
+- **Cut, which I had kept as content:** the old Kargin site's search failing live ("is the word պանիր anywhere?... it
+  forgot every sketch", 0:09:23-0:09:38). Only its first sentence stayed; the point is made again in words right after.
+- **Both unticked closing blocks stayed** (the course plan and the "build projects, put them on GitHub" advice), the
+  fourth lecture in a row ([03], [04], [06]).
+- **27 new cuts of 0.5-4.7 s**, one of 0.48 s (entered with `--min-cut 0.2`, Q6 of [05] still applies), and most of my
+  pause edges moved by a few frames.
+- Entry: dry run + 2 batches (115 + 124 s for 62 cuts), diff identical, saved by Claude under DECISIONS #58.
+
 ## Arnak Dalalyan, lesson 10 (2026-10-20): silent writing goes, questions and one-word narration stay
 
 Another channel (Համալսարանական մաթեմատիկա), another lecturer, but the same reading of what a
