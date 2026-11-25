@@ -12,7 +12,8 @@ Topics cut from current work so they don't get lost. Newest at the top.
   **Tests started 2026-11-24 (user Q9 "test both"):**
   - Language change: BfuZCh83Sp4 (Ֆունկցիոնալ անալիզ Դաս 12) audio language en-US -> hy at 16:40 via API
     (other snippet fields checked unchanged; to undo, set it back to en-US). After 1 h still only `ro-orig`.
-    **Next: check `yt-dlp --list-subs` for `hy-orig` on 2026-11-25; the user waits for this before choosing (Q12).**
+    **2026-11-25 18:40, ~26 h later: still only `ro-orig`. The language change does not make YouTube redo the
+    track.** So the re-upload route is the one that works; the user picks between its two forms (Q12).
   - Private re-upload: audio + black 1 fps picture of ChmN3qZWzRA (no track) uploaded through Studio as private
     `mCAyZA311r0`, "ASR test ChmN3qZWzRA (temporary, delete)", 16:43. **Worked:** a `hy` asr track after ~60 min,
     23,738 chars, 98% Armenian. Delete the copy once its track is used (ask first).
