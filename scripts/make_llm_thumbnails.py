@@ -555,6 +555,97 @@ def llm07_fishing(ax):
     put_image(ax, emoji("\U0001F3A3", 300), 1165, 105, 140)         # fishing pole
 
 
+# Video 08, RAG retrieval (recording of 2026-11-27; course repo llms/04_rag/08_rag_retrieval.tex): slides 2-3, the Lori
+# cheese press without context ("Typically around 4 to 6 bar", invented) and with one retrieved paragraph (2.5 bar, then
+# 3.2 bar after twenty minutes); slides 22, 38 and 58, the cellar chunk and the paraphrased question that share no
+# content word: BM25 scores exactly 0.000 (rank 17 of 18), the embedding model puts the chunk at rank 4.
+
+def llm08_press(ax):
+    """Plain: the lecture's cold open, the same question without and with the retrieved paragraph."""
+    put_image(ax, emoji("\U0001F64B", 300), 88, 512, 74)            # raising hand
+    ax.text(140, 492, "What pressure should the Lori cheese press run at?", fontsize=26, color=GREEN, **HAND)
+    put_image(ax, emoji("\U0001F916", 300), 88, 395, 80)            # robot
+    ax.text(150, 395, "\"Typically around 4 to 6 bar.\"", fontsize=30, color=RED, va="center", family="Segoe UI")
+    ax.text(712, 395, "(it never saw your factory)", fontsize=24, color="#7a7a7a", va="center", **HAND)
+    code_box(ax, 48, 282, ['retrieved: "The Lori press operates at 2.5 bar during',
+                           '            the first stage, 3.2 bar after twenty minutes."'], size=21, step=42)
+    put_image(ax, emoji("\U0001F916", 300), 88, 135, 80)
+    ax.text(150, 135, "\"2.5 bar, then 3.2 bar after twenty minutes.\"", fontsize=30, color=GREEN, va="center",
+            family="Segoe UI")
+    ax.text(48, 48, "same model, the right paragraph in front of it", fontsize=34, color=CHARCOAL, va="center",
+            **HAND)
+    put_image(ax, emoji("\U0001F9C0", 300), 1150, 140, 130)         # cheese
+
+
+def llm08_zero(ax):
+    """Plain: the pair with no shared word, BM25's exact zero against the embedding model's rank 4."""
+    ax.text(48, 528, "the chunk:", fontsize=32, color=GREEN, va="center", **HAND)
+    code_box(ax, 48, 462, ['"Ripening cellars are held at 10 degrees',
+                           ' and 85 percent humidity."'], size=25, step=46)
+    ax.text(48, 340, "the question:", fontsize=32, color=GREEN, va="center", **HAND)
+    code_box(ax, 48, 278, ['"How warm is the room where the cheese matures?"'], size=25)
+    ax.text(48, 160, "BM25 score:", fontsize=40, color=CHARCOAL, va="center", **LATIN)
+    ax.text(405, 160, "0.000", fontsize=58, color=RED, va="center", **LATIN)
+    ax.text(730, 160, "embeddings: rank 4", fontsize=40, color=GREEN, va="center", **LATIN)
+    ax.text(48, 55, "not one shared word, so keywords see nothing", fontsize=34, color=CHARCOAL, va="center", **HAND)
+    put_image(ax, emoji("\U0001F9C0", 300), 1150, 420, 150)         # cheese
+
+
+# The deck's toy space (py_src/l41_explain_figs.py, e10 "the nearest dot is the answer"): six chunks at two numbers each.
+TOY_PTS = {"press runs at 2.5 bar": (0.82, 0.62), "press maintenance": (0.95, 0.30), "brining at 12 degrees": (0.15, 0.80),
+           "ripening cellar": (0.05, 0.55), "pasteurisation": (0.35, 0.95), "vacuum packing": (0.60, 0.10)}
+FLAG_BLUE = "#0033A0"
+
+
+def vector_space(ax, q, q_lines, q_xy, label_xy, box=(70, 1010, 95, 545), circle=True):
+    """The toy points mapped into box (x0, x1, y0, y1): blue dots with labels, the question as a red star with its label
+    lines at label_xy (data units of the toy space), a dashed line and a dotted circle to the nearest dot. Returns the
+    nearest chunk's name."""
+    x0, x1, y0, y1 = box
+
+    def to_px(x, y):
+        return x0 + (x + 0.05) / 1.30 * (x1 - x0), y0 + y / 1.08 * (y1 - y0)
+
+    ax.plot([x0, x0, x1], [y1, y0, y0], color="#b9b9b9", lw=2.5, zorder=1, solid_capstyle="round")
+    offsets = {"press maintenance": (18, -26), "press runs at 2.5 bar": (20, -24), "ripening cellar": (18, 12)}
+    for name, (x, y) in TOY_PTS.items():
+        px, py = to_px(x, y)
+        ax.add_patch(plt.Circle((px, py), 13, color=FLAG_BLUE, zorder=4))
+        dx, dy = offsets.get(name, (18, 10))
+        ax.text(px + dx, py + dy, name, fontsize=21, color=CHARCOAL, va="center", zorder=4, family="Segoe UI")
+    near = min(TOY_PTS, key=lambda k: np.hypot(TOY_PTS[k][0] - q[0], TOY_PTS[k][1] - q[1]))
+    qx, qy = to_px(*q)
+    nx, ny = to_px(*TOY_PTS[near])
+    ax.plot([qx, nx], [qy, ny], color=RED, ls="--", lw=3.5, zorder=3)
+    r = np.hypot(nx - qx, ny - qy) * 1.08
+    t = np.linspace(0, 2 * np.pi, 200)
+    if circle:
+        ax.plot(qx + r * np.cos(t), qy + r * np.sin(t), color=RED, ls=":", lw=3, zorder=3)
+    ax.plot(qx, qy, marker="*", color=RED, ms=46, zorder=6, markeredgecolor="white", markeredgewidth=1.5)
+    lx, ly = to_px(*label_xy)
+    for i, line in enumerate(q_lines):
+        ax.text(lx, ly - i * 40, line, fontsize=27, color=RED, va="center", zorder=6, **HAND)
+    return near
+
+
+def llm08_nearest(ax):
+    """Visual: the deck's toy space, the Lori press question as a star, its nearest dot is the answer."""
+    vector_space(ax, (0.74, 0.74), ['"What pressure for', ' the Lori press?"'], (0.74, 0.74), (0.89, 0.90))
+    ax.text(48, 42, "the nearest dot is the answer", fontsize=38, color=CHARCOAL, va="center", **HAND)
+    put_image(ax, emoji("\U0001F9C0", 300), 1150, 330, 140)         # cheese
+
+
+def llm08_paraphrase(ax):
+    """Visual: the same space, the paraphrase with no shared word lands next to 'ripening cellar'; BM25 says 0.000."""
+    near = vector_space(ax, (0.22, 0.40), ['"How warm is the room', ' where the cheese matures?"'], (0.22, 0.40),
+                        (0.27, 0.49), circle=False)
+    if near != "ripening cellar":
+        raise ValueError(f"the paraphrase star's nearest dot is {near!r}, expected 'ripening cellar'")
+    ax.text(1035, 470, "BM25:", fontsize=34, color=CHARCOAL, va="center", **LATIN)
+    ax.text(1035, 405, "0.000", fontsize=52, color=RED, va="center", **LATIN)
+    ax.text(48, 42, "no shared word, still the nearest dot", fontsize=38, color=CHARCOAL, va="center", **HAND)
+
+
 LESSONS = [
     {"tag": "LLM 01", "title": "Tokenization", "draw": draw_llm01, "out": "LLM01.png"},
     # The user, 2026-11-10: "for thumbnails i like pikachu but pls notice that the ?? are out of the dialog box".
@@ -573,9 +664,16 @@ LESSONS = [
     {"tag": "LLM 06", "title": "MCP & Skills", "draw": llm06_servers, "out": "LLM06.png"},
     # The user, 2026-11-25 (Q16): d, the fishing trip, after rejecting the minibus punchline and the mayor example.
     {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_fishing, "out": "LLM07.png"},
+    # The user, 2026-11-27 (Q3): "something more visual pls maybe for vector search" over a/b, then c, the nearest dot.
+    {"tag": "LLM 08", "title": "RAG: Retrieval", "draw": llm08_nearest, "out": "LLM08.png"},
 ]
 
 OPTIONS = {
+    # 2026-11-27 (Q3): "Something more visual pls maybe for vector search" over a (press) and b (BM25 0.000).
+    "LLM08v": [("llm08_c_nearest", {"tag": "LLM 08", "title": "RAG: Retrieval", "draw": llm08_nearest}),
+               ("llm08_d_paraphrase", {"tag": "LLM 08", "title": "RAG: Retrieval", "draw": llm08_paraphrase})],
+    "LLM08": [("llm08_a_press", {"tag": "LLM 08", "title": "RAG: Retrieval", "draw": llm08_press}),
+              ("llm08_b_zero", {"tag": "LLM 08", "title": "RAG: Retrieval", "draw": llm08_zero})],
     "LLM07": [("llm07_a_trace", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_trace}),
               ("llm07_d_fishing", {"tag": "LLM 07", "title": "Kargin Agent", "draw": llm07_fishing})],
     # 2026-11-18: "if there is a genuine opportunity for a creative thumbnail, do it. If not, don't force it."
