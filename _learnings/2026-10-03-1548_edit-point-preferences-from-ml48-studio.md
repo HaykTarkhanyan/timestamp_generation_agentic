@@ -316,6 +316,33 @@ From my 41 cuts (19.7 min) plus 2 unticked suggestions to the user's 65 (27 chan
   pause edges moved by a few frames.
 - Entry: dry run + 2 batches (115 + 124 s for 62 cuts), diff identical, saved by Claude under DECISIONS #58.
 
+## LLM [08] RAG retrieval (2026-11-27): my three false-start cuts kept, today's plan cut
+
+From my 29 cuts (12.2 min) plus 4 unticked suggestions to the user's 50 (17 changed, 24 new, 3 removed), 48 after merging
+2+3 (19 frames) and 35+36 (1 frame): 13.3 min removed, 1:15:26 -> 1:02:06 (Studio's dialog = end marker 113,158 - 20,002
+frames). Files: `output/2026-11-27_08-x-Large-Language-Models_s7MCThtCnfo/studio_cuts_edited.txt` and `studio_cuts_to_enter.txt`.
+
+- **Three of my pre-ticked restart cuts were removed (kept in the video):** "if our embedding part brought 72%... no,
+  sorry, more precisely chunking" (0:28:59), "architectures which do... these aren't that primary, the semantic
+  chunking thing, but there are approaches" (1:00:28), and a 2 s "Okay?" before a student's second question (0:52:42).
+  With [04] and [06]: a correction or a self-interruption the lecturer makes on camera stays. Offer these unticked.
+- **Kept as I cut them:** the dropped log explanation (0:41:11, 26 s), the "existing question" tangle (0:41:53), the
+  "not discrete / not sparse" fumble (1:06:30), the haystack word hunt (0:13:48). An abandoned explanation or a tangled
+  sentence goes; a sentence the speaker corrects stays.
+- **The unticked same-day plan was cut** (0:05:43-0:06:28, "I thought it would be a long lecture... today motivation and
+  terms, next lesson another lecture, then maybe a project"), unlike [05], whose plan named what the series covers next.
+- **Kept unticked:** the closing course plan (hybrid search, eval metrics, maybe graph RAG; the fifth lecture in a row),
+  the ATE-2 "I added this slide when I planned a later lecture" remark, and most of the slide pointer (only its "հա"
+  went, 0:59:29.6-0:59:32.1).
+- **Edges:** cut 1 ended 0.6 s earlier than mine (0:03:54.92, mine 0:03:55.55): my edge sat on a 0.1 s gap I took for
+  the end of the lead-in "դե ժողովուրդ"; the user cut only "դե". A 0.1 s gap inside a lead-in is not a word boundary.
+  "Հա" lead-ins after a cut went again (cut 3 +1.5 s, cut 19 +3.3 s). Cut 10 ended 3 s earlier: the "okay, OK" that
+  opens the next sentence stayed.
+- **Political examples in the content stay:** the nickname rewrite example (0:54:19-0:54:56) was not cut. The [07]
+  thumbnail rejection ("no political example") was "a one off choice not a rule" (the user, 2026-11-27).
+- 24 new cuts of 0.88-4.3 s, all entered (none under 0.5 s).
+- Entry: dry run + 2 batches (449 + 100 s for 48 cuts), diff identical, saved by Claude under DECISIONS #58.
+
 ## Arnak Dalalyan, lesson 10 (2026-10-20): silent writing goes, questions and one-word narration stay
 
 Another channel (Համալսարանական մաթեմատիկա), another lecturer, but the same reading of what a

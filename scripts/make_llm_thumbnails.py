@@ -523,6 +523,8 @@ def llm06_servers(ax):
 # nothing" -> 4 steps, 5 tool calls, $0.0130, 9 s, "Kargin Haghordum sketch 498. The father tries to use their packed
 # lunch as bait, but Hakobik has eaten everything". Rejected on 2026-11-25: the minibus summary's own punchline
 # ("not the best for this course") and the Hayko -> Mayor of Yerevan web search ("I don't want political example").
+# That was a one-off choice for this thumbnail, not a rule (the user, 2026-11-27: "i rejected the thumbnail as a one off
+# choice not a rule"); political examples in a lecture's content are not cut for it either ([08]'s nickname rewrite).
 MINIBUS_Q = "the one where a lady lies to get a seat on the minibus?"
 MINIBUS_TRACE = ['search_dialogue("մարշրուտ|երթուղային")  -> 0 matches',
                  'search_dialogue("հղի|տեղ տվ|նստեմ")  -> 13 matches',
