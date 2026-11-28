@@ -584,6 +584,9 @@ so chapters pushed earlier point to the wrong places. Then:
 - Check that `duration_seconds` matches the predicted length, and run the verifier with
   `--audit-boundaries` on `edited/` with the drafted `timestamps.txt`. Move a boundary only
   if the audit shows the topic sentence on the other side of it.
+  - Quickest read: `python scripts/non_essential/chapter_caption_lines.py --output-dir <output_dir>` prints the real
+    line each chapter falls in and the next one. Don't snap with an automatic matcher of predicted lines: on LLM [08]
+    it proposed 3+ wrong moves (learning `2026-11-28-0129_check-chapters-on-the-caption-line-they-sit-in.md`).
 - The second caption pass also helps the correctness review: a number every pass agrees
   on was probably said (ML50's "117 million").
 - Before this script, boundaries were mapped by hand through `studio_final_cuts.json`
